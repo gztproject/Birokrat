@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -69,11 +71,17 @@ class User implements AdvancedUserInterface, \Serializable
      * @Assert\NotNull()
      */
     private $isRoleAdmin;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\Organization", mappedBy="users")
+     */
+    private $organizations;
     
     public function __construct()
     {
         $this->isActive = true;
         $this->isRoleAdmin = false;
+        $this->organizations = new ArrayCollection();
         
         // not needed with bcrypt
         // $this->salt = md5(uniqid('', true));
@@ -255,5 +263,33 @@ class User implements AdvancedUserInterface, \Serializable
             //not needed with bcrypt
             // $this->salt
             ) = unserialize($serialized);
+    }
+
+    /**
+     * @return Collection|Organization[]
+     */
+    public function getOrganizations(): Collection
+    {
+        return $this->organizations;
+    }
+
+    public function addOrganization(Organization $organization): self
+    {
+        if (!$this->organizations->contains($organization)) {
+            $this->organizations[] = $organization;
+            $organization->addUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOrganization(Organization $organization): self
+    {
+        if ($this->organizations->contains($organization)) {
+            $this->organizations->removeElement($organization);
+            $organization->removeUser($this);
+        }
+
+        return $this;
     }
 }
