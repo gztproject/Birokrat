@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+
+{% block body_id 'login' %}
+
+{% block javascripts %}
+    {{ parent() }}
+{% endblock %}
+
+{% block main %}
+    {% if error %}
+        <div class="alert alert-danger">
+            {{ error.messageKey|trans(error.messageData, 'security') }}
+        </div>
+    {% endif %}
+
+    <div class="row justify-content-center"">
+        <div class="col-sm-5">
+            <div class="card text-white bg-primary mb-3">
+                <div class="card-header">
+                <h1><i class="fa fa-lock" aria-hidden="true"></i> {{ 'title.login'|trans }}</h1></div>
+                <div class="card-body">
+                <form action="{{ path('app_login') }}" method="post">
+                    <fieldset>                        
+                        <div class="form-group">
+                            <label for="inputUsername">{{ 'label.username'|trans }}</label>
+                            <input type="text" value="{{ last_username }}" name="username" id="inputUsername" class="form-control" placeholder="Username" required autofocus>                            
+                        </div>
+                        <div class="form-group">
+                            <label for="inputPassword">{{ 'label.password'|trans }}</label>
+                             <input type="password" name="password" id="inputPassword" class="form-control" placeholder="Password" required>
+                        </div>
+                        <div class="form-group">
+                            <div class="checkbox mb-3">
+                                <label>
+                                    <input type="checkbox" name="_remember_me">{{ 'label.rememberMe'|trans }}
+                                </label>
+                            </div>
+                        </div>
+                        <input type="hidden" name="_target_path" value="{{ app.request.get('redirect_to') }}"/>
+                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}"/>
+                        <button type="submit" class="btn btn-sm btn-primary">
+                            <i class="fa fa-sign-in" aria-hidden="true"></i> {{ 'action.sign_in'|trans }}
+                        </button>
+                    </fieldset>
+                </form>
+                </div>
+            </div>
+        </div>        
+    </div>
+{% endblock %}
+

@@ -1,0 +1,32 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block body_id 'admin_user_show' %}
+
+{% block main %}
+    <h1>{{ user.fullName }}</h1>
+
+    <p class="user-email">
+        <span class="email"><i class="fa fa-email"></i> {{ user.email }}</span>
+    </p>
+
+    <div class="card text-white bg-primary mb-3">    
+        <div class="card-body">                    
+            <strong>{{ 'label.username'|trans }}</strong>: {{ user.username }}
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block sidebar %}
+    <div class="section">
+        <a href="{{ path('admin_user_edit', {id: user.id}) }}" class="btn btn-sm btn-block btn-success">
+            <i class="fa fa-edit" aria-hidden="true"></i> {{ 'action.edit_contents'|trans }}
+        </a>
+    </div>
+
+    <div class="section">
+        {{ include('admin/user/_delete_form.html.twig', {user: user}, with_context = false) }}
+    </div>
+
+    {{ parent() }}
+{% endblock %}
