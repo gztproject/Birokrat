@@ -1,4 +1,4 @@
-UserName	Password	FirstName	LastName	EMail	Mobile	Phone	UserRoles	OrganizationCode
-superAdmin	superAdmin	Super	Administrator	info@gzt.si	+386 40 000 000	+386 451 00 000	SuperAdmin, Administrator, User, Viewer	1
-admin	admin	Administrator	Veliki	info@gzt.si	+386 40 000 000	+386 451 00 000	Administrator, User, Viewer	1
-test	test	Tesko	Testič	test@gzt.si	+386 40 000 000	+386 451 00 000	User, Viewer	1
+UserName	Password	FirstName	LastName	EMail	Mobile	Phone	IsRoleAdmin	OrganizationCode
+admin	admin	Administrator	Veliki	info@gzt.si	+386 40 000 000	+386 451 00 000	TRUE	1
+test	test	Testko	Testič	test@gzt.si	+386 40 000 000	+386 451 00 000	FALSE	1
+gapi	gapi	Gašper	Doljak	gasper.doljak@gmail.com	+386 40 352 071		TRUE	1

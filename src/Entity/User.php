@@ -32,12 +32,12 @@ class User implements AdvancedUserInterface, \Serializable
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $name;
+    private $firstName;
     
     /**
      * @ORM\Column(type="string", length=255)
      */
-    private $surname;
+    private $lastName;
     
     /**
      * @Assert\NotBlank()
@@ -61,6 +61,16 @@ class User implements AdvancedUserInterface, \Serializable
      * @Assert\Email()
      */
     private $email;
+    
+    /**
+     * @ORM\Column(type="string", length=20)
+     */
+    private $mobile;
+    
+    /**
+     * @ORM\Column(type="string", length=20)
+     */
+    private $phone;
 
     /**
      * @ORM\Column(type="boolean")
@@ -104,38 +114,38 @@ class User implements AdvancedUserInterface, \Serializable
         return $this;
     }
     
-    public function getName(): ?string
+    public function getFirstName(): ?string
     {
-        return $this->name;
+        return $this->firstName;
     }
     
-    public function setName(string $name): self
+    public function setFirstName(string $firstName): self
     {
-        $this->name = $name;
+        $this->firstName = $firstName;
         
         return $this;
     }
     
-    public function getSurname(): ?string
+    public function getLastName(): ?string
     {
-        return $this->surname;
+        return $this->lastName;
     }
     
-    public function setSurname(string $name): self
+    public function setLastName(string $lastName): self
     {
-        $this->surname = $name;
+        $this->lastName = $lastName;
         
         return $this;
     }
     
     public function getFullname(): ?string
     {
-        return $this->name . " " . $this->surname;
+        return $this->firstName . " " . $this->lastName;
     }
     
     public function getPlainPassword(): ?string
     {
-        return $this->plainPassword;
+        return "I'm sorry Dave, I'm afraid I can't do that.";
     }
     
     public function setPlainPassword($password): self
@@ -166,6 +176,30 @@ class User implements AdvancedUserInterface, \Serializable
     {
         $this->email = $email;
 
+        return $this;
+    }
+    
+    public function getMobile(): ?string
+    {
+        return $this->mobile;
+    }
+    
+    public function setMobile(string $mobile): self
+    {
+        $this->mobile = $mobile;
+        
+        return $this;
+    }
+    
+    public function getPhone(): ?string
+    {
+        return $this->phone;
+    }
+    
+    public function setPhone(string $phone): self
+    {
+        $this->phone = $phone;
+        
         return $this;
     }
 

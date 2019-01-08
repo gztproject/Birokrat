@@ -20,11 +20,6 @@ class Konto
     /**
      * @ORM\Column(type="integer")
      */
-    private $class;
-
-    /**
-     * @ORM\Column(type="integer")
-     */
     private $number;
 
     /**
@@ -36,7 +31,7 @@ class Konto
      * @ORM\ManyToOne(targetEntity="App\Entity\KontoCategory", inversedBy="kontos")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $KontoCategory;
+    private $category;
 
     /**
      * @ORM\Column(type="boolean")
@@ -46,18 +41,6 @@ class Konto
     public function getId(): ?Uuid
     {
         return $this->id;
-    }
-
-    public function getClass(): ?int
-    {
-        return $this->class;
-    }
-
-    public function setClass(int $class): self
-    {
-        $this->class = $class;
-
-        return $this;
     }
 
     public function getNumber(): ?int
@@ -84,14 +67,14 @@ class Konto
         return $this;
     }
 
-    public function getKontoCategory(): ?KontoCategory
+    public function getCategory(): ?KontoCategory
     {
         return $this->kontoCategory;
     }
 
-    public function setKontoCategory(?KontoCategory $kontoCategory): self
+    public function setCategory(?KontoCategory $category): self
     {
-        $this->kontoCategory = $kontoCategory;
+        $this->category = $category;
 
         return $this;
     }

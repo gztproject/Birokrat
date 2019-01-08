@@ -72,6 +72,12 @@ class Invoice
      */
     private $state;
 
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\User")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $issuedBy;
+
     public function __construct()
     {
         $this->invoiceItems = new ArrayCollection();
@@ -217,6 +223,18 @@ class Invoice
     public function setState(?InvoiceState $state): self
     {
         $this->state = $state;
+
+        return $this;
+    }
+
+    public function getIssuedBy(): ?User
+    {
+        return $this->issuedBy;
+    }
+
+    public function setIssuedBy(?User $issuedBy): self
+    {
+        $this->issuedBy = $issuedBy;
 
         return $this;
     }

@@ -18,14 +18,27 @@ class AppFixtures extends Fixture
     
     public function load(ObjectManager $manager)
     {
+        //'internal' stuff
+        $invoiceStatesInitializer = new InvoiceStatesInitializer();
+        $invoiceStatesInitializer->generate($manager);
+        
+        
+        //actual data
+        $kontosInitializer = new KontosInitializer();
+        $kontosInitializer->generate($manager);
+        
         $countryInitializer = new CountryInitializer();
         $countries = $countryInitializer->generate($manager);
         
         $postInitializer = new PostsInitializer();
         $posts = $postInitializer->generate($manager, $countries);
         
+        $organizationsInitializer = new OrganizationsInitializer();
+        $organizations = $organizationsInitializer->generate($manager, $posts);
         
         $usersInitilizer = new UsersInitializer();
-        $usersInitilizer->generate($manager, $this->passwordEncoder);
+        $usersInitilizer->generate($manager, $this->passwordEncoder, $organizations);
+        
+        //test data
     }
 }

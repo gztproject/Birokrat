@@ -3,7 +3,6 @@
 namespace App\DataFixtures;
 
 use Doctrine\Common\Persistence\ObjectManager;
-use App\Entity\Country;
 use App\Entity\Post;
 
 class PostsInitializer
@@ -12,18 +11,28 @@ class PostsInitializer
     {
         $posts = array();
         
-        //for...
-        $post = new Post();
-        $post->setName("Škofja Loka");
-        $post->setCode("4220");
-        $post->setCodeInternational("SI-4220");
-        $post->setCountry(array_pop($countries));
+        foreach ($countries as $country) {
+        
+            $path = __DIR__ . "/InitData/posts-".strtolower($country->getA2()).".csv";
+            $fileReader = new ImportFileReader();
+            $rows = $fileReader->GetRows($path);
+            
+            foreach ($rows as $row) {
+                $post = new Post();
+                $post->setName($row["Name"]);
+                $post->setCode($row["Code"]);
+                $post->setCodeInternational($row["CodeInternational"]);
+                $post->setCountry($country);
                 
         
-        $manager->persist($post);
-        array_push($posts, $post);
-        $manager->flush();
-        //end for...
+                $manager->persist($post);
+                
+                array_push($posts, $post);
+                
+                $manager->flush();
+            }
+            
+        }
         
         
         return $posts;
