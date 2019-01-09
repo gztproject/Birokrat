@@ -1,9 +1,9 @@
 {% extends 'dashboard/layout.html.twig' %}
 
-{% block body_id 'invoice_index' %}
+{% block body_id 'konto_index' %}
 
 {% block main %}
-    <h1>{{ 'title.invoice'|trans }}</h1>
+    <h1>{{ 'title.konto'|trans }}</h1>
     <div class="bs-component">
     <table class="table table-hover">
         <thead>
@@ -14,17 +14,17 @@
             </tr>
         </thead>
         <tbody>
-    {% for invoice in invoices %}
+    {% for konto in kontos %}
             <tr class="table-primary">
-                <td>{{ invoice.number }}</td>
-                <td>{{ invoice.dateOfIssue }}</td>
+                <td>{{ konto.number }}</td>
+                <td>{{ konto.name }}</td>
                 <td class="text-right">
                     <div class="item-actions">
-                        <a href="{{ path('admin_user_show', {'id': invoice.id}) }}" class="btn btn-sm btn-default">
+                        <a href="{{ path('admin_user_show', {'id': konto.id}) }}" class="btn btn-sm btn-default">
                             <i class="fa fa-eye" aria-hidden="true"></i> {{ 'action.show'|trans }}
                         </a>
 
-                        <a href="{{ path('admin_user_edit', {'id': invoice.id}) }}" class="btn btn-sm btn-primary">
+                        <a href="{{ path('admin_user_edit', {'id': konto.id}) }}" class="btn btn-sm btn-primary">
                             <i class="fa fa-edit" aria-hidden="true"></i> {{ 'action.edit'|trans }}
                         </a>
                     </div>
@@ -32,7 +32,7 @@
             </tr>
         {% else %}
             <tr class="table-warning">
-                <td colspan="4" align="center">{{ 'invoice.no_invoices_found'|trans }}</td>
+                <td colspan="4" align="center">{{ 'konto.no_kontos_found'|trans }}</td>
            </tr>
         {% endfor %}    
     </tbody>
