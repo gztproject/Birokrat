@@ -69,7 +69,7 @@ class Konto
 
     public function getCategory(): ?KontoCategory
     {
-        return $this->kontoCategory;
+        return $this->category;
     }
 
     public function setCategory(?KontoCategory $category): self
@@ -89,5 +89,18 @@ class Konto
         $this->isActive = $isActive;
 
         return $this;
+    }
+    
+    public function getFullNumber(): string
+    {
+        $category = $this->getCategory();
+        $class = $category->getClass();
+        
+        return (string)$class->getNumber().substr((string)$category->getNumber(), -1).substr((string)$this->getNumber(),-1);
+    }
+    
+    public function getNumberAndName(): string
+    {
+        return (string)$this->getFullNumber()." - ".$this->name;
     }
 }

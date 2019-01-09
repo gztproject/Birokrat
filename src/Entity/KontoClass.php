@@ -30,9 +30,9 @@ class KontoClass
     private $name;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\KontoCategory", mappedBy="Class")
+     * @ORM\OneToMany(targetEntity="App\Entity\KontoCategory", mappedBy="class")
      */
-    private $kontoCategories;
+    private $categories;
 
     public function __construct()
     {
@@ -71,31 +71,36 @@ class KontoClass
     /**
      * @return Collection|KontoCategory[]
      */
-    public function getKontoCategories(): Collection
+    public function getCategories(): Collection
     {
-        return $this->kontoCategories;
+        return $this->categories;
     }
 
-    public function addKontoCategory(KontoCategory $kontoCategory): self
+    public function addCategory(KontoCategory $category): self
     {
-        if (!$this->kontoCategories->contains($kontoCategory)) {
-            $this->kontoCategories[] = $kontoCategory;
-            $kontoCategory->setClass($this);
+        if (!$this->categories->contains($category)) {
+            $this->categories[] = $category;
+            $category->setClass($this);
         }
 
         return $this;
     }
 
-    public function removeKontoCategory(KontoCategory $kontoCategory): self
+    public function removeCategory(KontoCategory $category): self
     {
-        if ($this->kontoCategories->contains($kontoCategory)) {
-            $this->kontoCategories->removeElement($kontoCategory);
+        if ($this->categories->contains($category)) {
+            $this->categories->removeElement($category);
             // set the owning side to null (unless already changed)
-            if ($kontoCategory->getClass() === $this) {
-                $kontoCategory->setClass(null);
+            if ($category->getClass() === $this) {
+                $category->setClass(null);
             }
         }
 
         return $this;
+    }
+    
+    public function getNumberAndName(): string
+    {
+        return (string)$this->number." - ".$this->name;
     }
 }

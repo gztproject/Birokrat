@@ -30,13 +30,13 @@ class KontoCategory
     private $name;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\KontoClass", inversedBy="kontoCategories")
+     * @ORM\ManyToOne(targetEntity="App\Entity\KontoClass", inversedBy="categories")
      * @ORM\JoinColumn(nullable=false)
      */
     private $class;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Konto", mappedBy="KontoCategory")
+     * @ORM\OneToMany(targetEntity="App\Entity\Konto", mappedBy="category")
      */
     private $kontos;
 
@@ -76,7 +76,7 @@ class KontoCategory
 
     public function getClass(): ?KontoClass
     {
-        return $this->Class;
+        return $this->class;
     }
 
     public function setClass(?KontoClass $class): self
@@ -115,5 +115,17 @@ class KontoCategory
         }
 
         return $this;
+    }
+    
+    public function getFullNumber(): string
+    {
+        $class = $this->getClass();
+        
+        return (string)$class->getNumber().substr((string)$this->getNumber(), -1);
+    }
+    
+    public function getNumberAndName(): string
+    {
+        return (string)$this->getFullNumber()." - ".$this->name;
     }
 }

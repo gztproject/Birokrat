@@ -1,0 +1,14 @@
+<div class="filter">
+{{ form_start(form, {attr: attr|default({})}) }}
+   
+    {{ form_errors(form) }}
+    <div class="form-group" id="ClassFilterForm">    
+        {{ form_label(form.kontoClasses) }}
+        {{ form_widget(form.kontoClasses, {'attr': {'class': 'form-control'}}) }}
+    </div>
+    <div class="form-group" id="CategoryFilterForm">
+        {{ form_label(form.kontoCategories) }}
+        {{ form_widget(form.kontoCategories, {'attr': {'class': 'form-control'}}) }}
+    </div>    
+{{ form_end(form) }}
+</div>    
