@@ -1,22 +1,15 @@
 <?php
 
-namespace App\Entity;
+namespace App\Entity\Invoice;
 
 use Doctrine\ORM\Mapping as ORM;
-use Ramsey\Uuid\Uuid;
+use App\Entity\Base\Base;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\InvoiceItemRepository")
  */
-class InvoiceItem
+class InvoiceItem extends Base
 {
-    /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue(strategy="UUID")
-     * @ORM\Column(type="uuid")
-     */
-    private $id;
-
     /**
      * @ORM\Column(type="string", length=255)
      */
@@ -48,16 +41,12 @@ class InvoiceItem
     private $discount;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Invoice", inversedBy="invoiceItems")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Invoice\Invoice", inversedBy="invoiceItems")
      * @ORM\JoinColumn(nullable=false)
      */
     private $invoice;
 
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
-
+    
     public function getCode(): ?string
     {
         return $this->code;

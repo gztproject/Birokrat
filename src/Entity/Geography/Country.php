@@ -1,24 +1,17 @@
 <?php
 
-namespace App\Entity;
+namespace App\Entity\Geography;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Ramsey\Uuid\Uuid;
+use App\Entity\Base\Base;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\CountryRepository")
  */
-class Country
+class Country extends Base
 {
-    /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue(strategy="UUID")
-     * @ORM\Column(type="uuid")
-     */
-    private $id;
-
     /**
      * @ORM\Column(type="string", length=255)
      */
@@ -45,18 +38,13 @@ class Country
     private $N3;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Post", mappedBy="country")
+     * @ORM\OneToMany(targetEntity="App\Entity\Geography\Post", mappedBy="country")
      */
     private $posts;
 
     public function __construct()
     {
         $this->posts = new ArrayCollection();
-    }
-
-    public function getId(): ?Uuid
-    {
-        return $this->id;
     }
 
     public function getName(): ?string

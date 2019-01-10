@@ -1,25 +1,19 @@
 <?php
 
-namespace App\Entity;
+namespace App\Entity\Organization;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Ramsey\Uuid\Uuid;
-
+use App\Entity\Base\Base;
+use App\Entity\User\User;
+use App\Entity\Geography\Address;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\OrganizationRepository")
  */
-class Organization
+class Organization extends Base
 {
-    /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue(strategy="UUID")
-     * @ORM\Column(type="uuid")
-     */
-    private $id;
-
     /**
      * @ORM\Column(type="string", length=50)
      */
@@ -46,12 +40,12 @@ class Organization
     private $taxable;
 
     /**
-     * @ORM\ManyToMany(targetEntity="App\Entity\User", inversedBy="organizations")
+     * @ORM\ManyToMany(targetEntity="App\Entity\User\User", inversedBy="organizations")
      */
     private $users;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Address", mappedBy="organization")
+     * @ORM\OneToMany(targetEntity="App\Entity\Geography\Address", mappedBy="organization")
      */
     private $address;
 
@@ -59,11 +53,6 @@ class Organization
     {
         $this->users = new ArrayCollection();
         $this->address = new ArrayCollection();
-    }
-
-    public function getId(): ?Uuid
-    {
-        return $this->id;
     }
 
     public function getCode(): ?string

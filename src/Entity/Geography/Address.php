@@ -1,22 +1,16 @@
 <?php
 
-namespace App\Entity;
+namespace App\Entity\Geography;
 
 use Doctrine\ORM\Mapping as ORM;
-use Ramsey\Uuid\Uuid;
+use App\Entity\Base\Base;
+use App\Entity\Organization\Organization;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\AddressRepository")
  */
-class Address
+class Address extends Base
 {
-    /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue(strategy="UUID")
-     * @ORM\Column(type="uuid")
-     */
-    private $id;
-
     /**
      * @ORM\Column(type="string", length=255)
      */
@@ -28,20 +22,15 @@ class Address
     private $line2;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Post", inversedBy="addresses")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Geography\Post", inversedBy="addresses")
      * @ORM\JoinColumn(nullable=false)
      */
     private $post;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Organization", inversedBy="address")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Organization\Organization", inversedBy="address")
      */
     private $organization;
-
-    public function getId(): ?Uuid
-    {
-        return $this->id;
-    }
 
     public function getLine1(): ?string
     {

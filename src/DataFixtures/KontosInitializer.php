@@ -19,8 +19,8 @@ class KontosInitializer
         foreach ($rows as $row) {
             $number = $row["Number"];
             $name = $row["Name"];
-            $lastClass;
-            $lastCategory;
+            $lastClass = null;
+            $lastCategory = null;
             switch (strlen((string)$number)){
                 case 1:
                     $kontoClass = new KontoClass();

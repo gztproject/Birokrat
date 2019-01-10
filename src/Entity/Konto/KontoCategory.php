@@ -1,77 +1,30 @@
 <?php
 
-namespace App\Entity;
+namespace App\Entity\Konto;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Ramsey\Uuid\Uuid;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\KontoCategoryRepository")
  */
-class KontoCategory
+class KontoCategory extends KontoBase
 {
     /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue(strategy="UUID")
-     * @ORM\Column(type="uuid")
-     */
-    private $id;
-
-    /**
-     * @ORM\Column(type="integer")
-     */
-    private $number;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $name;
-
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\KontoClass", inversedBy="categories")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Konto\KontoClass", inversedBy="categories")
      * @ORM\JoinColumn(nullable=false)
      */
     private $class;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Konto", mappedBy="category")
+     * @ORM\OneToMany(targetEntity="App\Entity\Konto\Konto", mappedBy="category")
      */
     private $kontos;
 
     public function __construct()
     {
         $this->kontos = new ArrayCollection();
-    }
-
-    public function getId(): ?Uuid
-    {
-        return $this->id;
-    }
-
-    public function getNumber(): ?int
-    {
-        return $this->number;
-    }
-
-    public function setNumber(int $number): self
-    {
-        $this->number = $number;
-
-        return $this;
-    }
-
-    public function getName(): ?string
-    {
-        return $this->name;
-    }
-
-    public function setName(string $name): self
-    {
-        $this->name = $name;
-
-        return $this;
     }
 
     public function getClass(): ?KontoClass

@@ -1,37 +1,32 @@
 <?php
 
-namespace App\Entity;
+namespace App\Entity\Invoice;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Ramsey\Uuid\Uuid;
+use App\Entity\Base\Base;
+use App\Entity\Organization\Organization;
+use App\Entity\User\User;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\InvoiceRepository")
  */
-class Invoice
+class Invoice extends Base
 {
-    /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue(strategy="UUID")
-     * @ORM\Column(type="uuid")
-     */
-    private $id;
-
     /**
      * @ORM\Column(type="datetime")
      */
     private $dateOfIssue;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Organization")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Organization\Organization")
      * @ORM\JoinColumn(nullable=false)
      */
     private $issuer;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Organization")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Organization\Organization")
      * @ORM\JoinColumn(nullable=false)
      */
     private $recepient;
@@ -62,30 +57,25 @@ class Invoice
     private $referenceNumber;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\InvoiceItem", mappedBy="invoice", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity="App\Entity\Invoice\InvoiceItem", mappedBy="invoice", orphanRemoval=true)
      */
     private $invoiceItems;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\InvoiceState", inversedBy="invoices")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Invoice\InvoiceState", inversedBy="invoices")
      * @ORM\JoinColumn(nullable=false)
      */
     private $state;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\User")
+     * @ORM\ManyToOne(targetEntity="App\Entity\User\User")
      * @ORM\JoinColumn(nullable=false)
      */
     private $issuedBy;
-
+    
     public function __construct()
     {
         $this->invoiceItems = new ArrayCollection();
-    }
-
-    public function getId(): ?int
-    {
-        return $this->id;
     }
 
     public function getDateOfIssue(): ?\DateTimeInterface
@@ -237,5 +227,5 @@ class Invoice
         $this->issuedBy = $issuedBy;
 
         return $this;
-    }
+    }    
 }

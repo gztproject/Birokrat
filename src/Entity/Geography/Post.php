@@ -1,24 +1,17 @@
 <?php
 
-namespace App\Entity;
+namespace App\Entity\Geography;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Ramsey\Uuid\Uuid;
+use App\Entity\Base\Base;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\PostRepository")
  */
-class Post
+class Post extends Base
 {
-    /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue(strategy="UUID")
-     * @ORM\Column(type="uuid")
-     */
-    private $id;
-
     /**
      * @ORM\Column(type="string", length=10)
      */
@@ -35,24 +28,19 @@ class Post
     private $name;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Country", inversedBy="posts")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Geography\Country", inversedBy="posts")
      * @ORM\JoinColumn(nullable=false)
      */
     private $country;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Address", mappedBy="post")
+     * @ORM\OneToMany(targetEntity="App\Entity\Geography\Address", mappedBy="post")
      */
     private $addresses;
 
     public function __construct()
     {
         $this->addresses = new ArrayCollection();
-    }
-
-    public function getId(): ?Uuid
-    {
-        return $this->id;
     }
 
     public function getCode(): ?string

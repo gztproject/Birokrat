@@ -1,29 +1,22 @@
 <?php
 
-namespace App\Entity;
+namespace App\Entity\User;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\AdvancedUserInterface;
-use Ramsey\Uuid\Uuid;
+use App\Entity\Base\Base;
+use App\Entity\Organization\Organization;
 
 
 /**
  * @ORM\Table(name="app_users")
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  */
-class User implements AdvancedUserInterface, \Serializable
+class User extends Base implements AdvancedUserInterface, \Serializable
 {
-    /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue(strategy="UUID")
-     * @ORM\Column(type="uuid")
-     */
-    private $id;
-
     /**
      * @ORM\Column(type="string", length=255)
      */
@@ -83,7 +76,7 @@ class User implements AdvancedUserInterface, \Serializable
     private $isRoleAdmin;
 
     /**
-     * @ORM\ManyToMany(targetEntity="App\Entity\Organization", mappedBy="users")
+     * @ORM\ManyToMany(targetEntity="App\Entity\Organization\Organization", mappedBy="users")
      */
     private $organizations;
     
@@ -95,12 +88,7 @@ class User implements AdvancedUserInterface, \Serializable
         
         // not needed with bcrypt
         // $this->salt = md5(uniqid('', true));
-    }
-
-    public function getId(): ?Uuid
-    {
-        return $this->id;
-    }
+    }    
 
     public function getUsername(): ?string
     {

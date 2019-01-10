@@ -28,7 +28,7 @@ class ImportFileReader
         //$logger->Log("Opening '" . $path . "'...: OK");
         
         //$readText = array_map("utf8_encode", $readText);
-        $parameters = array();
+        //$parameters = array();
         $headers = array();
         $firstLine = true;
         $lineCount = 0;
@@ -41,8 +41,8 @@ class ImportFileReader
                     continue;
                 }
                 $key = $param[0];
-                $value = empty($param[1]) ? "unknown " . $lineCount : $param[1];
-                $parameters[$key] = $value;
+                //$value = empty($param[1]) ? "unknown " . $lineCount : $param[1];
+                //$parameters[$key] = $value;
                 continue;
             }
             // if first line, parse headers

@@ -1,34 +1,16 @@
 <?php
 
-namespace App\Entity;
+namespace App\Entity\Konto;
 
 use Doctrine\ORM\Mapping as ORM;
-use Ramsey\Uuid\Uuid;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\KontoRepository")
  */
-class Konto
-{
+class Konto extends KontoBase
+{    
     /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue(strategy="UUID")
-     * @ORM\Column(type="uuid")
-     */
-    private $id;
-
-    /**
-     * @ORM\Column(type="integer")
-     */
-    private $number;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $name;
-
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\KontoCategory", inversedBy="kontos")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Konto\KontoCategory", inversedBy="kontos")
      * @ORM\JoinColumn(nullable=false)
      */
     private $category;
@@ -36,36 +18,7 @@ class Konto
     /**
      * @ORM\Column(type="boolean")
      */
-    private $isActive;
-
-    public function getId(): ?Uuid
-    {
-        return $this->id;
-    }
-
-    public function getNumber(): ?int
-    {
-        return $this->number;
-    }
-
-    public function setNumber(int $number): self
-    {
-        $this->number = $number;
-
-        return $this;
-    }
-
-    public function getName(): ?string
-    {
-        return $this->name;
-    }
-
-    public function setName(string $name): self
-    {
-        $this->name = $name;
-
-        return $this;
-    }
+    private $isActive;    
 
     public function getCategory(): ?KontoCategory
     {
@@ -102,5 +55,5 @@ class Konto
     public function getNumberAndName(): string
     {
         return (string)$this->getFullNumber()." - ".$this->name;
-    }
+    }    
 }
