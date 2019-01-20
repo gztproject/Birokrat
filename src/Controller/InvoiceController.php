@@ -9,7 +9,7 @@ use App\Repository\InvoiceRepository;
 class InvoiceController extends AbstractController
 {    
     /**
-     * @Route("/invoice", methods={"GET"}, name="invoice_index")
+     * @Route("/dashboard/invoice", methods={"GET"}, name="invoice_index")
      */
     public function index(InvoiceRepository $invoices): Response
     {                      

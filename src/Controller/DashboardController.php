@@ -10,7 +10,7 @@ use App\Repository\TravelExpenseRepository;
 
 class DashboardController extends AbstractController
 {    
-    /**     
+	/**     
      * @Route("/dashboard", methods={"GET"}, name="dashboard_index")
      */
 	public function index(InvoiceRepository $invoices, TravelExpenseRepository $travelExpenses): Response

@@ -9,7 +9,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class CountryController extends AbstractController
 {    
     /**
-     * @Route("/codesheets/country", methods={"GET"}, name="country_index")
+     * @Route("/dashboard/codesheets/country", methods={"GET"}, name="country_index")
      */
     public function index(CountryRepository $countries): Response
     {                      

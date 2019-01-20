@@ -34,11 +34,13 @@
                             <ul class="navbar-nav navbar-right">
 
                                 {% block header_navigation_links %}
-                                    <li class="nav-item active">
-                                        <a class="nav-link" href="{{ path('dashboard_index') }}">
-                                            <i class="fa fa-home" aria-hidden="true"></i> {{ 'menu.home'|trans }}
-                                        </a>
-                                    </li>
+                                    {% if app.user %}
+                                        <li class="nav-item active">
+                                            <a class="nav-link" href="{{ path('dashboard_index') }}">
+                                                <i class="fa fa-home" aria-hidden="true"></i> {{ 'menu.home'|trans }}
+                                            </a>
+                                        </li>
+                                    {% endif %}
                                     {% if is_granted('ROLE_ADMIN') %}
                                         <li class="nav-item dropdown">
                                             <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="{{ path('admin_index') }}">
@@ -52,12 +54,10 @@
                                         </li>
                                     {% endif %}
                                 {% endblock %}
-
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{{ path('POC_index') }}"> <i class="fa fa-hand-spock"></i> {{ 'menu.POC'|trans }}</a>
-                                </li>
-
                                 {% if app.user %}
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="{{ path('POC_index') }}"> <i class="fa fa-hand-spock"></i> {{ 'menu.POC'|trans }}</a>
+                                    </li>                                
                                     <li class="nav-item dropdown">
                                         <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-expanded="false" id="user">
                                             <i class="fa fa-user" aria-hidden="true"></i>
@@ -77,7 +77,7 @@
                                             </li>
                                         </ul>
                                     </li>
-                                {% endif %}
+                                
 
                                 <li class="nav-item dropdown">
                                     <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" aria-expanded="false" id="locales">
@@ -90,6 +90,7 @@
                                         {% endfor %}
                                     </div>
                                 </li>
+                                {% endif %}
                             </ul>
                         </div>
                     </div>

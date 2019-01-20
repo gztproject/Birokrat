@@ -9,7 +9,7 @@ use App\Repository\PostRepository;
 class PostController extends AbstractController
 {    
     /**
-     * @Route("/codesheets/post", methods={"GET"}, name="post_index")
+     * @Route("/dashboard/codesheets/post", methods={"GET"}, name="post_index")
      */
     public function index(PostRepository $posts): Response
     {                      
