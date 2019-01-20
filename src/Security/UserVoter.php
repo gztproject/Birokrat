@@ -11,7 +11,7 @@
 
 namespace App\Security;
 
-use App\Entity\User;
+use App\Entity\User\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
@@ -55,6 +55,6 @@ class UserVoter extends Voter
         // the logic of this voter is pretty simple: if the logged user is the
         // author of the given blog post, grant permission; otherwise, deny it.
         // (the supports() method guarantees that $post is a Post object)
-        return $currentUser === $user || in_array('ROLE_ADMIN', $currentUser->getRoles());
+        return ($currentUser === $user) || in_array('ROLE_ADMIN', $currentUser->getRoles());
     }
 }

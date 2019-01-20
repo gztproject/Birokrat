@@ -3,8 +3,8 @@
 namespace App\DataFixtures;
 
 use Doctrine\Common\Persistence\ObjectManager;
-use App\Entity\Post;
-use App\Entity\Address;
+use App\Entity\Geography\Post;
+use App\Entity\Geography\Address;
 use App\Entity\Organization;
 
 class OrganizationsInitializer

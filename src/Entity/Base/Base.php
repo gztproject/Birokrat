@@ -14,7 +14,7 @@ abstract class Base
      */
     protected $id;
 
-    public function getId(): ?int
+    public function getId(): ?Uuid
     {
         return $this->id;
     }    

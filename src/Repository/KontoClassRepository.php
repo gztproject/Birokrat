@@ -2,7 +2,7 @@
 
 namespace App\Repository;
 
-use App\Entity\KontoClass;
+use App\Entity\Konto\KontoClass;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 

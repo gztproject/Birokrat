@@ -3,9 +3,9 @@
 namespace App\DataFixtures;
 
 use Doctrine\Common\Persistence\ObjectManager;
-use App\Entity\KontoClass;
-use App\Entity\KontoCategory;
-use App\Entity\Konto;
+use App\Entity\Konto\KontoClass;
+use App\Entity\Konto\KontoCategory;
+use App\Entity\Konto\Konto;
 
 class KontosInitializer
 {      

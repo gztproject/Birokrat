@@ -2,7 +2,7 @@
 
 namespace App\Repository;
 
-use App\Entity\TravelExpenseState;
+use App\Entity\TravelExpense\TravelExpenseState;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 

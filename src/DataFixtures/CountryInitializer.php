@@ -3,7 +3,7 @@
 namespace App\DataFixtures;
 
 use Doctrine\Common\Persistence\ObjectManager;
-use App\Entity\Country;
+use App\Entity\Geography\Country;
 
 class CountryInitializer
 {      

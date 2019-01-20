@@ -3,7 +3,7 @@
 namespace App\DataFixtures;
 
 use Doctrine\Common\Persistence\ObjectManager;
-use App\Entity\Post;
+use App\Entity\Geography\Post;
 
 class PostsInitializer
 {      

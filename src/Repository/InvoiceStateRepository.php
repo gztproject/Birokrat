@@ -2,7 +2,7 @@
 
 namespace App\Repository;
 
-use App\Entity\InvoiceState;
+use App\Entity\Invoice\InvoiceState;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 

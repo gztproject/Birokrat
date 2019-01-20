@@ -1,19 +1,14 @@
 <?php 
 namespace App\Form;
 
-use App\Entity\Konto;
-use App\Entity\KontoCategory;
-use App\Entity\KontoClass;
+use App\Entity\Konto\KontoCategory;
+use App\Entity\Konto\KontoClass;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
-use Doctrine\Common\Collections\ArrayCollection;
 
 class KontoFilterType extends AbstractType
 {

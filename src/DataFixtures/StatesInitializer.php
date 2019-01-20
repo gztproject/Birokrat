@@ -3,8 +3,8 @@
 namespace App\DataFixtures;
 
 use Doctrine\Common\Persistence\ObjectManager;
-use App\Entity\InvoiceState;
-use App\Entity\TravelExpenseState;
+use App\Entity\Invoice\InvoiceState;
+use App\Entity\TravelExpense\TravelExpenseState;
 
 class StatesInitializer
 {

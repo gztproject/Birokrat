@@ -2,7 +2,7 @@
 
 namespace App\Repository;
 
-use App\Entity\Country;
+use App\Entity\Geography\Country;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
