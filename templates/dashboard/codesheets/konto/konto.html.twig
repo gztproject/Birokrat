@@ -5,7 +5,7 @@
 {% block main %}
     <h1>{{ 'title.konto'|trans }}</h1>
     <div class="bs-component">
-    {{ include('dashboard/codesheets/_table.html.twig', {
+    {{ include('dashboard/codesheets/konto/_table.html.twig', {
                 kontos: kontos                
             }, with_context = false) }}        
     </div>
@@ -14,7 +14,7 @@
 {% block sidebar %}
     
     {{ parent() }}
-    {{ include('dashboard/codesheets/_filter.html.twig', {form: form}) }}
+    {{ include('dashboard/codesheets/konto/_filter.html.twig', {form: form}) }}
 {% endblock %}
 
 {% block javascripts %}

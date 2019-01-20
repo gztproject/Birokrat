@@ -6,7 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Security\Core\User\AdvancedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 use App\Entity\Base\Base;
 use App\Entity\Organization\Organization;
 
@@ -15,7 +15,7 @@ use App\Entity\Organization\Organization;
  * @ORM\Table(name="app_users")
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  */
-class User extends Base implements AdvancedUserInterface, \Serializable
+class User extends Base implements UserInterface, \Serializable
 {
     /**
      * @ORM\Column(type="string", length=255)
@@ -226,21 +226,6 @@ class User extends Base implements AdvancedUserInterface, \Serializable
     public function eraseCredentials()
     {
         $this->plainPassword = null;
-    }
-    
-    public function isAccountNonExpired()
-    {
-        return true;
-    }
-    
-    public function isAccountNonLocked()
-    {
-        return true;
-    }
-    
-    public function isCredentialsNonExpired()
-    {
-        return true;
     }
     
     public function isEnabled()

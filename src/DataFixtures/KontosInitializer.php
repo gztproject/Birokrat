@@ -21,7 +21,7 @@ class KontosInitializer
             $name = $row["Name"];
             $lastClass = null;
             $lastCategory = null;
-            switch (strlen((string)$number)){
+            switch (strlen(trim((string)$number))){
                 case 1:
                     $kontoClass = new KontoClass();
                     $kontoClass->setNumber((int)$number);
@@ -31,6 +31,8 @@ class KontosInitializer
                     $manager->flush();
                     break;
                 case 2:
+                	if($lastClass == null)
+                		$lastClass = $kontoClass;
                     $kontoCategory = new KontoCategory();
                     $kontoCategory->setNumber((int)$number);
                     $kontoCategory->setName($name);
@@ -40,6 +42,8 @@ class KontosInitializer
                     $manager->flush();
                     break;
                 case 3:
+                	if($lastCategory == null)
+                		$lastCategory = $kontoCategory;
                     $konto = new Konto();
                     $konto->setNumber((int)$number);
                     $konto->setName($name);

@@ -26,17 +26,17 @@ class KontoController extends AbstractController
         
         if(isset($request->request->get("konto_filter")["kontoClasses"]))
         {            
-            return $this->render('dashboard/codesheets/_filter.html.twig', ['form' => $form->createView()]);
+            return $this->render('dashboard/codesheets/konto/_filter.html.twig', ['form' => $form->createView()]);
         }
         
         if(isset($request->request->get("konto_filter")["kontoCategories"]))
         {
             $myKontos = $kontos->findBy(["category" => $request->request->get("konto_filter")["kontoCategories"]]);
-            return $this->render('dashboard/codesheets/_table.html.twig', ['kontos' => $myKontos]);
+            return $this->render('dashboard/codesheets/konto/_table.html.twig', ['kontos' => $myKontos]);
         }
         
         $myKontos = $kontos->findAll();
-        return $this->render('dashboard/codesheets/konto.html.twig', ['kontos' => $myKontos, 'form'=>$form->createView()]);
+        return $this->render('dashboard/codesheets/konto/konto.html.twig', ['kontos' => $myKontos, 'form'=>$form->createView()]);
             
     } 
 }

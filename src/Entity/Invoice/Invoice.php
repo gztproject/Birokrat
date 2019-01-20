@@ -62,7 +62,7 @@ class Invoice extends Base
     private $invoiceItems;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Invoice\InvoiceState", inversedBy="invoices")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Invoice\InvoiceState")
      * @ORM\JoinColumn(nullable=false)
      */
     private $state;

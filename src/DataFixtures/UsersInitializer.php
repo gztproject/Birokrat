@@ -4,8 +4,8 @@ namespace App\DataFixtures;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
-use App\Entity\User;
-use App\Entity\Organization;
+use App\Entity\User\User;
+use App\Entity\Organization\Organization;
 
 class UsersInitializer
 {

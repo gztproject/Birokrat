@@ -1,0 +1,46 @@
+{% extends 'dashboard/layout.html.twig' %}
+
+{% block body_id 'organization_show' %}
+
+{% block main %}
+    <h1>{{ organization.name }}</h1>
+    
+    <div class="card text-white bg-primary mb-3"> 
+    <div class="card-header">
+            <strong>{{ 'label.organizationData'|trans }}</strong>
+        </div>    
+        <div class="card-body">                    
+            <strong>{{ 'label.name'|trans }}</strong>: {{ organization.name }}            
+        </div>
+    </div>
+    
+    <div class="card text-white bg-primary mb-3">   
+        <div class="card-header">
+            <strong>{{ 'label.addresses'|trans }}</strong>
+        </div> 
+        <div class="card-body">            
+                {% for address in organization.address %} 
+                    <div class="card border-primary mb-3" style="max-width: 15rem;">               
+                        <div class="card-body">
+                            {{ address.line1 }} {{ address.line2 }}</br>{{ address.post.code }} {{ address.post.name }}</br>{{ address.post.country.name }}
+                        </div>  
+                    </div>                      
+                {% endfor %}            
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block sidebar %}
+    <div class="section">
+        <a href="{{ path('organization_edit', {id: organization.id}) }}" class="btn btn-sm btn-block btn-success">
+            <i class="fa fa-edit" aria-hidden="true"></i> {{ 'action.edit_contents'|trans }}
+        </a>
+    </div>
+
+    <div class="section">
+        {{ include('dashboard/organization/_delete_form.html.twig', {organization: organization}, with_context = false) }}
+    </div>
+
+    {{ parent() }}
+{% endblock %}

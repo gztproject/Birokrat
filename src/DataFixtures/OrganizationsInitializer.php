@@ -5,7 +5,7 @@ namespace App\DataFixtures;
 use Doctrine\Common\Persistence\ObjectManager;
 use App\Entity\Geography\Post;
 use App\Entity\Geography\Address;
-use App\Entity\Organization;
+use App\Entity\Organization\Organization;
 
 class OrganizationsInitializer
 {

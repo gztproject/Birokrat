@@ -1,6 +1,6 @@
-<?xml version="1.0"?>
-<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
-    <file source-language="en" target-language="sl" datatype="plaintext" original="file.ext">
+<?xml version='1.0'?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+    <file source-language="en" original="file.ext" target-language="sl" datatype="plaintext">    
         <body>
             <trans-unit id="note">
                 <source>note</source>
@@ -361,35 +361,6 @@
                 <source>notification.comment_created</source>
                 <target>Vaša objava je prejela komentar!</target>
             </trans-unit>
-            <trans-unit id="notification.comment_created.description">
-                <source>notification.comment_created.description</source>
-                <target><![CDATA[Vaša objava "{title}" je prejela nov komentar. Preberete ga lahko na <a href="{link}">tej povezavi</a>]]></target>
-            </trans-unit>
-
-            <trans-unit id="help.app_description">
-                <source>help.app_description</source>
-                <target><![CDATA[To je <strong>demo aplikacija</strong> zgrajena z ogrodjem Symfony za prikaz priporočenega načina razvoja aplikacij Symfony.]]></target>
-            </trans-unit>
-            <trans-unit id="help.show_code">
-                <source>help.show_code</source>
-                <target><![CDATA[Kliknite na ta gumb za prikaz izvorne kode <strong>krmilnika</strong> in <strong>predloge</strong> uporabljene za izpis te strani.]]></target>
-            </trans-unit>
-            <trans-unit id="help.browse_app">
-                <source>help.browse_app</source>
-                <target><![CDATA[Ogled <strong>javne sekcije</strong> demo aplikacije.]]></target>
-            </trans-unit>
-            <trans-unit id="help.browse_admin">
-                <source>help.browse_admin</source>
-                <target><![CDATA[Ogled <strong>administracije</strong> demo aplikacije.]]></target>
-            </trans-unit>
-            <trans-unit id="help.login_users">
-                <source>help.login_users</source>
-                <target>Poskusite enega izmed sledečih uporabnikov</target>
-            </trans-unit>
-            <trans-unit id="help.role_user">
-                <source>help.role_user</source>
-                <target>splošni uporabnik</target>
-            </trans-unit>
             <trans-unit id="help.invoice_issueDate">
                 <source>help.invoice_issueDate</source>
                 <target>Datum izdaje računa</target>
@@ -398,26 +369,57 @@
                 <source>help.role_admin</source>
                 <target>administrator</target>
             </trans-unit>
-            <trans-unit id="help.reload_fixtures">
-                <source>help.reload_fixtures</source>
-                <target>Če uporabniki ne delujejo, ponovno naložite podatke aplikacije s pogonom tega ukaza v ukazni vrstici:</target>
+            <trans-unit id="menu.codesheets">
+                <source>menu.codesheets</source>
+                <target>Šifranti</target>
             </trans-unit>
-            <trans-unit id="help.add_user">
-                <source>help.add_user</source>
-                <target>Če želite dodati nove uporabnike, poženite sledeči ukaz:</target>
+            <trans-unit id="menu.organizations">
+                <source>menu.organizations</source>
+                <target>Organizacije</target>
             </trans-unit>
-            <trans-unit id="help.more_information">
-                <source>help.more_information</source>
-                <target><![CDATA[Za več informacij poglejte <a href="https://symfony.com/doc">dokumentacijo Symfony</a>.]]></target>
+            <trans-unit id="menu.kontos">
+                <source>menu.kontos</source>
+                <target>Konti</target>
             </trans-unit>
-
-            <trans-unit id="rss.title">
-                <source>rss.title</source>
-                <target>Symfony Demo blog</target>
+            <trans-unit id="menu.posts">
+                <source>menu.posts</source>
+                <target>Pošte</target>
             </trans-unit>
-            <trans-unit id="rss.description">
-                <source>rss.description</source>
-                <target>Najnovejše objave objavljene na Symfony Demo blogu</target>
+            <trans-unit id="menu.countries">
+                <source>menu.countries</source>
+                <target>Države</target>
+            </trans-unit>
+            <trans-unit id="title.invoices">
+                <source>title.invoices</source>
+                <target>Računi</target>
+            </trans-unit>
+            <trans-unit id="invoice.no_invoices_found">
+                <source>invoice.no_invoices_found</source>
+                <target>Ne najdem nobenega računa</target>
+            </trans-unit>
+            <trans-unit id="title.travelExpenses">
+                <source>title.travelExpenses</source>
+                <target>Potni stroški</target>
+            </trans-unit>
+            <trans-unit id="travelExpense.no_travelExpenses_found">
+                <source>travelExpense.no_travelExpenses_found</source>
+                <target>Ne najdem nobenega potnega stroška</target>
+            </trans-unit>
+            <trans-unit id="title.transactions">
+                <source>title.transactions</source>
+                <target>Transakcije</target>
+            </trans-unit>
+            <trans-unit id="action.create_invoice">
+                <source>action.create_invoice</source>
+                <target>Nov račun</target>
+            </trans-unit>
+            <trans-unit id="action.create_travelExpense">
+                <source>action.create_travelExpense</source>
+                <target>Nov potni strošek</target>
+            </trans-unit>
+            <trans-unit id="action.create_expense">
+                <source>action.create_expense</source>
+                <target>Nova transakcija</target>
             </trans-unit>
         </body>
     </file>

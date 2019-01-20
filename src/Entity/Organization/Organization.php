@@ -171,4 +171,9 @@ class Organization extends Base
 
         return $this;
     }
+    
+    public function getPrimaryAddress(): Address
+    {
+    	return $this->address[0];
+    }
 }

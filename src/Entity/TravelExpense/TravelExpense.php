@@ -15,7 +15,7 @@ class TravelExpense extends Base
     /**
      * @ORM\Column(type="datetime")
      */
-    private $Date;
+    private $date;
 
     /**
      * @ORM\Column(type="uuid")
@@ -50,12 +50,12 @@ class TravelExpense extends Base
 
     public function getDate(): ?\DateTimeInterface
     {
-        return $this->Date;
+        return $this->date;
     }
 
-    public function setDate(\DateTimeInterface $Date): self
+    public function setDate(\DateTimeInterface $date): self
     {
-        $this->Date = $Date;
+        $this->date = $date;
 
         return $this;
     }

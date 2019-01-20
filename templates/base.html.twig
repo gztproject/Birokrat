@@ -65,14 +65,14 @@
                                         </a>
                                         <ul class="dropdown-menu user" role="menu" aria-labelledby="user">
                                             <li>
-                                                <a class="nav-link" href="{{ path('dashboard_index') }}">
+                                                <a class="nav-link" href="{{ path('admin_user_show', {'id': app.user.id}) }}">
                                                     <i class="fa fa-edit" aria-hidden="true"></i> {{ 'menu.user'|trans }}
                                                 </a>
                                             </li>
                                             <li class="divider"></li>
                                             <li>
                                                 <a class="nav-link" href="{{ path('app_logout') }}">
-                                                    <i class="fa fa-sign-out" aria-hidden="true"></i> {{ 'menu.logout'|trans }}
+                                                    <i class="fa fa-sign-out-alt" aria-hidden="true"></i> {{ 'menu.logout'|trans }}
                                                 </a>
                                             </li>
                                         </ul>
@@ -97,7 +97,7 @@
             </header>
         {% endblock %}
 
-        <div class="container">
+        <div class="container-fluid">
             {% block body %}
                 <div class="row">
                     <div id="main" class="col-sm-9">
