@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use App\Entity\Base\Base;
+use App\Entity\User\User;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\TravelExpenseRepository")
@@ -16,11 +17,12 @@ class TravelExpense extends Base
      * @ORM\Column(type="datetime")
      */
     private $date;
-
+    
     /**
-     * @ORM\Column(type="uuid")
+     * @ORM\ManyToOne(targetEntity="App\Entity\User\User")
+     * @ORM\JoinColumn(nullable=false)
      */
-    private $uuid;
+    private $employee;
 
     /**
      * @ORM\Column(type="decimal", precision=10, scale=2)
@@ -50,7 +52,12 @@ class TravelExpense extends Base
 
     public function getDate(): ?\DateTimeInterface
     {
-        return $this->date;
+    	return $this->date;
+    }
+   	
+    public function getDateString(): ?string
+    {
+    	return $this->date->format('d. m. Y');
     }
 
     public function setDate(\DateTimeInterface $date): self
@@ -59,17 +66,17 @@ class TravelExpense extends Base
 
         return $this;
     }
-
-    public function getUuid()
+    
+    public function getEmployee(): ?User
     {
-        return $this->uuid;
+    	return $this->employee;
     }
-
-    public function setUuid($uuid): self
-    {
-        $this->uuid = $uuid;
-
-        return $this;
+    
+    public function setEmployee(?User $user): self
+    {    	
+    	$this->employee = $user;
+    	
+    	return $this;
     }
 
     public function getTotalDistance()
@@ -77,12 +84,12 @@ class TravelExpense extends Base
         return $this->totalDistance;
     }
 
-    public function setTotalDistance($totalDistance): self
-    {
-        $this->totalDistance = $totalDistance;
+//     public function setTotalDistance($totalDistance): self
+//     {
+//         $this->totalDistance = $totalDistance;
 
-        return $this;
-    }
+//         return $this;
+//     }
 
     public function getRate()
     {
@@ -138,4 +145,34 @@ class TravelExpense extends Base
 
         return $this;
     }
+    
+    public function getTotalRefund(): ?float
+    {
+    	return $this->totalDistance * $this->rate;
+    }
+    
+    public function calculateTotalDistance(): ?float
+    {
+    	$this->totalDistance = 0;
+    	foreach($this->travelStops as $ts)
+    	{
+    		if($ts->getStopOrder() > 0)
+    			$this->totalDistance += $ts->getDistanceFromPrevious();
+    	}    	
+    	return $this->totalDistance;
+    }
+    
+    public function getTravelDescription(): ?string
+    {
+    	$desc = null;
+    	foreach($this->travelStops as $ts)
+    	{
+    		if($ts->getStopOrder() > 0)
+    			$desc .= " - ";
+    		$desc .= $ts->getPost()->getName();
+    	}
+    	return $desc;
+    }
+    
+    
 }

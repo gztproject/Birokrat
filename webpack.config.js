@@ -16,6 +16,7 @@ Encore
     .addEntry('js/dashboard', './assets/js/dashboard.js')
     .addEntry('js/search', './assets/js/search.js')
     .addEntry('js/codesheets', './assets/js/codesheets.js')
+    .addEntry('js/travelExpense', './assets/js/travelExpense.js')
     .addStyleEntry('css/app', ['./assets/scss/app.scss'])
     .addStyleEntry('css/copyleft', ['./assets/css/copyleft.css'])
     .addStyleEntry('css/admin', ['./assets/scss/admin.scss'])

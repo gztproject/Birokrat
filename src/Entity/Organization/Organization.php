@@ -95,6 +95,13 @@ class Organization extends Base
     {
         return $this->taxNumber;
     }
+    
+    public function getFullTaxNumber(): string
+    {
+    	if($this->taxable)
+    		return "SI".$this->taxNumber;
+    	return $this->taxNumber;
+    }
 
     public function setTaxNumber(int $taxNumber): self
     {

@@ -1,0 +1,61 @@
+{% extends 'dashboard/layout.html.twig' %}
+
+{% block body_id 'travelExpense_new' %}
+
+{% block main %}
+    <h1>{{ 'title.travelExpense_new'|trans }}</h1>
+
+    {{ form_start(form) }}   
+     
+        <div class="form-group">
+            <div class='input-group date' id='datetimepicker'>
+                {{ form_label(form.date) }}
+                {{ form_widget(form.date, {'attr': {'class': 'form-control'}}) }}
+                <span class="input-group-addon">
+                        <span class="glyphicon glyphicon-calendar"></span>
+                </span>
+            </div>
+        </div>
+        <div class="bs-component">            
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>{{ 'label.stop_number'|trans }}</th>
+                        <th>{{ 'label.post'|trans }}</th>
+                        <th>{{ 'label.distance'|trans }}</th>
+                    </tr>
+                </thead>
+                <tbody id='tableBody' class="travelStops" data-prototype="{{ form_widget(form.travelStops.vars.prototype)|e('html_attr') }}">
+                
+                {% for travelStop in form.travelStops %}
+                    <tr class="form-group">
+                        <td>{{ form_widget(travelStop.stopOrder, {'attr': {'class': 'form-control'}})}}</td>
+                        <td>{{ form_widget(travelStop.post, {'attr': {'class': 'form-control'}})}}</td>
+                        <td>{{ form_widget(travelStop.distanceFromPrevious, {'attr': {'class': 'form-control'}})}}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>   
+        </div>
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary">
+                <i class="fa fa-save" aria-hidden="true"></i> {{ 'label.create_travelExpense'|trans }}
+            </button>
+            {{ form_widget(form.saveAndCreateNew, {label: 'label.save_and_create_new', attr: {class: 'btn btn-primary'}}) }}
+            <a href="{{ path('travelExpense_index') }}" class="btn btn-link">
+                <i class="fa fa-list-alt" aria-hidden="true"></i> {{ 'action.back_to_list'|trans }}
+            </a>
+       </div>
+    {{ form_end(form) }}
+
+{% endblock %}
+
+{% block sidebar %}
+    {{ parent() }}
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('js/travelExpense') }}
+{% endblock %}

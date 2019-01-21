@@ -71,6 +71,7 @@ class UserController extends AbstractController
     /**
      * Finds and displays a Invoice entity.
      *
+     * @Route("/user/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}", methods={"GET"}, name="user_show")
      * @Route("/admin/user/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}", methods={"GET"}, name="admin_user_show")
      */
     public function show(User $user): Response
@@ -85,6 +86,7 @@ class UserController extends AbstractController
     /**
      * Displays a form to edit an existing invoice entity.
      *
+     * @Route("/user/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/edit",methods={"GET", "POST"}, name="user_edit")
      * @Route("/admin/user/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/edit",methods={"GET", "POST"}, name="admin_user_edit")
      * @IsGranted("edit", subject="user", message="Users can only be edited by their authors.")
      */

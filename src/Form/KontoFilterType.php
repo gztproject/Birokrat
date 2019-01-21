@@ -18,7 +18,8 @@ class KontoFilterType extends AbstractType
                 'class' => KontoClass::class,
                 'choice_label' => 'numberAndName',
                 'expanded'=>false,
-                'multiple'=>false
+                'multiple'=>false,
+        		'label' => 'label.kontoClass',
         ));
             
         $formModifier = function (FormInterface $form, KontoClass $class = null) {
@@ -30,6 +31,7 @@ class KontoFilterType extends AbstractType
                 'choice_label' => 'numberAndName',
                 'expanded'=>false,
                 'multiple'=>false,
+            	'label' => 'label.kontoCategory',
             ));
         };
         

@@ -79,4 +79,18 @@ class Address extends Base
 
         return $this;
     }
+    
+    public function getFullAddress(): string
+    {
+    	$address = $this->line1;
+    	if ($this->line2)
+    		$address .= ", " . $this->line2;
+    	$address .= ", " . $this->post->getNameAndCode() . ", " . $this->post->getCountry()->getName();
+    	return $address;
+    }
+    
+    public function getFullFormattedAddress(): array
+    {
+    	return explode(", ", $this->getFullAddress());    	
+    }
 }

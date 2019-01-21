@@ -121,4 +121,9 @@ class Post extends Base
 
         return $this;
     }
+    
+    public function getNameAndCode(): string
+    {
+    	return $this->code . " " . $this->name;
+    }
 }

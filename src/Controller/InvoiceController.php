@@ -16,4 +16,13 @@ class InvoiceController extends AbstractController
         $myInvoices = $invoices->findAll();
         return $this->render('dashboard/invoice/index.html.twig', ['invoices' => $myInvoices]);
     } 
+    
+    /**
+     * @Route("/dashboard/invoice/new", methods={"GET"}, name="invoice_new")
+     */
+    public function new(InvoiceRepository $invoices): Response
+    {
+    	$myInvoices = $invoices->findAll();
+    	return $this->render('dashboard/invoice/index.html.twig', ['invoices' => $myInvoices]);
+    } 
 }
