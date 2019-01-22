@@ -10,6 +10,7 @@
 		"doctrine/orm": "^2.6",
 		"erusev/parsedown": "~1.7",
 		"ezyang/htmlpurifier": "~4.10",
+		"nelmio/cors-bundle": "^1.5",
 		"ramsey/uuid": "^3.8",
 		"ramsey/uuid-doctrine": "^1.5",
 		"sensio/framework-extra-bundle": "^5.2",

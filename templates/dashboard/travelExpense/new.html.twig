@@ -17,12 +17,13 @@
             </div>
         </div>
         <div class="bs-component">            
-            <table class="table table-hover">
+            <table id="travel-stops-table" class="table table-hover">
                 <thead>
                     <tr>
                         <th>{{ 'label.stop_number'|trans }}</th>
                         <th>{{ 'label.post'|trans }}</th>
                         <th>{{ 'label.distance'|trans }}</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody id='tableBody' class="travelStops" data-prototype="{{ form_widget(form.travelStops.vars.prototype)|e('html_attr') }}">
@@ -31,7 +32,7 @@
                     <tr class="form-group">
                         <td>{{ form_widget(travelStop.stopOrder, {'attr': {'class': 'form-control'}})}}</td>
                         <td>{{ form_widget(travelStop.post, {'attr': {'class': 'form-control'}})}}</td>
-                        <td>{{ form_widget(travelStop.distanceFromPrevious, {'attr': {'class': 'form-control'}})}}</td>
+                        <td colspan="2">{{ form_widget(travelStop.distanceFromPrevious, {'attr': {'class': 'form-control'}})}}</td>
                     </tr>
                 {% endfor %}
                 </tbody>
@@ -58,4 +59,8 @@
 {% block javascripts %}
     {{ parent() }}
     {{ encore_entry_script_tags('js/travelExpense') }}
+    <script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC1svLxva6w74TE6FNDeP-WA4I7ivof7kw&callback=initMap">
+    </script>
+    
 {% endblock %}
