@@ -12,5 +12,8 @@
 {% block sidebar %}
     
     {{ parent() }}
+    <a href="{{ path('invoice_new') }}" class="btn btn-sm btn-block btn-success">
+            <i class="fa fa-plus" aria-hidden="true"></i> {{ 'action.create_invoice'|trans }}
+    </a>
 
 {% endblock %}

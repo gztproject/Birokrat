@@ -123,24 +123,7 @@ function autoFillDistance($collectionHolder, index){
     var origin = [];
     var destination = [];
     var rowCount = $('.post-Selector', $collectionHolder).length;
-    if(rowCount > (parseInt(index) + 1))
-    {        
-        origin["country"]='Slovenija';
-        destination["country"]='Slovenija';
-        
-        origin["city"] = $('#travel_expense_travelStops_' + index + '_post option:selected', $collectionHolder)[0].text;
-        destination["city"] = $('#travel_expense_travelStops_' + (parseInt(index) + 1) + '_post option:selected', $collectionHolder)[0].text;
-        
-        origin["address"]='';
-        destination["address"]='';
-
-        getDistanceOSM(origin, destination, function(distance){
-            $('#travel_expense_travelStops_' + (parseInt(index)+1) + '_distanceFromPrevious', $collectionHolder).val((index == 0) ? 0 : distance/1000);   
-        });   
-        // getDistance(origin, destination, function(distance){
-        //     $('#travel_expense_travelStops_' + (parseInt(index)+1) + '_distanceFromPrevious', $collectionHolder).val((index == 0) ? 0 : distance/1000);   
-        // });  
-    }    
+    
     if (index > 0)
     {        
         origin["country"]='Slovenija';
@@ -153,94 +136,30 @@ function autoFillDistance($collectionHolder, index){
         destination["address"]='';
 
         getDistanceOSM(origin, destination, function(distance){
-            $('#travel_expense_travelStops_' + index + '_distanceFromPrevious', $collectionHolder).val((index == 0) ? 0 : distance/1000);   
-        }); 
+            $('#travel_expense_travelStops_' + index + '_distanceFromPrevious', $collectionHolder).val((index == 0) ? 0 : distance/1000);
+            if(rowCount > (parseInt(index) + 1))
+            {        
+                origin["country"]='Slovenija';
+                destination["country"]='Slovenija';
         
+                origin["city"] = $('#travel_expense_travelStops_' + index + '_post option:selected', $collectionHolder)[0].text;
+                destination["city"] = $('#travel_expense_travelStops_' + (parseInt(index) + 1) + '_post option:selected', $collectionHolder)[0].text;
         
-        // getDistance(origin, destination, function(distance){
-        //     $('#travel_expense_travelStops_' + index + '_distanceFromPrevious', $collectionHolder).val((index == 0) ? 0 : distance/1000);   
-        // });             
+                origin["address"]='';
+                destination["address"]='';
+
+                getDistanceOSM(origin, destination, function(distance){
+                    $('#travel_expense_travelStops_' + (parseInt(index)+1) + '_distanceFromPrevious', $collectionHolder).val((index == 0) ? 0 : distance/1000);   
+                });
+            }      
+        });             
     }
 }
-
-
-/* Only post: https://nominatim.openstreetmap.org/search?format=json&city=Škofja Loka&country=Slovenija
-       Address:   https://nominatim.openstreetmap.org/search?format=json&city=Škofja Loka&country=Slovenija&q=Groharjevo naselje 8
-
-    =>
-
-    [
-    {
-        "place_id": "61460287",
-        "licence": "Data © OpenStreetMap contributors, ODbL 1.0. https://osm.org/copyright",
-        "osm_type": "node",
-        "osm_id": "5053206923",
-        "boundingbox": [
-            "46.1723716",
-            "46.1724716",
-            "14.3041488",
-            "14.3042488"
-        ],
-        "lat": "46.1724216",
-        "lon": "14.3041988",
-        "display_name": "8, Groharjevo naselje, Podlubnik, Škofja Loka, Gorenjska, 4220, Slovenija",
-        "class": "place",
-        "type": "house",
-        "importance": 0.31100000000000005
-    }
-    ]
-    + Ljubljana...
-    
-    =>    
-    http://router.project-osrm.org/route/v1/driving/14.3041988,46.1724216;14.5462620077364,46.06558745
-    =>
-    {
-    "routes": [
-        {
-            "geometry": "cayxGuyhvAqt@{iAxPij@vi@hNtJuDfGyPd@_}@iG}{@hSg|@tSgk@nTyUdJ}d@kIwfC~GoN~LiHly@{wA`k@aD`IeYfWkTx`@}v@nHmk@liBifAzgAscBre@fOlxAXf`AfRo@cHoWuLcUmf@gs@s}CcFk}@bJaaC`o@ocCbb@yr@~LzGzGt]",
-            "legs": [
-                {
-                    "summary": "",
-                    "weight": 2422.4,
-                    "duration": 2217.4,
-                    "steps": [],
-                    "distance": 31166.6
-                }
-            ],
-            "weight_name": "routability",
-            "weight": 2422.4,
-            "duration": 2217.4,
-            "distance": 31166.6
-        }
-    ],
-    "waypoints": [
-        {
-            "hint": "eyssibMrLIkXAAAAAwAAAB8AAAAAAAAAP-VWQbCEwD8wZY9BAAAAABcAAAADAAAAHwAAAAAAAACBpwAArUTaAFaJwALHQ9oABonAAgEAnwk8GrCu",
-            "distance": 19.86255613275875,
-            "name": "",
-            "location": [
-                14.304429,
-                46.172502
-            ]
-        },
-        {
-            "hint": "cc0nif___38CAAAADQAAAAAAAAA8AAAAOaytP6eb_j8AAAAAPuRxQQIAAAAHAAAAAAAAAB0AAACBpwAAfPXdAHvnvgJW9d0As-e-AgAADwQ8GrCu",
-            "distance": 6.883789797450628,
-            "name": "",
-            "location": [
-                14.5463,
-                46.065531
-            ]
-        }
-    ],
-    "code": "Ok"
-}
-   */
 
 function getDistanceOSM(origin, destination, callback){
     geocodeOsm(origin, destination, function(origin, destination){
         //alert(origin.lat +'\n'+ origin.lon +'\n'+ destination.lat +'\n'+ destination.lon)
-        var url = 'http://router.project-osrm.org/route/v1/driving/' + origin.lon + "," + origin.lat + ";" + destination.lon + "," + destination.lat;
+        var url = 'http://engine.osrm.gzt.si/table/v1/driving/' + origin.lon + "," + origin.lat + ";" + destination.lon + "," + destination.lat + '?sources=0&destinations=1&annotations=distance';
         $.ajax(
         {
             url: url,
@@ -251,17 +170,18 @@ function getDistanceOSM(origin, destination, callback){
                 } 
                 else {      
                     //alert(response.routes[0].distance); 
-                    callback(response.routes[0].distance); 
+                    callback(response.distances[0][0]); 
                 }
             },
             error: function(error){
-                alert(error.responseText);
+                console.log(error.responseText);
             }
         });
     });
 }
 
 function geocodeOsm(origin, destination, callback){
+    //alert("Geocoding: origin: "+origin.city+" destination: "+destination.city);
     var originCoordinates = [];
     var destinationCoordinates = [];
     var baseUrl = 'https://nominatim.openstreetmap.org/search/?format=json&country=';
@@ -271,7 +191,7 @@ function geocodeOsm(origin, destination, callback){
         url += '&q=' + origin.address;
     $.getJSON(url, function(response, status) {
         if (status !== 'success') {
-            alert('Error was: ' + status);
+            console.log('Error was: ' + status);
         } 
         else {   
             originCoordinates['lon'] = response[0].lon;
@@ -283,7 +203,7 @@ function geocodeOsm(origin, destination, callback){
                 url += '&q=' + destination.address;
             $.getJSON(url, function(response, status) {
                 if (status !== 'success') {
-                    alert('Error was: ' + status);
+                    console.log('Error was: ' + status);
                 } 
                 else {   
                     destinationCoordinates['lon'] = response[0].lon;

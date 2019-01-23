@@ -14,5 +14,7 @@
 {% block sidebar %}
     
     {{ parent() }}
-
+    <a href="{{ path('travelExpense_new') }}" class="btn btn-sm btn-block btn-success">
+            <i class="fa fa-plus" aria-hidden="true"></i> {{ 'action.create_travelExpense'|trans }}
+        </a>
 {% endblock %}

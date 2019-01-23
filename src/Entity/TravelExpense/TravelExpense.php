@@ -167,7 +167,7 @@ class TravelExpense extends Base
     	$desc = null;
     	foreach($this->travelStops as $ts)
     	{
-    		if($ts->getStopOrder() > 0)
+    		if($ts->getStopOrder() > 1)
     			$desc .= " - ";
     		$desc .= $ts->getPost()->getName();
     	}
