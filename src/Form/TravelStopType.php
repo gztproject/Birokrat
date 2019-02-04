@@ -10,11 +10,14 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use App\Entity\Geography\Post;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use App\Controller\PostController;
+use App\Repository\PostRepository;
 
 class TravelStopType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+    	$pc = new PostController;
         $builder  
         	->add('stopOrder', TextType::class, array(
       			'label' => false,
@@ -25,6 +28,7 @@ class TravelStopType extends AbstractType
            		'expanded'=>false,
            		'multiple'=>false,
            		'label' => false,
+            	//'preferred_choices' => $pc->getPreferredPosts()
             ))
             ->add('distanceFromPrevious', TextType::class, array(
             		'label' => false,

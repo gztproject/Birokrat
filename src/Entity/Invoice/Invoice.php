@@ -8,6 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 use App\Entity\Base\Base;
 use App\Entity\Organization\Organization;
 use App\Entity\User\User;
+use Doctrine\Common\Persistence\ManagerRegistry;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\InvoiceRepository")
@@ -228,4 +229,23 @@ class Invoice extends Base
 
         return $this;
     }    
+    
+    public function getNewInvoiceNumber(Organization $organization, ManagerRegistry $doctrine): ?string
+    {
+    	$lastInvoice = $doctrine->getRepository(Invoice::class)->findOneBy(['issuer'=>$organization], ['dateOfIssue'=>'DESC']);
+    	$lastNumber = "";
+    	if($lastInvoice)
+    		$lastNumber = $lastInvoice->getNumber();
+    	else 
+    	{
+    		$prefix = $organization->getInvoicePrefix();
+    		$lastNumber = $prefix ? $prefix.'-' : '';
+    		$lastNumber .= date("Y") . '-' . '0000';
+    	}
+    	
+    	$parts = explode('-', $lastNumber);
+    	$parts[array_key_last ($parts)] = sprintf('%04d', $parts[array_key_last ($parts)]+1);
+    	
+    	return implode('-', $parts);    	
+    }
 }

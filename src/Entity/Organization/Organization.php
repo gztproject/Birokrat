@@ -48,6 +48,12 @@ class Organization extends Base
      * @ORM\OneToMany(targetEntity="App\Entity\Geography\Address", mappedBy="organization")
      */
     private $address;
+    
+    //Move to OrganizationSettings at some point...
+    /**
+     * @ORM\Column(type="string", length=100, nullable=true)
+     */
+    private $invoicePrefix;
 
     public function __construct()
     {
@@ -182,5 +188,18 @@ class Organization extends Base
     public function getPrimaryAddress(): Address
     {
     	return $this->address[0];
+    }
+    
+    //Move to OrganizationSettings sometime
+    public function getInvoicePrefix(): ?string
+    {
+    	return $this->invoicePrefix;
+    }
+    
+    public function setInvoicePrefix(?string $invoicePrefix): self
+    {
+    	$this->invoicePrefix = $invoicePrefix;
+    	
+    	return $this;
     }
 }

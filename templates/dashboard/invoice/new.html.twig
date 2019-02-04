@@ -8,36 +8,21 @@
     {{ form_start(form) }}   
      
         <div class="form-group">
+            <div class='input-group'>
+                {{ form_label(form.number) }}
+                {{ form_widget(form.number, {'attr': {'class': 'form-control'}}) }}                
+            </div>
+        </div>        
+        <div c
+        <div class="form-group">
             <div class='input-group date' id='datetimepicker'>
-                {{ form_label(form.date) }}
-                {{ form_widget(form.date, {'attr': {'class': 'form-control'}}) }}
+                {{ form_label(form.dateOfIssue) }}
+                {{ form_widget(form.dateOfIssue, {'attr': {'class': 'form-control'}}) }}
                 <span class="input-group-addon">
                         <span class="glyphicon glyphicon-calendar"></span>
                 </span>
             </div>
-        </div>
-        <div class="bs-component">            
-            <table id="travel-stops-table" class="table table-hover">
-                <thead>
-                    <tr>
-                        <th>{{ 'label.stop_number'|trans }}</th>
-                        <th>{{ 'label.post'|trans }}</th>
-                        <th>{{ 'label.distance'|trans }}</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody id='tableBody' class="travelStops" data-prototype="{{ form_widget(form.travelStops.vars.prototype)|e('html_attr') }}">
-                
-                {% for travelStop in form.travelStops %}
-                    <tr class="form-group">
-                        <td>{{ form_widget(travelStop.stopOrder, {'attr': {'class': 'form-control'}})}}</td>
-                        <td>{{ form_widget(travelStop.post, {'attr': {'class': 'form-control'}})}}</td>
-                        <td colspan="2">{{ form_widget(travelStop.distanceFromPrevious, {'attr': {'class': 'form-control'}})}}</td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>   
-        </div>
+        </div>        
         <div class="form-group">
             <button type="submit" class="btn btn-primary">
                 <i class="fa fa-save" aria-hidden="true"></i> {{ 'label.create_travelExpense'|trans }}
@@ -59,8 +44,4 @@
 {% block javascripts %}
     {{ parent() }}
     {{ encore_entry_script_tags('js/invoice') }}
-    <!-- <script async defer
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC1svLxva6w74TE6FNDeP-WA4I7ivof7kw&callback=initMap">
-    </script> -->
-    
 {% endblock %}
