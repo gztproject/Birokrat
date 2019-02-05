@@ -47,8 +47,10 @@ class InvoiceController extends AbstractController
     	
     	if ($form->isSubmitted() && $form->isValid()) {
     		
-    		$state = $this->getDoctrine()->getRepository(InvoiceState::class)->findOneBy(['name'=>'submitted']);
-    		$invoice->setState($state);    		
+    		$state = $this->getDoctrine()->getRepository(InvoiceState::class)->findOneBy(['name'=>'draft']);
+    		$invoice->setState($state);   
+    		$invoice->calculateReference();
+    		$invoice->calculateTotals();
     		
     		$entityManager = $this->getDoctrine()->getManager();
     		foreach($invoice->getInvoiceItems() as $ii)

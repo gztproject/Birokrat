@@ -10,7 +10,11 @@
     {% for invoice in invoices %}
             <tr class="table-primary">
                 <td>{{ invoice.number }}</td>
-                <td>{{ invoice.dateOfIssue }}</td>
+                <td>{{ invoice.dateOfIssueString }}</td>
+                <td>{{ invoice.Recepient.Name }}</td>
+                <td>{{ invoice.ReferenceNumber }}</td>
+                <td>{{ invoice.TotalPrice }}</td>
+                <td>{{ invoice.State.Name }}</td>
                 <td class="text-right">
                     <div class="item-actions">
                         <a href="{{ path('admin_user_show', {'id': invoice.id}) }}" class="btn btn-sm btn-default">

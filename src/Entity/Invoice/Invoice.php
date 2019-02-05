@@ -9,6 +9,7 @@ use App\Entity\Base\Base;
 use App\Entity\Organization\Organization;
 use App\Entity\User\User;
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Symfony\Component\Config\Definition\Exception\Exception;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\InvoiceRepository")
@@ -92,6 +93,11 @@ class Invoice extends Base
     public function getDateOfIssue(): ?\DateTimeInterface
     {
         return $this->dateOfIssue;
+    }
+    
+    public function getDateOfIssueString(): ?string
+    {
+    	return $this->dateOfIssue->format('d. m. Y');
     }
 
     public function setDateOfIssue(\DateTimeInterface $dateOfIssue): self
@@ -281,5 +287,63 @@ class Invoice extends Base
     	$parts[array_key_last ($parts)] = sprintf('%04d', $parts[array_key_last ($parts)]+1);
     	
     	return implode('-', $parts);    	
+    }
+    
+    public function calculateTotals(): self
+    {
+    	$value = 0;
+    	foreach($this->getInvoiceItems() as $ii)
+    	{
+    		$value += ($ii->getValue() * (1 - $ii->getDiscount()));
+    	}
+    	$this->totalValue = $value;
+    	$this->totalPrice = $value * (1 - $this->discount);
+    	
+    	return $this;
+    }
+    
+    // http://www.eclectica.ca/howto/modulus-11-self-check.php
+    // http://www.zbs-giz.si/system/file.asp?FileId=3707
+    public function calculateReference(): self
+    {
+    	if (strlen($this->number) > 20)
+    		throw new Exception("Input string must be shorter than 20 characters.");
+    	
+    	//Remove prefix (if there is one)	
+    	$number = explode('-', $this->number);
+    	if(count($number) > 2)
+    		array_shift($number);	
+    		
+    	$result = "SI01 ";
+    	$base = array(implode('-', $number));
+    		
+    	foreach ($base as $base_val) {
+    			
+    		if (strlen($base_val) > 12)
+    			throw new Exception("Input string must be shorter than 12 characters.");
+    			
+    		$weight = array(2,3,4,5,6,7,8,9,10,11,12,13);
+    			
+    		/* For convenience, reverse the string and work left to right. */
+    		$reversed_base_val = strrev(str_replace("-","", $base_val));
+    			
+    		for ($i = 0, $sum = 0; $i < strlen($reversed_base_val); $i ++) {
+    			/* Calculate product and accumulate. */
+    			$sum += substr($reversed_base_val, $i, 1) * $weight[$i];
+    		}
+    				
+    		$remainder = $sum % 11;
+    			
+    		$check = 11 - $remainder;
+    		if ($remainder == 1 || $remainder == 0)
+    			$check = 0;
+    				
+    		if ($base_val != $base[0])
+    			$result .= "-";
+    						
+    		$result .= $base_val . $check;
+    	}    		
+    	$this->referenceNumber = $result;
+    	return $this;
     }
 }

@@ -9,6 +9,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use App\Form\Type\DateTimePickerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use App\Entity\Organization\Organization;
@@ -62,6 +63,10 @@ class InvoiceType extends AbstractType
             		'label' => 'label.invoiceItem',
             		'by_reference' => false,
             ])
+            ->add('discount', NumberType::class, array(
+            		'label' => 'label.discount',
+            		'attr' => ['class' => 'discountInput'],
+            ))
         ;
     }
 
