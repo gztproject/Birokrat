@@ -10,6 +10,7 @@ use App\Entity\Invoice\Invoice;
 use App\Entity\Invoice\InvoiceState;
 use App\Form\InvoiceType;
 use App\Repository\InvoiceRepository;
+use Symfony\Component\Validator\Constraints\DateTime;
 
 class InvoiceController extends AbstractController
 {    
@@ -23,7 +24,7 @@ class InvoiceController extends AbstractController
     } 
     
     /**
-     * @Route("/dashboard/invoice/new", methods={"GET"}, name="invoice_new")
+     * @Route("/dashboard/invoice/new", methods={"GET", "POST"}, name="invoice_new")
      */
     public function new(Request $request): Response
     {
@@ -37,7 +38,7 @@ class InvoiceController extends AbstractController
     	
     	$invoice->setNumber($invoice->getNewInvoiceNumber($invoice->getIssuer(), $this->getDoctrine()));
     	
-    	
+    	$invoice->setDateOfIssue(\DateTime::createFromFormat('U', date("U")));
     	
     	$form = $this->createForm(InvoiceType::class, $invoice)
     	->add('saveAndCreateNew', SubmitType::class);
@@ -50,6 +51,10 @@ class InvoiceController extends AbstractController
     		$invoice->setState($state);    		
     		
     		$entityManager = $this->getDoctrine()->getManager();
+    		foreach($invoice->getInvoiceItems() as $ii)
+    		{
+    			$entityManager->persist($ii);
+    		}
     		    		
     		$entityManager->persist($invoice);
     		$entityManager->flush();

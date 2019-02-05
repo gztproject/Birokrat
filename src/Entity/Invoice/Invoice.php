@@ -19,7 +19,7 @@ class Invoice extends Base
      * @ORM\Column(type="datetime")
      */
     private $dateOfIssue;
-
+    
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Organization\Organization")
      * @ORM\JoinColumn(nullable=false)
@@ -73,6 +73,16 @@ class Invoice extends Base
      * @ORM\JoinColumn(nullable=false)
      */
     private $issuedBy;
+    
+    /**
+     * @ORM\Column(type="date")
+     */
+    private $dateServiceRenderedFrom;
+    
+	/**
+     * @ORM\Column(type="date", nullable=true)
+     */
+    private $dateServiceRenderedTo;
     
     public function __construct()
     {
@@ -228,7 +238,31 @@ class Invoice extends Base
         $this->issuedBy = $issuedBy;
 
         return $this;
-    }    
+    }  
+    
+    public function getDateServiceRenderedFrom(): ?\DateTimeInterface
+    {
+    	return $this->dateServiceRenderedFrom;
+    }
+    
+    public function setDateServiceRenderedFrom(\DateTimeInterface $dateServiceRenderedFrom): self
+    {
+    	$this->dateServiceRenderedFrom = $dateServiceRenderedFrom;
+    	
+    	return $this;
+    }
+    
+    public function getDateServiceRenderedTo(): ?\DateTimeInterface
+    {
+    	return $this->dateServiceRenderedTo;
+    }
+    
+    public function setDateServiceRenderedTo(\DateTimeInterface $dateServiceRenderedTo): self
+    {
+    	$this->dateServiceRenderedTo = $dateServiceRenderedTo;
+    	
+    	return $this;
+    }
     
     public function getNewInvoiceNumber(Organization $organization, ManagerRegistry $doctrine): ?string
     {

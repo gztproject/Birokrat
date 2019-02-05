@@ -17,8 +17,7 @@ class TravelStopType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-    	$pc = new PostController;
-        $builder  
+    	$builder  
         	->add('stopOrder', TextType::class, array(
       			'label' => false,
         	))
@@ -27,8 +26,7 @@ class TravelStopType extends AbstractType
            		'choice_label' => 'name',
            		'expanded'=>false,
            		'multiple'=>false,
-           		'label' => false,
-            	//'preferred_choices' => $pc->getPreferredPosts()
+           		'label' => false,            	
             ))
             ->add('distanceFromPrevious', TextType::class, array(
             		'label' => false,

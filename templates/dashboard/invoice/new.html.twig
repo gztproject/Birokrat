@@ -2,33 +2,102 @@
 
 {% block body_id 'invoice_new' %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('css/invoice') }}
+{% endblock %}
+
 {% block main %}
     <h1>{{ 'title.invoice_new'|trans }}</h1>
 
     {{ form_start(form) }}   
-     
-        <div class="form-group">
-            <div class='input-group'>
-                {{ form_label(form.number) }}
-                {{ form_widget(form.number, {'attr': {'class': 'form-control'}}) }}                
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <div class='input-group'>
+                        {{ form_label(form.recepient) }}
+                        {{ form_widget(form.recepient, {'attr': {'class': 'form-control'}}) }}                
+                    </div>
+                </div>            
+            </div>  
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <div class='input-group'>
+                        {{ form_label(form.number) }}
+                        {{ form_widget(form.number, {'attr': {'class': 'form-control'}}) }}                
+                    </div>
+                </div>
+            </div>                             
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <div class='input-group date' id="datetimepicker">
+                        {{ form_label(form.dateOfIssue) }}
+                        {{ form_widget(form.dateOfIssue, {'attr': {'class': 'form-control'}}) }}
+                        <!-- <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                        </span> -->
+                    </div>
+                </div>
             </div>
-        </div>        
-        <div c
-        <div class="form-group">
-            <div class='input-group date' id='datetimepicker'>
-                {{ form_label(form.dateOfIssue) }}
-                {{ form_widget(form.dateOfIssue, {'attr': {'class': 'form-control'}}) }}
-                <span class="input-group-addon">
-                        <span class="glyphicon glyphicon-calendar"></span>
-                </span>
+            <div class="col-sm-4">
+                 <div class="form-group">
+                    <div class='input-group date' id='dateServiceRenderedFrom'>
+                        {{ form_label(form.dateServiceRenderedFrom) }}
+                        {{ form_widget(form.dateServiceRenderedFrom, {'attr': {'class': 'form-control'}}) }} 
+                        <!-- <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                        </span>   -->                     
+                    </div>
+                </div>
             </div>
-        </div>        
+            <div class="col-sm-4">
+                 <div class="form-group">
+                    <div class='input-group date' id='dateServiceRenderedTo'>
+                        {{ form_label(form.dateServiceRenderedTo) }}
+                        {{ form_widget(form.dateServiceRenderedTo, {'attr': {'class': 'form-control'}}) }}  
+                        <!-- <span class="input-group-addon">
+                                <span class="glyphicon glyphicon-calendar"></span>
+                        </span>     -->                  
+                    </div>
+                </div>
+            </div>
+        </div>   
+        <div class="bs-component table-responsive">            
+            <table id="invoice-items-table" class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>{{ 'label.code'|trans }}</th>
+                        <th>{{ 'label.name'|trans }}</th>
+                        <th>{{ 'label.quantity'|trans }}</th>
+                        <th>{{ 'label.unit'|trans }}</th>
+                        <th>{{ 'label.value'|trans }}</th>
+                        <th>{{ 'label.discount'|trans }}</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id='tableBody' class="invoiceItems" data-prototype="{{ form_widget(form.invoiceItems.vars.prototype)|e('html_attr') }}">
+                
+                {% for invoiceItem in form.invoiceItems %}
+                    <tr class="form-group">
+                        <td>{{ form_widget(invoiceItem.code, {'attr': {'class': 'form-control'}})}}</td>
+                        <td>{{ form_widget(invoiceItem.name, {'attr': {'class': 'form-control'}})}}</td>
+                        <td>{{ form_widget(invoiceItem.quantity, {'attr': {'class': 'form-control'}})}}</td>
+                        <td>{{ form_widget(invoiceItem.unit, {'attr': {'class': 'form-control'}})}}</td>
+                        <td>{{ form_widget(invoiceItem.value, {'attr': {'class': 'form-control'}})}}</td>
+                        <td colspan="2">{{ form_widget(invoiceItem.discount, {'attr': {'class': 'form-control'}})}}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>   
+        </div>     
         <div class="form-group">
             <button type="submit" class="btn btn-primary">
-                <i class="fa fa-save" aria-hidden="true"></i> {{ 'label.create_travelExpense'|trans }}
+                <i class="fa fa-save" aria-hidden="true"></i> {{ 'label.create_invoiceItem'|trans }}
             </button>
             {{ form_widget(form.saveAndCreateNew, {label: 'label.save_and_create_new', attr: {class: 'btn btn-primary'}}) }}
-            <a href="{{ path('travelExpense_index') }}" class="btn btn-link">
+            <a href="{{ path('invoice_index') }}" class="btn btn-link">
                 <i class="fa fa-list-alt" aria-hidden="true"></i> {{ 'action.back_to_list'|trans }}
             </a>
        </div>

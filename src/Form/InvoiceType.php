@@ -3,12 +3,15 @@
 namespace App\Form;
 
 use App\Entity\Invoice\Invoice;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 use App\Form\Type\DateTimePickerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use App\Entity\Organization\Organization;
 
 class InvoiceType extends AbstractType
 {
@@ -17,9 +20,39 @@ class InvoiceType extends AbstractType
         $builder
         	->add('number', TextType::class,[
         		'label' => 'label.number'
-        	])
+        	])        	
+        	->add('recepient', EntityType::class, array(
+        			'class' => Organization::class,
+        			'choice_label' => 'name',
+        			'expanded'=>false,
+        			'multiple'=>false,
+        			'label' => 'label.recepient',
+        	))
             ->add('dateOfIssue', DateTimePickerType::class,[
-                'label' => 'label.date'
+                'label' => 'label.dateOfIssue',
+            	'widget' => 'single_text',
+            	'format' => 'dd. MM. yyyy',
+            		
+            	// prevents rendering it as type="date", to avoid HTML5 date pickers
+            	'html5' => false,            	
+            ])
+            ->add('dateServiceRenderedFrom', DateTimePickerType::class,[
+            	'label' => 'label.dateServiceRenderedFrom',
+            	'widget' => 'single_text',
+            	'format' => 'dd. MM. yyyy',
+            		
+            	// prevents rendering it as type="date", to avoid HTML5 date pickers
+            	'html5' => false,
+            ])
+            ->add('dateServiceRenderedTo', DateTimePickerType::class,[
+            	'label' => 'label.dateServiceRenderedTo',
+            	'widget' => 'single_text',
+            	'format' => 'dd. MM. yyyy',
+            	// adds a class that can be selected in JavaScript
+            	'attr' => ['id' => 'dateServiceRenderedTo'],
+            		
+            	// prevents rendering it as type="date", to avoid HTML5 date pickers
+            	'html5' => false,
             ])
             ->add('invoiceItems', CollectionType::class, [
             		'entry_type' => InvoiceItemType::class,

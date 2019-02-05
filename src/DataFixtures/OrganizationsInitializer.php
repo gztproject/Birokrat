@@ -27,6 +27,7 @@ class OrganizationsInitializer
             $organization->setShortName($row["ShortName"]);
             $organization->setTaxNumber($row["TaxNumber"]);
             $organization->setTaxable($row["Taxable"]==='TRUE');
+            $organization->setInvoicePrefix($row["InvoicePrefix"]);
             
             //address...
             $address = new Address();
