@@ -1,15 +1,15 @@
 <?php 
 namespace App\Controller;
 
+use App\Form\AddressType;
 use App\Form\OrganizationType;
-use App\Form\UserType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use App\Entity\Geography\Address;
 use App\Entity\Organization\Organization;
 use App\Repository\OrganizationRepository;
 
@@ -29,11 +29,14 @@ class OrganizationController extends AbstractController
     /**
      * @Route("/dashboard/organization/new", methods={"GET", "POST"}, name="organization_new")
      */
-    public function new(Request $request, UserPasswordEncoderInterface $passwordEncoder)
+    public function new(Request $request)
     {
         $organization = new Organization();
         $form = $this->createForm(OrganizationType::class, $organization)
             ->add('saveAndCreateNew', SubmitType::class);
+        
+        $address = new Address();
+        $addressForm = $this->createForm(AddressType::class, $address);
                 
         $form->handleRequest($request);
         
@@ -43,8 +46,25 @@ class OrganizationController extends AbstractController
         
         return $this->render(
             '/dashboard/organization/new.html.twig',
-            array('form' => $form->createView())
-            );
+            array(
+            		'form' => $form->createView(),
+            		'addressForm' => $addressForm->createView(),
+            )
+        );
+    }
+    
+    /**
+     * @Route("/dashboard/address/new", methods={"POST"}, name="address_new")
+     */
+    public function newAddress(Request $request)
+    {	
+    	$address = new Address();
+    	$form = $this->createForm(AddressType::class, $address);
+    	$form->handleRequest($request);
+    	
+    	if ($form->isSubmitted() && $form->isValid()) {
+    		
+    	}
     }
     
     /**
@@ -65,6 +85,7 @@ class OrganizationController extends AbstractController
     public function edit(Request $request, Organization $organization): Response
     {
         $form = $this->createForm(OrganizationType::class, $organization);
+        $addressForm = $this->createForm(AddressType::class, $organization->getAddress());
         $form->handleRequest($request);
         
         if ($form->isSubmitted() && $form->isValid()) {
@@ -83,6 +104,7 @@ class OrganizationController extends AbstractController
         return $this->render('dashboard/organization/edit.html.twig', [
             'organization' => $organization,
             'form' => $form->createView(),
+        	'addressForm' => $addressForm->createView(),
         ]);
     }    
    
