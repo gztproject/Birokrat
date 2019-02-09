@@ -64,10 +64,7 @@ class OrganizationController extends AbstractController
      */
     public function edit(Request $request, Organization $organization): Response
     {
-        if(!$organization->getIsRoleAdmin())
-            $organization->setIsRoleAdmin(false);
-            
-        $form = $this->createForm(UserType::class, $organization);
+        $form = $this->createForm(OrganizationType::class, $organization);
         $form->handleRequest($request);
         
         if ($form->isSubmitted() && $form->isValid()) {

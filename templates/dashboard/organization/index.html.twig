@@ -22,7 +22,7 @@
         {% for organization in organizations %}
             <tr class="table-primary">
                 <td>{{ organization.name }}</td>
-                <td>{{ organization.primaryAddress.fullAddress }}</td>
+                <td>{{ organization.address.fullAddress }}</td>
                 <td>{{ organization.fullTaxNumber }}</td>
                 <td>{{ organization.taxable ? '<i class="fa fa-check" aria-hidden="true"></i>' : ''}}</td>
                 <td class="text-right">

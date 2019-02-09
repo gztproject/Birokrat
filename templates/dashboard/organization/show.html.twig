@@ -16,18 +16,16 @@
     
     <div class="card text-white bg-primary mb-3">   
         <div class="card-header">
-            <strong>{{ 'label.addresses'|trans }}</strong>
+            <strong>{{ 'label.address'|trans }}</strong>
         </div> 
         <div class="card-body">            
-                {% for address in organization.address %} 
                     <div class="card border-primary mb-3" style="max-width: 15rem;">               
                         <div class="card-body">                            
-                            {% for line in address.getFullFormattedAddress %}
+                            {% for line in organization.address.getFullFormattedAddress %}
                                 {{ line }}</br>
                             {% endfor %}
                         </div>  
-                    </div>                      
-                {% endfor %}            
+                    </div>  
         </div>
     </div>
 

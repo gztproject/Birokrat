@@ -46,6 +46,7 @@ class Organization extends Base
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Geography\Address")
+     * @ORM\JoinColumn(nullable=false)
      */
     private $address;
     
@@ -58,7 +59,6 @@ class Organization extends Base
     public function __construct()
     {
         $this->users = new ArrayCollection();
-        $this->address = new ArrayCollection();
     }
 
     public function getCode(): ?string
@@ -154,10 +154,7 @@ class Organization extends Base
         return $this;
     }
 
-    /**
-     * @return Collection|Address[]
-     */
-    public function getAddress(): Collection
+    public function getAddress(): ?Address
     {
         return $this->address;
     }
@@ -167,25 +164,7 @@ class Organization extends Base
         $this->address = $address;   
         return $this;
     }
-
-    public function removeAddress(Address $address): self
-    {
-        if ($this->address->contains($address)) {
-            $this->address->removeElement($address);
-            // set the owning side to null (unless already changed)
-            if ($address->getOrganization() === $this) {
-                $address->setOrganization(null);
-            }
-        }
-
-        return $this;
-    }
-    
-    public function getPrimaryAddress(): Address
-    {
-    	return $this->address[0];
-    }
-    
+        
     //Move to OrganizationSettings sometime
     public function getInvoicePrefix(): ?string
     {

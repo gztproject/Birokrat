@@ -24,14 +24,18 @@ class OrganizationType extends AbstractType
             ])
             ->add('taxNumber', TextType::class,[
             		'label' => 'label.taxNumber'
+            ])            
+            ->add('address', EntityType::class, [
+            		'class' => Address::class,
+            		'choice_label' => 'fullAddress',            		
+            		'label' => 'label.address',
             ])
             ->add('taxable', CheckboxType::class,[
             		'label' => 'label.taxable', 'required' => false
             ])
             ->get('taxable')
-            	->addModelTransformer(new CallbackTransformer(
+            ->addModelTransformer(new CallbackTransformer(
             		function($boolToCheckbox){
-            			
             			return $boolToCheckbox?:false;
             		},
             		function($checkboxToBool){
@@ -39,15 +43,7 @@ class OrganizationType extends AbstractType
             				return false;
             				return $checkboxToBool?:false;
             		}
-            ))
-            ->add('address', EntityType::class, array(
-            		'class' => Address::class,
-            		'choice_label' => 'name',
-            		'expanded'=>false,
-            		'multiple'=>false,
-            		'label' => 'label.address',
-            ))
-
+           ))
         ;
     }
 
@@ -55,7 +51,6 @@ class OrganizationType extends AbstractType
     {
         $resolver->setDefaults(array(
             'data_class' => Organization::class,
-        	'compound' =>true,
         ));
     }
 }
