@@ -68,11 +68,17 @@
             <table id="invoice-items-table" class="table table-hover">
                 <thead>
                     <tr>
+{#                         <th>{{ form_label(form.invoiceItems.code)|trans }}</th>#}
+{#                         <th>{{ form_label(form.invoiceItems.name)|trans }}</th>#}
+{#                         <th>{{ form_label(form.invoiceItems.quantity)|trans }}</th>#}
+{#                         <th>{{ form_label(form.invoiceItems.unit)|trans }}</th>#}
+{#                         <th>{{ form_label(form.invoiceItems.value)|trans }}</th>#}
+{#                         <th>{{ form_label(form.invoiceItems.discount)|trans }}</th>#}
                         <th>{{ 'label.code'|trans }}</th>
                         <th>{{ 'label.name'|trans }}</th>
                         <th>{{ 'label.quantity'|trans }}</th>
                         <th>{{ 'label.unit'|trans }}</th>
-                        <th>{{ 'label.value'|trans }}</th>
+                        <th>{{ 'labelvalue'|trans }}</th>
                         <th>{{ 'label.discount'|trans }}</th>
                         <th></th>
                     </tr>

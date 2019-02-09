@@ -10,8 +10,6 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use App\Entity\Geography\Post;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use App\Controller\PostController;
-use App\Repository\PostRepository;
 
 class TravelStopType extends AbstractType
 {
