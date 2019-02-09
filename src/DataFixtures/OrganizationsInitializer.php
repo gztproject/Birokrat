@@ -6,10 +6,12 @@ use Doctrine\Common\Persistence\ObjectManager;
 use App\Entity\Geography\Post;
 use App\Entity\Geography\Address;
 use App\Entity\Organization\Organization;
+use Doctrine\ORM\EntityNotFoundException;
 
 class OrganizationsInitializer
 {
     private $posts;
+    private $addresses;
 
     public function generate(ObjectManager $manager, array $posts)
     {
@@ -18,6 +20,7 @@ class OrganizationsInitializer
         $path = __DIR__ . "/InitData/organizations.csv";
         $fileReader = new ImportFileReader();
         $rows = $fileReader->GetRows($path);
+        $this->addresses = Array();
                 
         foreach ($rows as $row) {
             
@@ -30,13 +33,23 @@ class OrganizationsInitializer
             $organization->setInvoicePrefix($row["InvoicePrefix"]);
             
             //address...
-            $address = new Address();
-            $address->setLine1($row["Address1"]);
-            $address->setLine2($row["Address2"]);
-            $address->setPost($this->getPost($row["postCodeInternational"]));
-            $manager->persist($address);
+            $post = $this->getPost($row["postCodeInternational"]);
+            if($post == null)
+            {
+            	throw new EntityNotFoundException('Post with postcode '.$row["postCodeInternational"].' doesn\'t exist.');
+            }
+            //try to find existing address:
+            $address = $this->getAddress($row["Address1"], $row["Address2"], $post);
+            if($address == null){
+            	$address = new Address();
+            	$address->setLine1($row["Address1"]);
+            	$address->setLine2($row["Address2"]);
+            	$address->setPost($post);
+            	$manager->persist($address);
+            	array_push($this->addresses, $address);
+            }
             
-            $organization->addAddress($address);
+            $organization->setAddress($address);
                   
             $manager->persist($organization);
             array_push($organizations, $organization);
@@ -45,7 +58,7 @@ class OrganizationsInitializer
         return $organizations;
     }
     
-    private function getPost($postCodeInternational): Post
+    private function getPost($postCodeInternational): ?Post
     {
         foreach ($this->posts as $post) {
             if ($post->getCodeInternational() === $postCodeInternational) {
@@ -53,5 +66,15 @@ class OrganizationsInitializer
             }
         }
         return null;
+    }
+    
+    private function getAddress(string $line1, string $line2, Post $post): ?Address
+    {
+    	foreach ($this->addresses as $address) {
+    		if ($address->getLine1() === $line1 && $address->getLine2() === $line2 && $address->getPost() === $post)  {
+    			return $address;
+    		}
+    	}
+    	return null;
     }
 }

@@ -45,7 +45,7 @@ class Organization extends Base
     private $users;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Geography\Address", mappedBy="organization")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Geography\Address")
      */
     private $address;
     
@@ -162,13 +162,9 @@ class Organization extends Base
         return $this->address;
     }
 
-    public function addAddress(Address $address): self
-    {
-        if (!$this->address->contains($address)) {
-            $this->address[] = $address;
-            $address->setOrganization($this);
-        }
-
+    public function setAddress(Address $address): self
+    {        
+        $this->address = $address;   
         return $this;
     }
 

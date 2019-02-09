@@ -27,11 +27,6 @@ class Address extends Base
      */
     private $post;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Organization\Organization", inversedBy="address")
-     */
-    private $organization;
-
     public function getLine1(): ?string
     {
         return $this->line1;
@@ -68,18 +63,6 @@ class Address extends Base
         return $this;
     }
 
-    public function getOrganization(): ?Organization
-    {
-        return $this->organization;
-    }
-
-    public function setOrganization(?Organization $organization): self
-    {
-        $this->organization = $organization;
-
-        return $this;
-    }
-    
     public function getFullAddress(): string
     {
     	$address = $this->line1;
