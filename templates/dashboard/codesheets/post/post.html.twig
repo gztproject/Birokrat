@@ -1,0 +1,21 @@
+{% extends 'dashboard/layout.html.twig' %}
+
+{% block body_id 'post_index' %}
+
+{% block main %}
+    <h1>{{ 'title.post'|trans }}</h1>
+    <div class="bs-component">
+    {{ include('dashboard/codesheets/post/_table.html.twig', {
+                posts: posts                
+            }, with_context = false) }}        
+    </div>
+{% endblock %}
+
+{% block sidebar %}
+    
+    {{ parent() }}    
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+{% endblock %}

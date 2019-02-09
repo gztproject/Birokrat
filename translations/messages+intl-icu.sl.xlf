@@ -421,6 +421,190 @@
                 <source>action.create_expense</source>
                 <target>Nova transakcija</target>
             </trans-unit>
+            <trans-unit id="label.date">
+                <source>label.date</source>
+                <target>Datum</target>
+            </trans-unit>
+            <trans-unit id="label.travelDescription">
+                <source>label.travelDescription</source>
+                <target>Opis</target>
+            </trans-unit>
+            <trans-unit id="label.distance">
+                <source>label.distance</source>
+                <target>Razdalja</target>
+            </trans-unit>            
+            <trans-unit id="menu.users">
+                <source>menu.users</source>
+                <target>Uporabniki</target>
+            </trans-unit>
+            <trans-unit id="label.recepient">
+                <source>label.recepient</source>
+                <target>Naročnik</target>
+            </trans-unit>
+            <trans-unit id="label.dateOfIssue">
+                <source>label.dateOfIssue</source>
+                <target>Datum izdaje</target>
+            </trans-unit>
+            <trans-unit id="label.dateServiceRenderedFrom">
+                <source>label.dateServiceRenderedFrom</source>
+                <target>Datum opr. stor. od</target>
+            </trans-unit>
+            <trans-unit id="label.dateServiceRenderedTo">
+                <source>label.dateServiceRenderedTo</source>
+                <target>Datum opr. stor. do</target>
+            </trans-unit>
+            <trans-unit id="label.code">
+                <source>label.code</source>
+                <target>Koda</target>
+            </trans-unit>
+            <trans-unit id="label.nameII">
+                <source>label.nameII0</source>
+                <target>Naziv</target>
+            </trans-unit>
+            <trans-unit id="label.quantity">
+                <source>label.quantity</source>
+                <target>Količina</target>
+            </trans-unit>
+            <trans-unit id="label.unit">
+                <source>label.unit</source>
+                <target>EM</target>
+            </trans-unit>
+            <trans-unit id="label.value">
+                <source>label.value</source>
+                <target>Vrednost</target>
+            </trans-unit>
+            <trans-unit id="label.discount">
+                <source>label.discount</source>
+                <target>Popust</target>
+            </trans-unit>
+            <trans-unit id="label.price">
+                <source>label.price</source>
+                <target>Cena</target>
+            </trans-unit>
+            <trans-unit id="title.invoice">
+                <source>title.invoice</source>
+                <target>Račun</target>
+            </trans-unit> 
+            <trans-unit id="label.stop_number">
+                <source>label.stop_number</source>
+                <target>Št.</target>
+            </trans-unit> 
+            <trans-unit id="label.post">
+                <source>label.post</source>
+                <target>Pošta</target>
+            </trans-unit>  
+            <trans-unit id="label.create_travelExpense">
+                <source>label.create_travelExpense</source>
+                <target>Ustvari potni strošek</target>
+            </trans-unit>   
+            <trans-unit id="title.travelExpense_new">
+                <source>title.travelExpense_new</source>
+                <target>Nov potni strošek</target>
+            </trans-unit>  
+            <trans-unit id="title.organization_list">
+                <source>title.organization_list</source>
+                <target>Organizacije</target>
+            </trans-unit>     
+            <trans-unit id="label.address">
+                <source>label.address</source>
+                <target>Naslov</target>
+            </trans-unit>  
+            <trans-unit id="label.taxNumber">
+                <source>label.taxNumber</source>
+                <target>Davčna šz.</target>
+            </trans-unit>  
+            <trans-unit id="label.taxable">
+                <source>label.taxable</source>
+                <target>Zavezanec za DDV</target>
+            </trans-unit>  
+            <trans-unit id="action.create_organization">
+                <source>action.create_organization</source>
+                <target>Ustvari organizacijo</target>
+            </trans-unit>
+            <trans-unit id="title.organization_new">
+                <source>title.organization_new</source>
+                <target>Nova organizacija</target>
+            </trans-unit>  
+            <trans-unit id="label.shortName">
+                <source>label.shortName</source>
+                <target>Kratko ime</target>
+            </trans-unit>  
+            <trans-unit id="label.create_organization">
+                <source>label.create_organization</source>
+                <target>Nova organizacija</target>
+            </trans-unit>  
+            <trans-unit id="label.new_address">
+                <source>label.new_address</source>
+                <target>Nov naslov</target>
+            </trans-unit>  
+            <trans-unit id="label.line1">
+                <source>label.line1</source>
+                <target>Naslov</target>
+            </trans-unit>  
+            <trans-unit id="label.line2">
+                <source>label.line2</source>
+                <target>Naslov</target>
+            </trans-unit>  
+            <trans-unit id="label.create_address">
+                <source>label.create_address</source>
+                <target>Ustvari naslov</target>
+            </trans-unit>  
+            <trans-unit id="title.konto">
+                <source>title.konto</source>
+                <target>Konti</target>
+            </trans-unit>  
+            <trans-unit id="label.kontoClass">
+                <source>label.kontoClass</source>
+                <target>Razred</target>
+            </trans-unit>  
+            <trans-unit id="label.kontoCategory">
+                <source>label.kontoCategory</source>
+                <target>Kategorija</target>
+            </trans-unit>
+            <trans-unit id="title.post">
+                <source>title.post</source>
+                <target>Pošte</target>
+            </trans-unit>
+            <trans-unit id="label.postName">
+                <source>label.postName</source>
+                <target>Pošta</target>
+            </trans-unit>
+            <trans-unit id="label.postCode">
+                <source>label.postCode</source>
+                <target>Poštna št.</target>
+            </trans-unit>
+            <trans-unit id="label.postCodeInternational">
+                <source>label.postCodeInternational</source>
+                <target>Medn. poštna št.</target>
+            </trans-unit>  
+            <trans-unit id="title.country">
+                <source>title.country</source>
+                <target>Države</target>
+            </trans-unit>
+            <trans-unit id="label.countryName">
+                <source>label.countryName</source>
+                <target>Država</target>
+            </trans-unit>
+            <trans-unit id="label.countryNameInt">
+                <source>label.countryNameInt</source>
+                <target>Mednarodno ime</target>
+            </trans-unit>
+            <trans-unit id="label.a2">
+                <source>label.a2</source>
+                <target>Koda A2</target>
+            </trans-unit>
+            <trans-unit id="label.a3">
+                <source>label.a3</source>
+                <target>Koda A3</target>
+            </trans-unit>
+            <trans-unit id="label.n3">
+                <source>label.n3</source>
+                <target>Koda N3</target>
+            </trans-unit>
+            <trans-unit id="title.admin">
+                <source>title.admin</source>
+                <target>Administrator</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

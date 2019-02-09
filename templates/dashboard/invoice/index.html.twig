@@ -3,7 +3,7 @@
 {% block body_id 'invoice_index' %}
 
 {% block main %}
-    <h1>{{ 'title.invoice'|trans }}</h1>
+    <h1>{{ 'title.invoices'|trans }}</h1>
     <div class="bs-component">
     {{ include('dashboard/invoice/_table.html.twig', {invoices: invoices}, with_context = false) }}
     </div>

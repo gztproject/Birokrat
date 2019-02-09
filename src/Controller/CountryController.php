@@ -14,6 +14,6 @@ class CountryController extends AbstractController
     public function index(CountryRepository $countries): Response
     {                      
     	$countries = $countries->findAll();
-    	return $this->render('dashboard/codesheets/country.html.twig', ['countries' => $countries]);
+    	return $this->render('dashboard/codesheets/country/country.html.twig', ['countries' => $countries]);
     } 
 }
