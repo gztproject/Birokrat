@@ -47,6 +47,7 @@
                 <i class="fa fa-list-alt" aria-hidden="true"></i> {{ 'action.back_to_list'|trans }}
             </a>
        </div>
+    {{ form_row(form._token) }}
     {{ form_end(form, {'render_rest': false}) }}
 
 {% endblock %}

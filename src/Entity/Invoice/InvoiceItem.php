@@ -33,7 +33,7 @@ class InvoiceItem extends Base
     /**
      * @ORM\Column(type="decimal", precision=10, scale=2)
      */
-    private $value;
+    private $price;
 
     /**
      * @ORM\Column(type="decimal", precision=5, scale=2, nullable=true)
@@ -95,14 +95,14 @@ class InvoiceItem extends Base
         return $this;
     }
 
-    public function getValue()
+    public function getPrice()
     {
-        return $this->value;
+        return $this->price;
     }
 
-    public function setValue($value): self
+    public function setPrice($price): self
     {
-        $this->value = $value;
+        $this->price = $price;
 
         return $this;
     }

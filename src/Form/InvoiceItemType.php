@@ -30,9 +30,9 @@ class InvoiceItemType extends AbstractType
         		'label' => false,
         		'attr' => ['class' => 'unitInput'],
         ))
-        ->add('value', NumberType::class, array(
+        ->add('price', NumberType::class, array(
         		'label' => false,
-        		'attr' => ['class' => 'valueInput'],
+        		'attr' => ['class' => 'priceInput'],
         ))
         ->add('discount', NumberType::class, array(
         		'label' => false,

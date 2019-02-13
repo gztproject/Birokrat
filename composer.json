@@ -8,6 +8,7 @@
 		"ext-ctype": "*",
 		"ext-iconv": "*",
 		"doctrine/orm": "^2.6",
+		"dompdf/dompdf": "^0.8.3",
 		"erusev/parsedown": "~1.7",
 		"ezyang/htmlpurifier": "~4.10",
 		"nelmio/cors-bundle": "^1.5",

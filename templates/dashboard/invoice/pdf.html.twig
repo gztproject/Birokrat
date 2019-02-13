@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>{{ 'title.invice'|trans }} {{ invoice.number }}</title>
+        {{ encore_entry_link_tags('css/app') }}        
+        {{ encore_entry_link_tags('css/copyleft') }}
+    </head>
+    <body>
+        <div class='row' id='head'>
+            <div class='col-md-6'>
+                <div class='col-sm-2'>
+                    <img src="http://www.gzt-project.si/logo.png" alt="Logo" height="100" width="100"> 
+                </div>
+                <div class='col-sm-10'>                    
+                    <h4>{{ invoice.issuer.name }}</h4>
+                    {% for line in invoice.issuer.address.getFullFormattedAddress %}
+                        {{ line }}</br>
+                    {% endfor %}              
+                </div>                
+            </div>
+            <div class='col-md-6'>
+                WWW:        ADD_FIELD! </br>      
+                E-mail:     ADD_FIELD! </br>    
+                GSM:        ADD_FIELD! </br>
+                Davčna št.:  {{ invoice.issuer.getFullTaxNumber }}        </br>
+                TRR:        ADD_FIELD!  </br>
+                BIC:        ADD_FIELD!      </br>
+            </div>
+        </div>
+        </br></br>
+        <div class='row' id='invoiceData'>            
+            <div class='col-md-6'>
+                Naročnik:</br></br>
+                <h4>{{ invoice.recepient.shortName }}</h4>
+                {% for line in invoice.recepient.address.getFullFormattedAddress %}
+                {{ line }}</br>
+                {% endfor %}
+                </br></br>
+                Davčna št.: {{ invoice.recepient.getFullTaxNumber }}
+                
+                
+            </div>
+            <div class='col-md-6'>
+                <h4>RAČUN št.: {{ invoice.number }}</h4>
+                {{ invoice.issuer.address.post.name }}, {{ invoice.dateOfIssueString }}</br></br>
+                Rok plačila: ADD_FIELD!</br>
+                Zapade: ADD_FILED!</br>
+                Sklic/referenca: {{ invoice.referenceNumber }}</br>
+                Datum storitve: {{ invoice.dateServiceRenderedFromString }} - {{ invoice.dateServiceRenderedToString }}</br>
+                
+            </div>
+        </div>
+        <div class='row' id='invoiceItems'>
+            <div class='col-md-12'>
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Koda</th>
+                            <th>Naziv</th>
+                            <th>Količina</th>
+                            <th>EM</th>
+                            <th>Cena</th>
+                            <th>Popust</th>
+                        </tr>
+                    </thead>
+                    <tbody id='tableBody' class="invoiceItems" }}">
+                        {% for ii in invoice.invoiceItems %}
+                            <tr>
+                                <td>{{ ii.code }}</td>
+                                <td>{{ ii.name }}</td>
+                                <td>{{ ii.quantity }}</td>
+                                <td>{{ ii.unit }}</td>
+                                <td>{{ ii.price }}</td>
+                                <td>{{ ii.discount }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class='row' id='footer'>
+        
+        </div>
+        {{ encore_entry_script_tags('js/app') }}
+    </body>
+</html>

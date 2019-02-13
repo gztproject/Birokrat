@@ -251,6 +251,11 @@ class Invoice extends Base
     	return $this->dateServiceRenderedFrom;
     }
     
+    public function getDateServiceRenderedFromString(): ?string
+    {
+    	return $this->dateServiceRenderedFrom->format('d. m. Y');
+    }
+    
     public function setDateServiceRenderedFrom(\DateTimeInterface $dateServiceRenderedFrom): self
     {
     	$this->dateServiceRenderedFrom = $dateServiceRenderedFrom;
@@ -261,6 +266,11 @@ class Invoice extends Base
     public function getDateServiceRenderedTo(): ?\DateTimeInterface
     {
     	return $this->dateServiceRenderedTo;
+    }
+    
+    public function getDateServiceRenderedToString(): ?string
+    {
+    	return $this->dateServiceRenderedTo->format('d. m. Y');
     }
     
     public function setDateServiceRenderedTo(\DateTimeInterface $dateServiceRenderedTo): self
@@ -291,13 +301,13 @@ class Invoice extends Base
     
     public function calculateTotals(): self
     {
-    	$value = 0;
+    	$price = 0;
     	foreach($this->getInvoiceItems() as $ii)
     	{
-    		$value += ($ii->getValue() * (1 - $ii->getDiscount()));
+    		$price += ($ii->getPrice() * (1 - $ii->getDiscount()));
     	}
-    	$this->totalValue = $value;
-    	$this->totalPrice = $value * (1 - $this->discount);
+    	$this->totalValue = $price;
+    	$this->totalPrice = $price * (1 - $this->discount);
     	
     	return $this;
     }

@@ -105,7 +105,7 @@ class Organization extends Base
     public function getFullTaxNumber(): string
     {
     	if($this->taxable)
-    		return "SI".$this->taxNumber;
+    		return "SI ".$this->taxNumber;
     	return $this->taxNumber;
     }
 

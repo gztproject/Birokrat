@@ -92,7 +92,7 @@ function addInvoiceItemForm($collectionHolder, $addRemoveInvoiceItemButtons, $nu
         '<td data-item-index="' + index + '">' + $('#invoice_invoiceItems_' + index + '_name' ,newForm).parent().html() + '</td>'+
         '<td>' + $('#invoice_invoiceItems_' + index + '_quantity', newForm).parent().html()+'</td>'+
         '<td>' + $('#invoice_invoiceItems_' + index + '_unit', newForm).parent().html()+'</td>'+
-        '<td>' + $('#invoice_invoiceItems_' + index + '_value', newForm).parent().html()+'</td>'+
+        '<td>' + $('#invoice_invoiceItems_' + index + '_price', newForm).parent().html()+'</td>'+
         '<td>' + $('#invoice_invoiceItems_' + index + '_discount', newForm).parent().html()+'</td>'+
         '<td><a id="remove-invoice-item'+ index +'" class="btn btn-sm btn-block btn-danger"><i class="fa fa-minus" aria-hidden="true"></i></a></td></tr>');        
         

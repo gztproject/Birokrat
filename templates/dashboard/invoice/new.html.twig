@@ -78,7 +78,7 @@
                         <th>{{ 'label.name'|trans }}</th>
                         <th>{{ 'label.quantity'|trans }}</th>
                         <th>{{ 'label.unit'|trans }}</th>
-                        <th>{{ 'label.value'|trans }}</th>
+                        <th>{{ 'label.price'|trans }}</th>
                         <th>{{ 'label.discount'|trans }}</th>
                         <th>{{ 'label.value'|trans }}</th>
                         <th></th>
@@ -89,12 +89,12 @@
                 {% for invoiceItem in form.invoiceItems %}
                     <tr class="form-group">
                         <td>{{ form_widget(invoiceItem.code, {'attr': {'class': 'form-control'}})}}</td>
-                        <td>{{ form_widget(invoiceItem.nameII, {'attr': {'class': 'form-control'}})}}</td>
+                        <td>{{ form_widget(invoiceItem.name, {'attr': {'class': 'form-control'}})}}</td>
                         <td>{{ form_widget(invoiceItem.quantity, {'attr': {'class': 'form-control'}})}}</td>
                         <td>{{ form_widget(invoiceItem.unit, {'attr': {'class': 'form-control'}})}}</td>
                         <td>{{ form_widget(invoiceItem.price, {'attr': {'class': 'form-control'}})}}</td>
-                        <td></td>
-                        <td colspan="2">{{ form_widget(invoiceItem.discount, {'attr': {'class': 'form-control'}})}}</td>
+                        <td>{{ form_widget(invoiceItem.discount, {'attr': {'class': 'form-control'}})}}</td>
+                        <td colspan="2"></td>
                     </tr>
                 {% endfor %}
                 </tbody>
@@ -117,6 +117,7 @@
                 <i class="fa fa-list-alt" aria-hidden="true"></i> {{ 'action.back_to_list'|trans }}
             </a>
        </div>
+    {{ form_row(form._token) }}
     {{ form_end(form, {'render_rest': false}) }}
 
 {% endblock %}
