@@ -74,23 +74,24 @@ class InvoiceController extends AbstractController
     /**
      * @Route("/dashboard/invoice/pdf/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}", methods={"GET"}, name="invoice_pdf")
      */
-    public function generatePdf(Invoice $invoice): Response
+    public function generatePdf(Invoice $invoice)
     {
     	// Configure Dompdf according to your needs
     	$pdfOptions = new Options();
     	$pdfOptions
-    		->set('defaultFont', 'Arial')
-    		->set('base_path', "/www/public/css/")
+    		->set('defaultFont', 'helvetica')
     	;
     	
     	// Instantiate Dompdf with our options
     	$dompdf = new Dompdf($pdfOptions);
-    	$dompdf->set_base_path("/www/public/css/");
     	
     	// Retrieve the HTML generated in our twig file
     	$html = $this->renderView('dashboard/invoice/pdf.html.twig', [
     			'invoice' => $invoice
     	]);
+    	//return $html;
+    	
+    	//$dompdf->basePath();
     	
     	// Load HTML to Dompdf
     	$dompdf->loadHtml($html);

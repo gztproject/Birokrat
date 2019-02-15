@@ -392,7 +392,7 @@
             <trans-unit id="title.invoices">
                 <source>title.invoices</source>
                 <target>Računi</target>
-            </trans-unit>
+            </trans-unit>            
             <trans-unit id="invoice.no_invoices_found">
                 <source>invoice.no_invoices_found</source>
                 <target>Ne najdem nobenega računa</target>
