@@ -55,9 +55,21 @@
                                     {% endif %}
                                 {% endblock %}
                                 {% if app.user %}
-                                    <li class="nav-item">
-                                        <a class="nav-link" href="{{ path('POC_index') }}"> <i class="fa fa-hand-spock"></i> {{ 'menu.POC'|trans }}</a>
-                                    </li>                                
+                                    <li class="nav-item dropdown">
+                                        <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-expanded="false" id="user">
+                                            <i class="fa fa-user" aria-hidden="true"></i>
+                                            {{ 'menu.POC'|trans }}
+                                        </a>
+                                        <ul class="dropdown-menu poc" role="menu" aria-labelledby="poc">
+                                            <li>
+                                                <a class="nav-link" href="{{ path('POC_bootswatch') }}"> <i class="fa fa-book-medical"></i>{{ 'menu.POC.bootswatch'|trans }}</a>
+                                            </li>
+                                            <li class="divider"></li>
+                                            <li>
+                                                <a class="nav-link" href="{{ path('POC_typeahead') }}"> <i class="fa fa-keyboard"></i>{{ 'menu.POC.typeahead'|trans }}</a>
+                                            </li>
+                                        </ul>
+                                    </li>                                                                 
                                     <li class="nav-item dropdown">
                                         <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-expanded="false" id="user">
                                             <i class="fa fa-user" aria-hidden="true"></i>

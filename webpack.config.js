@@ -19,6 +19,8 @@ Encore
     .addEntry('js/travelExpense', './assets/js/travelExpense.js')
     .addEntry('js/invoice', './assets/js/invoice.js')
     .addEntry('js/organization', './assets/js/organization.js')
+    .addEntry('js/poc.typeahead', './assets/js/poc.typeahead.js')
+
     .addStyleEntry('css/app', ['./assets/scss/app.scss'])
     .addStyleEntry('css/copyleft', ['./assets/css/copyleft.css'])
     .addStyleEntry('css/admin', ['./assets/scss/admin.scss'])

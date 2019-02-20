@@ -91,7 +91,7 @@ class InvoiceController extends AbstractController
     	]);
     	//return $html;
     	
-    	//$dompdf->basePath();
+    	$dompdf->basePath();
     	
     	// Load HTML to Dompdf
     	$dompdf->loadHtml($html);
