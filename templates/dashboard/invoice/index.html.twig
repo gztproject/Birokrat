@@ -1,0 +1,19 @@
+{% extends 'dashboard/layout.html.twig' %}
+
+{% block body_id 'invoice_index' %}
+
+{% block main %}
+    <h1>{{ 'title.invoices'|trans }}</h1>
+    <div class="bs-component">
+    {{ include('dashboard/invoice/_table.html.twig', {invoices: invoices}, with_context = false) }}
+    </div>
+{% endblock %}
+
+{% block sidebar %}
+    
+    {{ parent() }}
+    <a href="{{ path('invoice_new') }}" class="btn btn-sm btn-block btn-success">
+            <i class="fa fa-plus" aria-hidden="true"></i> {{ 'action.create_invoice'|trans }}
+    </a>
+
+{% endblock %}

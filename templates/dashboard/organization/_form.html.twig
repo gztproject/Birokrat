@@ -1,0 +1,41 @@
+{#
+    By default, forms enable client-side validation. This means that you can't
+    test the server-side validation errors from the browser. To temporarily
+    disable this validation, add the 'novalidate' attribute:
+
+    {{ form_start(form, {attr: {novalidate: 'novalidate'}}) }}
+#}
+
+{% if show_confirmation|default(true) %}
+    {% set attr = {'data-confirmation': 'true'} %}
+    {{ include('dashboard/organization/_delete_user_confirmation.html.twig') }}
+{% endif %}
+
+{{ form_start(form) }}
+    
+        <div class='row'>
+            {{ form_label(form.name) }}
+            {{ form_widget(form.name, {'attr': {'class': 'form-control'}}) }} 
+        </div>
+        <div class='row'>
+            {{ form_label(form.shortName) }}
+            {{ form_widget(form.shortName, {'attr': {'class': 'form-control'}}) }} 
+        </div>
+        <div class='row'>
+            {{ form_label(form.taxNumber) }}
+            {{ form_widget(form.taxNumber, {'attr': {'class': 'form-control'}}) }}
+        </div>
+        <div class='row'> 
+            {{ form_label(form.taxable) }}
+            {{ form_widget(form.taxable, {'attr': {'class': 'form-control'}}) }}
+        </div>
+        <div class='row'>           
+            {{ form_label(form.address) }}
+            {{ form_widget(form.address, {'attr': {'class': 'form-control'}}) }}  
+        
+            <button type='button' id='addAddress' class='btn btn-sm btn-success' data-toggle="modal" data-target="#addAddressModal"><i class="fa fa-plus" aria-hidden="true"></i></button>
+        </div>
+        
+        
+        
+    {{ form_end(form) }}

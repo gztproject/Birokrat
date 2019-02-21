@@ -1,0 +1,34 @@
+<table class="table table-hover">
+        <thead>
+            <tr>
+                <th scope="col"><i class="fa fa-calendar" aria-hidden="true"></i>{{ 'label.date'|trans }}</th>
+                <th scope="col"><i class="fa fa-map-marked-alt" aria-hidden="true"></i> {{ 'label.travelDescription'|trans }}</th>
+                <th scope="col"><i class="fa fa-tape" aria-hidden="true"></i> {{ 'label.distance'|trans }}</th>
+                <th scope="col" class="text-center"><i class="fa fa-cogs" aria-hidden="true"></i> {{ 'label.actions'|trans }}</th>
+            </tr>
+        </thead>
+        <tbody>
+    {% for travelExpense in travelExpenses %}
+            <tr class="table-primary">
+                <td>{{ travelExpense.dateString }}</td>
+                <td>{{ travelExpense.travelDescription }}</td>
+                <td>{{ travelExpense.totalDistance }}</td>                
+                <td class="text-right">
+                    <div class="item-actions">
+                        <a href="{{ path('dashboard_index', {'id': travelExpense.id}) }}" class="btn btn-sm btn-default">
+                            <i class="fa fa-eye" aria-hidden="true"></i> {{ 'action.show'|trans }}
+                        </a>
+
+                        <a href="{{ path('dashboard_index', {'id': travelExpense.id}) }}" class="btn btn-sm btn-primary">
+                            <i class="fa fa-edit" aria-hidden="true"></i> {{ 'action.edit'|trans }}
+                        </a>
+                    </div>
+                </td>
+            </tr>
+        {% else %}
+            <tr class="table-warning">
+                <td colspan="4" align="center">{{ 'travelExpense.no_travelExpenses_found'|trans }}</td>
+           </tr>
+        {% endfor %}    
+    </tbody>
+    </table>

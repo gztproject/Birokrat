@@ -1,0 +1,32 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block body_id 'admin_user_edit' %}
+
+{% block main %}
+    <h1>{{ 'title.edit_user'|trans({'%username%': organization.name}) }}</h1>
+
+    {{ include('dashboard/organization/_form.html.twig', {
+        form: form,
+        button_label: 'action.save'|trans,
+        include_back_to_home_link: true,
+    }, with_context = false) }}
+    
+    {{ include('dashboard/organization/addAddressModal.html.twig', {    
+        form: addressForm
+       }) }}
+{% endblock %}
+
+{% block sidebar %}
+    <div class="section">
+        <a href="{{ path('organization_show', {id: organization.id}) }}" class="btn btn-sm btn-block btn-success">
+            <i class="fa fa-eye" aria-hidden="true"></i> {{ 'action.show_organization'|trans }}
+        </a>
+    </div>
+
+    <div class="section actions">
+        {{ include('dashboard/organization/_delete_form.html.twig', {organization: organization}, with_context = false) }}
+    </div>
+
+    {{ parent() }}
+
+{% endblock %}

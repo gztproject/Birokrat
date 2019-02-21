@@ -1,0 +1,610 @@
+<?xml version='1.0'?>
+<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
+    <file source-language="en" original="file.ext" target-language="sl" datatype="plaintext">    
+        <body>
+            <trans-unit id="note">
+                <source>note</source>
+                <target>OPOMBA</target>
+            </trans-unit>
+            <trans-unit id="tip">
+                <source>tip</source>
+                <target>NASVET</target>
+            </trans-unit>
+            <trans-unit id="not_available">
+                <source>not_available</source>
+                <target>Ni na voljo</target>
+            </trans-unit>
+            <trans-unit id="mit_license">
+                <source>mit_license</source>
+                <target>Licenca MIT</target>
+            </trans-unit>
+
+            <trans-unit id="http_error.name">
+                <source>http_error.name</source>
+                <target>Napaka {status_code, number}</target>
+            </trans-unit>
+            <trans-unit id="http_error.description">
+                <source>http_error.description</source>
+                <target>Prišlo je do neznane napake (HTTP {status_code, number}), ki preprečuje zaključiti vaš zahtevek.</target>
+            </trans-unit>
+            <trans-unit id="http_error.suggestion">
+                <source>http_error.suggestion</source>
+                <target><![CDATA[Poskusite ponovno naložiti to stran čez nekaj minut ali pa <a href="{url}">se vrnite na domačo stran</a>.]]></target>
+            </trans-unit>
+            <trans-unit id="http_error_403.description">
+                <source>http_error_403.description</source>
+                <target>Nimate pravic za dostop do tega vira.</target>
+            </trans-unit>
+            <trans-unit id="http_error_403.suggestion">
+                <source>http_error_403.suggestion</source>
+                <target>Vprašajte vašega upravitelja ali sistemskega administratorja, da vam omogoči dostop do tega vira.</target>
+            </trans-unit>
+            <trans-unit id="http_error_404.description">
+                <source>http_error_404.description</source>
+                <target>Strani, ki ste jo zahtevali, ni mogoče najti.</target>
+            </trans-unit>
+            <trans-unit id="http_error_404.suggestion">
+                <source>http_error_404.suggestion</source>
+                <target><![CDATA[Preverite morebitne napake črkovanja v URL ali pa <a href="{url}">se vrnite na domačo stran</a>.]]></target>
+            </trans-unit>
+            <trans-unit id="http_error_500.description">
+                <source>http_error_500.description</source>
+                <target>Prišlo je do interne napake na strežniku.</target>
+            </trans-unit>
+            <trans-unit id="http_error_500.suggestion">
+                <source>http_error_500.suggestion</source>
+                <target><![CDATA[Poskusite ponovno naložiti to stran čez nekaj minut ali pa <a href="{url}">se vrnite na domačo stran</a>.]]></target>
+            </trans-unit>
+
+            <trans-unit id="title.homepage">
+                <source>title.homepage</source>
+                <target><![CDATA[Pozdravljeni v aplikaciji <strong>Birokrat</strong>]]></target>
+            </trans-unit>
+            <trans-unit id="title.source_code">
+                <source>title.source_code</source>
+                <target>Izvorna koda uporabljena za izpis te strani</target>
+            </trans-unit>
+            <trans-unit id="title.controller_code">
+                <source>title.controller_code</source>
+                <target>Koda krmilnika</target>
+            </trans-unit>
+            <trans-unit id="title.twig_template_code">
+                <source>title.twig_template_code</source>
+                <target>Koda predloge Twig</target>
+            </trans-unit>
+            <trans-unit id="title.login">
+                <source>title.login</source>
+                <target>Varna prijava</target>
+            </trans-unit>
+            <trans-unit id="title.user_list">
+                <source>title.user_list</source>
+                <target>Seznam uporabnikov</target>
+            </trans-unit>
+            <trans-unit id="title.user_new">
+                <source>title.user_new</source>
+                <target>Nov uporabnik</target>
+            </trans-unit>
+            <trans-unit id="title.edit_user">
+                <source>title.edit_user</source>
+                <target>Urejanje uporabnika {username}</target>
+            </trans-unit>
+            <trans-unit id="title.add_comment">
+                <source>title.add_comment</source>
+                <target>Dodaj komentar</target>
+            </trans-unit>
+            <trans-unit id="title.comment_error">
+                <source>title.comment_error</source>
+                <target>Pri objavi vašega komentarja je prišlo do napake</target>
+            </trans-unit>
+
+            <trans-unit id="action.show">
+                <source>action.show</source>
+                <target>Prikaži</target>
+            </trans-unit>
+            <trans-unit id="action.show_user">
+                <source>action.show_user</source>
+                <target>Prikaži uporabnika</target>
+            </trans-unit>
+            <trans-unit id="action.show_code">
+                <source>action.show_code</source>
+                <target>Prikaži kodo</target>
+            </trans-unit>
+            <trans-unit id="action.edit">
+                <source>action.edit</source>
+                <target>Uredi</target>
+            </trans-unit>
+            <trans-unit id="action.edit_post">
+                <source>action.edit_post</source>
+                <target>Uredi objavo</target>
+            </trans-unit>
+            <trans-unit id="action.save">
+                <source>action.save</source>
+                <target>Shrani spremembe</target>
+            </trans-unit>
+            <trans-unit id="action.delete_user">
+                <source>action.delete_user</source>
+                <target>Izbriši uporabnika</target>
+            </trans-unit>
+            <trans-unit id="delete_user_modal.title">
+                <source>delete_user_modal.title</source>
+                <target>Ali ste prepričani, da želite izbrisati uporabnika?</target>
+            </trans-unit>
+            <trans-unit id="delete_user_modal.body">
+                <source>delete_user_modal.body</source>
+                <target>Tega dejanja ni mogoče razveljaviti.</target>
+            </trans-unit>
+            <trans-unit id="label.delete_user">
+                <source>label.delete_user</source>
+                <target>Izbriši uporabnika</target>
+            </trans-unit>
+            <trans-unit id="label.cancel">
+                <source>label.cancel</source>
+                <target>Prekliči</target>
+            </trans-unit>
+            <trans-unit id="label.email">
+                <source>label.email</source>
+                <target>E-mail</target>
+            </trans-unit>
+            <trans-unit id="label.name">
+                <source>label.name</source>
+                <target>Ime</target>
+            </trans-unit>
+            <trans-unit id="label.surname">
+                <source>label.surname</source>
+                <target>Priimek</target>
+            </trans-unit>
+            <trans-unit id="label.repeat_password">
+                <source>label.repeat_password</source>
+                <target>Ponovite geslo</target>
+            </trans-unit>
+            <trans-unit id="label.isRoleAdmin">
+                <source>label.isRoleAdmin</source>
+                <target>Administrator</target>
+            </trans-unit>
+            <trans-unit id="action.create_user">
+                <source>action.create_user</source>
+                <target>Dodaj uporabnika</target>
+            </trans-unit>
+            <trans-unit id="label.rememberMe">
+                <source>label.rememberMe</source>
+                <target>Zapomni si me</target>
+            </trans-unit>
+            <trans-unit id="label.save_and_create_new">
+                <source>label.save_and_create_new</source>
+                <target>Shrani in ustvari novo</target>
+            </trans-unit>
+            <trans-unit id="action.back_to_list">
+                <source>action.back_to_list</source>
+                <target>Nazaj na seznam</target>
+            </trans-unit>
+            <trans-unit id="action.publish_comment">
+                <source>action.publish_comment</source>
+                <target>Objavi komentar</target>
+            </trans-unit>
+            <trans-unit id="action.sign_in">
+                <source>action.sign_in</source>
+                <target>Prijava</target>
+            </trans-unit>
+            <trans-unit id="help.login">
+                <source>help.login</source>
+                <target>Vstop</target>
+            </trans-unit>
+            <trans-unit id="action.login">
+                <source>action.login</source>
+                <target>Prijava</target>
+            </trans-unit>
+
+            <trans-unit id="label.title">
+                <source>label.title</source>
+                <target>Naslov</target>
+            </trans-unit>
+            <trans-unit id="label.author">
+                <source>label.author</source>
+                <target>Avtor</target>
+            </trans-unit>
+            <trans-unit id="label.author_email">
+                <source>label.author_email</source>
+                <target>E-pošta avtorja</target>
+            </trans-unit>
+            <trans-unit id="label.username">
+                <source>label.username</source>
+                <target>Uporabniško ime</target>
+            </trans-unit>
+            <trans-unit id="label.password">
+                <source>label.password</source>
+                <target>Geslo</target>
+            </trans-unit>
+            <trans-unit id="label.role">
+                <source>label.role</source>
+                <target>Vloga</target>
+            </trans-unit>
+            <trans-unit id="label.number">
+                <source>label.number</source>
+                <target>Številka</target>
+            </trans-unit>
+            <trans-unit id="label.content">
+                <source>label.content</source>
+                <target>Vsebina</target>
+            </trans-unit>
+            <trans-unit id="label.summary">
+                <source>label.summary</source>
+                <target>Povzetek</target>
+            </trans-unit>
+            <trans-unit id="label.create_invoice">
+                <source>label.create_invoice</source>
+                <target>Ustvari račun</target>
+            </trans-unit>
+            <trans-unit id="label.create_user">
+                <source>label.create_user</source>
+                <target>Ustvari uporabnika</target>
+            </trans-unit>
+            <trans-unit id="label.published_at">
+                <source>label.published_at</source>
+                <target>Objavljeno</target>
+            </trans-unit>
+            <trans-unit id="label.issued_at">
+                <source>label.issued_at</source>
+                <target>Izdano</target>
+            </trans-unit>
+            <trans-unit id="label.tags">
+                <source>label.tags</source>
+                <target>Značke</target>
+            </trans-unit>
+            <trans-unit id="label.actions">
+                <source>label.actions</source>
+                <target>Dejanja</target>
+            </trans-unit>
+            <trans-unit id="title.post_new">
+                <source>title.post_new</source>
+                <target>Nova objava</target>
+            </trans-unit>
+            <trans-unit id="title.invoice_new">
+                <source>title.invoice_new</source>
+                <target>Nov račun</target>
+            </trans-unit>
+            <trans-unit id="action.edit_contents">
+                <source>action.edit_contents</source>
+                <target>Uredi vsebine</target>
+            </trans-unit>
+            <trans-unit id="action.edit_user">
+                <source>action.edit_user</source>
+                <target>Urejanje uporabnika</target>
+            </trans-unit>
+
+            <trans-unit id="menu.toggle_nav">
+                <source>menu.toggle_nav</source>
+                <target>Preklop navigacije</target>
+            </trans-unit>
+            <trans-unit id="menu.choose_language">
+                <source>menu.choose_language</source>
+                <target>Izbira jezika</target>
+            </trans-unit>
+            <trans-unit id="menu.user_list">
+                <source>menu.user_list</source>
+                <target>Seznam uporabnikov</target>
+            </trans-unit>
+            <trans-unit id="menu.invoice_list">
+                <source>menu.invoice_list</source>
+                <target>Seznam računov</target>
+            </trans-unit>
+            <trans-unit id="menu.home">
+                <source>menu.home</source>
+                <target>Domov</target>
+            </trans-unit>
+            <trans-unit id="menu.homepage">
+                <source>menu.homepage</source>
+                <target>Domača stran</target>
+            </trans-unit>
+            <trans-unit id="menu.admin">
+                <source>menu.admin</source>
+                <target>Admin</target>
+            </trans-unit>
+            <trans-unit id="menu.user">
+                <source>menu.user</source>
+                <target>Uporabnik</target>
+            </trans-unit>
+            <trans-unit id="menu.logout">
+                <source>menu.logout</source>
+                <target>Odjava</target>
+            </trans-unit>
+            <trans-unit id="menu.POC">
+                <source>menu.POC</source>
+                <target>POC</target>
+            </trans-unit>
+            <trans-unit id="menu.invoices">
+                <source>menu.invoices</source>
+                <target>Računi</target>
+            </trans-unit>
+
+            <trans-unit id="post.to_publish_a_comment">
+                <source>post.to_publish_a_comment</source>
+                <target>za objavo komentarja</target>
+            </trans-unit>
+            <trans-unit id="post.num_comments">
+                <source>post.num_comments</source>
+                <target>{count, plural, one {# komentar} two {# komentarja} few {# komentarji} other {# komentarjev}}</target>
+            </trans-unit>
+            <trans-unit id="post.commented_on">
+                <source>post.commented_on</source>
+                <target>komentirano dne</target>
+            </trans-unit>
+            <trans-unit id="post.no_comments">
+                <source>post.no_comments</source>
+                <target>Bodite prvi, da komentirate to objavo.</target>
+            </trans-unit>
+            <trans-unit id="post.no_posts_found">
+                <source>post.no_posts_found</source>
+                <target>Na voljo ni nobene objave.</target>
+            </trans-unit>
+            <trans-unit id="post.created_successfully">
+                <source>post.created_successfully</source>
+                <target>Objava uspešno ustvarjena!</target>
+            </trans-unit>
+            <trans-unit id="user.updated_successfully">
+                <source>user.updated_successfully</source>
+                <target>Uporabnik uspešno posodobljen!</target>
+            </trans-unit>
+            <trans-unit id="post.deleted_successfully">
+                <source>post.deleted_successfully</source>
+                <target>Objava uspešno izbrisana!</target>
+            </trans-unit>
+            <trans-unit id="post.search_for">
+                <source>post.search_for</source>
+                <target>Iskanje za ...</target>
+            </trans-unit>
+            <trans-unit id="post.search_no_results">
+                <source>post.search_no_results</source>
+                <target>Ni najdenih rezultatov</target>
+            </trans-unit>
+
+            <trans-unit id="notification.comment_created">
+                <source>notification.comment_created</source>
+                <target>Vaša objava je prejela komentar!</target>
+            </trans-unit>
+            <trans-unit id="help.invoice_issueDate">
+                <source>help.invoice_issueDate</source>
+                <target>Datum izdaje računa</target>
+            </trans-unit>
+            <trans-unit id="help.role_admin">
+                <source>help.role_admin</source>
+                <target>administrator</target>
+            </trans-unit>
+            <trans-unit id="menu.codesheets">
+                <source>menu.codesheets</source>
+                <target>Šifranti</target>
+            </trans-unit>
+            <trans-unit id="menu.organizations">
+                <source>menu.organizations</source>
+                <target>Organizacije</target>
+            </trans-unit>
+            <trans-unit id="menu.kontos">
+                <source>menu.kontos</source>
+                <target>Konti</target>
+            </trans-unit>
+            <trans-unit id="menu.posts">
+                <source>menu.posts</source>
+                <target>Pošte</target>
+            </trans-unit>
+            <trans-unit id="menu.countries">
+                <source>menu.countries</source>
+                <target>Države</target>
+            </trans-unit>
+            <trans-unit id="title.invoices">
+                <source>title.invoices</source>
+                <target>Računi</target>
+            </trans-unit>            
+            <trans-unit id="invoice.no_invoices_found">
+                <source>invoice.no_invoices_found</source>
+                <target>Ne najdem nobenega računa</target>
+            </trans-unit>
+            <trans-unit id="title.travelExpenses">
+                <source>title.travelExpenses</source>
+                <target>Potni stroški</target>
+            </trans-unit>
+            <trans-unit id="travelExpense.no_travelExpenses_found">
+                <source>travelExpense.no_travelExpenses_found</source>
+                <target>Ne najdem nobenega potnega stroška</target>
+            </trans-unit>
+            <trans-unit id="title.transactions">
+                <source>title.transactions</source>
+                <target>Transakcije</target>
+            </trans-unit>
+            <trans-unit id="action.create_invoice">
+                <source>action.create_invoice</source>
+                <target>Nov račun</target>
+            </trans-unit>
+            <trans-unit id="action.create_travelExpense">
+                <source>action.create_travelExpense</source>
+                <target>Nov potni strošek</target>
+            </trans-unit>
+            <trans-unit id="action.create_expense">
+                <source>action.create_expense</source>
+                <target>Nova transakcija</target>
+            </trans-unit>
+            <trans-unit id="label.date">
+                <source>label.date</source>
+                <target>Datum</target>
+            </trans-unit>
+            <trans-unit id="label.travelDescription">
+                <source>label.travelDescription</source>
+                <target>Opis</target>
+            </trans-unit>
+            <trans-unit id="label.distance">
+                <source>label.distance</source>
+                <target>Razdalja</target>
+            </trans-unit>            
+            <trans-unit id="menu.users">
+                <source>menu.users</source>
+                <target>Uporabniki</target>
+            </trans-unit>
+            <trans-unit id="label.recepient">
+                <source>label.recepient</source>
+                <target>Naročnik</target>
+            </trans-unit>
+            <trans-unit id="label.dateOfIssue">
+                <source>label.dateOfIssue</source>
+                <target>Datum izdaje</target>
+            </trans-unit>
+            <trans-unit id="label.dateServiceRenderedFrom">
+                <source>label.dateServiceRenderedFrom</source>
+                <target>Datum opr. stor. od</target>
+            </trans-unit>
+            <trans-unit id="label.dateServiceRenderedTo">
+                <source>label.dateServiceRenderedTo</source>
+                <target>Datum opr. stor. do</target>
+            </trans-unit>
+            <trans-unit id="label.code">
+                <source>label.code</source>
+                <target>Koda</target>
+            </trans-unit>
+            <trans-unit id="label.nameII">
+                <source>label.nameII0</source>
+                <target>Naziv</target>
+            </trans-unit>
+            <trans-unit id="label.quantity">
+                <source>label.quantity</source>
+                <target>Količina</target>
+            </trans-unit>
+            <trans-unit id="label.unit">
+                <source>label.unit</source>
+                <target>EM</target>
+            </trans-unit>
+            <trans-unit id="label.value">
+                <source>label.value</source>
+                <target>Vrednost</target>
+            </trans-unit>
+            <trans-unit id="label.discount">
+                <source>label.discount</source>
+                <target>Popust</target>
+            </trans-unit>
+            <trans-unit id="label.price">
+                <source>label.price</source>
+                <target>Cena</target>
+            </trans-unit>
+            <trans-unit id="title.invoice">
+                <source>title.invoice</source>
+                <target>Račun</target>
+            </trans-unit> 
+            <trans-unit id="label.stop_number">
+                <source>label.stop_number</source>
+                <target>Št.</target>
+            </trans-unit> 
+            <trans-unit id="label.post">
+                <source>label.post</source>
+                <target>Pošta</target>
+            </trans-unit>  
+            <trans-unit id="label.create_travelExpense">
+                <source>label.create_travelExpense</source>
+                <target>Ustvari potni strošek</target>
+            </trans-unit>   
+            <trans-unit id="title.travelExpense_new">
+                <source>title.travelExpense_new</source>
+                <target>Nov potni strošek</target>
+            </trans-unit>  
+            <trans-unit id="title.organization_list">
+                <source>title.organization_list</source>
+                <target>Organizacije</target>
+            </trans-unit>     
+            <trans-unit id="label.address">
+                <source>label.address</source>
+                <target>Naslov</target>
+            </trans-unit>  
+            <trans-unit id="label.taxNumber">
+                <source>label.taxNumber</source>
+                <target>Davčna šz.</target>
+            </trans-unit>  
+            <trans-unit id="label.taxable">
+                <source>label.taxable</source>
+                <target>Zavezanec za DDV</target>
+            </trans-unit>  
+            <trans-unit id="action.create_organization">
+                <source>action.create_organization</source>
+                <target>Ustvari organizacijo</target>
+            </trans-unit>
+            <trans-unit id="title.organization_new">
+                <source>title.organization_new</source>
+                <target>Nova organizacija</target>
+            </trans-unit>  
+            <trans-unit id="label.shortName">
+                <source>label.shortName</source>
+                <target>Kratko ime</target>
+            </trans-unit>  
+            <trans-unit id="label.create_organization">
+                <source>label.create_organization</source>
+                <target>Nova organizacija</target>
+            </trans-unit>  
+            <trans-unit id="label.new_address">
+                <source>label.new_address</source>
+                <target>Nov naslov</target>
+            </trans-unit>  
+            <trans-unit id="label.line1">
+                <source>label.line1</source>
+                <target>Naslov</target>
+            </trans-unit>  
+            <trans-unit id="label.line2">
+                <source>label.line2</source>
+                <target>Naslov</target>
+            </trans-unit>  
+            <trans-unit id="label.create_address">
+                <source>label.create_address</source>
+                <target>Ustvari naslov</target>
+            </trans-unit>  
+            <trans-unit id="title.konto">
+                <source>title.konto</source>
+                <target>Konti</target>
+            </trans-unit>  
+            <trans-unit id="label.kontoClass">
+                <source>label.kontoClass</source>
+                <target>Razred</target>
+            </trans-unit>  
+            <trans-unit id="label.kontoCategory">
+                <source>label.kontoCategory</source>
+                <target>Kategorija</target>
+            </trans-unit>
+            <trans-unit id="title.post">
+                <source>title.post</source>
+                <target>Pošte</target>
+            </trans-unit>
+            <trans-unit id="label.postName">
+                <source>label.postName</source>
+                <target>Pošta</target>
+            </trans-unit>
+            <trans-unit id="label.postCode">
+                <source>label.postCode</source>
+                <target>Poštna št.</target>
+            </trans-unit>
+            <trans-unit id="label.postCodeInternational">
+                <source>label.postCodeInternational</source>
+                <target>Medn. poštna št.</target>
+            </trans-unit>  
+            <trans-unit id="title.country">
+                <source>title.country</source>
+                <target>Države</target>
+            </trans-unit>
+            <trans-unit id="label.countryName">
+                <source>label.countryName</source>
+                <target>Država</target>
+            </trans-unit>
+            <trans-unit id="label.countryNameInt">
+                <source>label.countryNameInt</source>
+                <target>Mednarodno ime</target>
+            </trans-unit>
+            <trans-unit id="label.a2">
+                <source>label.a2</source>
+                <target>Koda A2</target>
+            </trans-unit>
+            <trans-unit id="label.a3">
+                <source>label.a3</source>
+                <target>Koda A3</target>
+            </trans-unit>
+            <trans-unit id="label.n3">
+                <source>label.n3</source>
+                <target>Koda N3</target>
+            </trans-unit>
+            <trans-unit id="title.admin">
+                <source>title.admin</source>
+                <target>Administrator</target>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>

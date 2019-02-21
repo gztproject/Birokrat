@@ -1,0 +1,20 @@
+{% extends 'dashboard/layout.html.twig' %}
+
+{% block body_id 'travelExpense_index' %}
+
+{% block main %}
+<h1>{{ 'title.travelExpenses'|trans }}</h1>
+    <div class="bs-component">
+    {{ include('dashboard/travelExpense/_table.html.twig', {
+                travelExpenses: travelExpenses                
+            }, with_context = false) }}
+                </div>
+{% endblock %}
+
+{% block sidebar %}
+    
+    {{ parent() }}
+    <a href="{{ path('travelExpense_new') }}" class="btn btn-sm btn-block btn-success">
+            <i class="fa fa-plus" aria-hidden="true"></i> {{ 'action.create_travelExpense'|trans }}
+        </a>
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends 'dashboard/layout.html.twig' %}
+
+{% block body_id 'konto_index' %}
+
+{% block main %}
+    <h1>{{ 'title.konto'|trans }}</h1>
+    <div class="bs-component">
+    {{ include('dashboard/codesheets/konto/_table.html.twig', {
+                kontos: kontos                
+            }, with_context = false) }}        
+    </div>
+{% endblock %}
+
+{% block sidebar %}
+    
+    {{ parent() }}
+    {{ include('dashboard/codesheets/konto/_filter.html.twig', {form: form}) }}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('js/codesheets') }}
+{% endblock %}
