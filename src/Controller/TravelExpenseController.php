@@ -44,6 +44,7 @@ class TravelExpenseController extends AbstractController
     		$te->setState($state);
     		
     		$te->setEmployee($this->get('security.token_storage')->getToken()->getUser());
+    		//ToDo: Get rate from organizationSettings
     		$te->setRate(0.37);
     		$te->calculateTotalDistance(); 
     		
