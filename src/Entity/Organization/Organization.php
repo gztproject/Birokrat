@@ -2,6 +2,7 @@
 
 namespace App\Entity\Organization;
 
+use App\Entity\Settings\OrganizationSettings;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -50,11 +51,40 @@ class Organization extends Base
      */
     private $address;
     
-    //Move to OrganizationSettings at some point...
     /**
-     * @ORM\Column(type="string", length=100, nullable=true)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
-    private $invoicePrefix;
+    private $www;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $email;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $phone;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $mobile;
+
+    /**
+     * @ORM\OneToOne(targetEntity="App\Entity\Settings\OrganizationSettings", mappedBy="organization", cascade={"persist", "remove"})
+     */
+    private $organizationSettings;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $accountNumber;
+
+    /**
+     * @ORM\Column(type="string", length=10, nullable=true)
+     */
+    private $bic;
 
     public function __construct()
     {
@@ -164,17 +194,96 @@ class Organization extends Base
         $this->address = $address;   
         return $this;
     }
-        
-    //Move to OrganizationSettings sometime
-    public function getInvoicePrefix(): ?string
-    {
-    	return $this->invoicePrefix;
-    }
+
     
-    public function setInvoicePrefix(?string $invoicePrefix): self
+    public function getWww(): ?string
     {
-    	$this->invoicePrefix = $invoicePrefix;
-    	
-    	return $this;
+        return $this->wwwAddress;
+    }
+
+    public function setWww(?string $wwwAddress): self
+    {
+        $this->wwwAddress = $wwwAddress;
+
+        return $this;
+    }
+
+    public function getEmail(): ?string
+    {
+        return $this->email;
+    }
+
+    public function setEmail(?string $email): self
+    {
+        $this->email = $email;
+
+        return $this;
+    }
+
+    public function getPhone(): ?string
+    {
+        return $this->phone;
+    }
+
+    public function setPhone(?string $phone): self
+    {
+        $this->phone = $phone;
+
+        return $this;
+    }
+
+    public function getMobile(): ?string
+    {
+        return $this->mobile;
+    }
+
+    public function setMobile(?string $mobile): self
+    {
+        $this->mobile = $mobile;
+
+        return $this;
+    }
+
+    public function getOrganizationSettings(): ?OrganizationSettings
+    {
+        return $this->organizationSettings;
+    }
+
+    public function setOrganizationSettings(?OrganizationSettings $organizationSettings): self
+    {
+        $this->organizationSettings = $organizationSettings;
+
+        //ToDo: Remove orphans.
+        // set (or unset) the owning side of the relation if necessary
+        $newOrganization = $organizationSettings === null ? null : $this;
+        if ($newOrganization !== $organizationSettings->getOrganization()) {
+            $organizationSettings->setOrganization($newOrganization);
+        }
+
+        return $this;
+    }
+
+    public function getAccountNumber(): ?string
+    {
+        return $this->accountNumber;
+    }
+
+    public function setAccountNumber(?string $accountNumber): self
+    {
+        $this->accountNumber = $accountNumber;
+
+        return $this;
+    }
+
+    public function getBic(): ?string
+    {
+        return $this->bic;
+    }
+
+    public function setBic(?string $bic): self
+    {
+        $this->bic = $bic;
+
+        return $this;
     }
 }

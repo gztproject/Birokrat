@@ -1,8 +1,6 @@
 <?php 
 namespace App\Controller;
 
-use Dompdf\Dompdf;
-use Dompdf\Options;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
@@ -41,6 +39,7 @@ class InvoiceController extends AbstractController
     	$invoice->setNumber($invoice->getNewInvoiceNumber($invoice->getIssuer(), $this->getDoctrine()));
     	
     	$invoice->setDateOfIssue(\DateTime::createFromFormat('U', date("U")));
+    	$invoice->setDueInDays($invoice->getIssuer()->getOrganizationSettings()->getDefaultPaymentDueIn());
     	
     	$form = $this->createForm(InvoiceType::class, $invoice)
     	->add('saveAndCreateNew', SubmitType::class);
@@ -52,7 +51,7 @@ class InvoiceController extends AbstractController
     		$state = $this->getDoctrine()->getRepository(InvoiceState::class)->findOneBy(['name'=>'draft']);
     		$invoice->setState($state);   
     		$invoice->calculateReference();
-    		$invoice->calculateTotals();
+    		$invoice->calculateTotals();    		
     		
     		$entityManager = $this->getDoctrine()->getManager();
     		foreach($invoice->getInvoiceItems() as $ii)
@@ -63,50 +62,14 @@ class InvoiceController extends AbstractController
     		$entityManager->persist($invoice);
     		$entityManager->flush();
     		
-    		return $this->redirectToRoute('invoice_pdf', array('id'=> $invoice->getId()));
+    		return $this->redirectToRoute('invoice_pdf_debug', array('id'=> $invoice->getId()));
     	}
     	
     	return $this->render('dashboard/invoice/new.html.twig', [
     			'form' => $form->createView(),
     	]);
     } 
-    
-    /**
-     * @Route("/dashboard/invoice/pdf/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}", methods={"GET"}, name="invoice_pdf")
-     */
-    public function generatePdf(Invoice $invoice)
-    {
-    	// Configure Dompdf according to your needs
-    	$pdfOptions = new Options();
-    	$pdfOptions
-    		->set('defaultFont', 'helvetica')
-    	;
-    	
-    	// Instantiate Dompdf with our options
-    	$dompdf = new Dompdf($pdfOptions);
-    	
-    	// Retrieve the HTML generated in our twig file
-    	$html = $this->renderView('dashboard/invoice/pdf.html.twig', [
-    			'invoice' => $invoice
-    	]);
-    	//return $html;
-    	
-    	$dompdf->basePath();
-    	
-    	// Load HTML to Dompdf
-    	$dompdf->loadHtml($html);
-    	
-    	// (Optional) Setup the paper size and orientation 'portrait' or 'portrait'
-    	$dompdf->setPaper('A4', 'portrait');
-    	
-    	// Render the HTML as PDF
-    	$dompdf->render();
-    	
-    	// Output the generated PDF to Browser (inline view)
-    	$dompdf->stream("mypdf.pdf", [
-    			"Attachment" => false
-    	]);
-    }
+       
     
     /**
      * @Route("/dashboard/invoice/pdf-debug/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}", methods={"GET"}, name="invoice_pdf_debug")

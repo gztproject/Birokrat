@@ -84,6 +84,11 @@ class Invoice extends Base
      * @ORM\Column(type="date", nullable=true)
      */
     private $dateServiceRenderedTo;
+
+    /**
+     * @ORM\Column(type="date")
+     */
+    private $dueDate;
     
     public function __construct()
     {
@@ -288,7 +293,7 @@ class Invoice extends Base
     		$lastNumber = $lastInvoice->getNumber();
     	else 
     	{
-    		$prefix = $organization->getInvoicePrefix();
+    		$prefix = $organization->getOrganizationSettings()->getInvoicePrefix();
     		$lastNumber = $prefix ? $prefix.'-' : '';
     		$lastNumber .= date("Y") . '-' . '0000';
     	}
@@ -355,5 +360,34 @@ class Invoice extends Base
     	}    		
     	$this->referenceNumber = $result;
     	return $this;
+    }
+
+    public function getDueDate(): ?\DateTimeInterface
+    {
+        return $this->dueDate;
+    }
+    
+    public function getDueDateString(): ?string
+    {
+    	return $this->dueDate->format('d. m. Y');
+    }
+
+    public function setDueDate(\DateTimeInterface $dueDate): self
+    {
+        $this->dueDate = $dueDate;
+
+        return $this;
+    }
+    
+    public function setDueInDays (int $days): self
+    {
+    	$this->dueDate = $this->dateOfIssue->modify('+'.$days.' day');;
+    	
+    	return $this;
+    }
+    
+    public function getDueInDays(): int
+    {	
+    	return date_diff($this->dueDate, $this->dateOfIssue, true)->format("%d");;
     }
 }

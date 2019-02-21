@@ -20,12 +20,12 @@
                     </div>                
                 </div>
                 <div class='col-md-6'>
-                    WWW:        ADD_FIELD! </br>      
-                    E-mail:     ADD_FIELD! </br>    
-                    GSM:        ADD_FIELD! </br>
+                    WWW:        {{ invoice.issuer.getWww }} </br>      
+                    E-mail:     {{ invoice.issuer.getEmail }} </br>    
+                    GSM:        {{ invoice.issuer.getMobile }} </br>
                     Davčna št.:  {{ invoice.issuer.getFullTaxNumber }}        </br>
-                    TRR:        ADD_FIELD!  </br>
-                    BIC:        ADD_FIELD!      </br>                    
+                    TRR:        {{ invoice.issuer.getAccountNumber }}  </br>
+                    BIC:        {{ invoice.issuer.getBic }}      </br>                    
                 </div>
             </div>
             </br></br>
@@ -44,8 +44,8 @@
                 <div class='col-md-6'>
                     <h4>RAČUN št.: {{ invoice.number }}</h4>
                     {{ invoice.issuer.address.post.name }}, {{ invoice.dateOfIssueString }}</br></br>
-                    Rok plačila: ADD_FIELD!</br>
-                    Zapade: ADD_FILED!</br>
+                    Rok plačila: {{ invoice.dueInDays }}</br>
+                    Zapade: {{ invoice.dueDateString }}</br>
                     Sklic/referenca: {{ invoice.referenceNumber }}</br>
                     Datum storitve: {{ invoice.dateServiceRenderedFromString }} - {{ invoice.dateServiceRenderedToString }}</br>
                     
@@ -62,7 +62,7 @@
                                 <th>EM</th>
                                 <th>Cena</th>
                                 <th>Popust</th>
-                                <th>Vrdnost</th>
+                                <th>Vrednost</th>
                             </tr>
                         </thead>
                         <tbody id='tableBody' class="invoiceItems" }}">

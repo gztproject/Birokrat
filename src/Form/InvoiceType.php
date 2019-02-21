@@ -37,6 +37,17 @@ class InvoiceType extends AbstractType
             	// prevents rendering it as type="date", to avoid HTML5 date pickers
             	'html5' => false,            	
             ])
+            ->add('dueDate', DateTimePickerType::class,[
+            		'label' => 'label.dueDate',
+            		'widget' => 'single_text',
+            		'format' => 'dd. MM. yyyy',
+            		
+            		// prevents rendering it as type="date", to avoid HTML5 date pickers
+            		'html5' => false,
+            ])
+            ->add('dueInDays', NumberType::class,[
+            		'label' => 'label.dueInDays',
+            ])
             ->add('dateServiceRenderedFrom', DateTimePickerType::class,[
             	'label' => 'label.dateServiceRenderedFrom',
             	'widget' => 'single_text',

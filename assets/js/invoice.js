@@ -11,6 +11,11 @@ $(function() {
         format: 'dd. mm. yyyy',
     });
 
+    $('#invoice_dueDate').datetimepicker({
+        locale: 'si',
+        format: 'dd. mm. yyyy',
+    });
+
      $('#invoice_dateServiceRenderedFrom').datetimepicker({
         locale: 'si', 
         format: 'dd. mm. yyyy',
