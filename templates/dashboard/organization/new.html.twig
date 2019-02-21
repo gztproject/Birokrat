@@ -7,23 +7,23 @@
               
     {{ form_start(form) }}
         <div class='row'>
-            {{ form_row(form.name) }}
+            {{ form_label(form.name) }}
             {{ form_widget(form.name, {'attr': {'class': 'form-control'}}) }} 
         </div>
         <div class='row'>
-            {{ form_row(form.shortName) }}
+            {{ form_label(form.shortName) }}
             {{ form_widget(form.shortName, {'attr': {'class': 'form-control'}}) }} 
         </div>
         <div class='row'>
-            {{ form_row(form.taxNumber) }}
+            {{ form_label(form.taxNumber) }}
             {{ form_widget(form.taxNumber, {'attr': {'class': 'form-control'}}) }}
         </div>
         <div class='row'> 
-            {{ form_row(form.taxable) }}
+            {{ form_label(form.taxable) }}
             {{ form_widget(form.taxable, {'attr': {'class': 'form-control'}}) }}
         </div>
         <div class='row'>           
-            {{ form_row(form.address) }}
+            {{ form_label(form.address) }}
             {{ form_widget(form.address, {'attr': {'class': 'form-control'}}) }}  
         
             <button type='button' id='addAddress' class='btn btn-sm btn-success' data-toggle="modal" data-target="#addAddressModal"><i class="fa fa-plus" aria-hidden="true"></i></button>
