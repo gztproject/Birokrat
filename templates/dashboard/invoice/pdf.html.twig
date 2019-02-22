@@ -44,7 +44,7 @@
                 <div class='col-md-6'>
                     <h4>RAČUN št.: {{ invoice.number }}</h4>
                     {{ invoice.issuer.address.post.name }}, {{ invoice.dateOfIssueString }}</br></br>
-                    Rok plačila: {{ invoice.dueInDays }}</br>
+                    Rok plačila: {{ invoice.dueInDays }} dni</br>
                     Zapade: {{ invoice.dueDateString }}</br>
                     Sklic/referenca: {{ invoice.referenceNumber }}</br>
                     Datum storitve: {{ invoice.dateServiceRenderedFromString }} - {{ invoice.dateServiceRenderedToString }}</br>
