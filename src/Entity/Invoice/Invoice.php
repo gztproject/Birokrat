@@ -379,9 +379,11 @@ class Invoice extends Base
         return $this;
     }
     
-    public function setDueInDays (int $days): self
+    public function setDueInDays (int $days): self    
     {
-    	$this->dueDate = $this->dateOfIssue->modify('+'.$days.' day');;
+    	//ToDo: Must be a better way to do this...
+    	$date = \DateTime::createFromFormat("U", $this->getDateOfIssue()->format('U'));
+    	$this->dueDate= $date->modify('+'.$days.' day');;
     	
     	return $this;
     }

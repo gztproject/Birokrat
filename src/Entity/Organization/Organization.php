@@ -198,12 +198,12 @@ class Organization extends Base
     
     public function getWww(): ?string
     {
-        return $this->wwwAddress;
+        return $this->www;
     }
 
     public function setWww(?string $wwwAddress): self
     {
-        $this->wwwAddress = $wwwAddress;
+        $this->www = $wwwAddress;
 
         return $this;
     }
