@@ -6,7 +6,7 @@
                 <th scope="col" class="text-center">{{ 'label.recepient'|trans }}</th>
                 <th scope="col" class="text-center">{{ 'label.reference'|trans }}</th>
                 <th scope="col" class="text-center">{{ 'label.sum'|trans }}</th>
-                <th scope="col" class="text-center">{{ 'label.state'|trans }}</th>
+                <th scope="col" class="text-center">{{ 'label.paid'|trans }}</th>
                 <th scope="col" class="text-center">{{ 'label.actions'|trans }}</th>
             </tr>
         </thead>
@@ -15,10 +15,10 @@
             {% if invoice.State.Name == 'draft' or invoice.State.Name == 'new'%}
                 <tr class="table-secondary">
             {% elseif invoice.State.Name == 'issued' %}
-                {% if invoice.dateOfIssue < date('+10days') %}
+                {% if date() > date(invoice.dueDate) %}                
                     <tr class="table-danger">
                 {% else %}
-                    <tr class="table-primary">
+                    <tr class="table-warning">
                 {% endif %}
             {% elseif invoice.State.Name == 'paid' %}
                 <tr class="table-success">
@@ -30,7 +30,14 @@
                 <td>{{ invoice.Recepient.Name }}</td>
                 <td>{{ invoice.ReferenceNumber }}</td>
                 <td>{{ invoice.TotalPrice }}</td>
-                <td>{{ invoice.State.Name }}</td>
+                <td>{% if invoice.datePaid %}
+                        {{ invoice.DatePaidString }}
+                    {% else %}
+                         <a href="{{ path('invoice_set_paid', {'id': invoice.id}) }}" class="btn btn-sm btn-default">
+                            <i class="fa fa-euro-sign" aria-hidden="true"></i> {{ 'action.setPaid'|trans }}
+                        </a>
+                    {% endif %}
+                </td>
                 <td class="text-right">
                     <div class="item-actions">
                         <a href="{{ path('invoice_pdf_debug', {'id': invoice.id}) }}" class="btn btn-sm btn-default">

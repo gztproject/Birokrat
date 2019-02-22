@@ -10,6 +10,7 @@ use App\Entity\Organization\Organization;
 use App\Entity\User\User;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Symfony\Component\Config\Definition\Exception\Exception;
+use App\Entity\Organization\Partner;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\InvoiceRepository")
@@ -28,7 +29,7 @@ class Invoice extends Base
     private $issuer;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Organization\Organization")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Organization\Partner")
      * @ORM\JoinColumn(nullable=false)
      */
     private $recepient;
@@ -90,6 +91,11 @@ class Invoice extends Base
      */
     private $dueDate;
     
+    /**
+     * @ORM\Column(type="date", nullable=true)
+     */
+    private $datePaid;
+    
     public function __construct()
     {
         $this->invoiceItems = new ArrayCollection();
@@ -124,12 +130,12 @@ class Invoice extends Base
         return $this;
     }
 
-    public function getRecepient(): ?Organization
+    public function getRecepient(): ?Partner
     {
         return $this->recepient;
     }
 
-    public function setRecepient(?Organization $recepient): self
+    public function setRecepient(?Partner $recepient): self
     {
         $this->recepient = $recepient;
 
@@ -391,5 +397,22 @@ class Invoice extends Base
     public function getDueInDays(): int
     {	
     	return date_diff($this->dueDate, $this->dateOfIssue, true)->format("%d");;
+    }
+    
+    public function getDatePaid(): ?\DateTimeInterface
+    {
+    	return $this->datePaid;
+    }
+    
+    public function getDatePaidString(): ?string
+    {
+    	return $this->datePaid->format('d. m. Y');
+    }
+    
+    public function setDatePaid(\DateTimeInterface $datePaid): self
+    {
+    	$this->datePaid = $datePaid;
+    	
+    	return $this;
     }
 }

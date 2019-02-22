@@ -70,6 +70,22 @@ class InvoiceController extends AbstractController
     	]);
     } 
        
+    /**
+     * @Route("/dashboard/invoice/pay/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}", methods={"GET"}, name="invoice_set_paid")
+     */
+    public function setPaid(Invoice $invoice): Response
+    {
+    	//ToDo: check if not already paid etc...
+    	$entityManager = $this->getDoctrine()->getManager();
+    	$invoice->setDatePaid(\DateTime::createFromFormat('U', date("U")));
+    	$state = $this->getDoctrine()->getRepository(InvoiceState::class)->findOneBy(['name'=>'paid']);
+    	$invoice->setState($state);
+    	
+    	$entityManager->persist($invoice);
+    	$entityManager->flush();
+    	
+    	return $this->redirectToRoute('invoice_index');
+    }
     
     /**
      * @Route("/dashboard/invoice/pdf-debug/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}", methods={"GET"}, name="invoice_pdf_debug")

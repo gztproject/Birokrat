@@ -8,11 +8,10 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
-use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use App\Form\Type\DateTimePickerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use App\Entity\Organization\Organization;
+use App\Entity\Organization\Partner;
 
 class InvoiceType extends AbstractType
 {
@@ -23,7 +22,7 @@ class InvoiceType extends AbstractType
         		'label' => 'label.number'
         	])        	
         	->add('recepient', EntityType::class, array(
-        			'class' => Organization::class,
+        			'class' => Partner::class,
         			'choice_label' => 'name',
         			'expanded'=>false,
         			'multiple'=>false,
