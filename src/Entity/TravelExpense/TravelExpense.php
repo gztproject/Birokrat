@@ -40,8 +40,7 @@ class TravelExpense extends Base
     private $travelStops;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\TravelExpense\TravelExpenseState")
-     * @ORM\JoinColumn(nullable=false)
+     *  @ORM\Column(type="integer")
      */
     private $state;
 
@@ -134,12 +133,12 @@ class TravelExpense extends Base
         return $this;
     }
 
-    public function getState(): ?TravelExpenseState
+    public function getState(): ?int
     {
         return $this->state;
     }
 
-    public function setState(?TravelExpenseState $state): self
+    public function setState(?int $state): self
     {
         $this->state = $state;
 

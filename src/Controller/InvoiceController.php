@@ -7,10 +7,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\Invoice\Invoice;
-use App\Entity\Invoice\InvoiceState;
 use App\Form\InvoiceType;
 use App\Repository\InvoiceRepository;
 use Symfony\Component\Validator\Constraints\DateTime;
+use App\Entity\Invoice\InvoiceNumberFactory;
 
 class InvoiceController extends AbstractController
 {    
@@ -28,18 +28,18 @@ class InvoiceController extends AbstractController
      */
     public function new(Request $request): Response
     {
-    	$invoice = new Invoice();
-    	$state = $this->getDoctrine()->getRepository(InvoiceState::class)->findOneBy(['name'=>'new']);
-    	$invoice->setState($state);
+    	$doctrine = $this->getDoctrine();
+    	$issuedBy = $this->get('security.token_storage')->getToken()->getUser();
+    	$organizations = $this->get('security.token_storage')->getToken()->getUser()->getOrganizations();
+    	$issuer = $organizations[0];
+    	if (count($organizations)>1)
+    	{
+    		//show organization picker (modal I guess)    		
+    	}
     	
-    	$invoice->setIssuedBy($this->get('security.token_storage')->getToken()->getUser());
+    	$number = InvoiceNumberFactory::factory($issuer, $doctrine)->generate();
     	
-    	$invoice->setIssuer($this->get('security.token_storage')->getToken()->getUser()->getOrganizations()[0]);
-    	
-    	$invoice->setNumber($invoice->getNewInvoiceNumber($invoice->getIssuer(), $this->getDoctrine()));
-    	
-    	$invoice->setDateOfIssue(\DateTime::createFromFormat('U', date("U")));
-    	$invoice->setDueInDays($invoice->getIssuer()->getOrganizationSettings()->getDefaultPaymentDueIn());
+    	$invoice = new Invoice($issuedBy, $issuer, $number);   	
     	
     	$form = $this->createForm(InvoiceType::class, $invoice)
     	->add('saveAndCreateNew', SubmitType::class);
@@ -47,11 +47,8 @@ class InvoiceController extends AbstractController
     	$form->handleRequest($request);
     	
     	if ($form->isSubmitted() && $form->isValid()) {
-    		
-    		$state = $this->getDoctrine()->getRepository(InvoiceState::class)->findOneBy(['name'=>'draft']);
-    		$invoice->setState($state);   
-    		$invoice->calculateReference();
-    		$invoice->calculateTotals();    		
+    		 		
+    		$invoice->setNew();
     		
     		$entityManager = $this->getDoctrine()->getManager();
     		foreach($invoice->getInvoiceItems() as $ii)
@@ -71,15 +68,48 @@ class InvoiceController extends AbstractController
     } 
        
     /**
-     * @Route("/dashboard/invoice/pay/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}", methods={"GET"}, name="invoice_set_paid")
+     * @Route("/dashboard/invoice/pay", methods={"POST"}, name="invoice_set_paid")
      */
-    public function setPaid(Invoice $invoice): Response
+    public function setPaid(Request $request): Response
     {
-    	//ToDo: check if not already paid etc...
+    	$invoice = $this->getDoctrine()->getRepository(Invoice::class)->findOneBy(['id'=>$request->request->get('id', null)]);
     	$entityManager = $this->getDoctrine()->getManager();
-    	$invoice->setDatePaid(\DateTime::createFromFormat('U', date("U")));
-    	$state = $this->getDoctrine()->getRepository(InvoiceState::class)->findOneBy(['name'=>'paid']);
-    	$invoice->setState($state);
+    	    	
+    	$invoice->setPaid();
+    	    	
+    	$entityManager->persist($invoice);
+    	$entityManager->flush();
+    	
+    	return $this->redirectToRoute('invoice_index');
+    }
+    
+    /**
+     * @Route("/dashboard/invoice/issue", methods={"POST"}, name="invoice_issue")
+     */
+    public function issue(Request $request): Response
+    {
+    	$invoice = $this->getDoctrine()->getRepository(Invoice::class)->findOneBy(['id'=>$request->request->get('id', null)]);
+    	$entityManager = $this->getDoctrine()->getManager();
+    	
+    	$invoice->setIssued();
+    	
+    	$entityManager->persist($invoice);
+    	$entityManager->flush();
+    	
+    	return $this->render('dashboard/invoice/pdf.html.twig', [
+    			'invoice' => $invoice
+    	]);   
+    }
+    
+    /**
+     * @Route("/dashboard/invoice/cancel", methods={"POST"}, name="invoice_cancel")
+     */
+    public function cancel(Request $request): Response
+    {
+    	$invoice = $this->getDoctrine()->getRepository(Invoice::class)->findOneBy(['id'=>$request->request->get('id', null)]);
+    	$entityManager = $this->getDoctrine()->getManager();
+    	
+    	$invoice->cancel($request->request->get('id', ""));
     	
     	$entityManager->persist($invoice);
     	$entityManager->flush();

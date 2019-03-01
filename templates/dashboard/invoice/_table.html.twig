@@ -12,16 +12,18 @@
         </thead>
         <tbody>
         {% for invoice in invoices %}
-            {% if invoice.State.Name == 'draft' or invoice.State.Name == 'new'%}
+            {% if invoice.State == 00 or invoice.State == 10%}
                 <tr class="table-secondary">
-            {% elseif invoice.State.Name == 'issued' %}
+            {% elseif invoice.State == 20 %}
                 {% if date() > date(invoice.dueDate) %}                
-                    <tr class="table-danger">
-                {% else %}
                     <tr class="table-warning">
+                {% else %}
+                    <tr class="table-info">
                 {% endif %}
-            {% elseif invoice.State.Name == 'paid' %}
+            {% elseif invoice.State == 30 %}
                 <tr class="table-success">
+            {% elseif invoice.State == 40 %}
+                <tr class="table-danger">
             {% else %}
                 <tr class="table-primary">
             {% endif %}
@@ -33,19 +35,31 @@
                 <td>{% if invoice.datePaid %}
                         {{ invoice.DatePaidString }}
                     {% else %}
-                         <a href="{{ path('invoice_set_paid', {'id': invoice.id}) }}" class="btn btn-sm btn-default">
-                            <i class="fa fa-euro-sign" aria-hidden="true"></i> {{ 'action.setPaid'|trans }}
-                        </a>
+                         {{ 'label.notPaid'|trans }}
                     {% endif %}
                 </td>
                 <td class="text-right">
-                    <div class="item-actions">
+                    <div class="item-actions">                        
+                        {% if invoice.State == 00 or invoice.State == 10 %}
+                            <a href="{{ path('invoice_pdf_debug', {'id': invoice.id}) }}" class="btn btn-sm btn-primary">
+                                <i class="fa fa-edit" aria-hidden="true"></i> {{ 'action.edit'|trans }}
+                            </a>
+                            <a href="{{ path('invoice_cancel', {'id': invoice.id, 'reason': "test"}) }}" class="btn btn-sm btn-danger">
+                                <i class="fa fa-times" aria-hidden="true"></i> {{ 'action.cancel'|trans }}
+                            </a>
+                        {% endif %} 
+                        {% if invoice.State == 10 %}
+                            <button class="btn btn-sm btn-success" type="submit" name="id" value={{ invoice.id }}><i class="fa fa-share-square" aria-hidden="true"></i> 
+                                    {{ 'action.setIssued'|trans }}
+                            </button>                                                      
+                        {% endif %}
+                        {% if invoice.State == 20 %}
+                        <a href="{{ path('invoice_set_paid', {'id': invoice.id}) }}" class="btn btn-sm btn-success">
+                            <i class="fa fa-euro-sign" aria-hidden="true"></i> {{ 'action.setPaid'|trans }}
+                        </a>
+                        {% endif %}
                         <a href="{{ path('invoice_pdf_debug', {'id': invoice.id}) }}" class="btn btn-sm btn-default">
                             <i class="fa fa-eye" aria-hidden="true"></i> {{ 'action.show'|trans }}
-                        </a>
-
-                        <a href="{{ path('invoice_pdf_debug', {'id': invoice.id}) }}" class="btn btn-sm btn-primary">
-                            <i class="fa fa-edit" aria-hidden="true"></i> {{ 'action.edit'|trans }}
                         </a>
                     </div>
                 </td>
