@@ -121,6 +121,18 @@
                 <source>action.save</source>
                 <target>Shrani spremembe</target>
             </trans-unit>
+            <trans-unit id="action.cancel">
+                <source>action.cancel</source>
+                <target>Prekliči</target>
+            </trans-unit>
+            <trans-unit id="action.setIssued">
+                <source>action.setIssued</source>
+                <target>Izdaj</target>
+            </trans-unit>
+            <trans-unit id="action.setPaid">
+                <source>action.setPaid</source>
+                <target>Plačano</target>
+            </trans-unit>
             <trans-unit id="action.delete_user">
                 <source>action.delete_user</source>
                 <target>Izbriši uporabnika</target>
@@ -436,6 +448,34 @@
             <trans-unit id="menu.users">
                 <source>menu.users</source>
                 <target>Uporabniki</target>
+            </trans-unit>
+            <trans-unit id="menu.POC.bootswatch">
+                <source>menu.POC.bootswatch</source>
+                <target>POC Bootswatch</target>
+            </trans-unit>
+            <trans-unit id="menu.POC.typeahead">
+                <source>menu.POC.typeahead</source>
+                <target>POC typeahead</target>
+            </trans-unit>
+             <trans-unit id="label.invoiceNumber">
+                <source>label.invoiceNumber</source>
+                <target>Številka</target>
+            </trans-unit>
+             <trans-unit id="label.reference">
+                <source>label.reference</source>
+                <target>Referenca</target>
+            </trans-unit>
+             <trans-unit id="label.sum">
+                <source>label.sum</source>
+                <target>Vsota</target>
+            </trans-unit>
+            <trans-unit id="label.paid">
+                <source>label.paid</source>
+                <target>Plačano</target>
+            </trans-unit>
+            <trans-unit id="label.notPaid">
+                <source>label.notPaid</source>
+                <target> - </target>
             </trans-unit>
             <trans-unit id="label.recepient">
                 <source>label.recepient</source>

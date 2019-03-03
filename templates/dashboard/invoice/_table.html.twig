@@ -43,24 +43,26 @@
                         {% if invoice.State == 00 or invoice.State == 10 %}
                             <a href="{{ path('invoice_pdf_debug', {'id': invoice.id}) }}" class="btn btn-sm btn-primary">
                                 <i class="fa fa-edit" aria-hidden="true"></i> {{ 'action.edit'|trans }}
-                            </a>
-                            <a href="{{ path('invoice_cancel', {'id': invoice.id, 'reason': "test"}) }}" class="btn btn-sm btn-danger">
-                                <i class="fa fa-times" aria-hidden="true"></i> {{ 'action.cancel'|trans }}
-                            </a>
+                            </a>                                                        
                         {% endif %} 
                         {% if invoice.State == 10 %}
-                            <button class="btn btn-sm btn-success" type="submit" name="id" value={{ invoice.id }}><i class="fa fa-share-square" aria-hidden="true"></i> 
+                            <button class="set-issued btn btn-sm btn-success" type="submit" name="id" value={{ invoice.id }}><i class="fa fa-share-square" aria-hidden="true"></i> 
                                     {{ 'action.setIssued'|trans }}
                             </button>                                                      
                         {% endif %}
                         {% if invoice.State == 20 %}
-                        <a href="{{ path('invoice_set_paid', {'id': invoice.id}) }}" class="btn btn-sm btn-success">
-                            <i class="fa fa-euro-sign" aria-hidden="true"></i> {{ 'action.setPaid'|trans }}
-                        </a>
+                            <button class="set-paid btn btn-sm btn-success" type="submit" name="id" value={{ invoice.id }}><i class="fa fa-euro-sign" aria-hidden="true"></i> 
+                                    {{ 'action.setPaid'|trans }}
+                            </button>                        
                         {% endif %}
+                        {% if invoice.State == 00 or invoice.State == 10 %}
+                        <button class="cancel btn btn-sm btn-danger" type="submit" name="id" value={{ invoice.id }}><i class="fa fa-times" aria-hidden="true"></i> 
+                                    {{ 'action.cancel'|trans }}
+                        </button>
+                        {% endif %} 
                         <a href="{{ path('invoice_pdf_debug', {'id': invoice.id}) }}" class="btn btn-sm btn-default">
                             <i class="fa fa-eye" aria-hidden="true"></i> {{ 'action.show'|trans }}
-                        </a>
+                        </a>                        
                     </div>
                 </td>
             </tr>
@@ -71,3 +73,33 @@
         {% endfor %}    
     </tbody>
     </table>
+    
+    <!-- Modal -->
+<div id="cancelReasonModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">{{ 'label.cancel_reason'|trans }}</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        
+      </div>
+      <div class="modal-body">
+        <div class='row'>
+            <form>            
+                {{ 'label.cancel_reason'|trans }}:<br>
+                <input id='cancelReason' type="text" name="reason">    
+                <input id='cancelId' type="text" name="id" hidden='true'>  
+            </form> 
+        </div>        
+      </div>
+      <div class="modal-footer">
+        <button id='submitCancel' type="submit" class="btn btn-danger" ><i class="fa fa-times" aria-hidden="true"></i> {{ 'action.cancel'|trans }}</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'label.close'|trans }}</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+

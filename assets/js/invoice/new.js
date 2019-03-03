@@ -1,5 +1,5 @@
 import 'eonasdan-bootstrap-datetimepicker';
-import 'bootstrap-tagsinput';
+import moment from 'moment';
 
 $(function() {
     // Datetime picker initialization.
@@ -45,10 +45,34 @@ jQuery(document).ready(function() {
     $collectionHolder.data('index', $collectionHolder.find(':input').length);
     addInvoiceItemForm($collectionHolder, $addInvoiceItemButton, 1);
         
-    $('#add-invoice-item').on('click', function(e) {
+    $('#add-invoice-item').on('click', function() {
         // add a new tag form (see next code block)
         addInvoiceItemForm($collectionHolder, $addInvoiceItemButton, 1);        
     });
+
+    $('#invoice_dueDate').on('dp.change', function(){
+       var dueDate = moment($(this).data("DateTimePicker").date());
+       var issueDate = moment($('#invoice_dateOfIssue').data("DateTimePicker").date());
+       var days = dueDate.diff(issueDate, 'days');       
+       $('#invoice_dueInDays').val(days);
+    });
+
+    $('#invoice_dateOfIssue').on('dp.change', function(){
+        var issueDate = moment($(this).data("DateTimePicker").date());
+        $('#invoice_dateServiceRenderedTo').data("DateTimePicker").date(issueDate.format('L'));
+        
+        var days = $('#invoice_dueInDays').val();    
+        var date = issueDate.add(days, 'days').format('L');  
+        $('#invoice_dueDate').data("DateTimePicker").date(date);
+        
+    });
+
+    $('#invoice_dueInDays').on('change', function(){
+        var issueDate = moment($('#invoice_dateOfIssue').data("DateTimePicker").date());
+        var date = issueDate.add($(this).val(), 'days').format('L');       
+        $('#invoice_dueDate').data("DateTimePicker").date(date);
+    });
+    
 });
 
 function addInvoiceItemForm($collectionHolder, $addRemoveInvoiceItemButtons, $number) {

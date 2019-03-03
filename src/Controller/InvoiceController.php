@@ -109,7 +109,7 @@ class InvoiceController extends AbstractController
     	$invoice = $this->getDoctrine()->getRepository(Invoice::class)->findOneBy(['id'=>$request->request->get('id', null)]);
     	$entityManager = $this->getDoctrine()->getManager();
     	
-    	$invoice->cancel($request->request->get('id', ""));
+    	$invoice->cancel($request->request->get('reason', ""));
     	
     	$entityManager->persist($invoice);
     	$entityManager->flush();

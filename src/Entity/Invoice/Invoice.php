@@ -96,6 +96,16 @@ class Invoice extends Base
     private $datePaid;
     
     /**
+     * @ORM\Column(type="date", nullable=true)
+     */
+    private $dateCancelled;
+    
+    /**
+     * @ORM\Column(type="string", length=100, nullable=true)
+     */
+    private $cancelReason;
+    
+    /**
      * Creates new invoice
      *
      * @param User $issuedBy User that created the invoice
@@ -483,5 +493,34 @@ class Invoice extends Base
     	
     	return $this;
     }    
+    
+    public function getDateCancelled(): ?\DateTimeInterface
+    {
+    	return $this->dateCancelled;
+    }
+    
+    public function getDateCancelledString(): ?string
+    {
+    	return $this->dateCancelled->format('d. m. Y');
+    }
+    
+    private function setDateCancelled(\DateTimeInterface $dateCancelled): self
+    {
+    	$this->dateCancelled = $dateCancelled;
+    	
+    	return $this;
+    } 
+    
+    public function getCancelReason(): ?string
+    {
+    	return $this->cancelReason;
+    }
+    
+    private function setCancelReason(string $cancelReason): self
+    {
+    	$this->cancelReason = $cancelReason;
+    	
+    	return $this;
+    }
    
 }
