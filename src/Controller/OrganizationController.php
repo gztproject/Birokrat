@@ -11,7 +11,7 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use App\Entity\Geography\Address;
 use App\Entity\Organization\Organization;
-use App\Repository\OrganizationRepository;
+use App\Repository\Organization\OrganizationRepository;
 
 class OrganizationController extends AbstractController
 {

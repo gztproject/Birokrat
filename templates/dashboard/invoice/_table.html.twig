@@ -1,36 +1,105 @@
 <table class="table table-hover">
         <thead>
             <tr>
-                <th scope="col">{{ 'label.username'|trans }}</th>
-                <th scope="col"><i class="fa fa-calendar" aria-hidden="true"></i> {{ 'label.email'|trans }}</th>
-                <th scope="col" class="text-center"><i class="fa fa-cogs" aria-hidden="true"></i> {{ 'label.actions'|trans }}</th>
+                <th scope="col">{{ 'label.invoiceNumber'|trans }}</th>
+                <th scope="col"><i class="fa fa-calendar" aria-hidden="true"></i> {{ 'label.dateOfIssue'|trans }}</th>
+                <th scope="col" class="text-center">{{ 'label.recepient'|trans }}</th>
+                <th scope="col" class="text-center">{{ 'label.reference'|trans }}</th>
+                <th scope="col" class="text-center">{{ 'label.sum'|trans }}</th>
+                <th scope="col" class="text-center">{{ 'label.paid'|trans }}</th>
+                <th scope="col" class="text-center">{{ 'label.actions'|trans }}</th>
             </tr>
         </thead>
         <tbody>
-    {% for invoice in invoices %}
-            <tr class="table-primary">
+        {% for invoice in invoices %}
+            {% if invoice.State == 00 or invoice.State == 10%}
+                <tr class="table-secondary">
+            {% elseif invoice.State == 20 %}
+                {% if date() > date(invoice.dueDate) %}                
+                    <tr class="table-warning">
+                {% else %}
+                    <tr class="table-info">
+                {% endif %}
+            {% elseif invoice.State == 30 %}
+                <tr class="table-success">
+            {% elseif invoice.State == 40 %}
+                <tr class="table-danger">
+            {% else %}
+                <tr class="table-primary">
+            {% endif %}
                 <td>{{ invoice.number }}</td>
                 <td>{{ invoice.dateOfIssueString }}</td>
                 <td>{{ invoice.Recepient.Name }}</td>
                 <td>{{ invoice.ReferenceNumber }}</td>
                 <td>{{ invoice.TotalPrice }}</td>
-                <td>{{ invoice.State.Name }}</td>
+                <td>{% if invoice.datePaid %}
+                        {{ invoice.DatePaidString }}
+                    {% else %}
+                         {{ 'label.notPaid'|trans }}
+                    {% endif %}
+                </td>
                 <td class="text-right">
-                    <div class="item-actions">
-                        <a href="{{ path('admin_user_show', {'id': invoice.id}) }}" class="btn btn-sm btn-default">
+                    <div class="item-actions">                        
+                        {% if invoice.State == 00 or invoice.State == 10 %}
+                            <a href="{{ path('invoice_pdf_debug', {'id': invoice.id}) }}" class="btn btn-sm btn-primary">
+                                <i class="fa fa-edit" aria-hidden="true"></i> {{ 'action.edit'|trans }}
+                            </a>                                                        
+                        {% endif %} 
+                        {% if invoice.State == 10 %}
+                            <button class="set-issued btn btn-sm btn-success" type="submit" name="id" value={{ invoice.id }}><i class="fa fa-share-square" aria-hidden="true"></i> 
+                                    {{ 'action.setIssued'|trans }}
+                            </button>                                                      
+                        {% endif %}
+                        {% if invoice.State == 20 %}
+                            <button class="set-paid btn btn-sm btn-success" type="submit" name="id" value={{ invoice.id }}><i class="fa fa-euro-sign" aria-hidden="true"></i> 
+                                    {{ 'action.setPaid'|trans }}
+                            </button>                        
+                        {% endif %}
+                        {% if invoice.State == 00 or invoice.State == 10 %}
+                        <button class="cancel btn btn-sm btn-danger" type="submit" name="id" value={{ invoice.id }}><i class="fa fa-times" aria-hidden="true"></i> 
+                                    {{ 'action.cancel'|trans }}
+                        </button>
+                        {% endif %} 
+                        <a href="{{ path('invoice_pdf_debug', {'id': invoice.id}) }}" class="btn btn-sm btn-default">
                             <i class="fa fa-eye" aria-hidden="true"></i> {{ 'action.show'|trans }}
-                        </a>
-
-                        <a href="{{ path('admin_user_edit', {'id': invoice.id}) }}" class="btn btn-sm btn-primary">
-                            <i class="fa fa-edit" aria-hidden="true"></i> {{ 'action.edit'|trans }}
-                        </a>
+                        </a>                        
                     </div>
                 </td>
             </tr>
         {% else %}
             <tr class="table-warning">
-                <td colspan="4" align="center">{{ 'invoice.no_invoices_found'|trans }}</td>
+                <td colspan="7" align="center">{{ 'invoice.no_invoices_found'|trans }}</td>
            </tr>
         {% endfor %}    
     </tbody>
     </table>
+    
+    <!-- Modal -->
+<div id="cancelReasonModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">{{ 'label.cancel_reason'|trans }}</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        
+      </div>
+      <div class="modal-body">
+        <div class='row'>
+            <form>            
+                {{ 'label.cancel_reason'|trans }}:<br>
+                <input id='cancelReason' type="text" name="reason">    
+                <input id='cancelId' type="text" name="id" hidden='true'>  
+            </form> 
+        </div>        
+      </div>
+      <div class="modal-footer">
+        <button id='submitCancel' type="submit" class="btn btn-danger" ><i class="fa fa-times" aria-hidden="true"></i> {{ 'action.cancel'|trans }}</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'label.close'|trans }}</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+

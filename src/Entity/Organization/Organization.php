@@ -2,6 +2,7 @@
 
 namespace App\Entity\Organization;
 
+use App\Entity\Settings\OrganizationSettings;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -10,122 +11,23 @@ use App\Entity\User\User;
 use App\Entity\Geography\Address;
 
 /**
- * @ORM\Entity(repositoryClass="App\Repository\OrganizationRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\Organization\OrganizationRepository")
  */
-class Organization extends Base
+class Organization extends LegalEntityBase
 {
-    /**
-     * @ORM\Column(type="string", length=50)
-     */
-    private $code;
-
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $name;
-
-    /**
-     * @ORM\Column(type="string", length=100, nullable=true)
-     */
-    private $shortName;
-
-    /**
-     * @ORM\Column(type="integer")
-     */
-    private $taxNumber;
-
-    /**
-     * @ORM\Column(type="boolean")
-     */
-    private $taxable;
-
     /**
      * @ORM\ManyToMany(targetEntity="App\Entity\User\User", inversedBy="organizations")
      */
     private $users;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Geography\Address")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\OneToOne(targetEntity="App\Entity\Settings\OrganizationSettings", mappedBy="organization", cascade={"persist", "remove"})
      */
-    private $address;
-    
-    //Move to OrganizationSettings at some point...
-    /**
-     * @ORM\Column(type="string", length=100, nullable=true)
-     */
-    private $invoicePrefix;
+    private $organizationSettings;
 
     public function __construct()
     {
         $this->users = new ArrayCollection();
-    }
-
-    public function getCode(): ?string
-    {
-        return $this->code;
-    }
-
-    public function setCode(string $code): self
-    {
-        $this->code = $code;
-
-        return $this;
-    }
-
-    public function getName(): ?string
-    {
-        return $this->name;
-    }
-
-    public function setName(string $name): self
-    {
-        $this->name = $name;
-
-        return $this;
-    }
-
-    public function getShortName(): ?string
-    {
-        return $this->shortName;
-    }
-
-    public function setShortName(?string $shortName): self
-    {
-        $this->shortName = $shortName;
-
-        return $this;
-    }
-
-    public function getTaxNumber(): ?int
-    {
-        return $this->taxNumber;
-    }
-    
-    public function getFullTaxNumber(): string
-    {
-    	if($this->taxable)
-    		return "SI ".$this->taxNumber;
-    	return $this->taxNumber;
-    }
-
-    public function setTaxNumber(int $taxNumber): self
-    {
-        $this->taxNumber = $taxNumber;
-
-        return $this;
-    }
-
-    public function getTaxable(): ?bool
-    {
-        return $this->taxable;
-    }
-
-    public function setTaxable(bool $taxable): self
-    {
-        $this->taxable = $taxable;
-
-        return $this;
     }
 
     /**
@@ -152,29 +54,24 @@ class Organization extends Base
         }
 
         return $this;
-    }
+    }    
 
-    public function getAddress(): ?Address
+    public function getOrganizationSettings(): ?OrganizationSettings
     {
-        return $this->address;
+        return $this->organizationSettings;
     }
 
-    public function setAddress(Address $address): self
-    {        
-        $this->address = $address;   
+    public function setOrganizationSettings(?OrganizationSettings $organizationSettings): self
+    {
+        $this->organizationSettings = $organizationSettings;
+
+        //ToDo: Remove orphans.
+        // set (or unset) the owning side of the relation if necessary
+        $newOrganization = $organizationSettings === null ? null : $this;
+        if ($newOrganization !== $organizationSettings->getOrganization()) {
+            $organizationSettings->setOrganization($newOrganization);
+        }
+
         return $this;
-    }
-        
-    //Move to OrganizationSettings sometime
-    public function getInvoicePrefix(): ?string
-    {
-    	return $this->invoicePrefix;
-    }
-    
-    public function setInvoicePrefix(?string $invoicePrefix): self
-    {
-    	$this->invoicePrefix = $invoicePrefix;
-    	
-    	return $this;
-    }
+    }    
 }

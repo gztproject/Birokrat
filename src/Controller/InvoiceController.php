@@ -1,18 +1,16 @@
 <?php 
 namespace App\Controller;
 
-use Dompdf\Dompdf;
-use Dompdf\Options;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\Invoice\Invoice;
-use App\Entity\Invoice\InvoiceState;
 use App\Form\InvoiceType;
 use App\Repository\InvoiceRepository;
 use Symfony\Component\Validator\Constraints\DateTime;
+use App\Entity\Invoice\InvoiceNumberFactory;
 
 class InvoiceController extends AbstractController
 {    
@@ -30,17 +28,18 @@ class InvoiceController extends AbstractController
      */
     public function new(Request $request): Response
     {
-    	$invoice = new Invoice();
-    	$state = $this->getDoctrine()->getRepository(InvoiceState::class)->findOneBy(['name'=>'new']);
-    	$invoice->setState($state);
+    	$doctrine = $this->getDoctrine();
+    	$issuedBy = $this->get('security.token_storage')->getToken()->getUser();
+    	$organizations = $this->get('security.token_storage')->getToken()->getUser()->getOrganizations();
+    	$issuer = $organizations[0];
+    	if (count($organizations)>1)
+    	{
+    		//show organization picker (modal I guess)    		
+    	}
     	
-    	$invoice->setIssuedBy($this->get('security.token_storage')->getToken()->getUser());
+    	$number = InvoiceNumberFactory::factory($issuer, $doctrine)->generate();
     	
-    	$invoice->setIssuer($this->get('security.token_storage')->getToken()->getUser()->getOrganizations()[0]);
-    	
-    	$invoice->setNumber($invoice->getNewInvoiceNumber($invoice->getIssuer(), $this->getDoctrine()));
-    	
-    	$invoice->setDateOfIssue(\DateTime::createFromFormat('U', date("U")));
+    	$invoice = new Invoice($issuedBy, $issuer, $number);   	
     	
     	$form = $this->createForm(InvoiceType::class, $invoice)
     	->add('saveAndCreateNew', SubmitType::class);
@@ -48,11 +47,8 @@ class InvoiceController extends AbstractController
     	$form->handleRequest($request);
     	
     	if ($form->isSubmitted() && $form->isValid()) {
-    		
-    		$state = $this->getDoctrine()->getRepository(InvoiceState::class)->findOneBy(['name'=>'draft']);
-    		$invoice->setState($state);   
-    		$invoice->calculateReference();
-    		$invoice->calculateTotals();
+    		 		
+    		$invoice->setNew();
     		
     		$entityManager = $this->getDoctrine()->getManager();
     		foreach($invoice->getInvoiceItems() as $ii)
@@ -63,49 +59,62 @@ class InvoiceController extends AbstractController
     		$entityManager->persist($invoice);
     		$entityManager->flush();
     		
-    		return $this->redirectToRoute('invoice_pdf', array('id'=> $invoice->getId()));
+    		return $this->redirectToRoute('invoice_pdf_debug', array('id'=> $invoice->getId()));
     	}
     	
     	return $this->render('dashboard/invoice/new.html.twig', [
     			'form' => $form->createView(),
     	]);
     } 
+       
+    /**
+     * @Route("/dashboard/invoice/pay", methods={"POST"}, name="invoice_set_paid")
+     */
+    public function setPaid(Request $request): Response
+    {
+    	$invoice = $this->getDoctrine()->getRepository(Invoice::class)->findOneBy(['id'=>$request->request->get('id', null)]);
+    	$entityManager = $this->getDoctrine()->getManager();
+    	    	
+    	$invoice->setPaid();
+    	    	
+    	$entityManager->persist($invoice);
+    	$entityManager->flush();
+    	
+    	return $this->redirectToRoute('invoice_index');
+    }
     
     /**
-     * @Route("/dashboard/invoice/pdf/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}", methods={"GET"}, name="invoice_pdf")
+     * @Route("/dashboard/invoice/issue", methods={"POST"}, name="invoice_issue")
      */
-    public function generatePdf(Invoice $invoice)
+    public function issue(Request $request): Response
     {
-    	// Configure Dompdf according to your needs
-    	$pdfOptions = new Options();
-    	$pdfOptions
-    		->set('defaultFont', 'helvetica')
-    	;
+    	$invoice = $this->getDoctrine()->getRepository(Invoice::class)->findOneBy(['id'=>$request->request->get('id', null)]);
+    	$entityManager = $this->getDoctrine()->getManager();
     	
-    	// Instantiate Dompdf with our options
-    	$dompdf = new Dompdf($pdfOptions);
+    	$invoice->setIssued();
     	
-    	// Retrieve the HTML generated in our twig file
-    	$html = $this->renderView('dashboard/invoice/pdf.html.twig', [
+    	$entityManager->persist($invoice);
+    	$entityManager->flush();
+    	
+    	return $this->render('dashboard/invoice/pdf.html.twig', [
     			'invoice' => $invoice
-    	]);
-    	//return $html;
+    	]);   
+    }
+    
+    /**
+     * @Route("/dashboard/invoice/cancel", methods={"POST"}, name="invoice_cancel")
+     */
+    public function cancel(Request $request): Response
+    {
+    	$invoice = $this->getDoctrine()->getRepository(Invoice::class)->findOneBy(['id'=>$request->request->get('id', null)]);
+    	$entityManager = $this->getDoctrine()->getManager();
     	
-    	$dompdf->basePath();
+    	$invoice->cancel($request->request->get('reason', ""));
     	
-    	// Load HTML to Dompdf
-    	$dompdf->loadHtml($html);
+    	$entityManager->persist($invoice);
+    	$entityManager->flush();
     	
-    	// (Optional) Setup the paper size and orientation 'portrait' or 'portrait'
-    	$dompdf->setPaper('A4', 'portrait');
-    	
-    	// Render the HTML as PDF
-    	$dompdf->render();
-    	
-    	// Output the generated PDF to Browser (inline view)
-    	$dompdf->stream("mypdf.pdf", [
-    			"Attachment" => false
-    	]);
+    	return $this->redirectToRoute('invoice_index');
     }
     
     /**

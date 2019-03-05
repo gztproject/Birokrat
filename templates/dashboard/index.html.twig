@@ -5,7 +5,7 @@
 {% block main %}
 
 <div class="row">
-    <div class="col-6">
+    <div class="col-12">
         <div class="bs-component">
             <div class="card text-white bg-primary">
                 <div class="card-header">
@@ -17,7 +17,9 @@
             </div>
         </div>        
     </div>
-    <div class="col-6">
+</div>
+<div class="row">    
+    <div class="col-12">
         <div class="bs-component">
             <div class="card text-white bg-primary">
                 <div class="card-header">
@@ -63,4 +65,9 @@
         </a>
     </div>
 
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('js/invoice/list') }}
 {% endblock %}

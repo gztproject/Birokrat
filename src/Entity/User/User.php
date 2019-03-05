@@ -2,6 +2,7 @@
 
 namespace App\Entity\User;
 
+use App\Entity\Settings\UserSettings;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -79,6 +80,11 @@ class User extends Base implements UserInterface, \Serializable
      * @ORM\ManyToMany(targetEntity="App\Entity\Organization\Organization", mappedBy="users")
      */
     private $organizations;
+
+    /**
+     * @ORM\OneToOne(targetEntity="App\Entity\Settings\UserSettings", mappedBy="user" , cascade={"persist", "remove"})
+     */
+    private $userSettings;
     
     public function __construct()
     {
@@ -298,5 +304,23 @@ class User extends Base implements UserInterface, \Serializable
         }
 
         return $this;
+    }
+
+    public function getUserSettings(): ?UserSettings
+    {
+        return $this->userSettings;
+    }
+
+    public function setUserSettings(?UserSettings $userSettings): self
+    {
+    	$this->userSettings = $userSettings;
+    	
+    	// set (or unset) the owning side of the relation if necessary
+    	$newUser = $userSettings === null ? null : $this;
+    	if ($newUser !== $userSettings->getUser()) {
+    		$userSettings->setOrganization($newUser);
+    	}
+    	
+    	return $this;
     }
 }

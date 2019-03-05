@@ -1,4 +1,3 @@
-Name	ShortName	Code	Address1	Address2	postCodeInternational	TaxNumber	Taxable	InvoicePrefix
-Tehnične storitve Gašper Doljak, GZT s.p.	GZT s.p.	1	Trata 7		SI-4220	67589472	FALSE	GZT
-Gašper Doljak, samozaposlen v kulturi, oblikovalec zvoka	Gašper Doljak	2	Trata 7		SI-4220	67589472	FALSE	GD
-Kreker, Kreativno umetniška družba, d.o.o.	Kreker d.o.o.	3	Križna ulica 19		SI-1000	71223789	TRUE	
+Name	ShortName	Code	Address1	Address2	postCodeInternational	TaxNumber	Taxable	InvoicePrefix	www	mobile	phone	email	defaultPaymentDueIn	referenceModel	accountNumber	bic
+Tehnične storitve Gašper Doljak, GZT s.p.	GZT s.p.	1	Trata 7		SI-4220	67589472	FALSE	GZT	http://www.gzt.si	+386 (0)40 352 071		info@gzt-project.si	10	SI01	SI56 6100 0001 5609 393	HDELSI22
+Gašper Doljak, samozaposlen v kulturi, oblikovalec zvoka	Gašper Doljak	2	Trata 7		SI-4220	67589472	FALSE	GD	http://www.gzt.si	+386 (0)40 352 071		info@gzt-project.si	10	SI01	SI56 6100 0001 5609 393	HDELSI22
