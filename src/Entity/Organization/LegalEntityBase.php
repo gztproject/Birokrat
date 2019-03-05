@@ -72,11 +72,30 @@ class LegalEntityBase extends Base
      */
     protected $bic;
 
-    public function __construct()
+    public function init (string $code, string $name, int $taxNumber, bool $taxable, Address $address, string $shortName = null,
+    	string $www = null, string $email = null, string $phone = null, string $mobile = null, string $accountNumber = null, string $bic = null)
     {
-        $this->users = new ArrayCollection();
+    	$this->setCode($code);
+    	$this->setName($name);
+    	$this->setTaxNumber($taxNumber);
+    	$this->setTaxable($taxable);
+    	$this->setAddress($address);
+    	if($shortName)
+    		$this->setShortName($shortName);
+    	if($www)
+    		$this->setWww($www);
+    	if($email)
+    		$this->setEmail($email);
+    	if($phone)
+    		$this->setPhone($phone);
+    	if($mobile)
+    		$this->setMobile($mobile);
+    	if($accountNumber)
+    		$this->setAccountNumber($accountNumber);
+    	if($bic)
+    		$this->setBic($bic);
     }
-
+    
     public function getCode(): ?string
     {
         return $this->code;
