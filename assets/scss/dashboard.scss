@@ -1,8 +1,8 @@
 @import '~@fortawesome/fontawesome-free/css/all.css';
 
 
-@import "~bootswatch/dist/slate/_variables.scss";
+@import "node_modules/bootswatch/dist/slate/_variables.scss";
 @import "node_modules/bootswatch/dist/slate/bootstrap.scss";
-@import "~bootstrap-sass/assets/stylesheets/_bootstrap-custom.scss";
-@import "~bootswatch/dist/slate/_bootswatch.scss";
-@import "~eonasdan-bootstrap-datetimepicker/src/sass/bootstrap-datetimepicker-build.scss";
+@import "node_modules/bootstrap-sass/assets/stylesheets/_bootstrap-custom.scss";
+@import "node_modules/bootswatch/dist/slate/_bootswatch.scss";
+@import "node_modules/eonasdan-bootstrap-datetimepicker/src/sass/bootstrap-datetimepicker-build.scss";
