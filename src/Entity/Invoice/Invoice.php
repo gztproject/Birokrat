@@ -10,7 +10,7 @@ use App\Entity\Organization\Organization;
 use App\Entity\User\User;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Symfony\Component\Config\Definition\Exception\Exception;
-use App\Entity\Organization\Partner;
+use App\Entity\Organization\Client;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\InvoiceRepository")
@@ -29,7 +29,7 @@ class Invoice extends Base
     private $issuer;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Organization\Partner")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Organization\Client")
      * @ORM\JoinColumn(nullable=false)
      */
     private $recepient;
@@ -338,12 +338,12 @@ class Invoice extends Base
     	return $this;
     }
     
-    public function getRecepient(): ?Partner
+    public function getRecepient(): ?Client
     {
     	return $this->recepient;
     }
     
-    public function setRecepient(?Partner $recepient): self
+    public function setRecepient(?Client $recepient): self
     {
     	$this->recepient = $recepient;
     	
