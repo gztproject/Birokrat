@@ -1,0 +1,22 @@
+<table class="table table-hover">
+        <thead>
+            <tr>
+                <th scope="col"><i class="fa fa-calendar" aria-hidden="true"></i>{{ 'label.date'|trans }}</th>
+                <th scope="col"><i class="fa fa-map-marked-alt" aria-hidden="true"></i> {{ 'label.sum'|trans }}</th>
+                <th scope="col"><i class="fa fa-tape" aria-hidden="true"></i> {{ 'label.konto'|trans }}</th>
+            </tr>
+        </thead>
+        <tbody>
+    {% for transaction in transactions %}
+            <tr class="table-primary">
+                <td>{{ transaction.dateString }}</td>
+                <td>{{ transaction.sum }}</td>
+                <td>{{ transaction.konto.name }}</td>
+            </tr>
+        {% else %}
+            <tr class="table-warning">
+                <td colspan="4" align="center">{{ 'transaction.no_transactions_found'|trans }}</td>
+           </tr>
+        {% endfor %}    
+    </tbody>
+    </table>

@@ -11,6 +11,7 @@ use App\Form\InvoiceType;
 use App\Repository\InvoiceRepository;
 use Symfony\Component\Validator\Constraints\DateTime;
 use App\Entity\Invoice\InvoiceNumberFactory;
+use App\Entity\Konto\Konto;
 
 class InvoiceController extends AbstractController
 {    
@@ -89,11 +90,13 @@ class InvoiceController extends AbstractController
     public function issue(Request $request): Response
     {
     	$invoice = $this->getDoctrine()->getRepository(Invoice::class)->findOneBy(['id'=>$request->request->get('id', null)]);
+    	$konto = $this->getDoctrine()->getRepository(Konto::class)->findOneBy(['number'=>760]); //760 for services or 762 for goods
     	$entityManager = $this->getDoctrine()->getManager();
     	
-    	$invoice->setIssued();
+    	$transaction = $invoice->setIssued($konto);
     	
-    	$entityManager->persist($invoice);
+    	$entityManager->persist($invoice);    	
+    	$entityManager->persist($transaction);
     	$entityManager->flush();
     	
     	return $this->render('dashboard/invoice/pdf.html.twig', [

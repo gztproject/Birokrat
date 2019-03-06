@@ -6,11 +6,13 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use App\Entity\Base\Base;
+use App\Entity\Konto\Konto;
 use App\Entity\Organization\Organization;
 use App\Entity\User\User;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Symfony\Component\Config\Definition\Exception\Exception;
 use App\Entity\Organization\Client;
+use App\Entity\Transaction\Transaction;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\InvoiceRepository")
@@ -134,10 +136,16 @@ class Invoice extends Base
     	$this->setState(10);    	  
     }
     
-    public function setIssued()
+    public function setIssued(Konto $konto): Transaction
     {
-    	//$this->setDateIssued(\DateTime::createFromFormat('U', date("U")));
+    	$this->setDateOfIssue(\DateTime::createFromFormat('U', date("U")));
+    	$this->calculateTotals();
+    	
+    	$transaction = new Transaction();
+    	$transaction->initWithInvoice($this->getDateOfIssue(), $konto, $this->getTotalPrice(), $this);
+    	
     	$this->setState(20);
+    	return $transaction;
     }
     
     public function setPaid()
