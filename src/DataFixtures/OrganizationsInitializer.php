@@ -8,7 +8,7 @@ use App\Entity\Geography\Address;
 use App\Entity\Organization\Organization;
 use Doctrine\ORM\EntityNotFoundException;
 use App\Entity\Settings\OrganizationSettings;
-use App\Entity\Organization\Partner;
+use App\Entity\Organization\Client;
 
 class OrganizationsInitializer
 {
@@ -44,11 +44,11 @@ class OrganizationsInitializer
     			$manager->persist($address);
     			array_push($this->addresses, $address);
     		}
-    		$partner = new Partner();
-    		$partner->init($row["Code"], $row["Name"], $row["TaxNumber"], $row["Taxable"]==='TRUE', $address, $row["ShortName"], 
+    		$client = new Client();
+    		$client->init($row["Code"], $row["Name"], $row["TaxNumber"], $row["Taxable"]==='TRUE', $address, $row["ShortName"], 
     				$row["www"], $row["email"], $row["phone"], $row["mobile"], $row["accountNumber"], $row["bic"]);
     		    		
-    		$manager->persist($partner);    		
+    		$manager->persist($client);    		
     		$manager->flush();
     	}
     	
