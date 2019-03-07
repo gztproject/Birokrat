@@ -481,6 +481,18 @@
                 <source>label.recepient</source>
                 <target>Naročnik</target>
             </trans-unit>
+            <trans-unit id="label.no.">
+                <source>label.no.</source>
+                <target>št.</target>
+            </trans-unit>
+            <trans-unit id="label.dueDate">
+                <source>label.dueDate</source>
+                <target>Zapade</target>
+            </trans-unit>
+            <trans-unit id="label.dueInDays">
+                <source>label.dueInDays</source>
+                <target>Rok plačila</target>
+            </trans-unit>
             <trans-unit id="label.dateOfIssue">
                 <source>label.dateOfIssue</source>
                 <target>Datum izdaje</target>
@@ -492,6 +504,10 @@
             <trans-unit id="label.dateServiceRenderedTo">
                 <source>label.dateServiceRenderedTo</source>
                 <target>Datum opr. stor. do</target>
+            </trans-unit>
+            <trans-unit id="label.dateServiceRendered">
+                <source>label.dateServiceRendered</source>
+                <target>Datum opr. stor.</target>
             </trans-unit>
             <trans-unit id="label.code">
                 <source>label.code</source>
@@ -551,7 +567,7 @@
             </trans-unit>  
             <trans-unit id="label.taxNumber">
                 <source>label.taxNumber</source>
-                <target>Davčna šz.</target>
+                <target>Davčna št.</target>
             </trans-unit>  
             <trans-unit id="label.taxable">
                 <source>label.taxable</source>

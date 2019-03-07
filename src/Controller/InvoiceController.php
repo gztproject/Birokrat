@@ -179,7 +179,7 @@ class InvoiceController extends AbstractController
     	$pdf->SetFontSize(8);
     	//MultiCell( $w, $h, $txt, $border = 0, $align = 'J', $fill = false, $ln = 1, $x = '', $y = '', $reseth = true, $stretch = 0,
     	//	$ishtml = false, $autopadding = true, $maxh = 0, $valign = 'T', $fitcell = false )    	
-    	$pdf->MultiCell(20, '', "WWW:\nE-mail:\nGSM:\nDančna št.:\nTRR:\nBIC:", 0, 'R', 0, 0);
+    	$pdf->MultiCell(20, '', "WWW:\nE-mail:\nGSM:\n".$translator->trans('label.taxNumber').":\nTRR:\nBIC:", 0, 'R', 0, 0);
     	
     	$orgData = $invoice->getIssuer()->getWww() . "\n";
     	$orgData .= $invoice->getIssuer()->getEmail(). "\n";
@@ -189,7 +189,41 @@ class InvoiceController extends AbstractController
     	$orgData .= $invoice->getIssuer()->getBic(). "\n";
     	$pdf->MultiCell(60, '', $orgData, 0, 'L', 0, 1);
     	
+    	$pdf->Ln(15);
     	
+    	$pdf->Cell(80, '', $translator->trans('label.recepient').':', 0, 0, '', 0, '', 0, false, 'T', 'M' );
+    	
+    	$pdf->SetFont('dejavusans', 'B', 12);
+    	$pdf->Cell(40, '', $translator->trans('title.invoice').' '.$translator->trans('label.no.').':', 0, 0, 'R', 0, '', 0, false, 'T', 'M' );
+    	$pdf->Cell(60, '', $invoice->getNumber(), 0, 0, 'L', 0, '', 0, false, 'T', 'M' );
+    	
+    	$pdf->Ln(10);
+    	
+    	$pdf->SetFontSize(10);
+    	$name = $invoice->getRecepient()->getShortName();
+    	$address = "";
+    	for($i = 0; $i<count($invoice->getRecepient()->getAddress()->getFullFormattedAddress())-1; $i++)
+    	{
+    		if($address != "")	$address.= "\n";
+    		$address .= $invoice->getRecepient()->getAddress()->getFullFormattedAddress()[$i];
+    	}
+    	$pdf->MultiCell(80, '', $name."\n \n".$address, 0, 'L', 0, 0);
+    	$pdf->SetFont('dejavusans', '', 8);
+    	$pdf->MultiCell(40, '', $invoice->getIssuer()->getAddress()->getPost()->getName().
+    			",\n\n".$translator->trans('label.dueInDays').
+    			":\n".$translator->trans('label.dueDate').
+    			":\n".$translator->trans('label.reference').
+    			":\n".$translator->trans('label.dateServiceRendered').":", 0, 'R', 0, 0);
+    	
+    	$invData = $invoice->getDateOfIssueString() . "\n\n";
+    	$invData .= $invoice->getDueInDays()."\n";
+    	$invData .= $invoice->getDueDateString()."\n";
+    	$invData .= $invoice->getReferenceNumber()."\n";
+    	$invData .= $invoice->getDateServiceRenderedString();
+    	$pdf->MultiCell(60, '', $invData, 0, 'L', 0, 1);
+    	$pdf->Ln(7);
+    	$pdf->Cell( 80, 0, $translator->trans('label.taxNumber').": ".$invoice->getRecepient()->getFullTaxNumber(), 0, 0, '', 0, '', 0, false, 'T', 'M' );
+    	$pdf->Ln(7);
     	// ---------ITEMS
     	$discount = false;
     	foreach ($invoice->getInvoiceItems() as $ii){
@@ -208,33 +242,50 @@ class InvoiceController extends AbstractController
     	$pdf->Cell( $tableWidths[0], 0, $translator->trans('label.code'), 1, 0, '', $fill, '', 0, false, 'T', 'M' );
     	$pdf->Cell( $tableWidths[1], 0, $translator->trans('label.name'), 1, 0, '', $fill, '', 0, false, 'T', 'M' );
     	$pdf->Cell( $tableWidths[2], 0, $translator->trans('label.quantity'), 1, 0, '', $fill, '', 0, false, 'T', 'M' );
-    	$pdf->Cell( $tableWidths[3], 0, $translator->trans('label.unit'), 1, 0, '', $fill, '', 0, false, 'T', 'M' );
+    	$pdf->Cell( $tableWidths[3], 0, $translator->trans('label.unit'), 1, 0, 'C', $fill, '', 0, false, 'T', 'M' );
     	$pdf->Cell( $tableWidths[4], 0, $translator->trans('label.price'), 1, 0, '', $fill, '', 0, false, 'T', 'M' );
     	if($discount)
     		$pdf->Cell( $tableWidths[5], 0, $translator->trans('label.discount'), 1, 0, '', $fill, '', 0, false, 'T', 'M' );
     	$pdf->Cell( $tableWidths[6], 0, $translator->trans('label.value'), 1, 0, '', $fill, '', 0, false, 'T', 'M' );
     	
-    	
-    	$pdf->Ln();
-    	$pdf->Ln();
-    	
-    	   	
+    	$pdf->Ln(7);
     	
     	foreach ($invoice->getInvoiceItems() as $ii){
     		$fill = !$fill;
     		$pdf->Cell( $tableWidths[0], 0, $ii->getCode(), 0, 0, '', $fill, '', 0, false, 'T', 'M' );
     		$pdf->Cell( $tableWidths[1], 0, $ii->getName(), 0, 0, '', $fill, '', 0, false, 'T', 'M' );
-    		$pdf->Cell( $tableWidths[2], 0, number_format($ii->getQuantity(), 2, ',', '.'), 0, 0, '', $fill, '', 0, false, 'T', 'M' );
-    		$pdf->Cell( $tableWidths[3], 0, $ii->getUnit(), 0, 0, '', $fill, '', 0, false, 'T', 'M' );
-    		$pdf->Cell( $tableWidths[4], 0, number_format($ii->getPrice(), 2, ',', '.').' €', 0, 0, '', $fill, '', 0, false, 'T', 'M' );
+    		$pdf->Cell( $tableWidths[2], 0, number_format($ii->getQuantity(), 2, ',', '.'), 0, 0, 'R', $fill, '', 0, false, 'T', 'M' );
+    		$pdf->Cell( $tableWidths[3], 0, $ii->getUnit(), 0, 0, '', $fill, 'C', 0, false, 'T', 'M' );
+    		$pdf->Cell( $tableWidths[4], 0, number_format($ii->getPrice(), 2, ',', '.').' €', 0, 0, 'R', $fill, '', 0, false, 'T', 'M' );
     		if($discount)
     			$pdf->Cell( $tableWidths[5], 0, $ii->getDiscount().' %', 0, 0, '', $fill, '', 0, false, 'T', 'M' );
-    		$pdf->Cell( $tableWidths[6], 0, number_format($ii->getPrice()*$ii->getQuantity()*(1-$ii->getDiscount()), 2, ',', '.').' €', 0, 0, '', $fill, '', 0, false, 'T', 'M' );
-    		$pdf->Ln();
+    		$pdf->Cell( $tableWidths[6], 0, number_format($ii->getPrice()*$ii->getQuantity()*(1-$ii->getDiscount()), 2, ',', '.').' €', 0, 1, 'R', $fill, '', 0, false, 'T', 'M' );    		
     	}
     	
     	//--------- End Items
+    	$pdf->SetXY(5, -60);
+    	$pdf->Ln();
+    	$pdf->Cell( 120, 0, '', 0, 0, '', 0, '', 0, false, 'T', 'B' );
+    	$pdf->Cell( 30, 0, $translator->trans('label.value'), 0, 0, '', 0, '', 0, false, 'T', 'B' );
+    	$pdf->Cell( 30, 0, number_format($invoice->getTotalValue(), 2, ',', '.')." €", 0, 1, 'R', 0, '', 0, false, 'T', 'B' );
     	
+    	if($invoice->getDiscount()>0)
+    	{
+    		$pdf->Cell( 120, 0, '', 0, 0, '', 0, '', 0, false, 'T', 'B' );
+    		$pdf->Cell( 20, 0, $translator->trans('label.discount'), 0, 0, '', 0, '', 0, false, 'T', 'B' );
+    		$pdf->Cell( 20, 0, number_format($invoice->getDiscount(), 2, ',', '.') . " %", 0, 0, 'C', 0, '', 0, false, 'T', 'B' );
+    		$pdf->Cell( 20, 0, number_format($invoice->getTotalValue()*$invoice->getDiscount(), 2, ',', '.')." €", 0, 1, 'R', 0, '', 0, false, 'T', 'B' );
+    	}
+    	
+    	$pdf->Cell( 120, 0, '', 0, 0, '', 0, '', 0, false, 'T', 'B' );
+    	$pdf->Cell( 30, 0, $translator->trans('label.price').":", 0, 0, '', 1, '', 0, false, 'T', 'B' );
+    	$pdf->Cell( 30, 0, number_format($invoice->getTotalPrice(), 2, ',', '.')." €", 0, 1, 'R', 1, '', 0, false, 'T', 'B' );
+    	
+    	$pdf->Ln();
+    	$pdf->Cell( 120, 0, 'V skladu s 1. točko 94. člena ZDDV-1 DDV ni obračunan.', 0, 1, '', 0, '', 0, false, 'T', 'B' );
+    	$pdf->Ln(7);
+    	$pdf->Cell( 120, 0, 'Pripravil:', 0, 1, '', 0, '', 0, false, 'T', 'B' );
+    	$pdf->Cell( 120, 0, $invoice->getIssuedBy()->getFullname(), 0, 0, '', 0, '', 0, false, 'T', 'B' );
     	// ---------------------------------------------------------
     	
     	//Close and output PDF document
