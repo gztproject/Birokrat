@@ -18,12 +18,6 @@ class AppFixtures extends Fixture
     
     public function load(ObjectManager $manager)
     {
-        //'internal' stuff
-        $statesInitializer = new StatesInitializer();
-        $statesInitializer->generate($manager);
-        
-        
-        
         
         //actual data
         $kontosInitializer = new KontosInitializer();
