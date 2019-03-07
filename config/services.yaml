@@ -30,3 +30,7 @@ services:
     App\Controller\:
         resource: '../src/Controller'
         tags: ['controller.service_arguments']
+
+    # the `white_october.tcpdf` service will be injected when a
+    # `WhiteOctober\TCPDFBundle\Controller\TCPDFController` type-hint is detected
+    WhiteOctober\TCPDFBundle\Controller\TCPDFController: '@white_october.tcpdf'
