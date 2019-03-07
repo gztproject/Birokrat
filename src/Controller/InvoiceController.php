@@ -13,6 +13,7 @@ use Symfony\Component\Validator\Constraints\DateTime;
 use App\Entity\Invoice\InvoiceNumberFactory;
 use App\Entity\Konto\Konto;
 use WhiteOctober\TCPDFBundle\Controller\TCPDFController;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class InvoiceController extends AbstractController
 {    
@@ -124,23 +125,18 @@ class InvoiceController extends AbstractController
     /**
      * @Route("/dashboard/invoice/pdf/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}", methods={"GET"}, name="invoice_pdf")
      */
-    public function generatePdf(Invoice $invoice, TCPDFController $tcpdf): Response
+    public function generatePdf(Invoice $invoice, TCPDFController $tcpdf, TranslatorInterface $translator): Response
     {
-    	$pdf = $tcpdf->create();
-    	/**
-    	 * Creates an example PDF TEST document using TCPDF
-    	 * @package com.tecnick.tcpdf
-    	 * @abstract TCPDF - Example: Removing Header and Footer
-    	 * @author Nicola Asuni
-    	 * @since 2008-03-04
-    	 */    	
+    	$title = $translator->trans('title.invoice').' '.$invoice->getNumber();
+    	    	
+    	$pdf = $tcpdf->create(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'utf-8', false);   	     	
     	    	
     	// set document information
     	$pdf->SetCreator(PDF_CREATOR);
-    	$pdf->SetAuthor('Nicola Asuni');
-    	$pdf->SetTitle('TCPDF Example 002');
-    	$pdf->SetSubject('TCPDF Tutorial');
-    	$pdf->SetKeywords('TCPDF, PDF, example, test, guide');
+    	$pdf->SetAuthor($invoice->getIssuedBy()->getFullname());
+    	$pdf->SetTitle($title);
+    	$pdf->SetSubject($invoice->getNumber());
+    	$pdf->SetKeywords($translator->trans('title.invoice').','.$invoice->getNumber());
     	
     	// remove default header/footer
     	$pdf->setPrintHeader(false);
@@ -158,35 +154,73 @@ class InvoiceController extends AbstractController
     	// set image scale factor
     	$pdf->setImageScale(PDF_IMAGE_SCALE_RATIO);
     	
-    	// set some language-dependent strings (optional)
-    	if (@file_exists(dirname(__FILE__).'/lang/eng.php')) {
-    		require_once(dirname(__FILE__).'/lang/eng.php');
-    		$pdf->setLanguageArray($l);
-    	}
-    	
     	// ---------------------------------------------------------
     	
     	// set font
-    	$pdf->SetFont('times', 'BI', 20);
+    	$pdf->SetFont('dejavusans', '', 15);
     	
     	// add a page
     	$pdf->AddPage();
     	
     	// set some text to print
-    	$n = $invoice->getNumber();
     	$txt = <<<EOD
-		Invoice $n
-
-		Default page header and footer are disabled using setPrintHeader() and setPrintFooter() methods.
+		$title \n
+		
 		EOD;
+		
+		// print a block of text using Write( $h, $txt, $link = '', $fill = false, $align = '', $ln = false, $stretch = 0, $firstline = false, $firstblock = false, $maxh = 0, $wadj = 0, $margin = '' )
+    	$pdf->Write(0, $txt, '', 0, '', false, 0, false, false, 0);
     	
-    	// print a block of text using Write()
-    	$pdf->Write(0, $txt, '', 0, 'C', true, 0, false, false, 0);
+    	
+    	$discount = false;
+    	foreach ($invoice->getInvoiceItems() as $ii){
+    		if($ii->getDiscount() != 0)
+    			$discount = true;
+    	} 
+    	
+    	$tableWidths = [20, 90, 15, 15, 20, 0, 20];
+    	if($discount)
+    		$tableWidths = [20, 70, 15, 15, 20, 20, 20];
+    	
+    	$pdf->SetFontSize(8);
+    	$pdf->SetFillColor(200, 200, 200);
+    	$fill = true;
+    	//print a Cell( $w, $h = 0, $txt = '', $border = 0, $ln = 0, $align = '', $fill = false, $link = '', $stretch = 0, $ignore_min_height = false, $calign = 'T', $valign = 'M' )
+    	$pdf->Cell( $tableWidths[0], 0, $translator->trans('label.code'), 1, 0, '', $fill, '', 0, false, 'T', 'M' );
+    	$pdf->Cell( $tableWidths[1], 0, $translator->trans('label.name'), 1, 0, '', $fill, '', 0, false, 'T', 'M' );
+    	$pdf->Cell( $tableWidths[2], 0, $translator->trans('label.quantity'), 1, 0, '', $fill, '', 0, false, 'T', 'M' );
+    	$pdf->Cell( $tableWidths[3], 0, $translator->trans('label.unit'), 1, 0, '', $fill, '', 0, false, 'T', 'M' );
+    	$pdf->Cell( $tableWidths[4], 0, $translator->trans('label.price'), 1, 0, '', $fill, '', 0, false, 'T', 'M' );
+    	if($discount)
+    		$pdf->Cell( $tableWidths[5], 0, $translator->trans('label.discount'), 1, 0, '', $fill, '', 0, false, 'T', 'M' );
+    	$pdf->Cell( $tableWidths[6], 0, $translator->trans('label.value'), 1, 0, '', $fill, '', 0, false, 'T', 'M' );
+    	
+    	
+    	$pdf->Ln();
+    	$pdf->Ln();
+    	
+    	   	
+    	
+    	foreach ($invoice->getInvoiceItems() as $ii){
+    		$fill = !$fill;
+    		$pdf->Cell( $tableWidths[0], 0, $ii->getCode(), 0, 0, '', $fill, '', 0, false, 'T', 'M' );
+    		$pdf->Cell( $tableWidths[1], 0, $ii->getName(), 0, 0, '', $fill, '', 0, false, 'T', 'M' );
+    		$pdf->Cell( $tableWidths[2], 0, number_format($ii->getQuantity(), 2, ',', '.'), 0, 0, '', $fill, '', 0, false, 'T', 'M' );
+    		$pdf->Cell( $tableWidths[3], 0, $ii->getUnit(), 0, 0, '', $fill, '', 0, false, 'T', 'M' );
+    		$pdf->Cell( $tableWidths[4], 0, number_format($ii->getPrice(), 2, ',', '.').' €', 0, 0, '', $fill, '', 0, false, 'T', 'M' );
+    		if($discount)
+    			$pdf->Cell( $tableWidths[5], 0, $ii->getDiscount().' %', 0, 0, '', $fill, '', 0, false, 'T', 'M' );
+    		$pdf->Cell( $tableWidths[6], 0, number_format($ii->getPrice()*$ii->getQuantity()*(1-$ii->getDiscount()), 2, ',', '.').' €', 0, 0, '', $fill, '', 0, false, 'T', 'M' );
+    		$pdf->Ln();
+    	}
+    	
+    	
     	
     	// ---------------------------------------------------------
     	
     	//Close and output PDF document
-    	$pdf->Output('example_002.pdf', 'I');
+    	
+    	$pdf->Output($title.'.pdf', 'I');
     	
     	//============================================================+
     	// END OF FILE

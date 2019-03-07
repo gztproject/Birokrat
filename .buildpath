@@ -541,6 +541,26 @@
 			<attribute name="composer" value="vendor"/>
 		</attributes>
 	</buildpathentry>
+	<buildpathentry kind="src" path="vendor/tecnickcom/tcpdf/config">
+		<attributes>
+			<attribute name="composer" value="vendor"/>
+		</attributes>
+	</buildpathentry>
+	<buildpathentry excluding="config/|include/" kind="src" path="vendor/tecnickcom/tcpdf">
+		<attributes>
+			<attribute name="composer" value="vendor"/>
+		</attributes>
+	</buildpathentry>
+	<buildpathentry excluding="barcodes/" kind="src" path="vendor/tecnickcom/tcpdf/include">
+		<attributes>
+			<attribute name="composer" value="vendor"/>
+		</attributes>
+	</buildpathentry>
+	<buildpathentry kind="src" path="vendor/tecnickcom/tcpdf/include/barcodes">
+		<attributes>
+			<attribute name="composer" value="vendor"/>
+		</attributes>
+	</buildpathentry>
 	<buildpathentry kind="src" path="vendor/twig/extensions/lib">
 		<attributes>
 			<attribute name="composer" value="vendor"/>
@@ -567,6 +587,11 @@
 		</attributes>
 	</buildpathentry>
 	<buildpathentry kind="src" path="vendor/white-october/pagerfanta-bundle">
+		<attributes>
+			<attribute name="composer" value="vendor"/>
+		</attributes>
+	</buildpathentry>
+	<buildpathentry kind="src" path="vendor/whiteoctober/tcpdf-bundle">
 		<attributes>
 			<attribute name="composer" value="vendor"/>
 		</attributes>
