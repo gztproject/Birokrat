@@ -18,6 +18,7 @@
         </div>        
     </div>
 </div>
+</br>
 <div class="row">    
     <div class="col-12">
         <div class="bs-component">
@@ -41,7 +42,7 @@
                     <a href="{{ path('travelExpense_index') }}"><h2>{{ 'title.transactions'|trans }}</h2></a>
                 </div>
                 <div class="card-body">
-                    {{ include('dashboard/travelExpense/_table.html.twig', {travelExpenses: travelExpenses}, with_context = false) }}
+                    {{ include('dashboard/transaction/_table.html.twig', {transactions: transactions}, with_context = false) }}
                 </div>
             </div>        
         </div>

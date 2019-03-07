@@ -27,7 +27,19 @@ class Organization extends LegalEntityBase
 
     public function __construct()
     {
-        $this->users = new ArrayCollection();
+    	$this->users = new ArrayCollection();
+    }
+    
+    public function initOrganization(string $code, string $name, int $taxNumber, bool $taxable, Address $address, OrganizationSettings $organizationSettings, Collection $users,
+    		string $shortName = null, string $www = null, string $email = null, string $phone = null, string $mobile = null, string $accountNumber = null, string $bic = null)
+    {
+    	parent::init($code, $name, $taxNumber, $taxable, $address, $shortName, $www, $email, $phone, $mobile, $accountNumber, $bic);    	
+    	
+    	$this->setOrganizationSettings($organizationSettings);
+    	foreach($users as $user)
+    	{
+    		$this->addUser($user);
+    	}
     }
 
     /**
@@ -38,7 +50,7 @@ class Organization extends LegalEntityBase
         return $this->users;
     }
 
-    public function addUser(User $user): self
+    private function addUser(User $user): self
     {
         if (!$this->users->contains($user)) {
             $this->users[] = $user;
@@ -47,7 +59,7 @@ class Organization extends LegalEntityBase
         return $this;
     }
 
-    public function removeUser(User $user): self
+    private function removeUser(User $user): self
     {
         if ($this->users->contains($user)) {
             $this->users->removeElement($user);
@@ -61,7 +73,7 @@ class Organization extends LegalEntityBase
         return $this->organizationSettings;
     }
 
-    public function setOrganizationSettings(?OrganizationSettings $organizationSettings): self
+    private function setOrganizationSettings(?OrganizationSettings $organizationSettings): self
     {
         $this->organizationSettings = $organizationSettings;
 

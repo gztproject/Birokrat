@@ -28,20 +28,6 @@ class OrganizationsInitializer
     	$this->addresses = Array();
     	
     	foreach ($rows as $row) {
-    		
-    		$partner = new Partner();
-    		$partner->setCode($row["Code"]);
-    		$partner->setName($row["Name"]);
-    		$partner->setShortName($row["ShortName"]);
-    		$partner->setTaxNumber($row["TaxNumber"]);
-    		$partner->setTaxable($row["Taxable"]==='TRUE');
-    		$partner->setWww($row["www"]);
-    		$partner->setMobile($row["mobile"]);
-    		$partner->setPhone($row["phone"]);
-    		$partner->setEmail($row["email"]);
-    		$partner->setAccountNumber($row["accountNumber"]);
-    		$partner->setBic($row["bic"]);
-    		
     		//address...
     		$post = $this->getPost($row["postCodeInternational"]);
     		if($post == null)
@@ -58,9 +44,10 @@ class OrganizationsInitializer
     			$manager->persist($address);
     			array_push($this->addresses, $address);
     		}
-    		
-    		$partner->setAddress($address);
-    		
+    		$partner = new Partner();
+    		$partner->init($row["Code"], $row["Name"], $row["TaxNumber"], $row["Taxable"]==='TRUE', $address, $row["ShortName"], 
+    				$row["www"], $row["email"], $row["phone"], $row["mobile"], $row["accountNumber"], $row["bic"]);
+    		    		
     		$manager->persist($partner);    		
     		$manager->flush();
     	}
@@ -81,26 +68,11 @@ class OrganizationsInitializer
         $rows = $this->fileReader->GetRows(__DIR__ . "/InitData/organizations.csv");
                 
         foreach ($rows as $row) {
-            
-            $organization = new Organization();
-            $organization->setCode($row["Code"]);
-            $organization->setName($row["Name"]);
-            $organization->setShortName($row["ShortName"]);
-            $organization->setTaxNumber($row["TaxNumber"]);
-            $organization->setTaxable($row["Taxable"]==='TRUE');
-            $organization->setWww($row["www"]);
-            $organization->setMobile($row["mobile"]);
-            $organization->setPhone($row["phone"]);
-            $organization->setEmail($row["email"]);
-            $organization->setAccountNumber($row["accountNumber"]);
-            $organization->setBic($row["bic"]);
-            
-            if($row["InvoicePrefix"] || $row["defaultPaymentDueIn"] || $row["referenceModel"]){
-            	$organizationSettings = new OrganizationSettings();
+        	$organizationSettings = new OrganizationSettings();
+            if($row["InvoicePrefix"] || $row["defaultPaymentDueIn"] || $row["referenceModel"]){            	
             	$organizationSettings->setInvoicePrefix($row["InvoicePrefix"]);
             	$organizationSettings->setDefaultPaymentDueIn($row["defaultPaymentDueIn"]);
-            	$organizationSettings->setReferenceModel($row["referenceModel"]);
-            	$organization->setOrganizationSettings($organizationSettings);
+            	$organizationSettings->setReferenceModel($row["referenceModel"]);            	
             }
             
             //address...
@@ -119,8 +91,9 @@ class OrganizationsInitializer
             	$manager->persist($address);
             	array_push($this->addresses, $address);
             }
-            
-            $organization->setAddress($address);
+            $organization = new Organization();
+            $organization->initOrganization($row["Code"], $row["Name"], $row["TaxNumber"], $row["Taxable"]==='TRUE', $address, $organizationSettings,
+            		$row["ShortName"], $row["www"], $row["email"], $row["phone"], $row["mobile"], $row["accountNumber"], $row["bic"]);
                   
             $manager->persist($organization);
             array_push($organizations, $organization);

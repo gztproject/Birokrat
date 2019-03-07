@@ -1,5 +1,5 @@
 <?php 
-namespace App\Form;
+namespace App\Form\Geography;
 
 use App\Entity\Geography\Address;
 use App\Entity\Geography\Post;

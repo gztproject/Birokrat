@@ -1,0 +1,20 @@
+{% extends 'dashboard/layout.html.twig' %}
+
+{% block body_id 'transaction_index' %}
+
+{% block main %}
+<h1>{{ 'title.transactions'|trans }}</h1>
+    <div class="bs-component">
+    {{ include('dashboard/transaction/_table.html.twig', {
+                transactions: transactions                
+            }, with_context = false) }}
+                </div>
+{% endblock %}
+
+{% block sidebar %}
+    
+    {{ parent() }}
+    <a href="{{ path('transaction_new') }}" class="btn btn-sm btn-block btn-success">
+            <i class="fa fa-plus" aria-hidden="true"></i> {{ 'action.create_transaction'|trans }}
+        </a>
+{% endblock %}

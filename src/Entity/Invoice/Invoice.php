@@ -6,11 +6,13 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use App\Entity\Base\Base;
+use App\Entity\Konto\Konto;
 use App\Entity\Organization\Organization;
 use App\Entity\User\User;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Symfony\Component\Config\Definition\Exception\Exception;
-use App\Entity\Organization\Partner;
+use App\Entity\Organization\Client;
+use App\Entity\Transaction\Transaction;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\InvoiceRepository")
@@ -29,7 +31,7 @@ class Invoice extends Base
     private $issuer;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Organization\Partner")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Organization\Client")
      * @ORM\JoinColumn(nullable=false)
      */
     private $recepient;
@@ -134,10 +136,16 @@ class Invoice extends Base
     	$this->setState(10);    	  
     }
     
-    public function setIssued()
+    public function setIssued(Konto $konto): Transaction
     {
-    	//$this->setDateIssued(\DateTime::createFromFormat('U', date("U")));
+    	$this->setDateOfIssue(\DateTime::createFromFormat('U', date("U")));
+    	$this->calculateTotals();
+    	
+    	$transaction = new Transaction();
+    	$transaction->initWithInvoice($this->getDateOfIssue(), $konto, $this->getTotalPrice(), $this);
+    	
     	$this->setState(20);
+    	return $transaction;
     }
     
     public function setPaid()
@@ -282,7 +290,7 @@ class Invoice extends Base
     
     public function getDateServiceRenderedFromString(): ?string
     {
-    	return $this->dateServiceRenderedFrom->format('d. m. Y');
+    	return $this->dateServiceRenderedFrom->format('j. n. Y');
     }
     
     public function setDateServiceRenderedFrom(\DateTimeInterface $dateServiceRenderedFrom): self
@@ -299,7 +307,7 @@ class Invoice extends Base
     
     public function getDateServiceRenderedToString(): ?string
     {
-    	return $this->dateServiceRenderedTo->format('d. m. Y');
+    	return $this->dateServiceRenderedTo->format('j. n. Y');
     }
     
     public function setDateServiceRenderedTo(\DateTimeInterface $dateServiceRenderedTo): self
@@ -309,6 +317,14 @@ class Invoice extends Base
     	return $this;
     }
     
+    public function getDateServiceRenderedString(): ?string
+    {
+    	 $string = $this->dateServiceRenderedFrom->format('j. n. Y');
+    	 if ($this->dateServiceRenderedTo > $this->dateServiceRenderedFrom)
+    	 	$string .= " - ".$this->dateServiceRenderedTo->format('j. n. Y');
+    	 return $string;
+    }
+    
     public function getDateOfIssue(): ?\DateTimeInterface
     {
     	return $this->dateOfIssue;
@@ -316,7 +332,7 @@ class Invoice extends Base
     
     public function getDateOfIssueString(): ?string
     {
-    	return $this->dateOfIssue->format('d. m. Y');
+    	return $this->dateOfIssue->format('j. n. Y');
     }
     
     public function setDateOfIssue(\DateTimeInterface $dateOfIssue): self
@@ -338,12 +354,12 @@ class Invoice extends Base
     	return $this;
     }
     
-    public function getRecepient(): ?Partner
+    public function getRecepient(): ?Client
     {
     	return $this->recepient;
     }
     
-    public function setRecepient(?Partner $recepient): self
+    public function setRecepient(?Client $recepient): self
     {
     	$this->recepient = $recepient;
     	
@@ -362,7 +378,7 @@ class Invoice extends Base
     	return $this;
     }
     
-    public function getDiscount()
+    public function getDiscount():float
     {
     	return $this->discount;
     }
@@ -453,7 +469,7 @@ class Invoice extends Base
     
     public function getDueDateString(): ?string
     {
-    	return $this->dueDate->format('d. m. Y');
+    	return $this->dueDate->format('j. n. Y');
     }
 
     public function setDueDate(\DateTimeInterface $dueDate): self
@@ -484,7 +500,7 @@ class Invoice extends Base
     
     public function getDatePaidString(): ?string
     {
-    	return $this->datePaid->format('d. m. Y');
+    	return $this->datePaid->format('j. n. Y');
     }
     
     private function setDatePaid(\DateTimeInterface $datePaid): self
@@ -501,7 +517,7 @@ class Invoice extends Base
     
     public function getDateCancelledString(): ?string
     {
-    	return $this->dateCancelled->format('d. m. Y');
+    	return $this->dateCancelled->format('j. n. Y');
     }
     
     private function setDateCancelled(\DateTimeInterface $dateCancelled): self

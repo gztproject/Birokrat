@@ -1,26 +1,26 @@
 <?php
 
-namespace App\Repository;
+namespace App\Repository\Transaction;
 
-use App\Entity\Transaction\Income;
+use App\Entity\Transaction\Transaction;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 /**
- * @method Income|null find($id, $lockMode = null, $lockVersion = null)
- * @method Income|null findOneBy(array $criteria, array $orderBy = null)
- * @method Income[]    findAll()
- * @method Income[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method Transaction|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Transaction|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Transaction[]    findAll()
+ * @method Transaction[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class IncomeRepository extends ServiceEntityRepository
+class TransactionRepository extends ServiceEntityRepository
 {
     public function __construct(RegistryInterface $registry)
     {
-        parent::__construct($registry, Income::class);
+        parent::__construct($registry, Transaction::class);
     }
 
     // /**
-    //  * @return Income[] Returns an array of Income objects
+    //  * @return Transaction[] Returns an array of Transaction objects
     //  */
     /*
     public function findByExampleField($value)
@@ -37,7 +37,7 @@ class IncomeRepository extends ServiceEntityRepository
     */
 
     /*
-    public function findOneBySomeField($value): ?Income
+    public function findOneBySomeField($value): ?Transaction
     {
         return $this->createQueryBuilder('i')
             ->andWhere('i.exampleField = :val')

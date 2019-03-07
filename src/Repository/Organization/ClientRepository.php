@@ -2,25 +2,25 @@
 
 namespace App\Repository\Organization;
 
-use App\Entity\Organization\Partner;
+use App\Entity\Organization\Client;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 /**
- * @method Organization|null find($id, $lockMode = null, $lockVersion = null)
- * @method Organization|null findOneBy(array $criteria, array $orderBy = null)
- * @method Organization[]    findAll()
- * @method Organization[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method Client|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Client|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Client[]    findAll()
+ * @method Client[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class PartnerRepository extends ServiceEntityRepository
+class ClientRepository extends ServiceEntityRepository
 {
     public function __construct(RegistryInterface $registry)
     {
-        parent::__construct($registry, Partner::class);
+        parent::__construct($registry, Client::class);
     }
 
     // /**
-    //  * @return Partner[] Returns an array of Partner objects
+    //  * @return Client[] Returns an array of Client objects
     //  */
     /*
     public function findByExampleField($value)
@@ -37,7 +37,7 @@ class PartnerRepository extends ServiceEntityRepository
     */
 
     /*
-    public function findOneBySomeField($value): ?Partner
+    public function findOneBySomeField($value): ?Client
     {
         return $this->createQueryBuilder('o')
             ->andWhere('o.exampleField = :val')

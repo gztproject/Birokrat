@@ -1,8 +1,8 @@
 <?php 
-namespace App\Controller;
+namespace App\Controller\Organization;
 
-use App\Form\AddressType;
-use App\Form\OrganizationType;
+use App\Form\Geography\AddressType;
+use App\Form\Organization\OrganizationType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -51,20 +51,6 @@ class OrganizationController extends AbstractController
             		'addressForm' => $addressForm->createView(),
             )
         );
-    }
-    
-    /**
-     * @Route("/dashboard/address/new", methods={"POST"}, name="address_new")
-     */
-    public function newAddress(Request $request)
-    {	
-    	$address = new Address();
-    	$form = $this->createForm(AddressType::class, $address);
-    	$form->handleRequest($request);
-    	
-    	if ($form->isSubmitted() && $form->isValid()) {
-    		
-    	}
     }
     
     /**

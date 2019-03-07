@@ -5,8 +5,13 @@ namespace App\Entity\Transaction;
 use Doctrine\ORM\Mapping as ORM;
 use App\Entity\Base\Base;
 use App\Entity\Konto\Konto;
+use App\Entity\Invoice\Invoice;
+use App\Entity\TravelExpense\TravelExpense;
 
-abstract class Transaction extends Base
+/**
+ * @ORM\Entity(repositoryClass="App\Repository\Transaction\TransactionRepository")
+ */
+class Transaction extends Base
 {
 	/**
 	 * @ORM\ManyToOne(targetEntity="App\Entity\Konto\Konto")
@@ -22,7 +27,33 @@ abstract class Transaction extends Base
 	/**
 	 * @ORM\Column(type="datetime")
 	 */
-	private $dateTime;
+	private $date;
+	
+	/**
+	 * @ORM\OneToOne(targetEntity="App\Entity\Invoice\Invoice", cascade={"persist", "remove"})
+	 */
+	private $invoice;
+	
+	/**
+	 * @ORM\OneToOne(targetEntity="App\Entity\TravelExpense\TravelExpense", cascade={"persist", "remove"})
+	 */
+	private $travelExpense;
+	
+	public function initWithInvoice(\DateTimeInterface $date, Konto $konto, float $sum, Invoice $invoice)
+	{
+		$this->setDate($date);
+		$this->setSum($sum);
+		$this->setKonto($konto);
+		$this->setInvoice($invoice);
+	}
+	
+	public function initWithTravelExpense(\DateTimeInterface $date, Konto $konto, float $sum, TravelExpense $travelExpense)
+	{
+		$this->setDate($date);
+		$this->setSum($sum);
+		$this->setKonto($konto);
+		$this->setTravelExpense($travelExpense);
+	}
 	
 	public function getKonto(): ?Konto
 	{
@@ -48,14 +79,43 @@ abstract class Transaction extends Base
 		return $this;
 	}
 	
-	public function getDateTime(): ?\DateTimeInterface
+	public function getDate(): ?\DateTimeInterface
 	{
-		return $this->dateTime;
+		return $this->date;
 	}
 	
-	public function setDateTime(\DateTimeInterface $dateTime): self
+	public function getDateString(): ?string
 	{
-		$this->dateTime = $dateTime;
+		return $this->date->format('d. m. Y');
+	}
+	
+	public function setDate(\DateTimeInterface $date): self
+	{
+		$this->date = $date;
+		
+		return $this;
+	}
+	
+	public function getInvoice(): ?Invoice
+	{
+		return $this->invoice;
+	}
+	
+	public function setInvoice(?Invoice $Invoice): self
+	{
+		$this->invoice = $Invoice;
+		
+		return $this;
+	}
+	
+	public function getTravelExpense(): ?TravelExpense
+	{
+		return $this->travelExpense;
+	}
+	
+	public function setTravelExpense(?TravelExpense $travelExpense): self
+	{
+		$this->travelExpense = $travelExpense;
 		
 		return $this;
 	}

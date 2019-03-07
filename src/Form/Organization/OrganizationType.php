@@ -1,5 +1,5 @@
 <?php 
-namespace App\Form;
+namespace App\Form\Organization;
 
 use App\Entity\Organization\Organization;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
