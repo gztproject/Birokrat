@@ -157,21 +157,40 @@ class InvoiceController extends AbstractController
     	// ---------------------------------------------------------
     	
     	// set font
-    	$pdf->SetFont('dejavusans', '', 15);
-    	
+    	$pdf->SetFont('dejavusans', '', 10);
+    	    	
     	// add a page
     	$pdf->AddPage();
+    	$imgdata = base64_decode('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');
     	
-    	// set some text to print
-    	$txt = <<<EOD
-		$title \n
-		
-		EOD;
-		
-		// print a block of text using Write( $h, $txt, $link = '', $fill = false, $align = '', $ln = false, $stretch = 0, $firstline = false, $firstblock = false, $maxh = 0, $wadj = 0, $margin = '' )
-    	$pdf->Write(0, $txt, '', 0, '', false, 0, false, false, 0);
+    	//Image( $file, $x = '', $y = '', $w = 0, $h = 0, $type = '', $link = '', $align = '', $resize = false, $dpi = 300, $palign = '', $ismask = false, $imgmask = false, 
+    	//$border = 0, $fitbox = false, $hidden = false, $fitonpage = false, $alt = false, $altimgs = array() )
+    	$pdf->Image('@'.$imgdata, '', '', 20, 20, 'png', '', 'T');
+    	    	
+    	$name = $invoice->getIssuer()->getShortName();
+    	$address = "";
+    	for($i = 0; $i<count($invoice->getIssuer()->getAddress()->getFullFormattedAddress())-1; $i++)
+    	{
+    		if($address != "")	$address.= '<br>';
+    		$address .= $invoice->getIssuer()->getAddress()->getFullFormattedAddress()[$i];    		
+    	}
+    	$html = "<h2>$name</h2></br><b>$address</b>";
+    	$pdf->writeHTMLCell(80,'','','',$html, 0);
+    	$pdf->SetFontSize(8);
+    	//MultiCell( $w, $h, $txt, $border = 0, $align = 'J', $fill = false, $ln = 1, $x = '', $y = '', $reseth = true, $stretch = 0,
+    	//	$ishtml = false, $autopadding = true, $maxh = 0, $valign = 'T', $fitcell = false )    	
+    	$pdf->MultiCell(20, '', "WWW:\nE-mail:\nGSM:\nDančna št.:\nTRR:\nBIC:", 0, 'R', 0, 0);
+    	
+    	$orgData = $invoice->getIssuer()->getWww() . "\n";
+    	$orgData .= $invoice->getIssuer()->getEmail(). "\n";
+    	$orgData .= $invoice->getIssuer()->getMobile(). "\n";
+    	$orgData .= $invoice->getIssuer()->getFullTaxNumber(). "\n";
+    	$orgData .= $invoice->getIssuer()->getAccountNumber(). "\n";
+    	$orgData .= $invoice->getIssuer()->getBic(). "\n";
+    	$pdf->MultiCell(60, '', $orgData, 0, 'L', 0, 1);
     	
     	
+    	// ---------ITEMS
     	$discount = false;
     	foreach ($invoice->getInvoiceItems() as $ii){
     		if($ii->getDiscount() != 0)
@@ -214,7 +233,7 @@ class InvoiceController extends AbstractController
     		$pdf->Ln();
     	}
     	
-    	
+    	//--------- End Items
     	
     	// ---------------------------------------------------------
     	
