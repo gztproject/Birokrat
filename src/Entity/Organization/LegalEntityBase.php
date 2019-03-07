@@ -122,7 +122,11 @@ class LegalEntityBase extends Base
 
     public function getShortName(): ?string
     {
-        return $this->shortName;
+    	if($this->shortName == "" || $this->shortName == null)
+    		return $this->getName();
+    	else 
+    		return $this->shortName;
+         
     }
 
     public function setShortName(?string $shortName): self
