@@ -30,16 +30,12 @@ class Organization extends LegalEntityBase
     	$this->users = new ArrayCollection();
     }
     
-    public function initOrganization(string $code, string $name, int $taxNumber, bool $taxable, Address $address, OrganizationSettings $organizationSettings, Collection $users,
+    public function initOrganization(string $code, string $name, int $taxNumber, bool $taxable, Address $address, OrganizationSettings $organizationSettings,
     		string $shortName = null, string $www = null, string $email = null, string $phone = null, string $mobile = null, string $accountNumber = null, string $bic = null)
     {
     	parent::init($code, $name, $taxNumber, $taxable, $address, $shortName, $www, $email, $phone, $mobile, $accountNumber, $bic);    	
     	
-    	$this->setOrganizationSettings($organizationSettings);
-    	foreach($users as $user)
-    	{
-    		$this->addUser($user);
-    	}
+    	$this->setOrganizationSettings($organizationSettings);    	
     }
 
     /**
