@@ -46,7 +46,7 @@ class Organization extends LegalEntityBase
         return $this->users;
     }
 
-    private function addUser(User $user): self
+    public function addUser(User $user): self
     {
         if (!$this->users->contains($user)) {
             $this->users[] = $user;
