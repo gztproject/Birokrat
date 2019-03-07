@@ -11,7 +11,6 @@ use Symfony\Component\Routing\Annotation\Route;
 use App\Repository\TravelExpenseRepository;
 use App\Entity\TravelExpense\TravelExpense;
 use App\Form\TravelExpenseType;
-use App\Entity\TravelExpense\TravelExpenseState;
 
 class TravelExpenseController extends AbstractController
 {    
@@ -29,9 +28,8 @@ class TravelExpenseController extends AbstractController
      */
     public function new(Request $request)
     {
-    	$te = new TravelExpense();
-    	$state = $this->getDoctrine()->getRepository(TravelExpenseState::class)->findOneBy(['name'=>'new']);
-    	$te->setState($state);
+    	$te = new TravelExpense();    	
+    	$te->setState(00);
     	
     	$form = $this->createForm(TravelExpenseType::class, $te)
     		->add('saveAndCreateNew', SubmitType::class);
@@ -40,8 +38,7 @@ class TravelExpenseController extends AbstractController
     	
     	if ($form->isSubmitted() && $form->isValid()) {
     		
-    		$state = $this->getDoctrine()->getRepository(TravelExpenseState::class)->findOneBy(['name'=>'submitted']);
-    		$te->setState($state);
+    		$te->setState(10);
     		
     		$te->setEmployee($this->get('security.token_storage')->getToken()->getUser());
     		//ToDo: Get rate from organizationSettings
@@ -65,6 +62,16 @@ class TravelExpenseController extends AbstractController
     	return $this->render('dashboard/travelExpense/new.html.twig', [
     			'form' => $form->createView(),
     	]);
+    }
+    
+    /**
+     * @Route("/dashboard/travelExpense/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}", methods={"GET"}, name="travelExpense_show")
+     */
+    public function show(TravelExpense $travelExpense): Response
+    {           
+        return $this->render('dashboard/travelExpense/show.html.twig', [
+        		'travelExpense' => $travelExpense,
+        ]);
     }
     
 }

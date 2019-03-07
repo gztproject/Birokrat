@@ -12,19 +12,19 @@ class TransactionController extends AbstractController
 	/**     
      * @Route("/dashboard/transaction", methods={"GET"}, name="transaction_index")
      */
-	public function index(TransactionRepository $expenses): Response
+	public function index(TransactionRepository $transactions): Response
     {     
-    	$myExpenses = $expenses->findAll();
-    	return $this->render('dashboard/transaction/index.html.twig', ['expenses' => $myExpenses]);
+    	$myTransactions = $transactions->findAll();
+    	return $this->render('dashboard/transaction/index.html.twig', ['transactions' => $myTransactions]);
     } 
     
     /**
      * @Route("/dashboard/transaction/new", methods={"GET"}, name="transaction_new")
      */
-    public function new(TransactionRepository $expenses): Response
+    public function new(TransactionRepository $transactions): Response
     {
-    	$myExpenses = $expenses->findAll();
-    	return $this->render('dashboard/transaction/index.html.twig', ['expenses' => $myExpenses]);
-    } 
+    	$myTransactions = $transactions->findAll();
+    	return $this->render('dashboard/transaction/index.html.twig', ['transactions' => $myTransactions]);
+    }
     
 }

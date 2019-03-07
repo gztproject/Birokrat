@@ -15,7 +15,7 @@
                 <td>{{ travelExpense.totalDistance }}</td>                
                 <td class="text-right">
                     <div class="item-actions">
-                        <a href="{{ path('dashboard_index', {'id': travelExpense.id}) }}" class="btn btn-sm btn-default">
+                        <a href="{{ path('travelExpense_show', {'id': travelExpense.id}) }}" class="btn btn-sm btn-default">
                             <i class="fa fa-eye" aria-hidden="true"></i> {{ 'action.show'|trans }}
                         </a>
 
