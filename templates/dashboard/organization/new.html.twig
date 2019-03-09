@@ -26,7 +26,9 @@
             {{ form_label(form.address) }}
             {{ form_widget(form.address, {'attr': {'class': 'form-control'}}) }}  
         
-            <button type='button' id='addAddress' class='btn btn-sm btn-success' data-toggle="modal" data-target="#addAddressModal"><i class="fa fa-plus" aria-hidden="true"></i></button>
+            <button type='button' id='addAddressBtn' class='btn btn-sm btn-success'> <!-- data-toggle="modal" data-target="#addAddressModal" -->
+                <i class="fa fa-plus" aria-hidden="true"></i>
+            </button>
         </div>
         
         <div class='row'>
@@ -40,7 +42,7 @@
         </div>
     {{ form_end(form) }}
     
-    {{ include('dashboard/organization/addAddressModal.html.twig', {    
+{{ include('dashboard/organization/addAddressModal.html.twig', {    
         form: addressForm
         }) }}
     
@@ -52,5 +54,5 @@
 
 {% block javascripts %}
     {{ parent() }}
-    {{ encore_entry_script_tags('js/organization') }}
+    {{ encore_entry_script_tags('js/organization/new') }}
 {% endblock %}    

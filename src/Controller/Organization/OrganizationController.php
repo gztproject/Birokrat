@@ -12,6 +12,8 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use App\Entity\Geography\Address;
 use App\Entity\Organization\Organization;
 use App\Repository\Organization\OrganizationRepository;
+use App\Form\Geography\AddressDTO;
+use App\Entity\Organization\OrganizationCodeFactory;
 
 class OrganizationController extends AbstractController
 {
@@ -23,7 +25,14 @@ class OrganizationController extends AbstractController
     {
         $myOrganizations = $organizations->findBy([], ['name' => 'DESC']);
         
-        return $this->render('dashboard/organization/index.html.twig', ['organizations' => $myOrganizations]);
+        return $this->render(
+        		'dashboard/organization/index.html.twig', 
+        		array(
+        				'organizations' => $myOrganizations, 
+        				"entity" => 'organization'
+        				
+        		)
+        );
     }
     
     /**
@@ -32,23 +41,31 @@ class OrganizationController extends AbstractController
     public function new(Request $request)
     {
         $organization = new Organization();
+        
+        $code = OrganizationCodeFactory::factory('App\Entity\Organization\Organization', $this->getDoctrine())->generate();
+        $organization->setCode($code);
+        
         $form = $this->createForm(OrganizationType::class, $organization)
             ->add('saveAndCreateNew', SubmitType::class);
-        
-        $address = new Address();
-        $addressForm = $this->createForm(AddressType::class, $address);
                 
         $form->handleRequest($request);
         
         if ($form->isSubmitted() && $form->isValid()) {    
+        	$entityManager = $this->getDoctrine()->getManager();
+        	
+        	$entityManager->persist($organization);
+        	$entityManager->flush();
             return $this->redirectToRoute('organization_index');
-        }
+        }        
+       
+        $addressForm = $this->createForm(AddressType::class, new AddressDTO());  
         
         return $this->render(
             '/dashboard/organization/new.html.twig',
             array(
-            		'form' => $form->createView(),
+            		'form' => $form->createView(), 
             		'addressForm' => $addressForm->createView(),
+            		"entity" => 'organization'
             )
         );
     }

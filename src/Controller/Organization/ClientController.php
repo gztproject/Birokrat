@@ -11,6 +11,8 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use App\Entity\Geography\Address;
 use App\Entity\Organization\Client;
 use App\Repository\Organization\ClientRepository;
+use App\Form\Geography\AddressDTO;
+use App\Entity\Organization\OrganizationCodeFactory;
 
 class ClientController extends AbstractController
 {
@@ -22,7 +24,7 @@ class ClientController extends AbstractController
     {
         $myClients = $clients->findBy([], ['name' => 'DESC']);
         
-        return $this->render('dashboard/client/index.html.twig', ['clients' => $myClients]);
+        return $this->render('dashboard/organization/index.html.twig', ['organizations' => $myClients, 'entity' => 'client']);
     }
     
     /**
@@ -31,23 +33,31 @@ class ClientController extends AbstractController
     public function new(Request $request)
     {
         $client = new Client();
+        
+        $code = OrganizationCodeFactory::factory('App\Entity\Organization\Client', $this->getDoctrine())->generate();
+        $client->setCode($code);
+        
         $form = $this->createForm(ClientType::class, $client)
             ->add('saveAndCreateNew', SubmitType::class);
-        
-        $address = new Address();
-        $addressForm = $this->createForm(AddressType::class, $address);
                 
         $form->handleRequest($request);
         
-        if ($form->isSubmitted() && $form->isValid()) {    
+        if ($form->isSubmitted() && $form->isValid()) {  
+        	$entityManager = $this->getDoctrine()->getManager();
+        	
+        	$entityManager->persist($client);
+        	$entityManager->flush();
             return $this->redirectToRoute('client_index');
         }
+       
+        $addressForm = $this->createForm(AddressType::class, new AddressDTO());  
         
         return $this->render(
-            '/dashboard/client/new.html.twig',
+            '/dashboard/organization/new.html.twig',
             array(
             		'form' => $form->createView(),
             		'addressForm' => $addressForm->createView(),
+            		'entity' => 'client'
             )
         );
     }

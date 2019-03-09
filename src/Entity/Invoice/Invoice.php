@@ -371,14 +371,14 @@ class Invoice extends Base
     	return $this->number;
     }
     
-    private function setNumber(string $number): self
+    public function setNumber(string $number): self
     {
     	$this->number = $number;
     	
     	return $this;
     }
     
-    public function getDiscount():float
+    public function getDiscount():?float
     {
     	return $this->discount;
     }

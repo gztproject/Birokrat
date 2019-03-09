@@ -1,6 +1,6 @@
-import modal from 'bootstrap';
 
-jQuery(document).ready(function() {   
+
+$(document).ready(function(){  
     
     $('.set-issued').on('click', function(){        
         $.post("/dashboard/invoice/issue",

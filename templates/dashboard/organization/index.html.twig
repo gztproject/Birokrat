@@ -3,7 +3,7 @@
 {% block body_id 'organization_index' %}
 
 {% block main %}
-    <h1>{{ 'title.organization_list'|trans }}</h1>
+    <h1>{{ 'title.' ~ entity ~ '_list'|trans }}</h1>
     
     
     <div class="bs-component">
@@ -49,8 +49,8 @@
 
 {% block sidebar %}
     <div class="section actions">
-        <a href="{{ path('organization_new') }}" class="btn btn-sm btn-block btn-success">
-            <i class="fa fa-plus" aria-hidden="true"></i> {{ 'action.create_organization'|trans }}
+        <a href="{{ path(entity ~ '_new') }}" class="btn btn-sm btn-block btn-success">
+            <i class="fa fa-plus" aria-hidden="true"></i> {{ 'action.create_' ~ entity|trans }}
         </a>
     </div>
 
