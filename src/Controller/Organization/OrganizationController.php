@@ -23,7 +23,14 @@ class OrganizationController extends AbstractController
     {
         $myOrganizations = $organizations->findBy([], ['name' => 'DESC']);
         
-        return $this->render('dashboard/organization/index.html.twig', ['organizations' => $myOrganizations]);
+        return $this->render(
+        		'dashboard/organization/index.html.twig', 
+        		array(
+        				'organizations' => $myOrganizations, 
+        				"entity" => 'organization'
+        				
+        		)
+        );
     }
     
     /**
@@ -34,21 +41,26 @@ class OrganizationController extends AbstractController
         $organization = new Organization();
         $form = $this->createForm(OrganizationType::class, $organization)
             ->add('saveAndCreateNew', SubmitType::class);
-        
-        $address = new Address();
-        $addressForm = $this->createForm(AddressType::class, $address);
                 
         $form->handleRequest($request);
         
         if ($form->isSubmitted() && $form->isValid()) {    
+        	$entityManager = $this->getDoctrine()->getManager();
+        	
+        	$entityManager->persist($organization);
+        	$entityManager->flush();
             return $this->redirectToRoute('organization_index');
         }
+        
+        $address = new Address();
+        $addressForm = $this->createForm(AddressType::class, $address);  
         
         return $this->render(
             '/dashboard/organization/new.html.twig',
             array(
-            		'form' => $form->createView(),
+            		'form' => $form->createView(), 
             		'addressForm' => $addressForm->createView(),
+            		"entity" => 'organization'
             )
         );
     }

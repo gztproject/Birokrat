@@ -24,11 +24,11 @@ class UserType extends AbstractType
             ->add('username', TextType::class,[
                 'label' => 'label.username'
             ])
-            ->add('name', TextType::class,[
-                'label' => 'label.name'
+            ->add('firstName', TextType::class,[
+                'label' => 'label.firstname'
             ])
-            ->add('surname', TextType::class,[
-                'label' => 'label.surname'
+            ->add('lastName', TextType::class,[
+                'label' => 'label.lastname'
             ])
             ->add('plainPassword', RepeatedType::class, array(
                 'type' => PasswordType::class,

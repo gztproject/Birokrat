@@ -20,7 +20,8 @@ class OrganizationType extends AbstractType
                 'label' => 'label.name'
             ])
             ->add('shortName', TextType::class,[
-            		'label' => 'label.shortName'
+            		'label' => 'label.shortName',
+            		'required' => false
             ])
             ->add('taxNumber', TextType::class,[
             		'label' => 'label.taxNumber'

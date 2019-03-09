@@ -22,7 +22,7 @@ class ClientController extends AbstractController
     {
         $myClients = $clients->findBy([], ['name' => 'DESC']);
         
-        return $this->render('dashboard/client/index.html.twig', ['clients' => $myClients]);
+        return $this->render('dashboard/organization/index.html.twig', ['organizations' => $myClients, 'entity' => 'client']);
     }
     
     /**
@@ -33,21 +33,26 @@ class ClientController extends AbstractController
         $client = new Client();
         $form = $this->createForm(ClientType::class, $client)
             ->add('saveAndCreateNew', SubmitType::class);
-        
-        $address = new Address();
-        $addressForm = $this->createForm(AddressType::class, $address);
                 
         $form->handleRequest($request);
         
-        if ($form->isSubmitted() && $form->isValid()) {    
+        if ($form->isSubmitted() && $form->isValid()) {  
+        	$entityManager = $this->getDoctrine()->getManager();
+        	
+        	$entityManager->persist($client);
+        	$entityManager->flush();
             return $this->redirectToRoute('client_index');
         }
         
+        $address = new Address();
+        $addressForm = $this->createForm(AddressType::class, $address);  
+        
         return $this->render(
-            '/dashboard/client/new.html.twig',
+            '/dashboard/organization/new.html.twig',
             array(
             		'form' => $form->createView(),
             		'addressForm' => $addressForm->createView(),
+            		'entity' => 'client'
             )
         );
     }

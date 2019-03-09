@@ -11,7 +11,7 @@ use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use App\Form\Type\DateTimePickerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use App\Entity\Organization\Partner;
+use App\Entity\Organization\Client;
 
 class InvoiceType extends AbstractType
 {
@@ -22,7 +22,7 @@ class InvoiceType extends AbstractType
         		'label' => 'label.number'
         	])        	
         	->add('recepient', EntityType::class, array(
-        			'class' => Partner::class,
+        			'class' => Client::class,
         			'choice_label' => 'name',
         			'expanded'=>false,
         			'multiple'=>false,

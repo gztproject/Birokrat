@@ -18,7 +18,8 @@ class AddressType extends AbstractType
                 'label' => 'label.line1'
             ])
             ->add('line2', TextType::class,[
-            		'label' => 'label.line2'
+            		'label' => 'label.line2',
+            		'required' => false
             ])
             ->add('post', EntityType::class, array(
             		'class' => Post::class,
