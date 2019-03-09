@@ -12,11 +12,6 @@
     {{ encore_entry_link_tags('css/dashboard') }}
 {% endblock %}
 
-{% block javascripts %}
-    {{ parent() }}
-    {{ encore_entry_script_tags('js/dashboard') }}
-{% endblock %}
-
 {% block header_navigation_links %}
     <li class="nav-item">
         <a class="nav-link" href="{{ path('invoice_index') }}">
@@ -53,4 +48,9 @@
          </ul>
     </li>    
     {{ parent() }}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('js/dashboard') }}
 {% endblock %}

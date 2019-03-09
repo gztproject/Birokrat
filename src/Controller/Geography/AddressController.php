@@ -12,6 +12,7 @@ use App\Entity\Geography\Address;
 use App\Entity\Organization\Client;
 use App\Repository\Organization\ClientRepository;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use App\Form\Geography\AddressDTO;
 
 class AddressController extends AbstractController
 {    
@@ -20,19 +21,19 @@ class AddressController extends AbstractController
      */
     public function newAddress(Request $request): Response
     {	
-    	$address = new Address();
-    	$form = $this->createForm(AddressType::class, $address);    	
+    	$addressDTO = new AddressDTO();
+    	$form = $this->createForm(AddressType::class, $addressDTO);    	
     	
     	$form->handleRequest($request);
     	
     	if ($form->isSubmitted() && $form->isValid()) {
-    		$adr = $this->getDoctrine()->getRepository(Address::class)->findOneBy(['line1'=>$address->getLine1()]);
+    		$adr = $this->getDoctrine()->getRepository(Address::class)->findOneBy(['line1'=>$addressDTO->getLine1()]);
     		
-    		if($adr != null && $adr->getLine2() == $address->getLine2() && $adr->getPost() == $address->getPost())
+    		if($adr != null && $adr->getLine2() == $addressDTO->getLine2() && $adr->getPost() == $addressDTO->getPost())
     		{
     			return new JsonResponse(array(array('status'=>'error','data'=>'This address already exists.')));
     		}
-    		
+    		$address = new Address($addressDTO);
     		$entityManager = $this->getDoctrine()->getManager();    		
     		$entityManager->persist($address);    		
     		$entityManager->flush();

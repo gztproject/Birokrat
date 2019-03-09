@@ -5,6 +5,7 @@ namespace App\Entity\Geography;
 use Doctrine\ORM\Mapping as ORM;
 use App\Entity\Base\Base;
 use App\Entity\Organization\Organization;
+use App\Form\Geography\AddressDTO;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\AddressRepository")
@@ -26,13 +27,23 @@ class Address extends Base
      * @ORM\JoinColumn(nullable=false)
      */
     private $post;
+    
+    public function __construct(AddressDTO $dto = null)
+    {
+    	if($dto == null)
+    		return null;
+    	
+    	$this->line1 = $dto->getLine1();
+    	$this->line2 = $dto->getLine2();
+    	$this->post = $dto->getPost();
+    }
 
     public function getLine1(): ?string
     {
         return $this->line1;
     }
 
-    public function setLine1(string $line1): self
+    private function setLine1(string $line1): self
     {
         $this->line1 = $line1;
 
@@ -44,7 +55,7 @@ class Address extends Base
         return $this->line2;
     }
 
-    public function setLine2(?string $line2): self
+    private function setLine2(?string $line2): self
     {
         $this->line2 = $line2;
 
@@ -56,7 +67,7 @@ class Address extends Base
         return $this->post;
     }
 
-    public function setPost(?Post $post): self
+    private function setPost(?Post $post): self
     {
         $this->post = $post;
 

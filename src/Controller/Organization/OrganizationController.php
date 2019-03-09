@@ -12,6 +12,8 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use App\Entity\Geography\Address;
 use App\Entity\Organization\Organization;
 use App\Repository\Organization\OrganizationRepository;
+use App\Form\Geography\AddressDTO;
+use App\Entity\Organization\OrganizationCodeFactory;
 
 class OrganizationController extends AbstractController
 {
@@ -39,6 +41,10 @@ class OrganizationController extends AbstractController
     public function new(Request $request)
     {
         $organization = new Organization();
+        
+        $code = OrganizationCodeFactory::factory('App\Entity\Organization\Organization', $this->getDoctrine())->generate();
+        $organization->setCode($code);
+        
         $form = $this->createForm(OrganizationType::class, $organization)
             ->add('saveAndCreateNew', SubmitType::class);
                 
@@ -50,10 +56,9 @@ class OrganizationController extends AbstractController
         	$entityManager->persist($organization);
         	$entityManager->flush();
             return $this->redirectToRoute('organization_index');
-        }
-        
-        $address = new Address();
-        $addressForm = $this->createForm(AddressType::class, $address);  
+        }        
+       
+        $addressForm = $this->createForm(AddressType::class, new AddressDTO());  
         
         return $this->render(
             '/dashboard/organization/new.html.twig',

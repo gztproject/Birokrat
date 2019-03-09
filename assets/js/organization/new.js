@@ -1,4 +1,4 @@
-import modal from 'bootstrap';
+
 
 $(document).ready(function(){
     $('#addAddressBtn').on('click', function(){          
@@ -15,8 +15,10 @@ $(document).ready(function(){
             },
             function(data, status){
                 $('#addAddressModal').modal('hide');
-                console.log(data);
-                //location.reload();
+                $('#clientAddress').append($('<option>', {
+                    value: data[0].data.address.id,
+                    text: data[0].data.address.fullAddress
+                }));
             });
         });
     });

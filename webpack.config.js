@@ -19,7 +19,7 @@ Encore
     .addEntry('js/travelExpense', './assets/js/travelExpense.js')
     .addEntry('js/invoice/new', './assets/js/invoice/new.js')
     .addEntry('js/invoice/list', './assets/js/invoice/list.js')
-    .addEntry('js/organization', './assets/js/organization.js')
+    .addEntry('js/organization/new', './assets/js/organization/new.js')
     .addEntry('js/poc.typeahead', './assets/js/poc.typeahead.js')
 
     .addStyleEntry('css/app', ['./assets/scss/app.scss'])

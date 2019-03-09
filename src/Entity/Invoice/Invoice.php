@@ -371,7 +371,7 @@ class Invoice extends Base
     	return $this->number;
     }
     
-    private function setNumber(string $number): self
+    public function setNumber(string $number): self
     {
     	$this->number = $number;
     	
