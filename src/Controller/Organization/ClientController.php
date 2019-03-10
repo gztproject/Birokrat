@@ -66,8 +66,9 @@ class ClientController extends AbstractController
      */
     public function show(Client $client): Response
     {           
-        return $this->render('dashboard/client/show.html.twig', [
-        		'client' => $client,
+        return $this->render('dashboard/organization/show.html.twig', [
+        		'organization' => $client,
+        		'entity' => 'client'
         ]);
     }
     

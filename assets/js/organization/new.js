@@ -1,4 +1,4 @@
-import modal from 'bootstrap';
+
 $('#addAddressBtn').on('click', function(){          
     $('#addAddressModal').modal('show');
     $('#createAddressBtn').on('click', function(){            

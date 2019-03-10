@@ -9,7 +9,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use App\Entity\Organization\Organization;
-use App\Repository\UserRepository;
 use App\Form\Geography\AddressDTO;
 use App\Entity\Organization\OrganizationCodeFactory;
 use App\Repository\Organization\OrganizationRepository;
@@ -104,6 +103,7 @@ class OrganizationController extends AbstractController
     {           
         return $this->render('dashboard/organization/show.html.twig', [
         		'organization' => $organization,
+        		"entity" => 'organization',
         ]);
     }
     

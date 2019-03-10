@@ -1,6 +1,6 @@
 {% extends 'dashboard/layout.html.twig' %}
 
-{% block body_id 'organization_index' %}
+{% block body_id entity ~ '_index' %}
 
 {% block main %}
     <h1>{{ 'title.' ~ entity ~ '_list'|trans }}</h1>
@@ -27,11 +27,11 @@
                 <td>{{ organization.taxable ? '<i class="fa fa-check" aria-hidden="true"></i>' : ''}}</td>
                 <td class="text-right">
                     <div class="item-actions">
-                        <a href="{{ path('organization_show', {'id': organization.id}) }}" class="btn btn-sm btn-default">
+                        <a href="{{ path(entity ~ '_show', {'id': organization.id}) }}" class="btn btn-sm btn-default">
                             <i class="fa fa-eye" aria-hidden="true"></i> {{ 'action.show'|trans }}
                         </a>
 
-                        <a href="{{ path('organization_edit', {'id': organization.id}) }}" class="btn btn-sm btn-primary">
+                        <a href="{{ path(entity ~ '_edit', {'id': organization.id}) }}" class="btn btn-sm btn-primary">
                             <i class="fa fa-edit" aria-hidden="true"></i> {{ 'action.edit'|trans }}
                         </a>
                     </div>
@@ -39,7 +39,7 @@
             </tr>
         {% else %}
             <tr class="table-warning">
-                <td colspan="4" align="center">{{ 'organization.no_organizations_found'|trans }}</td>
+                <td colspan="4" align="center">{{ entity ~ '.no_' ~ entity ~ 's_found'|trans }}</td>
            </tr>
         {% endfor %}
         </tbody>

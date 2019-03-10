@@ -1,4 +1,4 @@
-
+import modal from 'bootstrap';
     $('#UserAddOrganization').on('click', function(){ 
         
         $.getJSON("/dashboard/organization/list",

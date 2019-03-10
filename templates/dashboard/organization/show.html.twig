@@ -1,13 +1,13 @@
 {% extends 'dashboard/layout.html.twig' %}
 
-{% block body_id 'organization_show' %}
+{% block body_id entity ~ '_show' %}
 
 {% block main %}
     <h1>{{ organization.name }}</h1>
     
     <div class="card text-white bg-primary mb-3"> 
     <div class="card-header">
-            <strong>{{ 'label.organizationData'|trans }}</strong>
+            <strong>{{ 'label.' ~ entity ~ 'Data'|trans }}</strong>
         </div>    
         <div class="card-body">                    
             <strong>{{ 'label.name'|trans }}</strong>: {{ organization.name }}            
@@ -33,14 +33,19 @@
 
 {% block sidebar %}
     <div class="section">
-        <a href="{{ path('organization_edit', {id: organization.id}) }}" class="btn btn-sm btn-block btn-success">
+        <a href="{{ path(entity ~ '_edit', {id: organization.id}) }}" class="btn btn-sm btn-block btn-success">
             <i class="fa fa-edit" aria-hidden="true"></i> {{ 'action.edit_contents'|trans }}
         </a>
     </div>
 
     <div class="section">
-        {{ include('dashboard/organization/_delete_form.html.twig', {organization: organization}, with_context = false) }}
+        {{ include('dashboard/organization/_delete_form.html.twig', {organization: organization, entity: entity}, with_context = false) }}
     </div>
 
     {{ parent() }}
 {% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('js/organization/show') }}
+{% endblock %}  
