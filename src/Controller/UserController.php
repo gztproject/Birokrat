@@ -11,6 +11,8 @@ use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use App\Entity\Organization\Organization;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class UserController extends AbstractController
 {
@@ -115,7 +117,34 @@ class UserController extends AbstractController
             'user' => $user,
             'form' => $form->createView(),
         ]);
-    }    
+    }  
+    
+    /**
+     * @Route("/admin/user/addOrganization", methods={"POST"}, name="user_addOrganization")
+     */
+    public function setPaid(Request $request): Response
+    {
+    	$user = $this->getDoctrine()->getRepository(User::class)->findOneBy(['id'=>$request->request->get('userId', null)]);
+    	$organization = $this->getDoctrine()->getRepository(Organization::class)->findOneBy(['id'=>$request->request->get('organizationId', null)]);
+    	
+    	$user->addOrganization($organization);
+    	
+    	$entityManager = $this->getDoctrine()->getManager();
+    	    	
+    	
+    	$entityManager->persist($user);
+    	$entityManager->flush();
+    	
+    	return new JsonResponse(
+    			array(
+    					array(
+    							'status'=>'ok',
+    							'data'=>array(    									
+    							)
+    					)
+    			)
+    	);
+    }
    
     
     /**

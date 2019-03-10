@@ -6,11 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use App\Entity\Geography\Address;
-use App\Entity\Organization\Client;
-use App\Repository\Organization\ClientRepository;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Form\Geography\AddressDTO;
 

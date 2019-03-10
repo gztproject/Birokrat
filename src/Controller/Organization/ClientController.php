@@ -8,7 +8,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use App\Entity\Geography\Address;
 use App\Entity\Organization\Client;
 use App\Repository\Organization\ClientRepository;
 use App\Form\Geography\AddressDTO;
@@ -79,8 +78,14 @@ class ClientController extends AbstractController
      */
     public function edit(Request $request, Client $organization): Response
     {
-        $form = $this->createForm(ClientType::class, $organization);
-        $addressForm = $this->createForm(AddressType::class, $organization->getAddress());
+    	$form = $this->createForm(ClientType::class, $organization);
+    	
+    	$addressDTO = new AddressDTO();
+    	$addressDTO->setLine1($organization->getAddress()->getLine1());
+    	$addressDTO->setLine2($organization->getAddress()->getLine2());
+    	$addressDTO->setPost($organization->getAddress()->getPost());
+    	
+    	$addressForm = $this->createForm(AddressType::class, $addressDTO);
         $form->handleRequest($request);
         
         if ($form->isSubmitted() && $form->isValid()) {

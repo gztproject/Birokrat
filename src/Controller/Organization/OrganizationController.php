@@ -7,13 +7,13 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use App\Entity\Geography\Address;
 use App\Entity\Organization\Organization;
-use App\Repository\Organization\OrganizationRepository;
+use App\Repository\UserRepository;
 use App\Form\Geography\AddressDTO;
 use App\Entity\Organization\OrganizationCodeFactory;
+use App\Repository\Organization\OrganizationRepository;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class OrganizationController extends AbstractController
 {
@@ -21,9 +21,9 @@ class OrganizationController extends AbstractController
     /**
      * @Route("/dashboard/organization", methods={"GET"}, name="organization_index")
      */
-	public function index(OrganizationRepository $organizations): Response
+	public function index(): Response
     {
-        $myOrganizations = $organizations->findBy([], ['name' => 'DESC']);
+    	$myOrganizations = $this->get('security.token_storage')->getToken()->getUser()->getOrganizations();
         
         return $this->render(
         		'dashboard/organization/index.html.twig', 
@@ -33,6 +33,33 @@ class OrganizationController extends AbstractController
         				
         		)
         );
+    }
+    
+    /**
+     * @Route("/dashboard/organization/list", methods={"GET"}, name="organization_list")
+     */
+    public function list(OrganizationRepository $organizations): Response
+    {
+    	$myOrganizations = $organizations->findBy([], ['name' => 'DESC']);
+    	
+    	$orgDataArray = array();
+    	
+    	foreach($myOrganizations as $org)
+    	{
+    		$dto = ['id'=>$org->getId(), 'name'=>$org->getName()];
+    		array_push($orgDataArray, $dto);
+    	}
+    	
+    	return new JsonResponse(
+    			array(
+    					array(
+    							'status'=>'ok',
+    							'data'=>array(
+    									'organizations'=>$orgDataArray    									
+    							)    							
+    					)    					
+    			)
+    	);
     }
     
     /**
@@ -88,7 +115,13 @@ class OrganizationController extends AbstractController
     public function edit(Request $request, Organization $organization): Response
     {
         $form = $this->createForm(OrganizationType::class, $organization);
-        $addressForm = $this->createForm(AddressType::class, $organization->getAddress());
+        
+        $addressDTO = new AddressDTO();
+        $addressDTO->setLine1($organization->getAddress()->getLine1());
+        $addressDTO->setLine2($organization->getAddress()->getLine2());
+        $addressDTO->setPost($organization->getAddress()->getPost());
+        
+        $addressForm = $this->createForm(AddressType::class, $addressDTO);
         $form->handleRequest($request);
         
         if ($form->isSubmitted() && $form->isValid()) {

@@ -1,0 +1,36 @@
+<!-- Modal -->
+<div id="addOrganizationModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">{{ 'label.add_organization'|trans }}</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        
+      </div>
+      <div class="modal-body">
+        
+        <div class='row'>
+            <form>
+                <select id="AddOrganizationList">
+                </select>
+                <input type="hidden" id="userId" name="userId" value={{ user.id }}>
+            </form>
+        </div>
+        
+        
+      </div>
+      <div class="modal-footer">
+        <div class='row'>
+            <button id='AddOrganization' type="submit" class="btn btn-primary">
+                <i class="fa fa-plus" aria-hidden="true"></i> {{ 'label.add_organization'|trans }}
+            </button>            
+        
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
