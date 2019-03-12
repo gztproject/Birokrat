@@ -8,32 +8,34 @@ use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 
 class AppFixtures extends Fixture
-{    
+{   	
     private $passwordEncoder;
     
     public function __construct(UserPasswordEncoderInterface $encoder)
     {
         $this->passwordEncoder = $encoder;
     }
-    
+        
     public function load(ObjectManager $manager)
-    {
-        
+    {        
         //actual data
-        $kontosInitializer = new KontosInitializer();
-        $kontosInitializer->generate($manager);
+    	$kontosInitializer = new KontosInitializer($manager, "/InitData/kontos.tsv");
+        $kontosInitializer->generate();
         
-        $countryInitializer = new CountryInitializer();
-        $countries = $countryInitializer->generate($manager);
+        $countryInitializer = new CountryInitializer($manager, "/InitData/countries.tsv");
+        $countries = $countryInitializer->generate();
         
-        $postInitializer = new PostsInitializer();
-        $posts = $postInitializer->generate($manager, $countries);
+        $posts = array();
+        foreach ($countries as $country) {
+        	$postInitializer = new PostsInitializer($manager, "/InitData/posts-".strtolower($country->getA2()).".tsv", $country);
+        	array_push($posts, $postInitializer->generate());
+        }
         
-        $organizationsInitializer = new OrganizationsInitializer();
-        $organizations = $organizationsInitializer->generate($manager, $posts);
+        $organizationsInitializer = new OrganizationsInitializer($manager, "/InitData/partners.tsv", "/InitData/organizations.tsv", $posts);
+        $organizations = $organizationsInitializer->generate();
         
-        $usersInitilizer = new UsersInitializer();
-        $usersInitilizer->generate($manager, $this->passwordEncoder, $organizations);
+        $usersInitilizer = new UsersInitializer($manager, "/InitData/users.tsv", $organizations, $this->passwordEncoder);
+        $usersInitilizer->generate();
         
         //test data
     }

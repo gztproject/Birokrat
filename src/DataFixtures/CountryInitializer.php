@@ -5,13 +5,30 @@ namespace App\DataFixtures;
 use Doctrine\Common\Persistence\ObjectManager;
 use App\Entity\Geography\Country;
 
-class CountryInitializer
-{      
-    public function generate(ObjectManager $manager): array
-    {
-        $path = __DIR__ . "/InitData/countries.csv";
+class CountryInitializer implements IEntityInitializer
+{   
+	private $path;
+	private $manager;
+	
+	/**
+	 * Country initializer
+	 * @param ObjectManager $manager DB manager to use for storing entities
+	 * @param string $path Relative path to .tsv file
+	 */
+	public function __construct(ObjectManager $manager, string $path)
+	{
+		$this->path = __DIR__ . $path;
+		$this->manager = $manager;
+	}
+	
+	/**
+	 * Generates countries	 * 
+	 * @return array Array of generated countries
+	 */
+    public function generate(): array
+    {    	
         $fileReader = new ImportFileReader();
-        $rows = $fileReader->GetRows($path);
+        $rows = $fileReader->GetRows($this->path);
         $countries = array();
         
         foreach ($rows as $row) {
@@ -23,9 +40,9 @@ class CountryInitializer
             $country->setN3($row["N3"]);
                 
         
-            $manager->persist($country);
+            $this->manager->persist($country);
             array_push($countries, $country);
-            $manager->flush();
+            $this->manager->flush();
         }
         
         
