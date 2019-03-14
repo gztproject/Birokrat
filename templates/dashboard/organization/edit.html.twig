@@ -1,19 +1,22 @@
-{% extends 'admin/layout.html.twig' %}
+{% extends 'dashboard/layout.html.twig' %}
 
-{% block body_id 'admin_user_edit' %}
+{% block body_id 'organization_edit' %}
 
 {% block main %}
-    <h1>{{ 'title.edit_user'|trans({'%username%': organization.name}) }}</h1>
+    <h1>{{ 'title.organization_edit'|trans({'%organization%': organization.name}) }}</h1>
 
     {{ include('dashboard/organization/_form.html.twig', {
         form: form,
+        addressForm: addressForm,
         button_label: 'action.save'|trans,
         include_back_to_home_link: true,
     }, with_context = false) }}
-    
-    {{ include('dashboard/organization/addAddressModal.html.twig', {    
+    <button type='button' id='addAddressBtn' class='btn btn-sm btn-success'><i class="fa fa-plus" aria-hidden="true"></i></button>
+        
+        {{ include('dashboard/organization/addAddressModal.html.twig', {    
         form: addressForm
        }) }}
+    
 {% endblock %}
 
 {% block sidebar %}
@@ -30,3 +33,8 @@
     {{ parent() }}
 
 {% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('js/organization/new') }}
+{% endblock %} 

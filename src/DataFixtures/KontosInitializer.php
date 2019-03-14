@@ -7,15 +7,32 @@ use App\Entity\Konto\KontoClass;
 use App\Entity\Konto\KontoCategory;
 use App\Entity\Konto\Konto;
 
-class KontosInitializer
-{      
-    public function generate(ObjectManager $manager)
-    {
-        $path = __DIR__ . "/InitData/kontos.csv";
+class KontosInitializer implements IEntityInitializer
+{    
+	private $path;
+	private $manager;
+	
+	/**
+	 * Konto Initializer
+	 * @param ObjectManager $manager DB manager to use for storing entities	
+	 * @param string $path Relative path to .tsv file
+	 */
+	public function __construct(ObjectManager $manager, string $path)
+	{
+		$this->path = __DIR__ . $path;
+		$this->manager = $manager;
+	}
+	
+	/**
+	 * Generates kontos.	 
+	 * @return array Array of generated kontos 
+	 */	
+    public function generate(): array
+    {        
         $fileReader = new ImportFileReader();
-        $rows = $fileReader->GetRows($path);
+        $rows = $fileReader->GetRows($this->path);        
         
-        
+        $kontos = array();
         foreach ($rows as $row) {
             $number = $row["Number"];
             $name = $row["Name"];
@@ -27,8 +44,8 @@ class KontosInitializer
                     $kontoClass->setNumber((int)$number);
                     $kontoClass->setName($name); 
                     $lastClass = $kontoClass;
-                    $manager->persist($kontoClass);
-                    $manager->flush();
+                    $this->manager->persist($kontoClass);
+                    $this->manager->flush();
                     break;
                 case 2:
                 	if($lastClass == null)
@@ -50,9 +67,11 @@ class KontosInitializer
                     $konto->setCategory($lastCategory);
                     $konto->setIsActive(trim($row["IsActive"])==='Da');
                     $manager->persist($konto);
+                    array_push($kontos, $konto);
                     $manager->flush();
                     break;               
             }                          
-        }    
+        } 
+        return $kontos;
     }
 }

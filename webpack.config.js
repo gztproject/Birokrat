@@ -12,7 +12,8 @@ Encore
     .enableSassLoader()
     .enableVersioning()
     .addEntry('js/app', './assets/js/app.js')
-    .addEntry('js/admin', './assets/js/admin.js')
+    .addEntry('js/user/admin', './assets/js/user/admin.js')
+    .addEntry('js/user/showUser', './assets/js/user/showUser.js')
     .addEntry('js/dashboard', './assets/js/dashboard.js')
     .addEntry('js/search', './assets/js/search.js')
     .addEntry('js/codesheets', './assets/js/codesheets.js')
@@ -20,6 +21,7 @@ Encore
     .addEntry('js/invoice/new', './assets/js/invoice/new.js')
     .addEntry('js/invoice/list', './assets/js/invoice/list.js')
     .addEntry('js/organization/new', './assets/js/organization/new.js')
+    .addEntry('js/organization/show', './assets/js/organization/show.js')
     .addEntry('js/poc.typeahead', './assets/js/poc.typeahead.js')
 
     .addStyleEntry('css/app', ['./assets/scss/app.scss'])

@@ -22,7 +22,7 @@ class InvoiceController extends AbstractController
      */
     public function index(InvoiceRepository $invoices): Response
     {                      
-        $myInvoices = $invoices->findAll();
+    	$myInvoices = $invoices->findBy([], ['number' => 'DESC']);;
         return $this->render('dashboard/invoice/index.html.twig', ['invoices' => $myInvoices]);
     } 
     
@@ -263,16 +263,17 @@ class InvoiceController extends AbstractController
     	}
     	
     	//--------- End Items
-    	$pdf->SetXY(5, -60);
+    	$pdf->SetXY(5, -75);
     	$pdf->Ln();
-    	$pdf->Cell( 120, 0, '', 0, 0, '', 0, '', 0, false, 'T', 'B' );
-    	$pdf->Cell( 30, 0, $translator->trans('label.value'), 0, 0, '', 0, '', 0, false, 'T', 'B' );
-    	$pdf->Cell( 30, 0, number_format($invoice->getTotalValue(), 2, ',', '.')." €", 0, 1, 'R', 0, '', 0, false, 'T', 'B' );
-    	
     	if($invoice->getDiscount()>0)
     	{
     		$pdf->Cell( 120, 0, '', 0, 0, '', 0, '', 0, false, 'T', 'B' );
-    		$pdf->Cell( 20, 0, $translator->trans('label.discount'), 0, 0, '', 0, '', 0, false, 'T', 'B' );
+    		$pdf->Cell( 30, 0, $translator->trans('label.value').":", 0, 0, '', 0, '', 0, false, 'T', 'B' );
+    		$pdf->Cell( 30, 0, number_format($invoice->getTotalValue(), 2, ',', '.')." €", 0, 1, 'R', 0, '', 0, false, 'T', 'B' );
+    	
+    	
+    		$pdf->Cell( 120, 0, '', 0, 0, '', 0, '', 0, false, 'T', 'B' );
+    		$pdf->Cell( 20, 0, $translator->trans('label.discount').":", 0, 0, '', 0, '', 0, false, 'T', 'B' );
     		$pdf->Cell( 20, 0, number_format($invoice->getDiscount(), 2, ',', '.') . " %", 0, 0, 'C', 0, '', 0, false, 'T', 'B' );
     		$pdf->Cell( 20, 0, number_format($invoice->getTotalValue()*$invoice->getDiscount(), 2, ',', '.')." €", 0, 1, 'R', 0, '', 0, false, 'T', 'B' );
     	}
@@ -281,7 +282,7 @@ class InvoiceController extends AbstractController
     	$pdf->Cell( 30, 0, $translator->trans('label.price').":", 0, 0, '', 1, '', 0, false, 'T', 'B' );
     	$pdf->Cell( 30, 0, number_format($invoice->getTotalPrice(), 2, ',', '.')." €", 0, 1, 'R', 1, '', 0, false, 'T', 'B' );
     	
-    	$pdf->Ln();
+    	$pdf->Ln(14);
     	$pdf->Cell( 120, 0, 'V skladu s 1. točko 94. člena ZDDV-1 DDV ni obračunan.', 0, 1, '', 0, '', 0, false, 'T', 'B' );
     	$pdf->Ln(7);
     	$pdf->Cell( 120, 0, 'Pripravil:', 0, 1, '', 0, '', 0, false, 'T', 'B' );

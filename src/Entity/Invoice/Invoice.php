@@ -218,7 +218,7 @@ class Invoice extends Base
     	$price = 0;
     	foreach($this->getInvoiceItems() as $ii)
     	{
-    		$price += ($ii->getPrice() * (1 - $ii->getDiscount()));
+    		$price += ($ii->getPrice() * $ii->getQuantity() * (1 - $ii->getDiscount()));
     	}
     	$this->totalValue = $price;
     	$this->totalPrice = $price * (1 - $this->discount);
@@ -490,7 +490,7 @@ class Invoice extends Base
     
     public function getDueInDays(): int
     {	
-    	return date_diff($this->dueDate, $this->dateOfIssue, true)->format("%d");;
+    	return date_diff($this->dueDate, $this->dateOfIssue, true)->format("%d")+1;
     }
     
     public function getDatePaid(): ?\DateTimeInterface

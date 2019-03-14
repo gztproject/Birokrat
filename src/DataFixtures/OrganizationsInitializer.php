@@ -10,21 +10,42 @@ use Doctrine\ORM\EntityNotFoundException;
 use App\Entity\Settings\OrganizationSettings;
 use App\Entity\Organization\Client;
 
-class OrganizationsInitializer
+class OrganizationsInitializer implements IEntityInitializer
 {
+	private $manager;
     private $posts;
     private $addresses;
     private $fileReader;
-
-    public function generate(ObjectManager $manager, array $posts)
+    private $partnersPath;
+    private $organizationsPath;
+    
+    /**
+     * Partner & organization initializer
+     * @param ObjectManager $manager DB manager to use for storing entities
+     * @param string $partnersPath Relative path to .tsv file with partners
+     * @param string $organizationsPath Relative path to .tsv file with organizations
+     * @param array $posts Array of posts
+     */
+    public function __construct(ObjectManager $manager, string $partnersPath, string $organizationsPath, array $posts)
     {
-    	
+    	$this->manager = $manager;
+    	$this->partnersPath = __DIR__ . $partnersPath;
+    	$this->organizationsPath = __DIR__ . $organizationsPath;
     	$this->posts = $posts;
+    }
+
+    /**
+     * Generates Client and Organization entities
+     * @throws EntityNotFoundException Thrown when trying to create an address with nonexisting post 
+     * @return array Array of generated organizations (doesn't return clients)
+     */
+    public function generate(): array
+    {	
     	$this->fileReader = new ImportFileReader();
     	$this->addresses = Array();
     	
     	// Let's set partners first
-    	$rows = $this->fileReader->GetRows(__DIR__ . "/InitData/partners.csv");
+    	$rows = $this->fileReader->GetRows($this->partnersPath);
     	$this->addresses = Array();
     	
     	foreach ($rows as $row) {
@@ -41,15 +62,15 @@ class OrganizationsInitializer
     			$address->setLine1($row["Address1"]);
     			$address->setLine2($row["Address2"]);
     			$address->setPost($post);
-    			$manager->persist($address);
+    			$this->manager->persist($address);
     			array_push($this->addresses, $address);
     		}
     		$client = new Client();
     		$client->init($row["Code"], $row["Name"], $row["TaxNumber"], $row["Taxable"]==='TRUE', $address, $row["ShortName"], 
     				$row["www"], $row["email"], $row["phone"], $row["mobile"], $row["accountNumber"], $row["bic"]);
     		    		
-    		$manager->persist($client);    		
-    		$manager->flush();
+    		$this->manager->persist($client);    		
+    		$this->manager->flush();
     	}
     	
     	
@@ -60,12 +81,12 @@ class OrganizationsInitializer
     	$defOrganizationSettings->setReferenceModel("SI00");
     	$defOrganizationSettings->setDefaultPaymentDueIn(30);
     	
-    	$manager->persist($defOrganizationSettings);
-    	$manager->flush();
+    	$this->manager->persist($defOrganizationSettings);
+    	$this->manager->flush();
     	
     	// And now organizations
         $organizations = array(); 
-        $rows = $this->fileReader->GetRows(__DIR__ . "/InitData/organizations.csv");
+        $rows = $this->fileReader->GetRows($this->organizationsPath);
                 
         foreach ($rows as $row) {
         	$organizationSettings = new OrganizationSettings();
@@ -88,16 +109,16 @@ class OrganizationsInitializer
             	$address->setLine1($row["Address1"]);
             	$address->setLine2($row["Address2"]);
             	$address->setPost($post);
-            	$manager->persist($address);
+            	$this->manager->persist($address);
             	array_push($this->addresses, $address);
             }
             $organization = new Organization();
             $organization->initOrganization($row["Code"], $row["Name"], $row["TaxNumber"], $row["Taxable"]==='TRUE', $address, $organizationSettings,
             		$row["ShortName"], $row["www"], $row["email"], $row["phone"], $row["mobile"], $row["accountNumber"], $row["bic"]);
                   
-            $manager->persist($organization);
+            $this->manager->persist($organization);
             array_push($organizations, $organization);
-            $manager->flush();
+            $this->manager->flush();
         }
         return $organizations;
     }
