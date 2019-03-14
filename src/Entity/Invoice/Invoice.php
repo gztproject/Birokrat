@@ -490,7 +490,7 @@ class Invoice extends Base
     
     public function getDueInDays(): int
     {	
-    	return date_diff($this->dueDate, $this->dateOfIssue, true)->format("%d");;
+    	return date_diff($this->dueDate, $this->dateOfIssue, true)->format("%d")+1;
     }
     
     public function getDatePaid(): ?\DateTimeInterface
