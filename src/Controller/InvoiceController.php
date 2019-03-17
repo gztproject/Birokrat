@@ -14,6 +14,7 @@ use App\Entity\Invoice\InvoiceNumberFactory;
 use App\Entity\Konto\Konto;
 use WhiteOctober\TCPDFBundle\Controller\TCPDFController;
 use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class InvoiceController extends AbstractController
 {    
@@ -69,22 +70,6 @@ class InvoiceController extends AbstractController
     			'form' => $form->createView(),
     	]);
     } 
-       
-    /**
-     * @Route("/dashboard/invoice/pay", methods={"POST"}, name="invoice_set_paid")
-     */
-    public function setPaid(Request $request): Response
-    {
-    	$invoice = $this->getDoctrine()->getRepository(Invoice::class)->findOneBy(['id'=>$request->request->get('id', null)]);
-    	$entityManager = $this->getDoctrine()->getManager();
-    	    	
-    	$invoice->setPaid();
-    	    	
-    	$entityManager->persist($invoice);
-    	$entityManager->flush();
-    	
-    	return $this->redirectToRoute('invoice_index');
-    }
     
     /**
      * @Route("/dashboard/invoice/issue", methods={"POST"}, name="invoice_issue")
@@ -93,18 +78,37 @@ class InvoiceController extends AbstractController
     {
     	$invoice = $this->getDoctrine()->getRepository(Invoice::class)->findOneBy(['id'=>$request->request->get('id', null)]);
     	$konto = $this->getDoctrine()->getRepository(Konto::class)->findOneBy(['number'=>760]); //760 for services or 762 for goods
+    	$date = new \DateTime($request->request->get('date', null));
     	$entityManager = $this->getDoctrine()->getManager();
     	
-    	$transaction = $invoice->setIssued($konto);
     	
-    	$entityManager->persist($invoice);    	
+    	$transaction = $invoice->setIssued($konto, $date);
+    	
+    	$entityManager->persist($invoice);
     	$entityManager->persist($transaction);
     	$entityManager->flush();
     	
     	return $this->render('dashboard/invoice/pdf.html.twig', [
     			'invoice' => $invoice
-    	]);   
+    	]);
     }
+       
+    /**
+     * @Route("/dashboard/invoice/pay", methods={"POST"}, name="invoice_set_paid")
+     */
+    public function setPaid(Request $request): Response
+    {
+    	$invoice = $this->getDoctrine()->getRepository(Invoice::class)->findOneBy(['id'=>$request->request->get('id', null)]);
+    	$date = new \DateTime($request->request->get('date', null));    	
+    	$entityManager = $this->getDoctrine()->getManager();
+    	    	
+    	$invoice->setPaid($date);
+    	    	
+    	$entityManager->persist($invoice);
+    	$entityManager->flush();
+    	
+    	return $this->redirectToRoute('invoice_index');
+    }    
     
     /**
      * @Route("/dashboard/invoice/cancel", methods={"POST"}, name="invoice_cancel")
