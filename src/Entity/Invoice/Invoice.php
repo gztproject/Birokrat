@@ -136,9 +136,9 @@ class Invoice extends Base
     	$this->setState(10);    	  
     }
     
-    public function setIssued(Konto $konto): Transaction
+    public function setIssued(Konto $konto, \DateTime $date): Transaction
     {
-    	$this->setDateOfIssue(\DateTime::createFromFormat('U', date("U")));
+    	$this->setDateOfIssue($date);
     	$this->calculateTotals();
     	
     	$transaction = new Transaction();
@@ -148,9 +148,9 @@ class Invoice extends Base
     	return $transaction;
     }
     
-    public function setPaid()
-    {
-    	$this->setDatePaid(\DateTime::createFromFormat('U', date("U")));
+    public function setPaid(\DateTime $date)
+    {    	
+    	$this->setDatePaid($date);
     	$this->setState(30);
     }
     

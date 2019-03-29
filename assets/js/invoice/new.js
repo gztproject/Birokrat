@@ -5,22 +5,22 @@ $(function() {
     // Datetime picker initialization.
     // See http://eonasdan.github.io/bootstrap-datetimepicker/
     $('#invoice_dateOfIssue').datetimepicker({
-        locale: 'si',
+        locale: 'sl',
         format: 'dd. mm. yyyy',
     });
 
     $('#invoice_dueDate').datetimepicker({
-        locale: 'si',
+        locale: 'sl',
         format: 'dd. mm. yyyy',
     });
 
      $('#invoice_dateServiceRenderedFrom').datetimepicker({
-        locale: 'si', 
+        locale: 'sl', 
         format: 'dd. mm. yyyy',
     });
 
      $('#invoice_dateServiceRenderedTo').datetimepicker({
-        locale: 'si',
+        locale: 'sl',
         format: 'dd. mm. yyyy',
         useCurrent: false //Important! See issue #1075        
     });
