@@ -1,4 +1,4 @@
-import modal from 'bootstrap';
+//import modal from 'bootstrap';
 
 $(document).on('submit', 'form[data-confirmation]', function (event) {
     var $form = $(this),

@@ -1,6 +1,6 @@
 import 'eonasdan-bootstrap-datetimepicker';
 import moment from 'moment-timezone';
-import modal from 'bootstrap';
+//import modal from 'bootstrap';
 
 $( document ).ajaxError(function( event, request, settings) {
     $('#notificationBody').html("<li>Error requesting page " + settings.url + "</li>");
