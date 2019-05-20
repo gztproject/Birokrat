@@ -31,6 +31,7 @@ Encore
     .addStyleEntry('css/invoice', ['./assets/scss/invoice.scss'])
     .splitEntryChunks()
     .enableSourceMaps(!Encore.isProduction())
+    .enableSingleRuntimeChunk()
 ;
 
 module.exports = Encore.getWebpackConfig();
