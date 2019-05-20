@@ -5,18 +5,20 @@
 {% block main %}
         <div class="container-fluid">
             <div class='row' id='head'>
-                <div class='col-md-6'>
-                    <div class='col-sm-2'>
-                        <img src="http://www.gzt-project.si/logo.png" alt="Logo" height="100" width="100"> 
-                    </div>
-                    <div class='col-sm-10'>                    
-                        <h4>{{ invoice.issuer.name }}</h4>
-                        {% for line in invoice.issuer.address.getFullFormattedAddress %}
-                            {{ line }}</br>
-                        {% endfor %}              
-                    </div>                
+                <div class='col-md-7'>
+                    <div class="row">
+                        <div class='col-sm-3'>
+                            <img src="http://www.gzt-project.si/logo.png" alt="Logo" height="100" width="100"> 
+                        </div>
+                        <div class='col-sm-9'>                    
+                            <h4>{{ invoice.issuer.name }}</h4>
+                            {% for line in invoice.issuer.address.getFullFormattedAddress %}
+                                {{ line }}</br>
+                            {% endfor %}              
+                        </div>  
+                    </div>              
                 </div>
-                <div class='col-md-6'>
+                <div class='col-md-5'>
                     WWW:        {{ invoice.issuer.getWww }} </br>      
                     E-mail:     {{ invoice.issuer.getEmail }} </br>    
                     GSM:        {{ invoice.issuer.getMobile }} </br>
@@ -26,8 +28,9 @@
                 </div>
             </div>
             </br></br>
+            
             <div class='row' id='invoiceData'>            
-                <div class='col-md-6'>
+                <div class='col-md-7'>
                     Naročnik:</br></br>
                     <h4>{{ invoice.recepient.shortName }}</h4>
                     {% for line in invoice.recepient.address.getFullFormattedAddress %}
@@ -38,7 +41,7 @@
                     
                     
                 </div>
-                <div class='col-md-6'>
+                <div class='col-md-5'>
                     <h4>RAČUN št.: {{ invoice.number }}</h4>
                     {{ invoice.issuer.address.post.name }}, {{ invoice.dateOfIssueString }}</br></br>
                     Rok plačila: {{ invoice.dueInDays }} dni</br>
@@ -48,6 +51,7 @@
                     
                 </div>
             </div>
+            </br>
             <div class='row' id='invoiceItems'>
                 <div class='col-md-12'>
                     <table class="table table-hover">
@@ -99,6 +103,7 @@
                     </table>
                 </div>
             </div>
+              
         </div>    
 {% endblock %}
 

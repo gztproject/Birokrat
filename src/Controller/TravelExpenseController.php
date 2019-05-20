@@ -11,16 +11,23 @@ use Symfony\Component\Routing\Annotation\Route;
 use App\Repository\TravelExpenseRepository;
 use App\Entity\TravelExpense\TravelExpense;
 use App\Form\TravelExpenseType;
+use Knp\Component\Pager\PaginatorInterface;
 
 class TravelExpenseController extends AbstractController
 {    
 	/**     
      * @Route("/dashboard/travelExpense", methods={"GET"}, name="travelExpense_index")
      */
-	public function index(TravelExpenseRepository $travelExpenses): Response
-    {     
-    	$myTEs = $travelExpenses->findBy([], ['date' => 'DESC']);
-    	return $this->render('dashboard/travelExpense/index.html.twig', ['travelExpenses' => $myTEs]);
+	public function index(TravelExpenseRepository $travelExpenses, Request $request, PaginatorInterface $paginator): Response
+	{   		
+		$queryBuilder = $travelExpenses->getQuery();
+		
+    	$pagination = $paginator->paginate($queryBuilder, $request->query->getInt('page', 1), 10);
+    	
+    	//$myTEs = $travelExpenses->findBy([], ['date' => 'DESC']);
+    	return $this->render('dashboard/travelExpense/index.html.twig', [
+    			'pagination' => $pagination,    			
+    	]);
     } 
     
     /**

@@ -4,8 +4,8 @@ namespace App\Repository;
 
 use App\Entity\TravelExpense\TravelExpense;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Symfony\Bridge\Doctrine\RegistryInterface;
-
 /**
  * @method TravelExpense|null find($id, $lockMode = null, $lockVersion = null)
  * @method TravelExpense|null findOneBy(array $criteria, array $orderBy = null)
@@ -17,6 +17,15 @@ class TravelExpenseRepository extends ServiceEntityRepository
     public function __construct(RegistryInterface $registry)
     {
         parent::__construct($registry, TravelExpense::class);
+    }
+    
+        public function getQuery(): QueryBuilder
+    {
+    	$qb = $this
+    		->createQueryBuilder('te')
+    		->addSelect('te');
+    	
+    	return $qb->orderBy('te.date', 'DESC');
     }
 
     // /**
