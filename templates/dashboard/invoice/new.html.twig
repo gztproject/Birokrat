@@ -10,7 +10,17 @@
 {% block main %}
     <h1>{{ 'title.invoice_new'|trans }}</h1>
 
-    {{ form_start(form) }}   
+    {{ form_start(form) }}  
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <div class='input-group'>
+                        {{ form_label(form.issuer) }}
+                        {{ form_widget(form.issuer, {'attr': {'class': 'form-control'}}) }}                
+                    </div>
+                </div>            
+            </div>
+        </div> 
         <div class="row">
             <div class="col-sm-6">
                 <div class="form-group">

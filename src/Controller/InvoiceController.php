@@ -35,11 +35,7 @@ class InvoiceController extends AbstractController
     	$doctrine = $this->getDoctrine();
     	$issuedBy = $this->get('security.token_storage')->getToken()->getUser();
     	$organizations = $this->get('security.token_storage')->getToken()->getUser()->getOrganizations();
-    	$issuer = $organizations[0];
-    	if (count($organizations)>1)
-    	{
-    		//show organization picker (modal I guess)    		
-    	}
+    	$issuer = $organizations[0];    	
     	
     	$number = InvoiceNumberFactory::factory($issuer, $doctrine)->generate();
     	
