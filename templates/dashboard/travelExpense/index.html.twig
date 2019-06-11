@@ -3,13 +3,13 @@
 {% block body_id 'travelExpense_index' %}
 
 {% block main %}
-<h1>{{ 'title.travelExpenses'|trans }} ({{ pagination.getTotalItemCount }})</h1>
+    <h1>{{ 'title.travelExpenses'|trans }} ({{ pagination.getTotalItemCount }})</h1>
     <div class="bs-component">
     {{ include('dashboard/travelExpense/_table.html.twig', {
-                travelExpenses: pagination                
-            }, with_context = false) }}
-                </div>
-                {{ knp_pagination_render(pagination) }}
+            travelExpenses: pagination                
+        }, with_context = false) }}
+    </div>
+    {{ knp_pagination_render(pagination) }}
 {% endblock %}
 
 {% block sidebar %}

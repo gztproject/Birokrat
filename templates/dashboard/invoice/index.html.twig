@@ -3,10 +3,13 @@
 {% block body_id 'invoice_index' %}
 
 {% block main %}
-    <h1>{{ 'title.invoices'|trans }}</h1>
+    <h1>{{ 'title.invoices'|trans }} ({{ pagination.getTotalItemCount }})</h1>
     <div class="bs-component">
-    {{ include('dashboard/invoice/_table.html.twig', {invoices: invoices}, with_context = false) }}
+    {{ include('dashboard/invoice/_table.html.twig', {
+            invoices: pagination
+        }, with_context = false) }}
     </div>
+    {{ knp_pagination_render(pagination) }}
 {% endblock %}
 
 {% block sidebar %}
