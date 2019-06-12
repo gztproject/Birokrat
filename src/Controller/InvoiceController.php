@@ -15,16 +15,23 @@ use App\Entity\Konto\Konto;
 use WhiteOctober\TCPDFBundle\Controller\TCPDFController;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Knp\Component\Pager\PaginatorInterface;
 
 class InvoiceController extends AbstractController
 {    
     /**
      * @Route("/dashboard/invoice", methods={"GET"}, name="invoice_index")
      */
-    public function index(InvoiceRepository $invoices): Response
-    {                      
-    	$myInvoices = $invoices->findBy([], ['number' => 'DESC']);;
-        return $this->render('dashboard/invoice/index.html.twig', ['invoices' => $myInvoices]);
+	public function index(InvoiceRepository $invoices, Request $request, PaginatorInterface $paginator): Response
+    {   		
+    	$queryBuilder = $invoices->getQuery();
+    	
+    	$pagination = $paginator->paginate($queryBuilder, $request->query->getInt('page', 1), 10);
+    	
+    	//$myInvoices = $invoices->findBy([], ['number' => 'DESC']);
+    	return $this->render('dashboard/invoice/index.html.twig', [
+    			'pagination' => $pagination,    			
+    	]);
     } 
     
     /**
@@ -66,6 +73,14 @@ class InvoiceController extends AbstractController
     			'form' => $form->createView(),
     	]);
     } 
+    
+    /**
+     * @Route("/dashboard/invoice/getNewNumber", methods={"POST"}, name="invoice_getNewNumber")
+     */
+    public function getNewNumber(Request $request): JsonResponse
+    {
+    	
+    }
     
     /**
      * @Route("/dashboard/invoice/issue", methods={"POST"}, name="invoice_issue")

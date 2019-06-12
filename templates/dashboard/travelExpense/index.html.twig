@@ -15,7 +15,19 @@
 {% block sidebar %}
     
     {{ parent() }}
-    <a href="{{ path('travelExpense_new') }}" class="btn btn-sm btn-block btn-success">
+    
+    <div id="actions" class="row">
+        <a href="{{ path('travelExpense_new') }}" class="btn btn-sm btn-block btn-success">
             <i class="fa fa-plus" aria-hidden="true"></i> {{ 'action.create_travelExpense'|trans }}
         </a>
+    </div>
+    </br>    
+    <div id="filter" class="row">
+        {{ include('dashboard/travelExpense/_filter.html.twig') }}
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('js/travelExpense/filter') }}  
 {% endblock %}

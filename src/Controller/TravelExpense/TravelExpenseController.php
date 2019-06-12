@@ -1,8 +1,7 @@
 <?php 
 
-namespace App\Controller;
+namespace App\Controller\TravelExpense;
 
-use App\Repository\InvoiceRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,13 +19,16 @@ class TravelExpenseController extends AbstractController
      */
 	public function index(TravelExpenseRepository $travelExpenses, Request $request, PaginatorInterface $paginator): Response
 	{   		
-		$queryBuilder = $travelExpenses->getQuery();
+		$dateFrom = $request->query->get('dateFrom', 0);
+		$dateTo = $request->query->get('dateTo', 0);
+		$queryBuilder = $travelExpenses->getQuery($dateFrom, $dateTo);
 		
     	$pagination = $paginator->paginate($queryBuilder, $request->query->getInt('page', 1), 10);
     	
     	//$myTEs = $travelExpenses->findBy([], ['date' => 'DESC']);
     	return $this->render('dashboard/travelExpense/index.html.twig', [
-    			'pagination' => $pagination,    			
+    			'pagination' => $pagination,  
+    			
     	]);
     } 
     

@@ -6,6 +6,7 @@ use App\Entity\TravelExpense\TravelExpense;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Bridge\Doctrine\RegistryInterface;
+use Doctrine\Common\Collections\Criteria;
 /**
  * @method TravelExpense|null find($id, $lockMode = null, $lockVersion = null)
  * @method TravelExpense|null findOneBy(array $criteria, array $orderBy = null)
@@ -19,11 +20,25 @@ class TravelExpenseRepository extends ServiceEntityRepository
         parent::__construct($registry, TravelExpense::class);
     }
     
-        public function getQuery(): QueryBuilder
+    
+    public function getQuery($from, $to): QueryBuilder
     {
     	$qb = $this
     		->createQueryBuilder('te')
     		->addSelect('te');
+    	if($from)
+    	{
+    	  	$qb
+    	  		->where('te.date >= :from')
+    	  		->setParameter('from', date('Y-m-d G:i:s', strtotime($from)));
+    	}
+    	
+    	if($to)
+    	{
+    		$qb    		
+    		->andWhere('te.date <= :to')
+    		->setParameter('to', date('Y-m-d G:i:s', strtotime($to)+60*60*24));
+    	}
     	
     	return $qb->orderBy('te.date', 'DESC');
     }

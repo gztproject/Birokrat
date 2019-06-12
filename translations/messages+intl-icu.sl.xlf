@@ -501,6 +501,14 @@
         <source>label.dateServiceRenderedTo</source>
         <target>Datum opr. stor. do</target>
       </trans-unit>
+      <trans-unit id="label.dateFrom" resname="label.dateFrom">
+        <source>label.dateFrom</source>
+        <target>Datum od</target>
+      </trans-unit>
+      <trans-unit id="label.dateTo" resname="label.dateTo">
+        <source>label.dateTo</source>
+        <target>Datum do</target>
+      </trans-unit>
       <trans-unit id="2OipcpU" resname="label.dateServiceRendered">
         <source>label.dateServiceRendered</source>
         <target>Datum opr. stor.</target>
