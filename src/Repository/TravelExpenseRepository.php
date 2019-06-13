@@ -21,7 +21,7 @@ class TravelExpenseRepository extends ServiceEntityRepository
     }
     
     
-    public function getQuery($from, $to): QueryBuilder
+    public function getQuery($from, $to, bool $unbooked, bool $booked): QueryBuilder
     {
     	$qb = $this
     		->createQueryBuilder('te')
@@ -29,15 +29,34 @@ class TravelExpenseRepository extends ServiceEntityRepository
     	if($from)
     	{
     	  	$qb
-    	  		->where('te.date >= :from')
-    	  		->setParameter('from', date('Y-m-d G:i:s', strtotime($from)));
+    	  	->where('te.date >= :from')
+    	  	->setParameter('from', date('Y-m-d G:i:s', $from));
     	}
     	
     	if($to)
     	{
     		$qb    		
     		->andWhere('te.date <= :to')
-    		->setParameter('to', date('Y-m-d G:i:s', strtotime($to)+60*60*24));
+    		->setParameter('to', date('Y-m-d G:i:s', $to+60*60*24));
+    	}
+    	
+    	if($booked && $unbooked)
+    	{
+    		
+    	}
+    	elseif($unbooked)
+    	{
+    		$qb->andWhere('te.state <= 10');
+    	}
+    	elseif($booked)
+    	{
+    		$qb->andWhere('te.state > 10');
+    	}
+    	else
+    	{
+    		$qb
+    			->andWhere('te.state <= 10')
+    			->andWhere('te.state > 10');
     	}
     	
     	return $qb->orderBy('te.date', 'DESC');

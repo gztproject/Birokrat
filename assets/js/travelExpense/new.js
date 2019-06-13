@@ -4,7 +4,20 @@ import Bloodhound from "bloodhound-js";
 import 'bootstrap-tagsinput';
 
 $( document ).ready(function() {
-    $('#travel_expense_date').datetimepicker({format: 'DD. MM. YYYY'});
+    $('#travel_expense_date').datetimepicker({
+        format: 'DD. MM. YYYY',
+        icons: {
+                    time: "fa fa-clock",
+                    date: "fa fa-calendar",
+                    up: "fa fa-arrow-up",
+                    down: "fa fa-arrow-down",
+                    previous: "fa fa-arrow-left",
+                    next: "fa fa-arrow-right",
+                    today:"fa fa-calendar-day",
+                    clear:"fa fa-backspace",
+                    close:"fa fa-times"
+                }
+    });
 
     // Bootstrap-tagsinput initialization
     // http://bootstrap-tagsinput.github.io/bootstrap-tagsinput/examples/

@@ -7,21 +7,65 @@ $(function() {
     $('#invoice_dateOfIssue').datetimepicker({
         locale: 'sl',
         format: 'dd. mm. yyyy',
+        icons: {
+                    time: "fa fa-clock",
+                    date: "fa fa-calendar",
+                    up: "fa fa-arrow-up",
+                    down: "fa fa-arrow-down",
+                    previous: "fa fa-arrow-left",
+                    next: "fa fa-arrow-right",
+                    today:"fa fa-calendar-day",
+                    clear:"fa fa-backspace",
+                    close:"fa fa-times"
+                }
     });
 
     $('#invoice_dueDate').datetimepicker({
         locale: 'sl',
         format: 'dd. mm. yyyy',
+        icons: {
+                    time: "fa fa-clock",
+                    date: "fa fa-calendar",
+                    up: "fa fa-arrow-up",
+                    down: "fa fa-arrow-down",
+                    previous: "fa fa-arrow-left",
+                    next: "fa fa-arrow-right",
+                    today:"fa fa-calendar-day",
+                    clear:"fa fa-backspace",
+                    close:"fa fa-times"
+                }
     });
 
      $('#invoice_dateServiceRenderedFrom').datetimepicker({
         locale: 'sl', 
         format: 'dd. mm. yyyy',
+        icons: {
+                    time: "fa fa-clock",
+                    date: "fa fa-calendar",
+                    up: "fa fa-arrow-up",
+                    down: "fa fa-arrow-down",
+                    previous: "fa fa-arrow-left",
+                    next: "fa fa-arrow-right",
+                    today:"fa fa-calendar-day",
+                    clear:"fa fa-backspace",
+                    close:"fa fa-times"
+                }
     });
 
      $('#invoice_dateServiceRenderedTo').datetimepicker({
         locale: 'sl',
         format: 'dd. mm. yyyy',
+        icons: {
+                    time: "fa fa-clock",
+                    date: "fa fa-calendar",
+                    up: "fa fa-arrow-up",
+                    down: "fa fa-arrow-down",
+                    previous: "fa fa-arrow-left",
+                    next: "fa fa-arrow-right",
+                    today:"fa fa-calendar-day",
+                    clear:"fa fa-backspace",
+                    close:"fa fa-times"
+                },
         useCurrent: false //Important! See issue #1075        
     });
 

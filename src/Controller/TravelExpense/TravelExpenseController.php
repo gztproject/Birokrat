@@ -21,7 +21,9 @@ class TravelExpenseController extends AbstractController
 	{   		
 		$dateFrom = $request->query->get('dateFrom', 0);
 		$dateTo = $request->query->get('dateTo', 0);
-		$queryBuilder = $travelExpenses->getQuery($dateFrom, $dateTo);
+		$booked = $request->query->get('booked', 'false') == 'true';
+		$unbooked = $request->query->get('unbooked', 'true') == 'true';
+		$queryBuilder = $travelExpenses->getQuery($dateFrom, $dateTo, $unbooked, $booked);
 		
     	$pagination = $paginator->paginate($queryBuilder, $request->query->getInt('page', 1), 10);
     	
