@@ -8,9 +8,11 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Repository\TravelExpenseRepository;
+use App\Entity\Konto\Konto;
 use App\Entity\TravelExpense\TravelExpense;
 use App\Form\TravelExpenseType;
 use Knp\Component\Pager\PaginatorInterface;
+use App\Entity\TravelExpense\TravelExpenseBundle;
 
 class TravelExpenseController extends AbstractController
 {    
@@ -83,6 +85,27 @@ class TravelExpenseController extends AbstractController
         return $this->render('dashboard/travelExpense/show.html.twig', [
         		'travelExpense' => $travelExpense,
         ]);
+    }
+    
+    /**
+     * @Route("/dashboard/travelExpense/bookInBundle", methods={"POST"}, name="travelExpense_bookinBundle")
+     */
+    public function issue(Request $request): Response
+    {
+    	
+    	$konto = $this->getDoctrine()->getRepository(Konto::class)->findOneBy(['number'=>486]); //486 	POVRAČILA STROŠKOV S.P. POSAMEZNIKOM
+    	$date = new \DateTime($request->request->get('date', null));
+    	$entityManager = $this->getDoctrine()->getManager();
+    	
+    	$bundle = new TravelExpenseBundle();
+    	
+    	$transaction = $bundle->setBooked($konto, $date);
+    	
+    	$entityManager->persist($bundle);
+    	$entityManager->persist($transaction);
+    	$entityManager->flush();
+    	
+    	return null;
     }
     
 }

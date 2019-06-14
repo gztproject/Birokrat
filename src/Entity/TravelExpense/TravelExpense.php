@@ -6,7 +6,9 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use App\Entity\Base\Base;
+use App\Entity\Konto\Konto;
 use App\Entity\User\User;
+use App\Entity\Transaction\Transaction;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\TravelExpenseRepository")
@@ -43,6 +45,11 @@ class TravelExpense extends Base
      *  @ORM\Column(type="integer")
      */
     private $state;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\TravelExpense\TravelExpenseBundle", inversedBy="TravelExpenses")
+     */
+    private $travelExpenseBundle;
 
     public function __construct()
     {
@@ -145,9 +152,9 @@ class TravelExpense extends Base
         return $this;
     }
     
-    public function getTotalRefund(): ?float
+    public function getTotalCost(): ?float
     {
-    	return $this->totalDistance * $this->rate;
+    	return round($this->totalDistance * $this->rate, 2);
     }
     
     public function calculateTotalDistance(): ?float
@@ -172,6 +179,17 @@ class TravelExpense extends Base
     	}
     	return $desc;
     }
-    
+
+    public function getTravelExpenseBundle(): ?TravelExpenseBundle
+    {
+        return $this->travelExpenseBundle;
+    }
+
+    public function setTravelExpenseBundle(?TravelExpenseBundle $travelExpenseBundle): self
+    {
+        $this->travelExpenseBundle = $travelExpenseBundle;
+
+        return $this;
+    }
     
 }

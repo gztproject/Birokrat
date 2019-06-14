@@ -7,6 +7,7 @@ use App\Entity\Base\Base;
 use App\Entity\Konto\Konto;
 use App\Entity\Invoice\Invoice;
 use App\Entity\TravelExpense\TravelExpense;
+use App\Entity\TravelExpense\TravelExpenseBundle;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\Transaction\TransactionRepository")
@@ -39,6 +40,11 @@ class Transaction extends Base
 	 */
 	private $travelExpense;
 	
+	/**
+	 * @ORM\OneToOne(targetEntity="App\Entity\TravelExpense\TravelExpenseBundle", cascade={"persist", "remove"})
+	 */
+	private $travelExpenseBundle;
+	
 	public function initWithInvoice(\DateTimeInterface $date, Konto $konto, float $sum, Invoice $invoice)
 	{
 		$this->setDate($date);
@@ -47,12 +53,12 @@ class Transaction extends Base
 		$this->setInvoice($invoice);
 	}
 	
-	public function initWithTravelExpense(\DateTimeInterface $date, Konto $konto, float $sum, TravelExpense $travelExpense)
+	public function initWithTravelExpenseBundle(\DateTimeInterface $date, Konto $konto, float $sum, TravelExpenseBundle $travelExpenseBundle)
 	{
 		$this->setDate($date);
-		$this->setSum($sum);
+		$this->setSum(-$sum);
 		$this->setKonto($konto);
-		$this->setTravelExpense($travelExpense);
+		$this->setTravelExpenseBundle($travelExpenseBundle);
 	}
 	
 	public function getKonto(): ?Konto
@@ -116,6 +122,18 @@ class Transaction extends Base
 	public function setTravelExpense(?TravelExpense $travelExpense): self
 	{
 		$this->travelExpense = $travelExpense;
+		
+		return $this;
+	}
+	
+	public function getTravelExpenseBundle(): ?TravelExpenseBundle
+	{
+		return $this->travelExpenseBundle;
+	}
+	
+	public function setTravelExpenseBundle(?TravelExpenseBundle $travelExpenseBundle): self
+	{
+		$this->travelExpenseBundle = $travelExpenseBundle;
 		
 		return $this;
 	}
