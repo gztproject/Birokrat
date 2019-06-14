@@ -70,7 +70,10 @@ class TravelExpenseBundle extends Base
     	$transaction = new Transaction();
     	$transaction->initWithTravelExpenseBundle($date, $konto, $this->getTotalCost(), $this);
     	
-    	$this->setState(20);
+    	foreach($this->TravelExpenses as $te)
+    	{
+    		$te->setBooked();
+    	}
     	return $transaction;
     }
 }

@@ -21,7 +21,7 @@ class TravelExpenseRepository extends ServiceEntityRepository
     }
     
     
-    public function getQuery($from, $to, bool $unbooked, bool $booked): QueryBuilder
+    public function getFilteredQuery($from, $to, bool $unbooked, bool $booked): QueryBuilder
     {
     	$qb = $this
     		->createQueryBuilder('te')

@@ -24,9 +24,16 @@ $( document ).ready(function(){
 
     $('#bookVisibleTEs').on('click', function(e){  
         var filter = queryString.parse(location.search);
-        console.log(filter);
-        
-        
+        $.post("/dashboard/travelExpense/bookInBundle/withFilter",
+        {
+            dateFrom: filter.dateFrom,
+            dateTo: filter.dateTo,
+            booked: filter.booked,
+            unbooked: filter.unbooked
+        },
+        function(data, status){
+            location.reload;
+        });        
     });
 
     $('.TECheckBox').on('change', function(e){

@@ -53,6 +53,7 @@ class TravelExpense extends Base
 
     public function __construct()
     {
+    	$this->state = 00;
         $this->travelStops = new ArrayCollection();
     }    
 
@@ -144,12 +145,62 @@ class TravelExpense extends Base
     {
         return $this->state;
     }
-
-    public function setState(?int $state): self
+    
+    public function setUnbooked(): self
     {
+    	$this->setState(10);
+    	return $this;
+    }
+    
+    public function setBooked(): self
+    {
+    	$this->setState(20);
+    	return $this;
+    }
+
+    /**
+     * Sets TE state
+     *
+     * @param integer $state 00-new, 10-unbooked, 20-booked, 100-cancelled.
+     */
+    private function setState(?int $state): self
+    {
+    	$this->checkState($this->state, $state);
         $this->state = $state;
 
         return $this;
+    }
+    
+    /**
+     * Checks if transition of states is allowed and everything is properly set.
+     *
+     * @param int $currState Current TE state
+     * @param int $newState New TE state
+     */
+    private function checkState(int $currState, int $newState)
+    {
+    	switch ($currState) {
+    		case 00: //new
+    			if ($newState != 10 && $newState != 100)
+    				throw new \Exception("Can't transition to state $newState from $currState");
+    				break;
+    		case 10: //unbooked
+    			if ($newState != 20 && $newState != 100)
+    				throw new \Exception("Can't transition to state $newState from $currState");
+    				break;
+    		case 20: //booked
+    			if ($newState != 100) //Do we really want to be able to cancel booked TEs?
+    				throw new \Exception("Can't transition to state $newState from $currState");
+    				break;
+    		
+    		case 100: //cancelled
+    			throw new \Exception("Can't do anything with cancelled TE.");
+    			break;
+    		default:
+    			throw new \Exception('This TE State is unknown!');
+    			break;
+    	}
+    	
     }
     
     public function getTotalCost(): ?float

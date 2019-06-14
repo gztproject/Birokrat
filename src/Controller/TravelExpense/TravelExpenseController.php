@@ -13,6 +13,7 @@ use App\Entity\TravelExpense\TravelExpense;
 use App\Form\TravelExpenseType;
 use Knp\Component\Pager\PaginatorInterface;
 use App\Entity\TravelExpense\TravelExpenseBundle;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class TravelExpenseController extends AbstractController
 {    
@@ -25,7 +26,7 @@ class TravelExpenseController extends AbstractController
 		$dateTo = $request->query->get('dateTo', 0);
 		$booked = $request->query->get('booked', 'false') == 'true';
 		$unbooked = $request->query->get('unbooked', 'true') == 'true';
-		$queryBuilder = $travelExpenses->getQuery($dateFrom, $dateTo, $unbooked, $booked);
+		$queryBuilder = $travelExpenses->getFilteredQuery($dateFrom, $dateTo, $unbooked, $booked);
 		
     	$pagination = $paginator->paginate($queryBuilder, $request->query->getInt('page', 1), 10);
     	
@@ -42,8 +43,7 @@ class TravelExpenseController extends AbstractController
     public function new(Request $request)
     {
     	$te = new TravelExpense();    	
-    	$te->setState(00);
-    	
+    	    	
     	$form = $this->createForm(TravelExpenseType::class, $te)
     		->add('saveAndCreateNew', SubmitType::class);
     	
@@ -51,7 +51,7 @@ class TravelExpenseController extends AbstractController
     	
     	if ($form->isSubmitted() && $form->isValid()) {
     		
-    		$te->setState(10);
+    		$te->setUnbooked();
     		
     		$te->setEmployee($this->get('security.token_storage')->getToken()->getUser());
     		//ToDo: Get rate from organizationSettings
@@ -88,16 +88,27 @@ class TravelExpenseController extends AbstractController
     }
     
     /**
-     * @Route("/dashboard/travelExpense/bookInBundle", methods={"POST"}, name="travelExpense_bookinBundle")
+     * @Route("/dashboard/travelExpense/bookInBundle/withFilter", methods={"POST"}, name="travelExpense_bookinBundle_withFilter")
      */
-    public function issue(Request $request): Response
+    public function issue(TravelExpenseRepository $repo, Request $request): JsonResponse
     {
+    	$dateFrom = $request->request->get('dateFrom', 0);
+    	$dateTo = $request->request->get('dateTo', 0);
+    	$booked = $request->request->get('booked', 'false') == 'true';
+    	$unbooked = $request->request->get('unbooked', 'true') == 'true';
+    	$queryBuilder = $repo->getFilteredQuery($dateFrom, $dateTo, $unbooked, $booked);
+    	
+    	$travelExpenses = $queryBuilder->getQuery()->getResult();
+    	    	
+    	$bundle = new TravelExpenseBundle();
+    	foreach($travelExpenses as $te)
+    	{
+    		$bundle->addTravelExpense($te);
+    	}
     	
     	$konto = $this->getDoctrine()->getRepository(Konto::class)->findOneBy(['number'=>486]); //486 	POVRAČILA STROŠKOV S.P. POSAMEZNIKOM
     	$date = new \DateTime($request->request->get('date', null));
     	$entityManager = $this->getDoctrine()->getManager();
-    	
-    	$bundle = new TravelExpenseBundle();
     	
     	$transaction = $bundle->setBooked($konto, $date);
     	
@@ -105,7 +116,7 @@ class TravelExpenseController extends AbstractController
     	$entityManager->persist($transaction);
     	$entityManager->flush();
     	
-    	return null;
+    	return new JsonResponse($travelExpenses);
     }
     
 }
