@@ -102,6 +102,18 @@ $( document ).ready(function(){
         var url = location.href.replace(location.search, "");
         document.location = url;
     });
+
+    $('#selectAllBtn').on('click', function(e){
+        var isAnyChecked = false;
+        $('#travelExpensesTable').find('input[type="checkbox"]:checked').each(function(){
+            isAnyChecked = true;
+        });
+
+        $('#travelExpensesTable').find('input[type="checkbox"]').each(function(){
+            this.checked = !isAnyChecked;
+            $(this).trigger("change");
+        });
+    });
 });
 
 

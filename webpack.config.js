@@ -19,6 +19,7 @@ Encore
     .addEntry('js/codesheets', './assets/js/codesheets.js')
     
     //TravelExpense
+    .addEntry('js/travelExpense/index', './assets/js/travelExpense/index.js')
     .addEntry('js/travelExpense/new', './assets/js/travelExpense/new.js')
     .addEntry('js/travelExpense/filter', './assets/js/travelExpense/filter.js')
 

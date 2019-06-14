@@ -13,6 +13,26 @@ $web-font-path: 'data:text/css;base64,';
 
 @import "node_modules/eonasdan-bootstrap-datetimepicker/src/sass/bootstrap-datetimepicker-build.scss";
 
+.col-form-label {
+    margin-bottom: 0;
+      margin-right: calc(#{$input-padding-x} + #{$input-border-width});
+      margin-left: calc(#{$input-padding-x});
+}
 
+.col-form-label-lg {
+      margin-bottom: 0;
+      margin-right: calc(#{$input-padding-x-lg} + #{$input-border-width});
+      margin-left: calc(#{$input-padding-x-lg});
+}
+
+.col-form-label-sm {
+      margin-bottom: 0;
+    margin-right: calc(#{$input-padding-x-sm} + #{$input-border-width});
+      margin-left: calc(#{$input-padding-x-sm});
+}
+
+.TECheckBox {
+      margin-left: $input-padding-x;
+}
 
 
