@@ -70,12 +70,12 @@ $(function() {
     });
 
     $("#invoice_dateServiceRenderedFrom").on("dp.change", function (e) {
-            $('#invoice_dateServiceRenderedTo').data("DateTimePicker").minDate(e.date);
-        });
-        $("#invoice_dateServiceRenderedTo").on("dp.change", function (e) {
-            $('#invoice_dateServiceRenderedFrom').data("DateTimePicker").maxDate(e.date);
-        });
-
+        $('#invoice_dateServiceRenderedTo').data("DateTimePicker").minDate(e.date);
+    });
+    $("#invoice_dateServiceRenderedTo").on("dp.change", function (e) {
+        $('#invoice_dateServiceRenderedFrom').data("DateTimePicker").maxDate(e.date);
+    });
+    refreshInvNumber();
 });
 
 var $collectionHolder;
@@ -116,8 +116,22 @@ jQuery(document).ready(function() {
         var date = issueDate.add($(this).val(), 'days').format('L');       
         $('#invoice_dueDate').data("DateTimePicker").date(date);
     });
+
+    $('#invoice_issuer').on('change', function(){
+        refreshInvNumber();
+    });
     
 });
+
+function refreshInvNumber(){
+    $.post("/dashboard/invoice/getNewNumber",
+        {           
+            issuerId: $('#invoice_issuer option:selected').val()
+        },
+        function(data, status){            
+            $('#invoice_number').val(data[0]['data'][0]);
+        }); 
+}
 
 function addInvoiceItemForm($collectionHolder, $addRemoveInvoiceItemButtons, $number) {
     for(var i=0; i<$number;i++){

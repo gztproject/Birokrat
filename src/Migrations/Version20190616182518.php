@@ -149,6 +149,7 @@ final class Version20190616182518 extends AbstractMigration implements Container
         $this->addSql('CREATE INDEX IDX_7410FCA5B03A8386 ON travel_expense_bundle (created_by_id)');
         $this->addSql('CREATE INDEX IDX_7410FCA5896DBBDE ON travel_expense_bundle (updated_by_id)');
         $this->addSql('ALTER TABLE app_users CHANGE mobile mobile VARCHAR(20) NULL, CHANGE phone phone VARCHAR(20) NULL ');
+        $this->addSql('UPDATE invoice SET created_by_id = issued_by_id; UPDATE invoice SET created_on = date_of_issue; ALTER TABLE invoice DROP FOREIGN KEY FK_90651744784BB717; ALTER TABLE invoice DROP COLUMN issued_by_id;');
     }
     
     public function postUp(Schema $schema) : void
@@ -218,6 +219,10 @@ final class Version20190616182518 extends AbstractMigration implements Container
         // this down() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
+        $this->addSql('ALTER TABLE invoice ADD issued_by_id CHAR(36) NOT NULL COMMENT \'(DC2Type:uuid)\';');
+        $this->addSql('UPDATE invoice SET issued_by_id = created_by_id;');
+        $this->addSql('ALTER TABLE invoice ADD CONSTRAINT FK_90651744784BB717 FOREIGN KEY (issued_by_id) REFERENCES app_users(id);');       
+        
         $this->addSql('ALTER TABLE address DROP FOREIGN KEY FK_D4E6F81B03A8386');
         $this->addSql('ALTER TABLE address DROP FOREIGN KEY FK_D4E6F81896DBBDE');
         $this->addSql('DROP INDEX IDX_D4E6F81B03A8386 ON address');
@@ -302,6 +307,7 @@ final class Version20190616182518 extends AbstractMigration implements Container
         $this->addSql('ALTER TABLE user_settings DROP FOREIGN KEY FK_5C844C5896DBBDE');
         $this->addSql('DROP INDEX IDX_5C844C5B03A8386 ON user_settings');
         $this->addSql('DROP INDEX IDX_5C844C5896DBBDE ON user_settings');
-        $this->addSql('ALTER TABLE user_settings DROP created_by_id, DROP updated_by_id, DROP created_on, DROP updated_on');
+        $this->addSql('ALTER TABLE user_settings DROP created_by_id, DROP updated_by_id, DROP created_on, DROP updated_on');       
+        
     }
 }

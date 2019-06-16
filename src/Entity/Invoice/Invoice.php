@@ -70,13 +70,7 @@ class Invoice extends Base
      *  @ORM\Column(type="integer")
      */
     private $state;
-
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\User\User")
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $issuedBy;
-    
+        
     /**
      * @ORM\Column(type="date")
      */
@@ -114,19 +108,31 @@ class Invoice extends Base
      * @param Organization $issuer Issuing Organization
      * @param String $number Invoice number (generate using InvoiceNumberFactory)
      */
-    public function __construct(User $issuedBy, Organization $issuer, String $number)
+    public function __construct(CreateInvoiceCommand $c, User $user)
     {
+    	parent::__construct($user);
         $this->invoiceItems = new ArrayCollection();
         
         //We have to initialize the state (see checkState()).
-        $this->state = 00;      
-        $this->setIssuedBy($issuedBy);        
-        $this->setIssuer($issuer);
-        
-        $this->setNumber($number);
+        $this->state = 00;         
+        $this->issuer = $c->issuer;
+        $this->number = $c->number;
         
         $this->setDateOfIssue(\DateTime::createFromFormat('U', date("U")));
         $this->setDueInDays($this->issuer->getOrganizationSettings()->getDefaultPaymentDueIn());
+    }
+    
+    /**
+     * Creates a new InvoiceItem on this invoice
+     * @param CreateInvoiceItemCommand $c
+     * @return InvoiceItem
+     */
+    public function createInvoiceItem(CreateInvoiceItemCommand $c): InvoiceItem
+    {
+    	$ii = new InvoiceItem($c, $this);
+    	$this->invoiceItems[] = $ii;
+    	    	
+    	return $ii;
     }
     
     public function setNew()    
@@ -269,19 +275,7 @@ class Invoice extends Base
     			}
     			$this->referenceNumber = $result;
     			return $this;
-    }
-
-    public function getIssuedBy(): ?User
-    {
-        return $this->issuedBy;
-    }
-
-    public function setIssuedBy(?User $issuedBy): self
-    {
-        $this->issuedBy = $issuedBy;
-
-        return $this;
-    }  
+    }   
     
     public function getDateServiceRenderedFrom(): ?\DateTimeInterface
     {
@@ -434,15 +428,7 @@ class Invoice extends Base
     	return $this->invoiceItems;
     }
     
-    public function addInvoiceItem(InvoiceItem $invoiceItem): self
-    {
-    	if (!$this->invoiceItems->contains($invoiceItem)) {
-    		$this->invoiceItems[] = $invoiceItem;
-    		$invoiceItem->setInvoice($this);
-    	}
-    	
-    	return $this;
-    }
+    
     
     public function removeInvoiceItem(InvoiceItem $invoiceItem): self
     {

@@ -11,6 +11,8 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use App\Entity\Base\Base;
 use App\Entity\Organization\Organization;
+use App\Entity\Invoice\CreateInvoiceCommand;
+use App\Entity\Invoice\Invoice;
 
 
 /**
@@ -146,6 +148,16 @@ class User extends Base implements UserInterface, \Serializable
     public function createUser(CreateUserCommand $c, UserPasswordEncoderInterface $passwordEncoder): User
     {
     	return new User($c, $this, $passwordEncoder);
+    }
+    
+    /**
+     * Creates a new invoice.
+     * @param CreateInvoiceCommand $c
+     * @return Invoice
+     */
+    public function createInvoice(CreateInvoiceCommand $c): Invoice
+    {
+    	return new Invoice($c, $this);
     }
     
     /*

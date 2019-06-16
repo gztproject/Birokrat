@@ -1,5 +1,5 @@
 <?php 
-namespace App\Controller;
+namespace App\Controller\Invoice;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -7,15 +7,17 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\Invoice\Invoice;
-use App\Form\InvoiceType;
+use App\Form\Invoice\InvoiceType;
 use App\Repository\InvoiceRepository;
 use Symfony\Component\Validator\Constraints\DateTime;
 use App\Entity\Invoice\InvoiceNumberFactory;
 use App\Entity\Konto\Konto;
+use App\Entity\Organization\Organization;
 use WhiteOctober\TCPDFBundle\Controller\TCPDFController;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Knp\Component\Pager\PaginatorInterface;
+use App\Entity\Invoice\CreateInvoiceCommand;
 
 class InvoiceController extends AbstractController
 {    
@@ -39,32 +41,26 @@ class InvoiceController extends AbstractController
      */
     public function new(Request $request): Response
     {
-    	$doctrine = $this->getDoctrine();
-    	$issuedBy = $this->get('security.token_storage')->getToken()->getUser();
-    	$organizations = $this->get('security.token_storage')->getToken()->getUser()->getOrganizations();
-    	$issuer = $organizations[0];    	
+    	$createInvoiceCommand = new CreateInvoiceCommand();
     	
-    	$number = InvoiceNumberFactory::factory($issuer, $doctrine)->generate();
-    	
-    	$invoice = new Invoice($issuedBy, $issuer, $number);   	
-    	
-    	$form = $this->createForm(InvoiceType::class, $invoice)
+    	$form = $this->createForm(InvoiceType::class, $createInvoiceCommand)
     	->add('saveAndCreateNew', SubmitType::class);
     	
     	$form->handleRequest($request);
     	
     	if ($form->isSubmitted() && $form->isValid()) {
     		 		
-    		$invoice->setNew();
-    		
-    		$entityManager = $this->getDoctrine()->getManager();
-    		foreach($invoice->getInvoiceItems() as $ii)
+    		$invoice = $this->getUser()->createInvoice($createInvoiceCommand);
+    		    		
+    		$em = $this->getDoctrine()->getManager();
+    		foreach($createInvoiceCommand->invoiceItems as $ii)
     		{
-    			$entityManager->persist($ii);
+    			$invoice->createInvoiceItem($ii);
+    			$em->persist($ii);
     		}
     		    		
-    		$entityManager->persist($invoice);
-    		$entityManager->flush();
+    		$em->persist($invoice);
+    		$em->flush();
     		
     		return $this->redirectToRoute('invoice_pdf_debug', array('id'=> $invoice->getId()));
     	}
@@ -78,8 +74,19 @@ class InvoiceController extends AbstractController
      * @Route("/dashboard/invoice/getNewNumber", methods={"POST"}, name="invoice_getNewNumber")
      */
     public function getNewNumber(Request $request): JsonResponse
-    {
-    	
+    {    	
+    	$doctrine = $this->getDoctrine();
+    	$issuer = $doctrine->getRepository(Organization::class)->findOneBy(['id'=>$request->request->get('issuerId', null)]);
+    	return new JsonResponse(
+    		array(
+    			array(
+    				'status'=>'ok',
+    				'data'=>array(
+    						InvoiceNumberFactory::factory($issuer, $doctrine)->generate()    						
+    				)
+    			)    						
+    		)
+    	);
     }
     
     /**
