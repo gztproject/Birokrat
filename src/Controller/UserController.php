@@ -1,18 +1,19 @@
 <?php 
 namespace App\Controller;
 
-use App\Form\UserType;
+use App\Form\User\CreateUserType;
 use App\Entity\User\User;
 use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use App\Entity\Organization\Organization;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use App\Entity\User\CreateUserCommand;
 
 class UserController extends AbstractController
 {
@@ -38,8 +39,8 @@ class UserController extends AbstractController
     public function new(Request $request, UserPasswordEncoderInterface $passwordEncoder)
     {
         // 1) build the form
-        $user = new User();
-        $form = $this->createForm(UserType::class, $user)
+        $createUserCommand = new CreateUserCommand();
+        $form = $this->createForm(CreateUserType::class, $createUserCommand)
             ->add('saveAndCreateNew', SubmitType::class);
         
         
@@ -47,11 +48,7 @@ class UserController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             
-                        
-            // 3) Encode the password (you could also do this via Doctrine listener)
-            $password = $passwordEncoder->encodePassword($user, $user->getPlainPassword());
-            $user->setPassword($password);            
-            $user->eraseCredentials();
+        	$user = $this->getUser()->createUser($createUserCommand, $passwordEncoder);
             
             // 4) save the User!
             $entityManager = $this->getDoctrine()->getManager();

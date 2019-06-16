@@ -1,8 +1,7 @@
 <?php 
-// src/Form/UserType.php
-namespace App\Form;
+// src/Form/CreateUserType.php
+namespace App\Form\User;
 
-use App\Entity\User\User;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -12,14 +11,19 @@ use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\CallbackTransformer;
+use App\Entity\User\CreateUserCommand;
+use Doctrine\DBAL\Types\StringType;
 
-class UserType extends AbstractType
+class CreateUserType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
             ->add('email', EmailType::class,[
                 'label' => 'label.email'
+            ])
+            ->add('mobile', TextType::class,[
+            		'label' => 'label.mobile'
             ])
             ->add('username', TextType::class,[
                 'label' => 'label.username'
@@ -30,7 +34,7 @@ class UserType extends AbstractType
             ->add('lastName', TextType::class,[
                 'label' => 'label.lastname'
             ])
-            ->add('plainPassword', RepeatedType::class, array(
+            ->add('password', RepeatedType::class, array(
                 'type' => PasswordType::class,
                 'first_options'  => array('label' => 'label.password'),
                 'second_options' => array('label' => 'label.repeat_password'),
@@ -56,7 +60,7 @@ class UserType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => User::class,
+            'data_class' => CreateUserCommand::class,
         ));
     }
 }
