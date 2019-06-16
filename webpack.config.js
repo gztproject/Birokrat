@@ -17,7 +17,13 @@ Encore
     .addEntry('js/dashboard', './assets/js/dashboard.js')
     .addEntry('js/search', './assets/js/search.js')
     .addEntry('js/codesheets', './assets/js/codesheets.js')
-    .addEntry('js/travelExpense', './assets/js/travelExpense.js')
+    
+    //TravelExpense
+    .addEntry('js/travelExpense/index', './assets/js/travelExpense/index.js')
+    .addEntry('js/travelExpense/new', './assets/js/travelExpense/new.js')
+    .addEntry('js/travelExpense/filter', './assets/js/travelExpense/filter.js')
+
+    //Invoice
     .addEntry('js/invoice/new', './assets/js/invoice/new.js')
     .addEntry('js/invoice/list', './assets/js/invoice/list.js')
     .addEntry('js/organization/new', './assets/js/organization/new.js')

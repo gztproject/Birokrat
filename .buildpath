@@ -31,7 +31,7 @@
 			<attribute name="composer" value="vendor"/>
 		</attributes>
 	</buildpathentry>
-	<buildpathentry kind="src" path="vendor/doctrine/collections/lib">
+	<buildpathentry kind="src" path="vendor/doctrine/collections/lib/Doctrine/Common/Collections">
 		<attributes>
 			<attribute name="composer" value="vendor"/>
 		</attributes>
@@ -86,12 +86,7 @@
 			<attribute name="composer" value="vendor"/>
 		</attributes>
 	</buildpathentry>
-	<buildpathentry kind="src" path="vendor/doctrine/lexer/lib">
-		<attributes>
-			<attribute name="composer" value="vendor"/>
-		</attributes>
-	</buildpathentry>
-	<buildpathentry kind="src" path="vendor/doctrine/migrations/lib/Doctrine/DBAL/Migrations">
+	<buildpathentry kind="src" path="vendor/doctrine/lexer/lib/Doctrine/Common/Lexer">
 		<attributes>
 			<attribute name="composer" value="vendor"/>
 		</attributes>
@@ -156,6 +151,16 @@
 			<attribute name="composer" value="vendor"/>
 		</attributes>
 	</buildpathentry>
+	<buildpathentry kind="src" path="vendor/knplabs/knp-components/src">
+		<attributes>
+			<attribute name="composer" value="vendor"/>
+		</attributes>
+	</buildpathentry>
+	<buildpathentry kind="src" path="vendor/knplabs/knp-paginator-bundle">
+		<attributes>
+			<attribute name="composer" value="vendor"/>
+		</attributes>
+	</buildpathentry>
 	<buildpathentry kind="src" path="vendor/monolog/monolog/src/Monolog">
 		<attributes>
 			<attribute name="composer" value="vendor"/>
@@ -181,7 +186,7 @@
 			<attribute name="composer" value="vendor"/>
 		</attributes>
 	</buildpathentry>
-	<buildpathentry kind="src" path="vendor/pagerfanta/pagerfanta/src">
+	<buildpathentry kind="src" path="vendor/pagerfanta/pagerfanta/src/Pagerfanta">
 		<attributes>
 			<attribute name="composer" value="vendor"/>
 		</attributes>
@@ -217,11 +222,6 @@
 		</attributes>
 	</buildpathentry>
 	<buildpathentry kind="src" path="vendor/psr/log/Psr/Log">
-		<attributes>
-			<attribute name="composer" value="vendor"/>
-		</attributes>
-	</buildpathentry>
-	<buildpathentry kind="src" path="vendor/psr/simple-cache/src">
 		<attributes>
 			<attribute name="composer" value="vendor"/>
 		</attributes>

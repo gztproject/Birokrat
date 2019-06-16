@@ -29,13 +29,13 @@
             {% endif %}
                 <td>{{ invoice.number }}</td>
                 <td>{{ invoice.dateOfIssueString }}</td>
-                <td>{{ invoice.Recepient.Name }}</td>
+                <td>{{ invoice.Recepient.ShortName }}</td>
                 <td>{{ invoice.ReferenceNumber }}</td>
                 <td>{{ invoice.TotalPrice }}</td>
                 <td>{% if invoice.datePaid %}
                         {{ invoice.DatePaidString }}
                     {% else %}
-                         {{ 'label.notPaid'|trans }}
+                         {{ invoice.DueDateString }}
                     {% endif %}
                 </td>
                 <td class="text-right">

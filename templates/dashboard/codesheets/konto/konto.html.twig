@@ -14,7 +14,9 @@
 {% block sidebar %}
     
     {{ parent() }}
-    {{ include('dashboard/codesheets/konto/_filter.html.twig', {form: form}) }}
+    <div id="filter" class="row">
+        {{ include('dashboard/codesheets/konto/_filter.html.twig', {form: form}) }}
+    </div>
 {% endblock %}
 
 {% block javascripts %}

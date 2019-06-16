@@ -3,18 +3,48 @@
 {% block body_id 'travelExpense_index' %}
 
 {% block main %}
-<h1>{{ 'title.travelExpenses'|trans }}</h1>
+    <h1>{{ 'title.travelExpenses'|trans }} ({{ pagination.getTotalItemCount }})</h1>
     <div class="bs-component">
     {{ include('dashboard/travelExpense/_table.html.twig', {
-                travelExpenses: travelExpenses                
-            }, with_context = false) }}
-                </div>
+            travelExpenses: pagination,
+            ShowCBs: true                
+        }, with_context = false) }}
+    </div>
+    {{ knp_pagination_render(pagination) }}
 {% endblock %}
 
 {% block sidebar %}
     
     {{ parent() }}
-    <a href="{{ path('travelExpense_new') }}" class="btn btn-sm btn-block btn-success">
-            <i class="fa fa-plus" aria-hidden="true"></i> {{ 'action.create_travelExpense'|trans }}
-        </a>
+    <div class="bs-component">
+        <div class="list-group">
+            <div class="list-group-item list-group-item-action flex-column align-items-start">
+                <div class="d-flex w-100 justify-content-between">
+                    <h5 class="mb-1">{{ "label.actions" | trans }}</h5>
+                </div>
+                <div id="actions" class="row">
+                    <a href="{{ path('travelExpense_new') }}" class="btn btn-block btn-success">
+                        <i class="fa fa-plus" aria-hidden="true"></i> {{ 'action.create_travelExpense'|trans }}
+                    </a>
+                    <button type="button" id="bookCheckedTEs" class="btn btn-info btn-block">{{ 'action.bookSelectedTravelExpenses' | trans }}</button>
+                    <button type="button" id="bookVisibleTEs" class="btn btn-info btn-block">{{ 'action.bookVisibleTravelExpenses' | trans }}</button>
+                </div>
+            </div>
+            </br>
+            <div class="list-group-item list-group-item-action flex-column align-items-start">
+                <div class="d-flex w-100 justify-content-between">
+                    <h5 class="mb-1">{{ "label.filter" | trans }}</h5>
+                </div>
+                <div id="filter" class="row">
+                    {{ include('dashboard/travelExpense/_filter.html.twig') }}
+                </div>
+            </div>   
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('js/travelExpense/index') }}
+    {{ encore_entry_script_tags('js/travelExpense/filter') }}  
 {% endblock %}

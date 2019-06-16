@@ -15,7 +15,9 @@ class TravelExpenseType extends AbstractType
     {
         $builder
             ->add('date', DateTimePickerType::class,[
-                'label' => 'label.date'
+            		'label' => 'label.date',
+            		'widget' => 'single_text',
+            		'format' => 'dd. MM. yyyy',
             ]) 
             ->add('travelStops', CollectionType::class, [
             		'entry_type' => TravelStopType::class,

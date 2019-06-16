@@ -3,22 +3,20 @@ import 'typeahead.js';
 import Bloodhound from "bloodhound-js";
 import 'bootstrap-tagsinput';
 
-$(function() {
-    // Datetime picker initialization.
-    // See http://eonasdan.github.io/bootstrap-datetimepicker/
-    $('#datetimepicker').datetimepicker({
+$( document ).ready(function() {
+    $('#travel_expense_date').datetimepicker({
+        format: 'DD. MM. YYYY',
         icons: {
-            locale: 'si',
-            time: 'fa fa-clock-o',
-            date: 'fa fa-calendar',
-            up: 'fa fa-chevron-up',
-            down: 'fa fa-chevron-down',
-            previous: 'fa fa-chevron-left',
-            next: 'fa fa-chevron-right',
-            today: 'fa fa-check-circle-o',
-            clear: 'fa fa-trash',
-            close: 'fa fa-remove'
-        }
+                    time: "fa fa-clock",
+                    date: "fa fa-calendar",
+                    up: "fa fa-arrow-up",
+                    down: "fa fa-arrow-down",
+                    previous: "fa fa-arrow-left",
+                    next: "fa fa-arrow-right",
+                    today:"fa fa-calendar-day",
+                    clear:"fa fa-backspace",
+                    close:"fa fa-times"
+                }
     });
 
     // Bootstrap-tagsinput initialization

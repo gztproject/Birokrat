@@ -501,6 +501,14 @@
         <source>label.dateServiceRenderedTo</source>
         <target>Datum opr. stor. do</target>
       </trans-unit>
+      <trans-unit id="label.dateFrom" resname="label.dateFrom">
+        <source>label.dateFrom</source>
+        <target>Datum od</target>
+      </trans-unit>
+      <trans-unit id="label.dateTo" resname="label.dateTo">
+        <source>label.dateTo</source>
+        <target>Datum do</target>
+      </trans-unit>
       <trans-unit id="2OipcpU" resname="label.dateServiceRendered">
         <source>label.dateServiceRendered</source>
         <target>Datum opr. stor.</target>
@@ -764,6 +772,38 @@
       <trans-unit id="zUgcwGL" resname="action.user_add_organization">
         <source>action.user_add_organization</source>
         <target>Dodaj v organizacijo</target>
+      </trans-unit>
+      <trans-unit id="label.days" resname="label.days">
+        <source>label.days</source>
+        <target>dni</target>
+      </trans-unit>
+      <trans-unit id="label.issuer" resname="label.issuer">
+        <source>label.issuer</source>
+        <target>Izdajatelj</target>
+      </trans-unit>
+      <trans-unit id="label.filter" resname="label.filter">
+        <source>label.filter</source>
+        <target>Filter</target>
+      </trans-unit>
+      <trans-unit id="label.booked" resname="label.booked">
+        <source>label.booked</source>
+        <target>Knjiženo</target>
+      </trans-unit>
+      <trans-unit id="label.unbooked" resname="label.unbooked">
+        <source>label.unbooked</source>
+        <target>Neknjiženo</target>
+      </trans-unit>
+      <trans-unit id="label.clear" resname="label.clear">
+        <source>label.clear</source>
+        <target>Počisti</target>
+      </trans-unit>
+      <trans-unit id="action.bookSelectedTravelExpenses" resname="action.bookSelectedTravelExpenses">
+        <source>action.bookSelectedTravelExpenses</source>
+        <target>Poknjiži označene</target>
+      </trans-unit>
+      <trans-unit id="label.cost" resname="label.cost">
+        <source>label.cost</source>
+        <target>Strošek</target>
       </trans-unit>
     </body>
   </file>
