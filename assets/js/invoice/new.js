@@ -1,6 +1,5 @@
 import 'eonasdan-bootstrap-datetimepicker';
 import moment from 'moment';
-import modal from 'bootstrap';
 
 $(function() {
     // Datetime picker initialization.
