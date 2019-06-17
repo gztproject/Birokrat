@@ -164,7 +164,7 @@ function addInvoiceItemForm($collectionHolder, $addRemoveInvoiceItemButtons, $nu
         $collectionHolder.append($newFormLi);
         $collectionHolder.append($addRemoveInvoiceItemButtons);
 
-        $('#remove-invoice-item'+index).on('click', function(e) {        
+        $('#remove-invoice-item'+index).on('click', function() {        
             removeInvoiceItemForm($collectionHolder, index);        
         }); 
     }    

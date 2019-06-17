@@ -73,9 +73,9 @@
                                     <td>{{ ii.name }}</td>
                                     <td>{{ ii.quantity }}</td>
                                     <td>{{ ii.unit }}</td>
-                                    <td>{{ ii.price }}</td>
-                                    <td>{{ ii.discount }}</td>
-                                    <td>{{ ii.price * (1-ii.discount) * ii.quantity }}</td>
+                                    <td>{{ ii.price }} €</td>
+                                    <td>{{ ii.discount * 100 }} %</td>
+                                    <td>{{ ii.price * (1-ii.discount) * ii.quantity }} €</td>
                                 </tr>
                             {% endfor %}
                         </tbody>
@@ -87,18 +87,18 @@
                         V skladu s 1. točko 94. člena ZDDV-1 DDV ni obračunan.
                     </br></br>
                         Pripravil:</br>
-                        {{ invoice.issuedBy.getFullName }}
+                        {{ invoice.createdBy.getFullName }}
                 </div>                
                 <div class='col-md-3'>
                     <table>
                         <tr>
-                            <td>Skupaj:</td><td>{{ invoice.totalValue }}</td>                            
+                            <td>Skupaj:</td><td>{{ invoice.totalValue }} €</td>                            
                         </tr>
                         <tr>
-                            <td>Popust:</td><td>{{ invoice.discount }}</td>
+                            <td>Popust:</td><td>{{ invoice.discount * 100}} %</td>
                         </tr>
                         <tr>
-                            <td>Za plačilo:</td><td>{{ invoice.totalPrice }}</td>
+                            <td>Za plačilo:</td><td>{{ invoice.totalPrice }} €</td>
                         </tr>
                     </table>
                 </div>
@@ -110,7 +110,7 @@
 {% block sidebar %}
     
     {{ parent() }}
-    <a href="{{ path('invoice_pdf', {'id': invoice.id}) }}" class="btn btn-sm btn-block btn-success">
+    <a href="{{ path('invoice_pdf', {'id': invoice.id}) }}" target="_blank" class="btn btn-sm btn-block btn-success">
             <i class="fa fa-file-pdf" aria-hidden="true"></i> {{ 'action.pdf'|trans }}
     </a>
 
