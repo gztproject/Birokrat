@@ -1,5 +1,6 @@
 import 'eonasdan-bootstrap-datetimepicker';
 import moment from 'moment';
+import modal from 'bootstrap';
 
 $(function() {
     // Datetime picker initialization.
@@ -128,8 +129,13 @@ function refreshInvNumber(){
         {           
             issuerId: $('#invoice_issuer option:selected').val()
         },
-        function(data, status){            
-            $('#invoice_number').val(data[0]['data'][0]);
+        function(data, status){  
+            if(data[0]['status']=="ok")          
+                $('#invoice_number').val(data[0]['data'][0]);
+            else{
+                $('#notificationBody').html("<li>Error getting invoice number: " + data[0]['data'][0] + "</li>");
+                $('#notificationModal').modal('show');
+            }
         }); 
 }
 

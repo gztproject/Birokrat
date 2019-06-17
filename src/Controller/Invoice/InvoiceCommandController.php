@@ -7,16 +7,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\Invoice\Invoice;
-use App\Form\Invoice\InvoiceType;
-use App\Repository\InvoiceRepository;
-use Symfony\Component\Validator\Constraints\DateTime;
 use App\Entity\Invoice\InvoiceNumberFactory;
+use App\Form\Invoice\InvoiceType;
 use App\Entity\Konto\Konto;
-use App\Entity\Organization\Organization;
-use WhiteOctober\TCPDFBundle\Controller\TCPDFController;
-use Symfony\Component\Translation\TranslatorInterface;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Knp\Component\Pager\PaginatorInterface;
 use App\Entity\Invoice\CreateInvoiceCommand;
 
 class InvoiceCommandController extends AbstractController
@@ -66,8 +59,8 @@ class InvoiceCommandController extends AbstractController
     	$date = new \DateTime($request->request->get('date', null));
     	$entityManager = $this->getDoctrine()->getManager();
     	
-    	
-    	$transaction = $invoice->setIssued($konto, $date);
+    	$number = InvoiceNumberFactory::factory($invoice->getIssuer, 10, $entityManager)->generate();
+    	$transaction = $invoice->setIssued($konto, $date, $number);
     	
     	$entityManager->persist($invoice);
     	$entityManager->persist($transaction);

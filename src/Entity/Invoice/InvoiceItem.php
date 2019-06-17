@@ -6,7 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 use App\Entity\Base\Base;
 
 /**
- * @ORM\Entity(repositoryClass="App\Repository\InvoiceItemRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\Invoice\InvoiceItemRepository")
  */
 class InvoiceItem extends Base
 {

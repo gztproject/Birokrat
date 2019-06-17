@@ -6,10 +6,11 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\Invoice\Invoice;
-use App\Repository\InvoiceRepository;
+use App\Repository\Invoice\InvoiceRepository;
 use App\Entity\Invoice\InvoiceNumberFactory;
 use App\Entity\Organization\Organization;
 use WhiteOctober\TCPDFBundle\Controller\TCPDFController;
+use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Knp\Component\Pager\PaginatorInterface;
@@ -39,16 +40,26 @@ class InvoiceQueryController extends AbstractController
     {    	
     	$doctrine = $this->getDoctrine();
     	$issuer = $doctrine->getRepository(Organization::class)->findOneBy(['id'=>$request->request->get('issuerId', null)]);
+    	try {
+    		$data = InvoiceNumberFactory::factory($issuer, 00, $doctrine)->generate();
+    		$status = "ok";
+    	} 
+    	catch (Exception $e) 
+    	{
+    		$status = "error";
+    		$data = $e->getMessage();    				
+    	}
+    	
     	return new JsonResponse(
-    		array(
     			array(
-    				'status'=>'ok',
-    				'data'=>array(
-    						InvoiceNumberFactory::factory($issuer, $doctrine)->generate()    						
-    				)
-    			)    						
-    		)
-    	);
+    					array(
+    							'status'=>$status,
+    							'data'=>array(
+    									$data
+    									)
+    							)
+    					)
+    			);
     }
     
     /**

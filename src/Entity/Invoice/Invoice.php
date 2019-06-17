@@ -15,7 +15,7 @@ use App\Entity\Organization\Client;
 use App\Entity\Transaction\Transaction;
 
 /**
- * @ORM\Entity(repositoryClass="App\Repository\InvoiceRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\Invoice\InvoiceRepository")
  */
 class Invoice extends Base
 {
@@ -147,9 +147,17 @@ class Invoice extends Base
     	return $ii;
     }
     
-    public function setIssued(Konto $konto, \DateTime $date): Transaction
+    /**
+     * Sets the invoice issued and creates the transaction.
+     * @param Konto $konto Konto for the transaction
+     * @param \DateTime $date 
+     * @param string $number Invoice number (in case of other new invoices being issued later)
+     * @return Transaction
+     */
+    public function setIssued(Konto $konto, \DateTime $date, string $number): Transaction
     {
-    	//ToDo: Re-check number and reference.
+    	$this->number = $number;
+    	$this->calculateReference();
     	$this->setDateOfIssue($date);
     	$this->calculateTotals();
     	
@@ -181,7 +189,7 @@ class Invoice extends Base
     /**
      * Sets invoice state
      * 
-     * @param integer $state 00-draft, 10-new, 20-issued, 30-paid, 40-cancelled. Draft state is kinda useless ATM but I'm keeping it for the time being.
+     * @param integer $state 00-draft, 10-new, 20-issued, 30-paid, 40-cancelled, 50-rejected.
      */
     private function setState(?int $state): self
     {
@@ -209,7 +217,7 @@ class Invoice extends Base
     				throw new \Exception("Can't transition to state $newState from $currState");
     			break;
     		case 20: //issued
-    			if ($newState != 30 && $newState != 40) //Do we really want to be able to cancel issued invoices?
+    			if ($newState != 30 && $newState != 50) 
     				throw new \Exception("Can't transition to state $newState from $currState");
     			break;
     		case 30: //paid
@@ -217,6 +225,9 @@ class Invoice extends Base
     			break;
     		case 40: //cancelled
     			throw new \Exception("Can't do anything with cancelled invoice.");
+    			break;
+    		case 50: //rejected
+    			throw new \Exception("Can't do anything with rejected invoice.");
     			break;
     		default:
     			throw new \Exception('This InvoiceState is unknown!');
