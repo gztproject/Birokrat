@@ -3,6 +3,7 @@
 namespace App\Entity\User;
 
 use App\Entity\Settings\UserSettings;
+use App\Entity\TravelExpense\CreateTravelExpenseCommand;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -13,6 +14,7 @@ use App\Entity\Base\Base;
 use App\Entity\Organization\Organization;
 use App\Entity\Invoice\CreateInvoiceCommand;
 use App\Entity\Invoice\Invoice;
+use App\Entity\TravelExpense\TravelExpense;
 
 
 /**
@@ -136,7 +138,9 @@ class User extends Base implements UserInterface, \Serializable
     }
     
     /*
+     * *****************************************************************
      * Entity creators (everything should be created by a user)
+     * *****************************************************************
      */
     
     /**
@@ -160,8 +164,21 @@ class User extends Base implements UserInterface, \Serializable
     	return new Invoice($c, $this);
     }
     
+    /**
+     * Creates a new travelExpense.
+     * @param CreateTravelExpenseCommand $c
+     * @return TravelExpense
+     */
+    public function createTravelExpense(CreateTravelExpenseCommand $c): TravelExpense
+    {
+    	return new TravelExpense($c, $this);
+    }
+    
+    
     /*
+     * ***************************************************************
      * Getters (Needed by Symfony)
+     * ***************************************************************
      */
     
     public function getUsername(): ?string
@@ -248,7 +265,9 @@ class User extends Base implements UserInterface, \Serializable
     
     
     /*
+     * ********************************************************************
      * Stuff needed by UserInterface and Serializable
+     * ********************************************************************
      */
     
      /** @see \Serializable::serialize() */

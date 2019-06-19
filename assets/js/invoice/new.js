@@ -158,12 +158,12 @@ function addInvoiceItemForm($collectionHolder, $addRemoveInvoiceItemButtons, $nu
 
         // Display the form in the page in an li, before the "Add a tag" link li
         var $newFormLi = $('<tr class="invoice-item-tr-' + index + '">'+
-        '<td>' + $('#invoice_invoiceItems_' + index + '_code', newForm).parent().html() + '</td>'+
-        '<td data-item-index="' + index + '">' + $('#invoice_invoiceItems_' + index + '_name' ,newForm).parent().html() + '</td>'+
-        '<td>' + $('#invoice_invoiceItems_' + index + '_quantity', newForm).parent().html()+'</td>'+
-        '<td>' + $('#invoice_invoiceItems_' + index + '_unit', newForm).parent().html()+'</td>'+
-        '<td>' + $('#invoice_invoiceItems_' + index + '_price', newForm).parent().html()+'</td>'+
-        '<td>' + $('#invoice_invoiceItems_' + index + '_discount', newForm).parent().html()+'</td>'+
+        '<td>' + $('#invoice_createInvoiceItemCommands_' + index + '_code', newForm).parent().html() + '</td>'+
+        '<td data-item-index="' + index + '">' + $('#invoice_createInvoiceItemCommands_' + index + '_name' ,newForm).parent().html() + '</td>'+
+        '<td>' + $('#invoice_createInvoiceItemCommands_' + index + '_quantity', newForm).parent().html()+'</td>'+
+        '<td>' + $('#invoice_createInvoiceItemCommands_' + index + '_unit', newForm).parent().html()+'</td>'+
+        '<td>' + $('#invoice_createInvoiceItemCommands_' + index + '_price', newForm).parent().html()+'</td>'+
+        '<td>' + $('#invoice_createInvoiceItemCommands_' + index + '_discount', newForm).parent().html()+'</td>'+
         '<td><a id="remove-invoice-item'+ index +'" class="btn btn-sm btn-block btn-danger"><i class="fa fa-minus" aria-hidden="true"></i></a></td></tr>');        
         
         $collectionHolder.append($newFormLi);

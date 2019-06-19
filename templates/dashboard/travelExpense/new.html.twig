@@ -26,9 +26,9 @@
                         <th></th>
                     </tr>
                 </thead>
-                <tbody id='tableBody' class="travelStops" data-prototype="{{ form_widget(form.travelStops.vars.prototype)|e('html_attr') }}">
+                <tbody id='tableBody' class="travelStops" data-prototype="{{ form_widget(form.createTravelStopCommands.vars.prototype)|e('html_attr') }}">
                 
-                {% for travelStop in form.travelStops %}
+                {% for travelStop in form.createTravelStopCommands %}
                     <tr class="form-group">
                         <td>{{ form_widget(travelStop.stopOrder, {'attr': {'class': 'form-control'}})}}</td>
                         <td>{{ form_widget(travelStop.post, {'attr': {'class': 'form-control'}})}}</td>

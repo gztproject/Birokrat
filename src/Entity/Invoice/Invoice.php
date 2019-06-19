@@ -103,10 +103,8 @@ class Invoice extends Base
     
     /**
      * Creates new invoice
-     *
+     * @param CreateInvoiceCommand $c
      * @param User $issuedBy User that created the invoice
-     * @param Organization $issuer Issuing Organization
-     * @param String $number Invoice number (generate using InvoiceNumberFactory)
      */
     public function __construct(CreateInvoiceCommand $c, User $user)
     {
@@ -298,27 +296,27 @@ class Invoice extends Base
     	$this->referenceNumber = $result;    			
     }   
     
-    public function getDateServiceRenderedFrom(): ?\DateTimeInterface
+    public function getDateServiceRenderedFrom(): \DateTimeInterface
     {
     	return $this->dateServiceRenderedFrom;
     }
     
-    public function getDateServiceRenderedFromString(): ?string
+    public function getDateServiceRenderedFromString(): string
     {
     	return $this->dateServiceRenderedFrom->format('j. n. Y');
     }
     
-    public function getDateServiceRenderedTo(): ?\DateTimeInterface
+    public function getDateServiceRenderedTo(): \DateTimeInterface
     {
     	return $this->dateServiceRenderedTo;
     }
     
-    public function getDateServiceRenderedToString(): ?string
+    public function getDateServiceRenderedToString(): string
     {
     	return $this->dateServiceRenderedTo->format('j. n. Y');
     }
     
-    public function getDateServiceRenderedString(): ?string
+    public function getDateServiceRenderedString(): string
     {
     	 $string = $this->dateServiceRenderedFrom->format('j. n. Y');
     	 if ($this->dateServiceRenderedTo > $this->dateServiceRenderedFrom)
@@ -326,32 +324,32 @@ class Invoice extends Base
     	 return $string;
     }
     
-    public function getDateOfIssue(): ?\DateTimeInterface
+    public function getDateOfIssue(): \DateTimeInterface
     {
     	return $this->dateOfIssue;
     }
     
-    public function getDateOfIssueString(): ?string
+    public function getDateOfIssueString(): string
     {
     	return $this->dateOfIssue->format('j. n. Y');
     }
     
-    public function getIssuer(): ?Organization
+    public function getIssuer(): Organization
     {
     	return $this->issuer;
     }
     
-    public function getRecepient(): ?Client
+    public function getRecepient(): Client
     {
     	return $this->recepient;
     }
     
-    public function getNumber(): ?string
+    public function getNumber(): string
     {
     	return $this->number;
     }
     
-    public function getDiscount():?float
+    public function getDiscount():float
     {
     	return $this->discount;
     }
@@ -366,7 +364,7 @@ class Invoice extends Base
     	return $this->totalPrice;
     }
     
-    public function getReferenceNumber(): ?string
+    public function getReferenceNumber(): string
     {
     	return $this->referenceNumber;
     }
@@ -379,21 +377,26 @@ class Invoice extends Base
     	return $this->invoiceItems;
     }
 
-    public function getState(): ?int
+    public function getState(): int
     {
     	return $this->state;
     }
 
-    public function getDueDate(): ?\DateTimeInterface
+    public function getDueDate(): \DateTimeInterface
     {
         return $this->dueDate;
     }
     
-    public function getDueDateString(): ?string
+    public function getDueDateString(): string
     {
     	return $this->dueDate->format('j. n. Y');
     }
     
+    /**
+     * @deprecated Shouldn't set this from outside.
+     * @param int $days
+     * @return self
+     */
     public function setDueInDays (int $days): self    
     {
     	//ToDo: Must be a better way to do this...
@@ -405,7 +408,7 @@ class Invoice extends Base
     
     public function getDueInDays(): int
     {	
-    	return date_diff($this->dueDate, $this->dateOfIssue, true)->format("%d")+1;
+    	return date_diff($this->dueDate, $this->dateOfIssue, true)->format("%d");
     }
     
     public function getDatePaid(): ?\DateTimeInterface

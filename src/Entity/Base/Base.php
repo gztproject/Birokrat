@@ -59,7 +59,7 @@ abstract class Base
      * @param User $user User that is updating the entity. (@see entity's update method)
      * @return Uuid Returns the Uuid of updated entity.
      */
-    protected function Update(User $user): Uuid
+    protected function updateBase(User $user): Uuid
     {
     	$this->updatedOn = new Datetime('now');
     	$this->updatedBy = $user;

@@ -1,15 +1,13 @@
 <?php 
-// src/Form/TravelStopType.php
-namespace App\Form;
+namespace App\Form\TravelExpense;
 
-
-use App\Entity\TravelExpense\TravelStop;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use App\Entity\Geography\Post;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use App\Entity\TravelExpense\CreateTravelStopCommand;
 
 class TravelStopType extends AbstractType
 {
@@ -35,7 +33,7 @@ class TravelStopType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-        	'data_class' => TravelStop::class,
+        	'data_class' => CreateTravelStopCommand::class,
         ));
     }
 }

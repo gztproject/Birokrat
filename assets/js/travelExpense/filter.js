@@ -47,12 +47,15 @@ $(function() {
         $('#dateFieldTo').data("DateTimePicker").minDate(e.date);
     });
     
+    if(typeof queryString.parse(location.search)['unbooked'] == 'undefined')
+        $('#showUnbooked').prop('checked', true);
+
     if(typeof queryString.parse(location.search)['dateFrom'] !== 'undefined')
         $('#dateFieldFrom').data("DateTimePicker").date(moment.unix(queryString.parse(location.search)['dateFrom']));
     if(typeof queryString.parse(location.search)['dateTo'] !== 'undefined')
         $('#dateFieldTo').data("DateTimePicker").date(moment.unix(queryString.parse(location.search)['dateTo']));
     if(typeof queryString.parse(location.search)['unbooked'] !== 'undefined')
-        $('#showUnbooked').prop('checked', queryString.parse(location.search)['unbooked']=='true');
+        $('#showUnbooked').prop('checked', queryString.parse(location.search)['unbooked']=='true');    
     if(typeof queryString.parse(location.search)['booked'] !== 'undefined')
         $('#showBooked').prop('checked', queryString.parse(location.search)['booked']=='true');
 

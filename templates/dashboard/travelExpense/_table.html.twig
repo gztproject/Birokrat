@@ -14,7 +14,7 @@
                 <td>{{ travelExpense.dateString }}</td>
                 <td>{{ travelExpense.travelDescription }}</td>
                 <td>{{ travelExpense.totalDistance }}</td> 
-                <td>{{ travelExpense.totalDistance * travelExpense.rate }} €</td>                
+                <td>{{ (travelExpense.totalDistance * travelExpense.rate) | round(2, 'common')}} €</td>                
                 <td>
                     <div class="item-actions">
                         <a href="{{ path('travelExpense_show', {'id': travelExpense.id}) }}" class="btn btn-sm btn-primary">

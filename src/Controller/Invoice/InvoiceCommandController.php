@@ -32,7 +32,7 @@ class InvoiceCommandController extends AbstractController
     		$invoice = $this->getUser()->createInvoice($createInvoiceCommand);
     		    		
     		$em = $this->getDoctrine()->getManager();
-    		foreach($createInvoiceCommand->invoiceItems as $c)
+    		foreach($createInvoiceCommand->createInvoiceItemCommands as $c)
     		{
     			$ii = $invoice->createInvoiceItem($c);
     			$em->persist($ii);

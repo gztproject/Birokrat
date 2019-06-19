@@ -120,9 +120,9 @@
                         <th></th>
                     </tr>
                 </thead>
-                <tbody id='tableBody' class="invoiceItems" data-prototype="{{ form_widget(form.invoiceItems.vars.prototype)|e('html_attr') }}">
+                <tbody id='tableBody' class="invoiceItems" data-prototype="{{ form_widget(form.createInvoiceItemCommands.vars.prototype)|e('html_attr') }}">
 
-                {% for invoiceItem in form.invoiceItems %}
+                {% for invoiceItem in form.createInvoiceItemCommands %}
                     <tr>
                         <td>{{ form_widget(invoiceItem.code, {'attr': {'class': 'form-control'}})}}</td>
                         <td>{{ form_widget(invoiceItem.name, {'attr': {'class': 'form-control'}})}}</td>

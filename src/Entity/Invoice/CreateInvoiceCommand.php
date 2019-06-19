@@ -9,17 +9,21 @@ class CreateInvoiceCommand
     public $issuer;
 
     public $recepient;
-
+    
     public $number;
 
     public $discount;
-
-    public $totalValue;
-
-    public $totalPrice;
-
-    public $invoiceItems;
-
+    
+    /**
+     * Need this for getting them from the form to controller...
+     * @var Array[CreateInvoiceItemCommand]
+     */
+    public $createInvoiceItemCommands;
+    
+    /**
+     * @deprecated Using CreatedBy instead of this.
+     * @var User
+     */
     public $issuedBy;
     
     public $dateServiceRenderedFrom;
