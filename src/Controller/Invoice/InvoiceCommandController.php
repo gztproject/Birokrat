@@ -56,6 +56,7 @@ class InvoiceCommandController extends AbstractController
     {
     	$invoice = $this->getDoctrine()->getRepository(Invoice::class)->findOneBy(['id'=>$request->request->get('id', null)]);
     	$konto = $this->getDoctrine()->getRepository(Konto::class)->findOneBy(['number'=>760]); //760 for services or 762 for goods
+    	$counerKonto = $this->getDoctrine()->getRepository(Konto::class)->findOneBy(['number'=>120]); //120 for home or 121 for abroad
     	$date = new \DateTime($request->request->get('date', null));
     	$entityManager = $this->getDoctrine()->getManager();
     	
