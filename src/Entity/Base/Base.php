@@ -57,7 +57,7 @@ abstract class Base
     /**
      * Sets the updating user and datetime for the entity being updated.
      * @param User $user User that is updating the entity. (@see entity's update method)
-     * @return Uuid Returns the Uuid of updated entity.
+     * @return Uuid Returns the Uuid of updated entity. - we have to support null for PHPUnit tests...
      */
     protected function updateBase(User $user): ?Uuid
     {
