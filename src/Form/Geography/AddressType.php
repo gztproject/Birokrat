@@ -7,6 +7,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use App\Entity\Geography\CreateAddressCommand;
 
 class AddressType extends AbstractType
 {
@@ -33,7 +34,7 @@ class AddressType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-        		'data_class' => AddressDTO::class,
+        		'data_class' => CreateAddressCommand::class,
         ));
     }
 }

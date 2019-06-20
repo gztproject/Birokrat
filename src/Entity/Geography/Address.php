@@ -4,8 +4,7 @@ namespace App\Entity\Geography;
 
 use Doctrine\ORM\Mapping as ORM;
 use App\Entity\Base\Base;
-use App\Entity\Organization\Organization;
-use App\Form\Geography\AddressDTO;
+use App\Entity\User\User;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\AddressRepository")
@@ -28,14 +27,35 @@ class Address extends Base
      */
     private $post;
     
-    public function __construct(AddressDTO $dto = null)
+    public function __construct(CreateAddressCommand $c, User $user, Post $post)
     {
-    	if($dto == null)
-    		return null;
+    	if($user == null)
+    		throw new \Exception("Can't create entity without a user.");
+    	if($c == null)
+    		throw new \Exception("Can't create entity without a command.");
+    	if($post == null)
+    		throw new \Exception("Can't create a child entity without parent.");
     	
-    	$this->line1 = $dto->getLine1();
-    	$this->line2 = $dto->getLine2();
-    	$this->post = $dto->getPost();
+    	parent::__construct($user);    	
+    	$this->line1 = $c->line1;
+    	$this->line2 = $c->line2;
+    	$this->post = $post;
+    }
+    
+    public function update(UpdateAddressCommand $c, User $user)
+    {
+    	throw new \Exception("Not implemented yet.");
+    	parent::updateBase($user);
+    	return $this;
+    }
+    
+    public function removePost(Post $post, User $user): Address
+    {
+    	if($this->post != $post)
+    		throw new \Exception("Can't remove post other than itself.");
+    	parent::updateBase($user);
+    	$this->post = null;
+    	return $this;
     }
 
     public function getLine1(): ?string
@@ -43,35 +63,14 @@ class Address extends Base
         return $this->line1;
     }
 
-    private function setLine1(string $line1): self
-    {
-        $this->line1 = $line1;
-
-        return $this;
-    }
-
     public function getLine2(): ?string
     {
         return $this->line2;
     }
 
-    private function setLine2(?string $line2): self
-    {
-        $this->line2 = $line2;
-
-        return $this;
-    }
-
     public function getPost(): ?Post
     {
         return $this->post;
-    }
-
-    private function setPost(?Post $post): self
-    {
-        $this->post = $post;
-
-        return $this;
     }
 
     public function getFullAddress(): string

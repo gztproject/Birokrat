@@ -55,8 +55,8 @@ class KontosInitializer implements IEntityInitializer
                     $kontoCategory->setName($name);
                     $kontoCategory->setClass($lastClass);
                     $lastCategory = $kontoCategory;
-                    $manager->persist($kontoCategory);
-                    $manager->flush();
+                    $this->manager->persist($kontoCategory);
+                    $this->manager->flush();
                     break;
                 case 3:
                 	if($lastCategory == null)
@@ -66,9 +66,9 @@ class KontosInitializer implements IEntityInitializer
                     $konto->setName($name);
                     $konto->setCategory($lastCategory);
                     $konto->setIsActive(trim($row["IsActive"])==='Da');
-                    $manager->persist($konto);
+                    $this->manager->persist($konto);
                     array_push($kontos, $konto);
-                    $manager->flush();
+                    $this->manager->flush();
                     break;               
             }                          
         } 
