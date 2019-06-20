@@ -6,12 +6,12 @@
     <h1>{{ 'title.user_new'|trans }}</h1>
 
     {{ form_start(form) }}    
-        {{ form_row(form.username) }}
-        {{ form_row(form.email) }}
+        {{ form_row(form.username) }}        
         {{ form_row(form.firstName) }}
         {{ form_row(form.lastName) }}
-        {{ form_row(form.username) }}
-        {{ form_row(form.plainPassword) }}
+        {{ form_row(form.email) }}
+        {{ form_row(form.mobile) }}
+        {{ form_row(form.password) }}
         {{ form_row(form.isRoleAdmin) }}
 
         <button type="submit" class="btn btn-primary">

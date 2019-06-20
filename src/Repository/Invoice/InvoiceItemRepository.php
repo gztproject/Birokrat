@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Repository;
+namespace App\Repository\Invoice;
 
 use App\Entity\Invoice\InvoiceItem;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;

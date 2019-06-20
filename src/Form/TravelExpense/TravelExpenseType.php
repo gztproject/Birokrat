@@ -1,13 +1,12 @@
 <?php 
-// src/Form/TravelExpenseType.php
-namespace App\Form;
+namespace App\Form\TravelExpense;
 
-use App\Entity\TravelExpense\TravelExpense;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use App\Form\Type\DateTimePickerType;
+use App\Entity\TravelExpense\CreateTravelExpenseCommand;
 
 class TravelExpenseType extends AbstractType
 {
@@ -19,7 +18,7 @@ class TravelExpenseType extends AbstractType
             		'widget' => 'single_text',
             		'format' => 'dd. MM. yyyy',
             ]) 
-            ->add('travelStops', CollectionType::class, [
+            ->add('createTravelStopCommands', CollectionType::class, [
             		'entry_type' => TravelStopType::class,
             		//'entry_options' => ['label' => false],
             		'allow_add' => true,
@@ -33,7 +32,7 @@ class TravelExpenseType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-        	'data_class' => TravelExpense::class,
+        	'data_class' => CreateTravelExpenseCommand::class,
         ));
     }
 }

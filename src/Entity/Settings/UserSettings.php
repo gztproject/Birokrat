@@ -16,15 +16,34 @@ class UserSettings extends Base
      */
     private $user;
 
+    /**
+     * 
+     * @param CreateUserSettingsCommand $c
+     * @param User $user
+     * @param User $creator
+     */
+    public function __construct(CreateUserSettingsCommand $c, User $user, User $creator)
+    {
+    	parent::__construct($creator);
+    	$this->user = $user;
+    }
+    
+    /**
+     * 
+     * @param UpdateUserSettingsCommand $c
+     * @param User $user
+     * @throws \ErrorException
+     */
+    public function update(UpdateUserSettingsCommand $c, User $user)
+    {
+    	throw new \ErrorException("Not implemented yet.");
+    	parent::updateBase($user);    	
+    }
+    
+    
+    
     public function getUser(): ?User
     {
         return $this->user;
-    }
-
-    public function setUser(?User $user): self
-    {
-        $this->user = $user;
-
-        return $this;
     }
 }

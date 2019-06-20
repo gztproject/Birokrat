@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Repository;
+namespace App\Repository\Invoice;
 
 use App\Entity\Invoice\Invoice;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -22,11 +22,10 @@ class InvoiceRepository extends ServiceEntityRepository
     
     public function getQuery(): QueryBuilder
     {
-    	$qb = $this
-    	->createQueryBuilder('i')
-    	->addSelect('i');
-    	
-    	return $qb->orderBy('i.dateOfIssue', 'DESC');
+    	return $this->createQueryBuilder('i')
+    		->addSelect('i')
+    		->orderBy('i.dateOfIssue', 'DESC')
+    		->addOrderBy('i.number', 'DESC');    	 
     }
 
     // /**

@@ -9,65 +9,43 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Repository\TravelExpenseRepository;
 use App\Entity\Konto\Konto;
-use App\Entity\TravelExpense\TravelExpense;
-use App\Form\TravelExpenseType;
-use Knp\Component\Pager\PaginatorInterface;
+use App\Form\TravelExpense\TravelExpenseType;
 use App\Entity\TravelExpense\TravelExpenseBundle;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use App\Entity\TravelExpense\CreateTravelExpenseCommand;
 
-class TravelExpenseController extends AbstractController
+class TravelExpenseCommandController extends AbstractController
 {    
-	/**     
-     * @Route("/dashboard/travelExpense", methods={"GET"}, name="travelExpense_index")
-     */
-	public function index(TravelExpenseRepository $travelExpenses, Request $request, PaginatorInterface $paginator): Response
-	{   		
-		$dateFrom = $request->query->get('dateFrom', 0);
-		$dateTo = $request->query->get('dateTo', 0);
-		$booked = $request->query->get('booked', 'false') == 'true';
-		$unbooked = $request->query->get('unbooked', 'true') == 'true';
-		$queryBuilder = $travelExpenses->getFilteredQuery($dateFrom, $dateTo, $unbooked, $booked);
-		
-    	$pagination = $paginator->paginate($queryBuilder, $request->query->getInt('page', 1), 10);
-    	
-    	//$myTEs = $travelExpenses->findBy([], ['date' => 'DESC']);
-    	return $this->render('dashboard/travelExpense/index.html.twig', [
-    			'pagination' => $pagination,  
-    			
-    	]);
-    } 
-    
-    /**
+	/**
      * @Route("/dashboard/travelExpense/new", methods={"GET", "POST"}, name="travelExpense_new")
      */
-    public function new(Request $request)
+    public function new(Request $request): Response
     {
-    	$te = new TravelExpense();    	
+    	$c = new CreateTravelExpenseCommand();    	
     	    	
-    	$form = $this->createForm(TravelExpenseType::class, $te)
+    	$form = $this->createForm(TravelExpenseType::class, $c)
     		->add('saveAndCreateNew', SubmitType::class);
     	
     	$form->handleRequest($request);
     	
     	if ($form->isSubmitted() && $form->isValid()) {
     		
-    		$te->setUnbooked();
-    		
-    		$te->setEmployee($this->get('security.token_storage')->getToken()->getUser());
+    		$c->employee = $this->getUser();
     		//ToDo: Get rate from organizationSettings
-    		$te->setRate(0.37);
-    		$te->calculateTotalDistance(); 
+    		$c->rate = 0.37;
     		
+    		$te = $this->getUser()->createTravelExpense($c);    		
     		
+    		$em = $this->getDoctrine()->getManager();
     		
-    		$entityManager = $this->getDoctrine()->getManager();
-    		foreach($te->getTravelStops() as $ts)
+    		foreach($c->createTravelStopCommands as $tsc)
     		{
-    			$entityManager->persist($ts);
+    			$ts = $te->createTravelStop($tsc);
+    			$em->persist($ts);
     		}
     		
-    		$entityManager->persist($te);
-    		$entityManager->flush();
+    		$em->persist($te);
+    		$em->flush();
     		    		
     		return $this->redirectToRoute('travelExpense_index');
     	}
@@ -75,17 +53,7 @@ class TravelExpenseController extends AbstractController
     	return $this->render('dashboard/travelExpense/new.html.twig', [
     			'form' => $form->createView(),
     	]);
-    }
-    
-    /**
-     * @Route("/dashboard/travelExpense/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}", methods={"GET"}, name="travelExpense_show")
-     */
-    public function show(TravelExpense $travelExpense): Response
-    {           
-        return $this->render('dashboard/travelExpense/show.html.twig', [
-        		'travelExpense' => $travelExpense,
-        ]);
-    }
+    }    
     
     /**
      * @Route("/dashboard/travelExpense/bookInBundle/withFilter", methods={"POST"}, name="travelExpense_bookinBundle_withFilter")

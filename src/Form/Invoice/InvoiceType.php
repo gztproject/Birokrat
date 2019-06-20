@@ -1,8 +1,7 @@
 <?php 
 // src/Form/InvoiceType.php
-namespace App\Form;
+namespace App\Form\Invoice;
 
-use App\Entity\Invoice\Invoice;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -13,6 +12,7 @@ use App\Form\Type\DateTimePickerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use App\Entity\Organization\Client;
 use App\Entity\Organization\Organization;
+use App\Entity\Invoice\CreateInvoiceCommand;
 
 class InvoiceType extends AbstractType
 {
@@ -52,9 +52,7 @@ class InvoiceType extends AbstractType
             		// prevents rendering it as type="date", to avoid HTML5 date pickers
             		'html5' => false,
             ])
-            ->add('dueInDays', NumberType::class,[
-            		'label' => 'label.dueInDays',
-            ])
+            
             ->add('dateServiceRenderedFrom', DateTimePickerType::class,[
             	'label' => 'label.dateServiceRenderedFrom',
             	'widget' => 'single_text',
@@ -73,7 +71,7 @@ class InvoiceType extends AbstractType
             	// prevents rendering it as type="date", to avoid HTML5 date pickers
             	'html5' => false,
             ])
-            ->add('invoiceItems', CollectionType::class, [
+            ->add('createInvoiceItemCommands', CollectionType::class, [
             		'entry_type' => InvoiceItemType::class,
             		//'entry_options' => ['label' => false],
             		'allow_add' => true,
@@ -91,7 +89,7 @@ class InvoiceType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-        	'data_class' => Invoice::class,
+        	'data_class' => CreateInvoiceCommand::class,
         ));
     }
 }

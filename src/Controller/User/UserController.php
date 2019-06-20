@@ -1,18 +1,19 @@
 <?php 
-namespace App\Controller;
+namespace App\Controller\User;
 
-use App\Form\UserType;
+use App\Form\User\UserType;
 use App\Entity\User\User;
 use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use App\Entity\Organization\Organization;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use App\Entity\User\CreateUserCommand;
 
 class UserController extends AbstractController
 {
@@ -38,8 +39,8 @@ class UserController extends AbstractController
     public function new(Request $request, UserPasswordEncoderInterface $passwordEncoder)
     {
         // 1) build the form
-        $user = new User();
-        $form = $this->createForm(UserType::class, $user)
+        $createUserCommand = new CreateUserCommand();
+        $form = $this->createForm(UserType::class, $createUserCommand)
             ->add('saveAndCreateNew', SubmitType::class);
         
         
@@ -47,11 +48,7 @@ class UserController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             
-                        
-            // 3) Encode the password (you could also do this via Doctrine listener)
-            $password = $passwordEncoder->encodePassword($user, $user->getPlainPassword());
-            $user->setPassword($password);            
-            $user->eraseCredentials();
+        	$user = $this->getUser()->createUser($createUserCommand, $passwordEncoder);
             
             // 4) save the User!
             $entityManager = $this->getDoctrine()->getManager();
@@ -122,12 +119,12 @@ class UserController extends AbstractController
     /**
      * @Route("/admin/user/addOrganization", methods={"POST"}, name="user_addOrganization")
      */
-    public function setPaid(Request $request): Response
+    public function addOrganization(Request $request): Response
     {
     	$user = $this->getDoctrine()->getRepository(User::class)->findOneBy(['id'=>$request->request->get('userId', null)]);
     	$organization = $this->getDoctrine()->getRepository(Organization::class)->findOneBy(['id'=>$request->request->get('organizationId', null)]);
     	
-    	$user->addOrganization($organization);
+    	$user->addOrganization($organization, $this->getUser());
     	
     	$entityManager = $this->getDoctrine()->getManager();
     	    	

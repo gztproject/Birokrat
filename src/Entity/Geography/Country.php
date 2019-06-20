@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use App\Entity\Base\Base;
+use App\Entity\User\User;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\CountryRepository")
@@ -42,21 +43,66 @@ class Country extends Base
      */
     private $posts;
 
-    public function __construct()
+    public function __construct(CreateCountryCommand $c, User $user)
     {
+    	if($user == null)
+    		throw new \Exception("Can't create entity without a user.");
+    	if($c == null)
+    		throw new \Exception("Can't create entity without a command.");
+    	
+    	parent::__construct($user);
         $this->posts = new ArrayCollection();
+        $this->A2 = $c->A2;
+        $this->A3 = $c->A3;
+        $this->N3 = $c->N3;
+        $this->name = $c->name;
+        $this->nameInt = $c->nameInt;
     }
+    
+    public function update(UpdateCountryCommand $c, User $user): Country
+    {
+    	throw new \Exception("Not implemented yet.");
+    	parent::updateBase($user);
+    	return $this;
+    }
+    
+    public function createPost(CreatePostCommand $c, User $user): Post
+    {
+    	$post = new Post($c, $user, $this);
+    	foreach($this->getPosts() as $p)
+    	{
+    		if ($p->getCodeInternational() == $post->getCodeInternational())
+    			throw new \Exception("Post with this code already exists");
+    	}
+    	
+    	$this->posts[] = $post;
+    	return $post;    	
+    }
+    
+    public function removePost(Post $post, User $user): ?Post
+    {
+    	if ($this->posts->contains($post)) {
+    		$this->posts->removeElement($post);
+    		// set the owning side to null (unless already changed)
+    		if ($post->getCountry() === $this) {
+    			return $post->removeCountry($this, $user);
+    		}
+    	}    	
+    	return null;
+    }
+    
+    public function updatePost(Post $post, UpdatePostCommand $c, User $user): ?Post
+    {
+    	if ($this->posts->contains($post)) {    	
+    		return $post->update($c, $user);
+    	}
+    	return null;
+    }
+    
 
     public function getName(): ?string
     {
         return $this->name;
-    }
-
-    public function setName(string $name): self
-    {
-        $this->name = $name;
-
-        return $this;
     }
 
     public function getNameInt(): ?string
@@ -64,23 +110,9 @@ class Country extends Base
         return $this->nameInt;
     }
 
-    public function setNameInt(string $nameInt): self
-    {
-        $this->nameInt = $nameInt;
-
-        return $this;
-    }
-
     public function getA2(): ?string
     {
         return $this->A2;
-    }
-
-    public function setA2(string $A2): self
-    {
-        $this->A2 = $A2;
-
-        return $this;
     }
 
     public function getA3(): ?string
@@ -88,53 +120,16 @@ class Country extends Base
         return $this->A3;
     }
 
-    public function setA3(string $A3): self
-    {
-        $this->A3 = $A3;
-
-        return $this;
-    }
-
     public function getN3(): ?int
     {
         return $this->N3;
     }
-
-    public function setN3(int $N3): self
-    {
-        $this->N3 = $N3;
-
-        return $this;
-    }
-
+    
     /**
      * @return Collection|Post[]
      */
     public function getPosts(): Collection
     {
         return $this->posts;
-    }
-
-    public function addPost(Post $post): self
-    {
-        if (!$this->posts->contains($post)) {
-            $this->posts[] = $post;
-            $post->setCountry($this);
-        }
-
-        return $this;
-    }
-
-    public function removePost(Post $post): self
-    {
-        if ($this->posts->contains($post)) {
-            $this->posts->removeElement($post);
-            // set the owning side to null (unless already changed)
-            if ($post->getCountry() === $this) {
-                $post->setCountry(null);
-            }
-        }
-
-        return $this;
-    }
+    }    
 }

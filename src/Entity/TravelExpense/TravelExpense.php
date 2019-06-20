@@ -9,11 +9,12 @@ use App\Entity\Base\Base;
 use App\Entity\Konto\Konto;
 use App\Entity\User\User;
 use App\Entity\Transaction\Transaction;
+use App\Entity\Transaction\iTransactionDocument;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\TravelExpenseRepository")
  */
-class TravelExpense extends Base
+class TravelExpense extends Base implements iTransactionDocument
 {
     /**
      * @ORM\Column(type="datetime")
@@ -50,125 +51,120 @@ class TravelExpense extends Base
      * @ORM\ManyToOne(targetEntity="App\Entity\TravelExpense\TravelExpenseBundle", inversedBy="TravelExpenses")
      */
     private $travelExpenseBundle;
-
-    public function __construct()
+    
+    public function __construct(CreateTravelExpenseCommand $c, User $user)
     {
+    	parent::__construct($user);
     	$this->state = 00;
         $this->travelStops = new ArrayCollection();
+        
+        $this->date = $c->date;
+        $this->employee = $c->employee;
+        $this->rate = $c->rate;
+        
     }    
-
-    public function getDate(): ?\DateTimeInterface
-    {
-    	return $this->date;
-    }
-   	
-    public function getDateString(): ?string
-    {
-    	return $this->date->format('d. m. Y');
-    }
-
-    public function setDate(\DateTimeInterface $date): self
-    {
-        $this->date = $date;
-
-        return $this;
-    }
     
-    public function getEmployee(): ?User
+    /**
+     * Updates the TravelExpense.
+     * @param UpdateTravelExpenseCommand $c Only fill the fields that need updating.
+     * @param User $user Updating user.
+     * @throws \Exception TravelExpense is not editable or the updating user is not set.
+     * @return TravelExpense Updated TravelExpense.
+     */
+    public function update(UpdateTravelExpenseCommand $c, User $user): TravelExpense
     {
-    	return $this->employee;
-    }
-    
-    public function setEmployee(?User $user): self
-    {    	
-    	$this->employee = $user;
+    	if($user == null)
+    		throw new \Exception("Updating user must be set.");
+    	
+    	if($this->state > 10)
+    		throw new \Exception("Can't update booked or cancelled TravelExpenses.");
+    	
+    	parent::updateBase($user);
+    	
+    	if($c->date != null && $c->date != $this->date)
+    		$this->date = $c->date;
+    	
+    	if($c->employee != null && $c->employee != $this->employee)
+    		$this->employee = $c->employee;
+    	
+    	if($c->rate != null && $c->rate != $this->rate)
+    		$this->rate = $c->rate;
     	
     	return $this;
     }
-
-    public function getTotalDistance()
-    {
-        return $this->totalDistance;
-    }
-
-//     public function setTotalDistance($totalDistance): self
-//     {
-//         $this->totalDistance = $totalDistance;
-
-//         return $this;
-//     }
-
-    public function getRate()
-    {
-        return $this->rate;
-    }
-
-    public function setRate($rate): self
-    {
-        $this->rate = $rate;
-
-        return $this;
-    }
-
+    
+    
     /**
-     * @return Collection|TravelStop[]
+     * Createss a new TravelStop.
+     * @param CreateTravelStopCommand $c
+     * @throws \Exception If the TravelExpense is already booked or cancelled.
+     * @return TravelStop
      */
-    public function getTravelStops(): Collection
+    public function createTravelStop(CreateTravelStopCommand $c): TravelStop
     {
-        return $this->travelStops;
-    }
-
-    public function addTravelStop(TravelStop $travelStop): self
-    {
-        if (!$this->travelStops->contains($travelStop)) {
-            $this->travelStops[] = $travelStop;
-            $travelStop->setTravelExpense($this);
-        }
-
-        return $this;
-    }
-
-    public function removeTravelStop(TravelStop $travelStop): self
-    {
-        if ($this->travelStops->contains($travelStop)) {
-            $this->travelStops->removeElement($travelStop);
-            // set the owning side to null (unless already changed)
-            if ($travelStop->getTravelExpense() === $this) {
-                $travelStop->setTravelExpense(null);
-            }
-        }
-
-        return $this;
-    }
-
-    public function getState(): ?int
-    {
-        return $this->state;
+    	if($this->state > 10)
+    		throw new \Exception("Can't update booked or cancelled TravelExpenses.");
+    	$ts = new TravelStop($c, $this);
+    	$this->travelStops[] = $ts;
+    	$this->calculateTotalDistance();
+    	return $ts;
     }
     
-    public function setUnbooked(): self
+    /**
+     * Updates the TravelStop.
+     * @param UpdateTravelStopCommand $c Only fill the fields that need updating.
+     * @param TravelStop $ts TravelStop to update.
+     * @param User $user Updating user.
+     * @throws \Exception If the TravelStop is not in this TravelExpense or the updating user is not set.
+     * @return TravelStop Updated TravelStop.
+     */
+    public function updateTravelStop(UpdateTravelStopCommand $c, TravelStop $ts, User $user): TravelStop
     {
-    	$this->setState(10);
+    	if($user == null)
+    		throw new \Exception("Updating user must be set.");
+    	if(!$this->travelStops->contains($ts))
+    		throw new \Exception("Can't update a travelStop that's not in this TravelExpense.");
+    	$ts->update($c, $user);
+    	return $ts;
+    }
+        
+    public function removeTravelStop(TravelStop $ts, User $user): TravelExpense
+    {
+    	if($user == null)
+    		throw new \Exception("Updating user must be set.");  
+    	if($this->state > 10)
+    		throw new \Exception("Can't update booked or cancelled TravelExpenses.");
+    	if(!$this->travelStops->contains($ts))
+    		throw new \Exception("Can't remove a travelStop that's not in this TravelExpense.");
+    	if($this->travelStops->count() < 3) 
+    		throw new \Exception("Can't remove last two TravelStops.");
+    		    	
+    	$this->travelStops->removeElement($ts);    		
+    	if ($ts->getTravelExpense() === $this) {
+    		$ts->remove();
+    	}
+    	
+    	$index = $ts->getStopOrder();
+    	foreach($this->getTravelStops() as $stop)
+    	{
+    		if($stop->getStopOrder()>=$index)
+    			$stop->setStopOrder($stop->getStopOrder()-1);
+    	}
+    	$this->calculateTotalDistance();
     	return $this;
     }
     
-    public function setBooked(): self
-    {
-    	$this->setState(20);
-    	return $this;
-    }
-
     /**
      * Sets TE state
      *
      * @param integer $state 00-new, 10-unbooked, 20-booked, 100-cancelled.
      */
-    private function setState(?int $state): self
+    private function setState(?int $state): int
     {
     	$this->checkState($this->state, $state);
-        $this->state = $state;
-
-        return $this;
+    	$this->state = $state;
+    	
+    	return $state;
     }
     
     /**
@@ -192,7 +188,7 @@ class TravelExpense extends Base
     			if ($newState != 100) //Do we really want to be able to cancel booked TEs?
     				throw new \Exception("Can't transition to state $newState from $currState");
     				break;
-    		
+    				
     		case 100: //cancelled
     			throw new \Exception("Can't do anything with cancelled TE.");
     			break;
@@ -203,20 +199,64 @@ class TravelExpense extends Base
     	
     }
     
-    public function getTotalCost(): ?float
-    {
-    	return round($this->totalDistance * $this->rate, 2);
-    }
-    
-    public function calculateTotalDistance(): ?float
+    private function calculateTotalDistance(): ?float
     {
     	$this->totalDistance = 0;
     	foreach($this->travelStops as $ts)
     	{
     		if($ts->getStopOrder() > 0)
     			$this->totalDistance += $ts->getDistanceFromPrevious();
-    	}    	
+    	}
     	return $this->totalDistance;
+    }
+    
+
+    /*
+     * ************************************************************
+     * Getters
+     * ************************************************************
+     */
+    public function getDate(): ?\DateTimeInterface
+    {
+    	return $this->date;
+    }
+   	
+    public function getDateString(): ?string
+    {
+    	return $this->date->format('d. m. Y');
+    }    
+    
+    public function getEmployee(): ?User
+    {
+    	return $this->employee;
+    }
+    
+    public function getTotalDistance()
+    {
+        return $this->totalDistance;
+    }
+
+    public function getRate()
+    {
+        return $this->rate;
+    }
+
+    /**
+     * @return Collection|TravelStop[]
+     */
+    public function getTravelStops(): Collection
+    {
+        return $this->travelStops;
+    }
+
+    public function getState(): ?int
+    {
+        return $this->state;
+    }    
+    
+    public function getTotalCost(): ?float
+    {
+    	return round($this->totalDistance * $this->rate, 2);
     }
     
     public function getTravelDescription(): ?string
@@ -234,13 +274,6 @@ class TravelExpense extends Base
     public function getTravelExpenseBundle(): ?TravelExpenseBundle
     {
         return $this->travelExpenseBundle;
-    }
-
-    public function setTravelExpenseBundle(?TravelExpenseBundle $travelExpenseBundle): self
-    {
-        $this->travelExpenseBundle = $travelExpenseBundle;
-
-        return $this;
     }
     
 }

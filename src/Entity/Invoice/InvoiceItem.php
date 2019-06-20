@@ -6,7 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 use App\Entity\Base\Base;
 
 /**
- * @ORM\Entity(repositoryClass="App\Repository\InvoiceItemRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\Invoice\InvoiceItemRepository")
  */
 class InvoiceItem extends Base
 {
@@ -46,17 +46,26 @@ class InvoiceItem extends Base
      */
     private $invoice;
 
+    public function __construct(CreateInvoiceItemCommand $c, Invoice $invoice)
+    {
+    	parent::__construct($invoice->getCreatedBy());
+    	$this->invoice = $invoice;
+    	
+    	$this->code = $c->code;
+    	$this->discount = $c->discount/100;
+    	$this->name = $c->name;
+    	$this->price = $c->price;
+    	$this->quantity = $c->quantity;
+    	$this->unit = $c->unit;    	
+    }
+    
+    /*
+     * Getters...
+     */
     
     public function getCode(): ?string
     {
         return $this->code;
-    }
-
-    public function setCode(string $code): self
-    {
-        $this->code = $code;
-
-        return $this;
     }
 
     public function getName(): ?string
@@ -64,23 +73,9 @@ class InvoiceItem extends Base
         return $this->name;
     }
 
-    public function setName(string $name): self
-    {
-        $this->name = $name;
-
-        return $this;
-    }
-
     public function getQuantity()
     {
         return $this->quantity;
-    }
-
-    public function setQuantity($quantity): self
-    {
-        $this->quantity = $quantity;
-
-        return $this;
     }
 
     public function getUnit(): ?string
@@ -88,23 +83,9 @@ class InvoiceItem extends Base
         return $this->unit;
     }
 
-    public function setUnit(string $unit): self
-    {
-        $this->unit = $unit;
-
-        return $this;
-    }
-
     public function getPrice()
     {
         return $this->price;
-    }
-
-    public function setPrice($price): self
-    {
-        $this->price = $price;
-
-        return $this;
     }
 
     public function getDiscount()
@@ -112,22 +93,8 @@ class InvoiceItem extends Base
         return $this->discount;
     }
 
-    public function setDiscount($discount): self
-    {
-        $this->discount = $discount;
-
-        return $this;
-    }
-
     public function getInvoice(): ?Invoice
     {
         return $this->invoice;
-    }
-
-    public function setInvoice(?Invoice $invoice): self
-    {
-        $this->invoice = $invoice;
-
-        return $this;
-    }
+    }    
 }

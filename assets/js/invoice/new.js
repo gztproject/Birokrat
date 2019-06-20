@@ -70,12 +70,12 @@ $(function() {
     });
 
     $("#invoice_dateServiceRenderedFrom").on("dp.change", function (e) {
-            $('#invoice_dateServiceRenderedTo').data("DateTimePicker").minDate(e.date);
-        });
-        $("#invoice_dateServiceRenderedTo").on("dp.change", function (e) {
-            $('#invoice_dateServiceRenderedFrom').data("DateTimePicker").maxDate(e.date);
-        });
-
+        $('#invoice_dateServiceRenderedTo').data("DateTimePicker").minDate(e.date);
+    });
+    $("#invoice_dateServiceRenderedTo").on("dp.change", function (e) {
+        $('#invoice_dateServiceRenderedFrom').data("DateTimePicker").maxDate(e.date);
+    });
+    refreshInvNumber();
 });
 
 var $collectionHolder;
@@ -116,8 +116,27 @@ jQuery(document).ready(function() {
         var date = issueDate.add($(this).val(), 'days').format('L');       
         $('#invoice_dueDate').data("DateTimePicker").date(date);
     });
+
+    $('#invoice_issuer').on('change', function(){
+        refreshInvNumber();
+    });
     
 });
+
+function refreshInvNumber(){
+    $.post("/dashboard/invoice/getNewNumber",
+        {           
+            issuerId: $('#invoice_issuer option:selected').val()
+        },
+        function(data, status){  
+            if(data[0]['status']=="ok")          
+                $('#invoice_number').val(data[0]['data'][0]);
+            else{
+                $('#notificationBody').html("<li>Error getting invoice number: " + data[0]['data'][0] + "</li>");
+                $('#notificationModal').modal('show');
+            }
+        }); 
+}
 
 function addInvoiceItemForm($collectionHolder, $addRemoveInvoiceItemButtons, $number) {
     for(var i=0; i<$number;i++){
@@ -139,18 +158,18 @@ function addInvoiceItemForm($collectionHolder, $addRemoveInvoiceItemButtons, $nu
 
         // Display the form in the page in an li, before the "Add a tag" link li
         var $newFormLi = $('<tr class="invoice-item-tr-' + index + '">'+
-        '<td>' + $('#invoice_invoiceItems_' + index + '_code', newForm).parent().html() + '</td>'+
-        '<td data-item-index="' + index + '">' + $('#invoice_invoiceItems_' + index + '_name' ,newForm).parent().html() + '</td>'+
-        '<td>' + $('#invoice_invoiceItems_' + index + '_quantity', newForm).parent().html()+'</td>'+
-        '<td>' + $('#invoice_invoiceItems_' + index + '_unit', newForm).parent().html()+'</td>'+
-        '<td>' + $('#invoice_invoiceItems_' + index + '_price', newForm).parent().html()+'</td>'+
-        '<td>' + $('#invoice_invoiceItems_' + index + '_discount', newForm).parent().html()+'</td>'+
+        '<td>' + $('#invoice_createInvoiceItemCommands_' + index + '_code', newForm).parent().html() + '</td>'+
+        '<td data-item-index="' + index + '">' + $('#invoice_createInvoiceItemCommands_' + index + '_name' ,newForm).parent().html() + '</td>'+
+        '<td>' + $('#invoice_createInvoiceItemCommands_' + index + '_quantity', newForm).parent().html()+'</td>'+
+        '<td>' + $('#invoice_createInvoiceItemCommands_' + index + '_unit', newForm).parent().html()+'</td>'+
+        '<td>' + $('#invoice_createInvoiceItemCommands_' + index + '_price', newForm).parent().html()+'</td>'+
+        '<td>' + $('#invoice_createInvoiceItemCommands_' + index + '_discount', newForm).parent().html()+'</td>'+
         '<td><a id="remove-invoice-item'+ index +'" class="btn btn-sm btn-block btn-danger"><i class="fa fa-minus" aria-hidden="true"></i></a></td></tr>');        
         
         $collectionHolder.append($newFormLi);
         $collectionHolder.append($addRemoveInvoiceItemButtons);
 
-        $('#remove-invoice-item'+index).on('click', function(e) {        
+        $('#remove-invoice-item'+index).on('click', function() {        
             removeInvoiceItemForm($collectionHolder, index);        
         }); 
     }    

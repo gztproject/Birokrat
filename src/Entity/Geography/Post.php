@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use App\Entity\Base\Base;
+use App\Entity\User\User;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\PostRepository")
@@ -38,58 +39,93 @@ class Post extends Base
      */
     private $addresses;
 
-    public function __construct()
+    public function __construct(CreatePostCommand $c, User $user, Country $country)
     {
+    	if($user == null)
+    		throw new \Exception("Can't create entity without a user.");
+    	if($c == null)
+    		throw new \Exception("Can't create entity without a command.");
+    	if($country == null)
+    		throw new \Exception("Can't create a child entity without parent.");
+    			
+    	parent::__construct($user);
         $this->addresses = new ArrayCollection();
+        $this->country = $country;
+        $this->code = $c->code;
+        $this->codeInternational = $c->codeInternational;
+        $this->name = $c->name;
     }
 
+    public function update(UpdatePostCommand $c, User $user): Post
+    {
+    	throw new \Exception("Not implemented yet.");
+    	parent::updateBase($user);
+    	return $this;
+    }
+    
+    public function removeCountry(Country $country, User $user): Post
+    {
+    	if($this->country != $country)
+    		throw new \Exception("Can't remove contry other than itself.");
+    	parent::updateBase($user);
+    	$this->country = null;
+    	return $this;
+    }
+    
+    public function createAddress(CreateAddressCommand $c, User $user): Address
+    {
+    	$address = new Address($c, $user, $this);
+    	
+    	if (!$this->addresses->contains($address)) {
+    		$this->addresses[] = $address;
+    	}
+    	
+    	return $address;
+    }
+    
+    
+    
+    public function removeAddress(Address $address, User $user): ?Address
+    {
+    	if ($this->addresses->contains($address)) {
+    		$this->addresses->removeElement($address);
+    		// set the owning side to null (unless already changed)
+    		if ($address->getPost() === $this) {
+    			return $address->removePost($this, $user);
+    		}
+    	}
+    	return null;
+    }
+    
+    public function updateAddress(Address $address, UpdateAddressCommand $c, User $user): ?Address
+    {
+    	if ($this->addresses->contains($address)) {
+    		return $address->update($c, $user);
+    	}
+    	return null;
+    }   	
+    
+    
+    
     public function getCode(): ?string
     {
         return $this->code;
-    }
-
-    public function setCode(string $code): self
-    {
-        $this->code = $code;
-
-        return $this;
     }
 
     public function getCodeInternational(): ?string
     {
         return $this->codeInternational;
     }
-
-    public function setCodeInternational(string $codeInternational): self
-    {
-        $this->codeInternational = $codeInternational;
-
-        return $this;
-    }
-
+    
     public function getName(): ?string
     {
         return $this->name;
     }
 
-    public function setName(string $name): self
-    {
-        $this->name = $name;
-
-        return $this;
-    }
-
     public function getCountry(): ?Country
     {
         return $this->country;
-    }
-
-    public function setCountry(?Country $country): self
-    {
-        $this->country = $country;
-
-        return $this;
-    }
+    }    
 
     /**
      * @return Collection|Address[]
@@ -97,30 +133,7 @@ class Post extends Base
     public function getAddresses(): Collection
     {
         return $this->addresses;
-    }
-
-    public function addAddress(Address $address): self
-    {
-        if (!$this->addresses->contains($address)) {
-            $this->addresses[] = $address;
-            $address->setPost($this);
-        }
-
-        return $this;
-    }
-
-    public function removeAddress(Address $address): self
-    {
-        if ($this->addresses->contains($address)) {
-            $this->addresses->removeElement($address);
-            // set the owning side to null (unless already changed)
-            if ($address->getPost() === $this) {
-                $address->setPost(null);
-            }
-        }
-
-        return $this;
-    }
+    }    
     
     public function getNameAndCode(): string
     {
