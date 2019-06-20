@@ -61,7 +61,7 @@ class InvoiceCommandController extends AbstractController
     	$entityManager = $this->getDoctrine()->getManager();
     	
     	$number = InvoiceNumberFactory::factory($invoice->getIssuer, 10, $entityManager)->generate();
-    	$transaction = $invoice->setIssued($konto, $date, $number);
+    	$transaction = $invoice->setIssued($konto, $date, $number, $this->getUser());
     	
     	$entityManager->persist($invoice);
     	$entityManager->persist($transaction);
@@ -81,7 +81,7 @@ class InvoiceCommandController extends AbstractController
     	$date = new \DateTime($request->request->get('date', null));    	
     	$entityManager = $this->getDoctrine()->getManager();
     	    	
-    	$invoice->setPaid($date);
+    	$invoice->setPaid($date, $this->getUser());
     	    	
     	$entityManager->persist($invoice);
     	$entityManager->flush();

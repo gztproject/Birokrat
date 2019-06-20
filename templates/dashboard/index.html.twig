@@ -39,7 +39,7 @@
         <div class="bs-component">
             <div class="card text-white bg-primary">
                 <div class="card-header">
-                    <a href="{{ path('travelExpense_index') }}"><h2>{{ 'title.transactions'|trans }}</h2></a>
+                    <a href="{{ path('transaction_index') }}"><h2>{{ 'title.transactions'|trans }}</h2></a>
                 </div>
                 <div class="card-body">
                     {{ include('dashboard/transaction/_table.html.twig', {transactions: transactions}, with_context = false) }}

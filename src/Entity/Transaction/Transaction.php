@@ -8,6 +8,7 @@ use App\Entity\Konto\Konto;
 use App\Entity\Invoice\Invoice;
 use App\Entity\TravelExpense\TravelExpense;
 use App\Entity\TravelExpense\TravelExpenseBundle;
+use App\Entity\User\User;
 
 /**
  * 1.   s.p. ni dolžan voditi blagajniškega poslovanja, prosto razpolaga z gotovino
@@ -69,56 +70,88 @@ class Transaction extends Base
 	 */
 	private $travelExpenseBundle;
 	
-	public function initWithInvoice(\DateTimeInterface $date, Konto $konto, float $sum, Invoice $invoice)
+	public function __construct(CreateTransactionCommand $c, User $user, iTransactionDocument $document)
 	{
-		$this->setDate($date);
-		$this->setSum($sum);
-		$this->setKonto($konto);
-		$this->setInvoice($invoice);
+		switch (get_class($document)) {
+			case Invoice::class:
+				parent::__construct($user);
+				$this->initWithInvoice($c, $document);
+				break;
+			case TravelExpense::class:
+				throw new \Exception('Not implemented yet.');
+				break;
+			case TravelExpenseBundle::class:
+				parent::__construct($user);
+				$this->initWithTravelExpenseBundle($c, $document);
+				break;
+			default:
+				throw new \Exception('Not implemented yet.');
+				break;
+		}
 	}
 	
-	public function initWithTravelExpenseBundle(\DateTimeInterface $date, Konto $konto, float $sum, TravelExpenseBundle $travelExpenseBundle)
+	public function update(UpdateTransactionCommand $c, User $user, iTransactionDocument $document): Transaction
 	{
-		$this->setDate($date);
-		$this->setSum(-$sum);
-		$this->setKonto($konto);
-		$this->setTravelExpenseBundle($travelExpenseBundle);
+		switch (get_class($document)) {
+			case Invoice::class:
+				parent::updateBase($user);
+				$this->updateWithInvoice($c, $document);
+				break;
+			case TravelExpense::class:
+				throw new \Exception('Not implemented yet.');
+				break;
+			case TravelExpenseBundle::class:
+				parent::updateBase($user);
+				$this->iupdateWithTravelExpenseBundle($c, $document);
+				break;
+			default:
+				throw new \Exception('Not implemented yet.');
+				break;
+		}
 	}
+	
+	private function initWithInvoice(CreateTransactionCommand $c, Invoice $invoice)
+	{
+		$this->date = $c->date;
+		$this->sum = $c->sum;
+		$this->konto = $c->konto;
+		$this->invoice = $invoice;
+	}
+	
+	private function initWithTravelExpenseBundle(CreateTransactionCommand $c, TravelExpenseBundle $bundle)
+	{
+		$this->date = $c->date;
+		$this->sum = $c->sum;
+		$this->konto = $c->konto;
+		$this->travelExpenseBundle = $bundle;
+	}
+	
+	private function updateWithInvoice(UpdateTransactionCommand $c, Invoice $invoice)
+	{
+		$this->date = $c->date;
+		$this->sum = $c->sum;
+		$this->konto = $c->konto;
+		$this->invoice = $invoice;
+	}
+	
+	private function updateWithTravelExpenseBundle(UpdateTransactionCommand $c, TravelExpenseBundle $bundle)
+	{
+		$this->date = $c->date;
+		$this->sum = $c->sum;
+		$this->konto = $c->konto;
+		$this->travelExpenseBundle = $bundle;
+	}
+	
+	
 	
 	public function getKonto(): ?Konto
 	{
 		return $this->konto;
 	}
 	
-	public function setKonto(?Konto $konto): self
-	{
-		$this->konto = $konto;
-		
-		return $this;
-	}
-	
-	public function getCounterKonto(): ?Konto
-	{
-		return $this->counterKonto;
-	}
-	
-	public function setCounterKonto(?Konto $counterKonto): self
-	{
-		$this->counterKonto = $counterKonto;
-		
-		return $this;
-	}
-	
 	public function getSum()
 	{
 		return $this->sum;
-	}
-	
-	public function setSum($sum): self
-	{
-		$this->sum = $sum;
-		
-		return $this;
 	}
 	
 	public function getDate(): ?\DateTimeInterface
@@ -131,23 +164,9 @@ class Transaction extends Base
 		return $this->date->format('d. m. Y');
 	}
 	
-	public function setDate(\DateTimeInterface $date): self
-	{
-		$this->date = $date;
-		
-		return $this;
-	}
-	
 	public function getInvoice(): ?Invoice
 	{
 		return $this->invoice;
-	}
-	
-	public function setInvoice(?Invoice $Invoice): self
-	{
-		$this->invoice = $Invoice;
-		
-		return $this;
 	}
 	
 	public function getTravelExpense(): ?TravelExpense
@@ -155,22 +174,8 @@ class Transaction extends Base
 		return $this->travelExpense;
 	}
 	
-	public function setTravelExpense(?TravelExpense $travelExpense): self
-	{
-		$this->travelExpense = $travelExpense;
-		
-		return $this;
-	}
-	
 	public function getTravelExpenseBundle(): ?TravelExpenseBundle
 	{
 		return $this->travelExpenseBundle;
-	}
-	
-	public function setTravelExpenseBundle(?TravelExpenseBundle $travelExpenseBundle): self
-	{
-		$this->travelExpenseBundle = $travelExpenseBundle;
-		
-		return $this;
 	}
 }

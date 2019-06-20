@@ -8,11 +8,12 @@ use App\Entity\Transaction\Transaction;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use App\Entity\Transaction\iTransactionDocument;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\TravelExpense\TravelExpenseBundleRepository")
  */
-class TravelExpenseBundle extends Base
+class TravelExpenseBundle extends Base implements iTransactionDocument
 {    
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\TravelExpense\TravelExpense", mappedBy="travelExpenseBundle")
