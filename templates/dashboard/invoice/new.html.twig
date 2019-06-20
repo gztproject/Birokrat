@@ -11,7 +11,7 @@
     <h1>{{ 'title.invoice_new'|trans }}</h1>
 
     {{ form_start(form) }} 
-    <div class="jumbotron"> 
+    <div class="jumbotron" id="InvoiceFormContainer"> 
         <div class="row">
             <div class="col-sm-6">
                 <div class="form-group">                    
@@ -104,12 +104,12 @@
             </div>
         </div> 
         
-        <div class="bs-component table-responsive">            
-            <table id="invoice-items-table" class="table table-hover">
+        <div class="bs-component table-responsive-sm">            
+            <table id="invoice-items-table" class="table table-sm w-auto">                
                 <thead>
                     <tr>
-                        <th>{{ 'label.code'|trans }}</th>
-                        <th>{{ 'label.name'|trans }}</th>
+                        <th class="th-sm">{{ 'label.code'|trans }}</th>
+                        <th class="th-lg">{{ 'label.name'|trans }}</th>
                         <th>{{ 'label.quantity'|trans }}</th>
                         <th>{{ 'label.unit'|trans }}</th>
                         <th>{{ 'label.price'|trans }}</th>

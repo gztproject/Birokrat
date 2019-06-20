@@ -80,7 +80,7 @@ $(function() {
 });
 
 var $collectionHolder;
-var $addInvoiceItemButton = $('<tr class="table-primary"><td colspan="6"><a id="add-invoice-item" class="btn btn-sm btn-block btn-success"><i class="fa fa-plus" aria-hidden="true"></i></a></td></tr>');
+var $addInvoiceItemButton = $('<tr class="table-primary"><td colspan="7"><a id="add-invoice-item" class="btn btn-sm btn-block btn-success"><i class="fa fa-plus" aria-hidden="true"></i></a></td></tr>');
 
 
 jQuery(document).ready(function() {
@@ -168,7 +168,7 @@ function refreshDefaultDueInDays(){
 
 function calculateValue(index){
     var qty = $('#invoice_createInvoiceItemCommands_'+index+'_quantity').val();    
-    qty = qty=="" ? 0 : (qty.replace(',','.'))*1;
+    qty = qty=="" ? 1 : (qty.replace(',','.'))*1;
     var price = $('#invoice_createInvoiceItemCommands_'+index+'_price').val();
     price = price=="" ? 0 : (price.replace(',','.'))*1;
     var discount = $('#invoice_createInvoiceItemCommands_'+index+'_discount').val();
@@ -186,7 +186,7 @@ function setItemValue(index, value){
         x1 = x1.replace(rgx, '$1' + ' ' + '$2');
     }
     
-    $("#iiValue_"+index).html(x1 + x2 + " €");
+    $("#iiValue_"+index).val(x1 + x2 + " €");
 }
 
 function addInvoiceItemForm($collectionHolder, $addRemoveInvoiceItemButtons, $number) {
@@ -209,14 +209,14 @@ function addInvoiceItemForm($collectionHolder, $addRemoveInvoiceItemButtons, $nu
 
         // Display the form in the page in an li, before the "Add a tag" link li
         var $newFormLi = $('<tr class="invoice-item-tr-' + index + '">'+
-        '<td>' + $('#invoice_createInvoiceItemCommands_' + index + '_code', newForm).parent().html() + '</td>'+
-        '<td data-item-index="' + index + '">' + $('#invoice_createInvoiceItemCommands_' + index + '_name' ,newForm).parent().html() + '</td>'+
-        '<td>' + $('#invoice_createInvoiceItemCommands_' + index + '_quantity', newForm).parent().html()+'</td>'+
-        '<td>' + $('#invoice_createInvoiceItemCommands_' + index + '_unit', newForm).parent().html()+'</td>'+
-        '<td>' + $('#invoice_createInvoiceItemCommands_' + index + '_price', newForm).parent().html()+'</td>'+
-        '<td>' + $('#invoice_createInvoiceItemCommands_' + index + '_discount', newForm).parent().html()+'</td>'+
-        '<td><span id="iiValue_'+index+'"></span></td>'+
-        '<td><a id="remove-invoice-item'+ index +'" class="btn btn-sm btn-block btn-danger"><i class="fa fa-minus" aria-hidden="true"></i></a></td></tr>');        
+        '<td class="codeInput">' + $('#invoice_createInvoiceItemCommands_' + index + '_code', newForm).parent().html() + '</td>'+
+        '<td class="nameInput" data-item-index="' + index + '">' + $('#invoice_createInvoiceItemCommands_' + index + '_name' ,newForm).parent().html() + '</td>'+
+        '<td class="quantityInput">' + $('#invoice_createInvoiceItemCommands_' + index + '_quantity', newForm).parent().html()+'</td>'+
+        '<td class="unitInput">' + $('#invoice_createInvoiceItemCommands_' + index + '_unit', newForm).parent().html()+'</td>'+
+        '<td class="priceInput">' + $('#invoice_createInvoiceItemCommands_' + index + '_price', newForm).parent().html()+'</td>'+
+        '<td class="discountInput">' + $('#invoice_createInvoiceItemCommands_' + index + '_discount', newForm).parent().html()+'</td>'+
+        '<td class="valueInput"><input id="iiValue_'+index+'" class="valueInput" type="text" placeholder="0,00" readonly=""></td>'+
+        '<td class="removeBtn"><a id="remove-invoice-item'+ index +'" class="btn btn-sm btn-block btn-danger removeBtn"><i class="fa fa-minus" aria-hidden="true"></i></a></td></tr>');        
         
         $collectionHolder.append($newFormLi);
         $collectionHolder.append($addRemoveInvoiceItemButtons);
