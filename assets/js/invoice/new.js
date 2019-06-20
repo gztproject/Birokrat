@@ -76,7 +76,7 @@ $(function() {
         $('#invoice_dateServiceRenderedFrom').data("DateTimePicker").maxDate(e.date);
     });
     refreshInvNumber();
-    refreshDefaultDueInDays();
+    refreshDefaultDueInDays();    
 });
 
 var $collectionHolder;
@@ -89,10 +89,12 @@ jQuery(document).ready(function() {
     
     $collectionHolder.data('index', $collectionHolder.find(':input').length);
     addInvoiceItemForm($collectionHolder, $addInvoiceItemButton, 1);
+    setItemValue(0,0);
         
     $('#add-invoice-item').on('click', function() {
         // add a new tag form (see next code block)
-        addInvoiceItemForm($collectionHolder, $addInvoiceItemButton, 1);        
+        addInvoiceItemForm($collectionHolder, $addInvoiceItemButton, 1); 
+
     });
 
     $('#invoice_dueDate').on('dp.change', function(){
@@ -121,6 +123,13 @@ jQuery(document).ready(function() {
     $('#invoice_issuer').on('change', function(){
         refreshInvNumber();
         refreshDefaultDueInDays();
+    }); 
+    
+    $('.quantityInput').on('keydown', function(e){
+        var index = e.target.id.split('_')[2]; 
+        setTimeout(function () {       
+            setItemValue(index, calculateValue(index));
+        });
     });
     
 });
@@ -157,6 +166,29 @@ function refreshDefaultDueInDays(){
         }); 
 }
 
+function calculateValue(index){
+    var qty = $('#invoice_createInvoiceItemCommands_'+index+'_quantity').val();    
+    qty = qty=="" ? 0 : (qty.replace(',','.'))*1;
+    var price = $('#invoice_createInvoiceItemCommands_'+index+'_price').val();
+    price = price=="" ? 0 : (price.replace(',','.'))*1;
+    var discount = $('#invoice_createInvoiceItemCommands_'+index+'_discount').val();
+    discount = discount=="" ? 0 : (discount.replace(',','.'))*1;
+    return (qty*price)*(1-(discount/100));
+}
+
+function setItemValue(index, value){
+    value += '';
+    var x = value.split('.');
+    var x1 = x[0];
+    var x2 = x.length > 1 ? ('.' + (x[1].length == 1 ? x[1] + '0' : x[1][0] + (x[1].length == 2 ? x[1][1] : ( x[1][2]*1 >= 5 ? (x[1][1]*1 + 1) : x[1][1] )))) : '.00';
+    var rgx = /(\d+)(\d{3})/;
+    while (rgx.test(x1)) {
+        x1 = x1.replace(rgx, '$1' + ' ' + '$2');
+    }
+    
+    $("#iiValue_"+index).html(x1 + x2 + " €");
+}
+
 function addInvoiceItemForm($collectionHolder, $addRemoveInvoiceItemButtons, $number) {
     for(var i=0; i<$number;i++){
         // Get the data-prototype explained earlier
@@ -183,6 +215,7 @@ function addInvoiceItemForm($collectionHolder, $addRemoveInvoiceItemButtons, $nu
         '<td>' + $('#invoice_createInvoiceItemCommands_' + index + '_unit', newForm).parent().html()+'</td>'+
         '<td>' + $('#invoice_createInvoiceItemCommands_' + index + '_price', newForm).parent().html()+'</td>'+
         '<td>' + $('#invoice_createInvoiceItemCommands_' + index + '_discount', newForm).parent().html()+'</td>'+
+        '<td><span id="iiValue_'+index+'"></span></td>'+
         '<td><a id="remove-invoice-item'+ index +'" class="btn btn-sm btn-block btn-danger"><i class="fa fa-minus" aria-hidden="true"></i></a></td></tr>');        
         
         $collectionHolder.append($newFormLi);
@@ -191,6 +224,26 @@ function addInvoiceItemForm($collectionHolder, $addRemoveInvoiceItemButtons, $nu
         $('#remove-invoice-item'+index).on('click', function() {        
             removeInvoiceItemForm($collectionHolder, index);        
         }); 
+
+        $('#invoice_createInvoiceItemCommands_' + index + '_quantity').on('keydown', function(e){
+            var index = e.target.id.split('_')[2]; 
+            setTimeout(function () {       
+                setItemValue(index, calculateValue(index));
+            });
+        });
+        $('#invoice_createInvoiceItemCommands_' + index + '_price').on('keydown', function(e){
+            var index = e.target.id.split('_')[2]; 
+            setTimeout(function () {       
+                setItemValue(index, calculateValue(index));
+            });
+        });
+        $('#invoice_createInvoiceItemCommands_' + index + '_discount').on('keydown', function(e){
+            var index = e.target.id.split('_')[2]; 
+            setTimeout(function () {       
+                setItemValue(index, calculateValue(index));
+            });
+        });
+        setItemValue(index,0);
     }    
 }
 
