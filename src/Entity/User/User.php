@@ -11,10 +11,15 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use App\Entity\Base\Base;
+use App\Entity\Organization\Client;
+use App\Entity\Organization\CreateClientCommand;
+use App\Entity\Organization\CreateOrganizationCommand;
 use App\Entity\Organization\Organization;
 use App\Entity\Invoice\CreateInvoiceCommand;
 use App\Entity\Invoice\Invoice;
 use App\Entity\TravelExpense\TravelExpense;
+use App\Entity\Geography\Country;
+use App\Entity\Geography\CreateCountryCommand;
 
 
 /**
@@ -98,33 +103,34 @@ class User extends Base implements UserInterface, \Serializable
         $this->roles = array($c->isRoleAdmin?'ROLE_ADMIN':'ROLE_USER');
                 
         return $this;
-    }    
+    }   
+    
+    public function addOrganization(Organization $organization, User $user): self
+    {
+    	parent::updateBase($user);
+    	if (!$this->organizations->contains($organization)) {
+    		$this->organizations[] = $organization;
+    		$organization->addUser($this, $user);
+    	}
+    	
+    	return $this;
+    }
+    
+    public function removeOrganization(Organization $organization, User $user): self
+    {
+    	parent::updateBase($user);
+    	if ($this->organizations->contains($organization)) {
+    		$this->organizations->removeElement($organization);
+    		$organization->removeUser($this, $user);
+    	}
+    	
+    	return $this;
+    }
 
     /*
      * Private stuff, mostly helper functions
-     */
-        
-    private function addOrganization(Organization $organization): self
-    {
-    	if (!$this->organizations->contains($organization)) {
-    		$this->organizations[] = $organization;
-    		$organization->addUser($this);
-    	}
-    	
-    	return $this;
-    }
-    
-    private function removeOrganization(Organization $organization): self
-    {
-    	if ($this->organizations->contains($organization)) {
-    		$this->organizations->removeElement($organization);
-    		$organization->removeUser($this);
-    	}
-    	
-    	return $this;
-    }
-    
-    private function setUserSettings(?UserSettings $userSettings): self
+     */ 
+     private function setUserSettings(?UserSettings $userSettings): self
     {
     	$this->userSettings = $userSettings;
     	
@@ -172,6 +178,36 @@ class User extends Base implements UserInterface, \Serializable
     public function createTravelExpense(CreateTravelExpenseCommand $c): TravelExpense
     {
     	return new TravelExpense($c, $this);
+    }
+    
+    /**
+     * 
+     * @param CreateCountryCommand $c
+     * @return Country
+     */
+    public function createCountry(CreateCountryCommand $c): Country
+    {
+    	return new Country($c, $this);
+    }
+    
+    /**
+     * 
+     * @param CreateOrganizationCommand $c
+     * @return Organization
+     */
+    public function createOrganization(CreateOrganizationCommand $c): Organization
+    {
+    	return new Organization($c, $this);
+    }
+    
+    /**
+     * 
+     * @param CreateClientCommand $c
+     * @return Client
+     */
+    public function createClient(CreateClientCommand $c): Client
+    {
+    	return new Client($c, $this);
     }
     
     

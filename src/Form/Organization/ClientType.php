@@ -1,7 +1,6 @@
 <?php 
 namespace App\Form\Organization;
 
-use App\Entity\Organization\Client;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -10,6 +9,7 @@ use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\CallbackTransformer;
 use App\Entity\Geography\Address;
+use App\Entity\Organization\CreateClientCommand;
 
 class ClientType extends AbstractType
 {
@@ -51,7 +51,7 @@ class ClientType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => Client::class,
+            'data_class' => CreateClientCommand::class,
         ));
     }
 }

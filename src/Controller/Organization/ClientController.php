@@ -10,8 +10,11 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use App\Entity\Organization\Client;
 use App\Repository\Organization\ClientRepository;
-use App\Form\Geography\AddressDTO;
 use App\Entity\Organization\OrganizationCodeFactory;
+use App\Entity\Organization\CreateClientCommand;
+use App\Entity\Geography\CreateAddressCommand;
+use App\Entity\Geography\UpdateAddressCommand;
+use App\Entity\Organization\UpdateClientCommand;
 
 class ClientController extends AbstractController
 {
@@ -31,17 +34,18 @@ class ClientController extends AbstractController
      */
     public function new(Request $request)
     {
-        $client = new Client();
+        $c = new CreateClientCommand();
+                
+        $c->code = OrganizationCodeFactory::factory('App\Entity\Organization\Client', $this->getDoctrine())->generate();
         
-        $code = OrganizationCodeFactory::factory('App\Entity\Organization\Client', $this->getDoctrine())->generate();
-        $client->setCode($code);
-        
-        $form = $this->createForm(ClientType::class, $client)
+        $form = $this->createForm(ClientType::class, $c)
             ->add('saveAndCreateNew', SubmitType::class);
                 
         $form->handleRequest($request);
         
         if ($form->isSubmitted() && $form->isValid()) {  
+        	
+        	$client = $this->getUser()->createClient($c);
         	$entityManager = $this->getDoctrine()->getManager();
         	
         	$entityManager->persist($client);
@@ -49,7 +53,7 @@ class ClientController extends AbstractController
             return $this->redirectToRoute('client_index');
         }
        
-        $addressForm = $this->createForm(AddressType::class, new AddressDTO());  
+        $addressForm = $this->createForm(AddressType::class, new CreateAddressCommand());  
         
         return $this->render(
             '/dashboard/organization/new.html.twig',
@@ -77,35 +81,35 @@ class ClientController extends AbstractController
      *
      * @Route("/dashboard/client/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/edit",methods={"GET", "POST"}, name="client_edit")
      */
-    public function edit(Request $request, Client $organization): Response
+    public function edit(Request $request, Client $client): Response
     {
-    	$form = $this->createForm(ClientType::class, $organization);
+    	$updateCommand = new UpdateClientCommand();
+    	$client->mapTo($updateCommand);
+    	$form = $this->createForm(ClientType::class, $updateCommand);
     	
-    	$addressDTO = new AddressDTO();
-    	$addressDTO->setLine1($organization->getAddress()->getLine1());
-    	$addressDTO->setLine2($organization->getAddress()->getLine2());
-    	$addressDTO->setPost($organization->getAddress()->getPost());
+    	$addressDTO = new UpdateAddressCommand();
+    	$addressDTO->line1 = $client->getAddress()->getLine1();
+    	$addressDTO->line2 = $client->getAddress()->getLine2();
+    	$addressDTO->post = $client->getAddress()->getPost();
     	
     	$addressForm = $this->createForm(AddressType::class, $addressDTO);
         $form->handleRequest($request);
         
-        if ($form->isSubmitted() && $form->isValid()) {
-            
-            $client = $form->getData();
-                                   
-            $this->getDoctrine()->getManager()->persist($organization);
-            
-            $this->getDoctrine()->getManager()->flush();
-            
-            $this->addFlash('success', 'organization.updated_successfully');
-            
-            return $this->redirectToRoute('client_edit', ['id' => $organization->getId()]);
+        if ($form->isSubmitted() && $form->isValid()) 
+        {            
+        	$updateCommand = $form->getData();
+            $client->update($updateCommand, $this->getUser());
+            $this->getDoctrine()->getManager()->persist($client);            
+            $this->getDoctrine()->getManager()->flush();            
+            $this->addFlash('success', 'client.updated_successfully');            
+            return $this->redirectToRoute('client_edit', ['id' => $client->getId()]);
         }
         
-        return $this->render('dashboard/client/edit.html.twig', [
-            'client' => $client,
+        return $this->render('dashboard/organization/edit.html.twig', [
+            'organization' => $client,
             'form' => $form->createView(),
         	'addressForm' => $addressForm->createView(),
+        	'entity' => 'client',
         ]);
     }    
    

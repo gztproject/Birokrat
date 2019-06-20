@@ -25,18 +25,107 @@ class Organization extends LegalEntityBase
      */
     private $organizationSettings;
 
-    public function __construct()
+    public function __construct(CreateOrganizationCommand $c, User $user)
     {
-    	$this->users = new ArrayCollection();
+    	parent::__construct($user);
+    	$this->code = $c->code;
+    	$this->name = $c->name;
+    	$this->taxNumber = $c->taxNumber;
+    	$this->taxable = $c->taxable;
+    	$this->address = $c->address;
+    	if($c->shortName)
+    		$this->shortName = $c->shortName;
+    	if($c->www)
+    		$this->www = $c->www;
+    	if($c->email)
+    		$this->email = $c->email;
+    	if($c->phone)
+    		$this->phone = $c->phone;
+    	if($c->mobile)
+    		$this->mobile = $c->mobile;
+    	if($c->accountNumber)
+    		$this->accountNumber = $c->accountNumber;
+    	if($c->bic)
+    		$this->bic = $c->bic;    		
     }
     
-    public function initOrganization(string $code, string $name, int $taxNumber, bool $taxable, Address $address, OrganizationSettings $organizationSettings,
-    		string $shortName = null, string $www = null, string $email = null, string $phone = null, string $mobile = null, string $accountNumber = null, string $bic = null)
+    public function update (UpdateOrganizationCommand $c, User $user): Organization
     {
-    	parent::init($code, $name, $taxNumber, $taxable, $address, $shortName, $www, $email, $phone, $mobile, $accountNumber, $bic);    	
+    	//Should we make a copy and deactivate old one not to mix up old stuff?
+    	parent::updateBase($user);
+    	if($c->name != null && $c->name != $this->name)
+    		$this->name = $c->name;
+    	if($c->taxNumber != null && $c->taxNumber != $this->taxNumber)
+    		$this->taxNumber = $c->taxNumber;
+    	if($c->taxable != null && $c->taxable != $this->taxable)
+    		$this->taxable = $c->taxable;
+    	if($c->address != null && $c->address != $this->address)
+    		$this->address = $c->address;
+    	if($c->shortName != null && $c->shortName != $this->shortName)
+    		$this->shortName = $c->shortName;
+    	if($c->www != null && $c->www != $this->www)
+    		$this->www = $c->www;
+    	if($c->email != null && $c->email != $this->email)
+    		$this->email = $c->email;
+    	if($c->phone != null && $c->phone != $this->phone)
+    		$this->phone = $c->phone;
+    	if($c->mobile != null && $c->mobile != $this->mobile)
+    		$this->mobile = $c->mobile;
+    	if($c->accountNumber != null && $c->accountNumber != $this->accountNumber)
+    		$this->accountNumber = $c->accountNumber;
+    	if($c->bic != null && $c->bic != $this->bic)
+    		$this->bic = $c->bic;
     	
-    	$this->setOrganizationSettings($organizationSettings);    	
+    	return $this;
     }
+       
+    public function setOrganizationSettings(OrganizationSettings $settings)
+    {
+    	$this->organizationSettings = $settings; 
+    }
+    
+    public function addUser(User $user, User $editor): self
+    {    	
+    	if (!$this->users->contains($user)) {
+    		parent::updateBase($editor);
+    		$this->users[] = $user;
+    	}
+    	
+    	return $this;
+    }
+    
+    public function removeUser(User $user, User $editor): self
+    {
+    	if ($this->users->contains($user)) {
+    		parent::updateBase($editor);
+    		$this->users->removeElement($user);
+    	}
+    	
+    	return $this;
+    }   
+    
+    public function mapTo($to)
+    {
+    	if ($to instanceof UpdateOrganizationCommand) 
+    	{
+    		$reflect = new \ReflectionClass($this);
+    		$props  = $reflect->getProperties();
+    		foreach($props as $prop)
+    		{
+    			$name = $prop->getName();    			
+    			if(property_exists($to, $name))
+    			{    				
+    				$to->$name = $this->$name;
+    			}
+    		}
+    	} 
+    	else 
+    	{
+    		throw(new \Exception('cant map ' . get_class($this) . ' to ' . get_class($to)));
+    		return $to;
+    	}
+    }
+    
 
     /**
      * @return Collection|User[]
@@ -44,42 +133,12 @@ class Organization extends LegalEntityBase
     public function getUsers(): Collection
     {
         return $this->users;
-    }
-
-    public function addUser(User $user): self
-    {
-        if (!$this->users->contains($user)) {
-            $this->users[] = $user;
-        }
-
-        return $this;
-    }
-
-    private function removeUser(User $user): self
-    {
-        if ($this->users->contains($user)) {
-            $this->users->removeElement($user);
-        }
-
-        return $this;
-    }    
+    }     
 
     public function getOrganizationSettings(): ?OrganizationSettings
     {
         return $this->organizationSettings;
     }
 
-    private function setOrganizationSettings(?OrganizationSettings $organizationSettings): self
-    {
-        $this->organizationSettings = $organizationSettings;
-
-        //ToDo: Remove orphans.
-        // set (or unset) the owning side of the relation if necessary
-        $newOrganization = $organizationSettings === null ? null : $this;
-        if ($newOrganization !== $organizationSettings->getOrganization()) {
-            $organizationSettings->setOrganization($newOrganization);
-        }
-
-        return $this;
-    }    
+        
 }

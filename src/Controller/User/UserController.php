@@ -1,7 +1,7 @@
 <?php 
-namespace App\Controller;
+namespace App\Controller\User;
 
-use App\Form\User\CreateUserType;
+use App\Form\User\UserType;
 use App\Entity\User\User;
 use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -40,7 +40,7 @@ class UserController extends AbstractController
     {
         // 1) build the form
         $createUserCommand = new CreateUserCommand();
-        $form = $this->createForm(CreateUserType::class, $createUserCommand)
+        $form = $this->createForm(UserType::class, $createUserCommand)
             ->add('saveAndCreateNew', SubmitType::class);
         
         
@@ -119,12 +119,12 @@ class UserController extends AbstractController
     /**
      * @Route("/admin/user/addOrganization", methods={"POST"}, name="user_addOrganization")
      */
-    public function setPaid(Request $request): Response
+    public function addOrganization(Request $request): Response
     {
     	$user = $this->getDoctrine()->getRepository(User::class)->findOneBy(['id'=>$request->request->get('userId', null)]);
     	$organization = $this->getDoctrine()->getRepository(Organization::class)->findOneBy(['id'=>$request->request->get('organizationId', null)]);
     	
-    	$user->addOrganization($organization);
+    	$user->addOrganization($organization, $this->getUser());
     	
     	$entityManager = $this->getDoctrine()->getManager();
     	    	

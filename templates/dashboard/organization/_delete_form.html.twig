@@ -1,4 +1,4 @@
-{{ include('dashboard/organization/_delete_organization_confirmation.html.twig') }}
+{{ include('dashboard/organization/_delete_organization_confirmation.html.twig', {entity: entity}) }}
 <form action="{{ url(entity ~ '_delete', {id: organization.id}) }}" method="post" data-confirmation="true" id="delete-form">
     <input type="hidden" name="token" value="{{ csrf_token('delete') }}" />
     <button type="submit" class="btn btn-sm btn-block btn-danger">
