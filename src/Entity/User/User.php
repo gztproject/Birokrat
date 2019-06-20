@@ -2,6 +2,8 @@
 
 namespace App\Entity\User;
 
+use App\Entity\Settings\CreateUserSettingsCommand;
+use App\Entity\Settings\UpdateUserSettingsCommand;
 use App\Entity\Settings\UserSettings;
 use App\Entity\TravelExpense\CreateTravelExpenseCommand;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -87,7 +89,14 @@ class User extends Base implements UserInterface, \Serializable
      */
     private $userSettings;
     
-    private function __construct(CreateUserCommand $c, User $user, UserPasswordEncoderInterface $passwordEncoder)
+    /**
+     * 
+     * @param CreateUserCommand $c
+     * @param User $user
+     * @param UserPasswordEncoderInterface $passwordEncoder
+     * @return \App\Entity\User\User
+     */
+    public function __construct(CreateUserCommand $c, User $user, UserPasswordEncoderInterface $passwordEncoder)
     {
     	parent::__construct($user);
         $this->isActive = true;
@@ -105,6 +114,42 @@ class User extends Base implements UserInterface, \Serializable
         return $this;
     }   
     
+    /**
+     * 
+     * @param CreateUserSettingsCommand $c
+     * @param User $user
+     * @return UserSettings
+     */
+    public function CreateUserSettings(CreateUserSettingsCommand $c, User $user): UserSettings
+    {
+    	parent::updateBase($user);
+    	$this->userSettings = new UserSettings($c, $this, $user);
+    	return $this->userSettings;
+    }
+    
+    /**
+     * 
+     * @param UpdateUserSettingsCommand $c
+     * @param UserSettings $settings
+     * @param User $user
+     * @throws \Exception
+     * @return UserSettings
+     */
+    public function updateUserSettings(UpdateUserSettingsCommand $c, UserSettings $settings, User $user): UserSettings
+    {
+    	if($this->userSettings != $settings)
+    		throw new \Exception("Can't update settings that are not mine.");
+    		parent::updateBase($user);
+    		$this->userSettings->update($c, $user);
+    		return $this->userSettings;
+    }
+    
+    /**
+     * 
+     * @param Organization $organization
+     * @param User $user
+     * @return self
+     */
     public function addOrganization(Organization $organization, User $user): self
     {
     	parent::updateBase($user);
@@ -116,6 +161,12 @@ class User extends Base implements UserInterface, \Serializable
     	return $this;
     }
     
+    /**
+     * 
+     * @param Organization $organization
+     * @param User $user
+     * @return self
+     */
     public function removeOrganization(Organization $organization, User $user): self
     {
     	parent::updateBase($user);
@@ -125,23 +176,7 @@ class User extends Base implements UserInterface, \Serializable
     	}
     	
     	return $this;
-    }
-
-    /*
-     * Private stuff, mostly helper functions
-     */ 
-     private function setUserSettings(?UserSettings $userSettings): self
-    {
-    	$this->userSettings = $userSettings;
-    	
-    	// set (or unset) the owning side of the relation if necessary
-    	$newUser = $userSettings === null ? null : $this;
-    	if ($newUser !== $userSettings->getUser()) {
-    		$userSettings->setOrganization($newUser);
-    	}
-    	
-    	return $this;
-    }
+    }    
     
     /*
      * *****************************************************************

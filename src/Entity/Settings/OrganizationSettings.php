@@ -4,6 +4,7 @@ namespace App\Entity\Settings;
 
 use App\Entity\Base\Base;
 use App\Entity\Organization\Organization;
+use App\Entity\User\User;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -32,53 +33,54 @@ class OrganizationSettings extends Base
      */
     private $organization;
 
+    /**
+     * 
+     * @param CreateOrganizationSettingsCommand $c
+     * @param Organization $organization
+     * @param User $user
+     */
+    public function __construct(CreateOrganizationSettingsCommand $c, Organization $organization, User $user)
+    {
+    	parent::__construct($user);
+    	$this->organization = $organization;
+    	$this->defaultPaymentDueIn = $c->defaultPaymentDueIn;
+    	$this->invoicePrefix = $c->invoicePrefix;
+    	$this->referenceModel = $c->referenceModel;
+    }
     
+    /**
+     * 
+     * @param UpdateOrganizationSettingsCommand $c
+     * @param User $user
+     */
+    public function update(UpdateOrganizationSettingsCommand $c, User $user)
+    {    	
+    	parent::updateBase($user);
+    	
+    	$this->defaultPaymentDueIn = $c->defaultPaymentDueIn;
+    	$this->invoicePrefix = $c->invoicePrefix;
+    	$this->referenceModel = $c->referenceModel;
+    }
     
     public function getInvoicePrefix(): ?string
     {
     	return $this->invoicePrefix;
     }
     
-    public function setInvoicePrefix(?string $invoicePrefix): self
-    {
-    	$this->invoicePrefix = $invoicePrefix;
-    	
-    	return $this;
-    }
-
+    
     public function getDefaultPaymentDueIn(): ?int
     {
         return $this->defaultPaymentDueIn;
     }
 
-    public function setDefaultPaymentDueIn(?int $defaultPaymentDueIn): self
-    {
-        $this->defaultPaymentDueIn = $defaultPaymentDueIn;
-
-        return $this;
-    }
-
+    
     public function getReferenceModel(): ?string
     {
         return $this->referenceModel;
     }
 
-    public function setReferenceModel(?string $referenceModel): self
-    {
-        $this->referenceModel = $referenceModel;
-
-        return $this;
-    }
-
     public function getOrganization(): ?Organization
     {
         return $this->organization;
-    }
-
-    public function setOrganization(?Organization $organization): self
-    {
-        $this->organization = $organization;
-
-        return $this;
-    }
+    }    
 }

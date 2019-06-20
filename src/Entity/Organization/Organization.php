@@ -9,6 +9,8 @@ use Doctrine\ORM\Mapping as ORM;
 use App\Entity\Base\Base;
 use App\Entity\User\User;
 use App\Entity\Geography\Address;
+use App\Entity\Settings\CreateOrganizationSettingsCommand;
+use App\Entity\Settings\UpdateOrganizationSettingsCommand;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\Organization\OrganizationRepository")
@@ -25,6 +27,11 @@ class Organization extends LegalEntityBase
      */
     private $organizationSettings;
 
+    /**
+     * 
+     * @param CreateOrganizationCommand $c
+     * @param User $user
+     */
     public function __construct(CreateOrganizationCommand $c, User $user)
     {
     	parent::__construct($user);
@@ -49,6 +56,12 @@ class Organization extends LegalEntityBase
     		$this->bic = $c->bic;    		
     }
     
+    /**
+     * 
+     * @param UpdateOrganizationCommand $c
+     * @param User $user
+     * @return Organization
+     */
     public function update (UpdateOrganizationCommand $c, User $user): Organization
     {
     	//Should we make a copy and deactivate old one not to mix up old stuff?
@@ -78,12 +91,43 @@ class Organization extends LegalEntityBase
     	
     	return $this;
     }
-       
-    public function setOrganizationSettings(OrganizationSettings $settings)
+     
+    /**
+     * 
+     * @param CreateOrganizationSettingsCommand $c
+     * @param User $user
+     * @return OrganizationSettings
+     */
+    public function CreateOrganizationSettings(CreateOrganizationSettingsCommand $c, User $user): OrganizationSettings
     {
-    	$this->organizationSettings = $settings; 
+    	parent::updateBase($user);
+    	$this->organizationSettings = new OrganizationSettings($c, $this, $user);
+    	return $this->organizationSettings;
     }
     
+    /**
+     * 
+     * @param UpdateOrganizationSettingsCommand $c
+     * @param OrganizationSettings $settings
+     * @param User $user
+     * @throws \Exception
+     * @return OrganizationSettings
+     */
+    public function updateOrganizationSettings(UpdateOrganizationSettingsCommand $c, OrganizationSettings $settings, User $user): OrganizationSettings
+    {
+    	if($this->organizationSettings != $settings)
+    		throw new \Exception("Can't update settings that are not mine.");
+    	parent::updateBase($user);
+    	$this->organizationSettings->update($c, $user);
+    	return $this->organizationSettings;    	
+    }
+    
+    /**
+     * 
+     * @param User $user
+     * @param User $editor
+     * @return self
+     */
     public function addUser(User $user, User $editor): self
     {    	
     	if (!$this->users->contains($user)) {
@@ -94,6 +138,12 @@ class Organization extends LegalEntityBase
     	return $this;
     }
     
+    /**
+     * 
+     * @param User $user
+     * @param User $editor
+     * @return self
+     */
     public function removeUser(User $user, User $editor): self
     {
     	if ($this->users->contains($user)) {
@@ -104,6 +154,11 @@ class Organization extends LegalEntityBase
     	return $this;
     }   
     
+    /**
+     * 
+     * @param Class $to
+     * @return Class
+     */
     public function mapTo($to)
     {
     	if ($to instanceof UpdateOrganizationCommand) 
