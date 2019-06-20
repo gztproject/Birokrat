@@ -165,6 +165,63 @@ final class Version20190619180140 extends AbstractMigration implements Container
     		}
     }
 
+    public function preDown(Schema $schema) : void
+    {
+    	//Get EntityManager
+    	$em = $this->container->get('doctrine.orm.entity_manager');
+    	
+    	//Check if MigrationUser already exists and create it if not. We have to do it manually as we don't have the new fields yet.
+    	$sql = "SELECT * FROM `app_users` WHERE username = 'dbMigrator' ";
+    	
+    	$stmt = $em->getConnection()->prepare($sql);
+    	$stmt->execute();
+    	$dbMigratorUser = $stmt->fetchAll();
+    	
+    	if($dbMigratorUser==null)
+    	{
+    		//System users are created directly in DB as we need an existing user to do it utherwise.
+    		$this->dbMigratorId = Uuid::uuid1();
+    		$sql = "INSERT INTO `app_users` (`id`, `username`, `first_name`, `last_name`, `password`, `roles`, `email`, `mobile`, `phone`, `is_active`)
+				VALUES ('$this->dbMigratorId','DbMigrator','Database','Migrator','','','','','',0)";
+    		$stmt = $em->getConnection()->prepare($sql);
+    		$stmt->execute();
+    		$em->flush();
+    	}
+    	else
+    	{
+    		$this->dbMigratorId = $dbMigratorUser[0]["id"];
+    	}
+    	
+    	$sql = "SELECT k.id FROM konto AS k WHERE k.number = 110";
+    	$stmt = $em->getConnection()->prepare($sql);
+    	$stmt->execute();
+    	$res = $stmt->fetchAll();
+    	if($res != null)
+    		$this->konto110id = $res[0]['id'];
+    		$em->flush();
+    		
+    	$sql = "SELECT k.id FROM konto AS k WHERE k.number = 120";
+    	$stmt = $em->getConnection()->prepare($sql);
+    	$stmt->execute();
+    	$res = $stmt->fetchAll();
+    	if($res != null)
+    		$this->konto120id = $res[0]['id'];
+    	$em->flush();
+    			
+    	$sql = "SELECT k.id FROM konto AS k WHERE k.number = 760";
+    	$stmt = $em->getConnection()->prepare($sql);
+    	$stmt->execute();
+    	$res = $stmt->fetchAll();
+    	if($res != null)
+    		$this->konto760id = $res[0]['id'];
+    	$em->flush();
+    	
+    	$sql = "DELETE FROM transaction where konto_id = '$this->konto120id'";
+    	$stmt = $em->getConnection()->prepare($sql);
+    	$stmt->execute();
+    	$em->flush();
+    }
+    
     public function down(Schema $schema) : void
     {
         // this down() migration is auto-generated, please modify it to your needs
