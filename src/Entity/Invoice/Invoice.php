@@ -13,11 +13,13 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Symfony\Component\Config\Definition\Exception\Exception;
 use App\Entity\Organization\Client;
 use App\Entity\Transaction\Transaction;
+use App\Entity\Transaction\iTransactionDocument;
+use App\Entity\Transaction\CreateTransactionCommand;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\Invoice\InvoiceRepository")
  */
-class Invoice extends Base
+class Invoice extends Base implements iTransactionDocument
 {
     /**
      * @ORM\Column(type="datetime")
@@ -150,26 +152,34 @@ class Invoice extends Base
      * @param Konto $konto Konto for the transaction
      * @param \DateTime $date 
      * @param string $number Invoice number (in case of other new invoices being issued later)
+     * @param Issuing user
      * @return Transaction
      */
-    public function setIssued(Konto $konto, \DateTime $date, string $number): Transaction
+    public function setIssued(Konto $konto, \DateTime $date, string $number, User $user): Transaction
     {
+    	$this->setState(20);
+    	parent::updateBase($user);
+    	
     	$this->number = $number;
     	$this->calculateReference();
-    	$this->setDateOfIssue($date);
+    	$this->dateOfIssue = $date;
     	$this->calculateTotals();
     	
-    	$transaction = new Transaction();
-    	$transaction->initWithInvoice($this->getDateOfIssue(), $konto, $this->getTotalPrice(), $this);
+    	$c = new CreateTransactionCommand();
+    	$c->date = $this->dateOfIssue;
+    	$c->konto = $konto;
+    	$c->sum = $this->totalPrice;
     	
-    	$this->setState(20);
+    	$transaction = new Transaction($c, $user, $this);
+    	    	    	
     	return $transaction;
     }
     
-    public function setPaid(\DateTime $date)
+    public function setPaid(\DateTime $date, User $user)
     {    	
-    	$this->setDatePaid($date);
     	$this->setState(30);
+    	parent::updateBase($user);
+    	$this->datePaid = $date;
     }
     
     /**

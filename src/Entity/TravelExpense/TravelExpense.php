@@ -9,11 +9,12 @@ use App\Entity\Base\Base;
 use App\Entity\Konto\Konto;
 use App\Entity\User\User;
 use App\Entity\Transaction\Transaction;
+use App\Entity\Transaction\iTransactionDocument;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\TravelExpenseRepository")
  */
-class TravelExpense extends Base
+class TravelExpense extends Base implements iTransactionDocument
 {
     /**
      * @ORM\Column(type="datetime")
