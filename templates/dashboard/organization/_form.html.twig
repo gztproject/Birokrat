@@ -1,14 +1,6 @@
-{#
-    By default, forms enable client-side validation. This means that you can't
-    test the server-side validation errors from the browser. To temporarily
-    disable this validation, add the 'novalidate' attribute:
-
-    {{ form_start(form, {attr: {novalidate: 'novalidate'}}) }}
-#}
-
 {% if show_confirmation|default(true) %}
     {% set attr = {'data-confirmation': 'true'} %}
-    {{ include('dashboard/organization/_delete_user_confirmation.html.twig') }}
+    {{ include ('dashboard/organization/_delete_organization_confirmation.html.twig', {entity: entity}) }}
 {% endif %}
 
 {{ form_start(form) }}

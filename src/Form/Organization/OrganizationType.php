@@ -10,6 +10,7 @@ use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\CallbackTransformer;
 use App\Entity\Geography\Address;
+use App\Entity\Organization\CreateOrganizationCommand;
 
 class OrganizationType extends AbstractType
 {
@@ -51,7 +52,7 @@ class OrganizationType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => Organization::class,
+            'data_class' => CreateOrganizationCommand::class,
         ));
     }
 }

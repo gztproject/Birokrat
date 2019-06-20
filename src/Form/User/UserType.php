@@ -1,5 +1,5 @@
 <?php 
-// src/Form/CreateUserType.php
+// src/Form/UserType.php
 namespace App\Form\User;
 
 use Symfony\Component\Form\AbstractType;
@@ -14,7 +14,7 @@ use Symfony\Component\Form\CallbackTransformer;
 use App\Entity\User\CreateUserCommand;
 use Doctrine\DBAL\Types\StringType;
 
-class CreateUserType extends AbstractType
+class UserType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
