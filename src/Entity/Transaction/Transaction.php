@@ -99,7 +99,7 @@ class Transaction extends Base
 	
 	public function getCounterKonto(): ?Konto
 	{
-		return $this->konto;
+		return $this->counterKonto;
 	}
 	
 	public function setCounterKonto(?Konto $counterKonto): self
