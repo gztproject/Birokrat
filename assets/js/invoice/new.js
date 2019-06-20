@@ -76,6 +76,7 @@ $(function() {
         $('#invoice_dateServiceRenderedFrom').data("DateTimePicker").maxDate(e.date);
     });
     refreshInvNumber();
+    refreshDefaultDueInDays();
 });
 
 var $collectionHolder;
@@ -119,6 +120,7 @@ jQuery(document).ready(function() {
 
     $('#invoice_issuer').on('change', function(){
         refreshInvNumber();
+        refreshDefaultDueInDays();
     });
     
 });
@@ -131,6 +133,23 @@ function refreshInvNumber(){
         function(data, status){  
             if(data[0]['status']=="ok")          
                 $('#invoice_number').val(data[0]['data'][0]);
+            else{
+                $('#notificationBody').html("<li>Error getting invoice number: " + data[0]['data'][0] + "</li>");
+                $('#notificationModal').modal('show');
+            }
+        }); 
+}
+
+function refreshDefaultDueInDays(){
+    $.post("/dashboard/invoice/getDefaultDueInDays",
+        {           
+            issuerId: $('#invoice_issuer option:selected').val()
+        },
+        function(data, status){  
+            if(data[0]['status']=="ok"){        
+                $('#invoice_dueInDays').val(data[0]['data'][0]);
+                $('#invoice_dueInDays').change();
+            }
             else{
                 $('#notificationBody').html("<li>Error getting invoice number: " + data[0]['data'][0] + "</li>");
                 $('#notificationModal').modal('show');

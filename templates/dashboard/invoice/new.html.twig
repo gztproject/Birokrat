@@ -11,8 +11,7 @@
     <h1>{{ 'title.invoice_new'|trans }}</h1>
 
     {{ form_start(form) }} 
-    <div class="list-group"> 
-    <div class="list-group-item list-group-item-action flex-column align-items-start">
+    <div class="jumbotron"> 
         <div class="row">
             <div class="col-sm-6">
                 <div class="form-group">                    
@@ -164,7 +163,7 @@
             <a href="{{ path('invoice_index') }}" class="btn btn-link">
                 <i class="fa fa-list-alt" aria-hidden="true"></i> {{ 'action.back_to_list'|trans }}
             </a>
-       </div>
+       
     </div>
     {{ form_row(form._token) }}
     {{ form_end(form, {'render_rest': false}) }}

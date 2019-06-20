@@ -4,36 +4,82 @@
 {% endif %}
 
 {{ form_start(form) }}
-    
-        <div class='row'>
-            {{ form_label(form.name) }}
-            {{ form_widget(form.name, {'attr': {'class': 'form-control'}}) }} 
-        </div>
-        <div class='row'>
-            {{ form_label(form.shortName) }}
-            {{ form_widget(form.shortName, {'attr': {'class': 'form-control'}}) }} 
-        </div>
-        <div class='row'>
-            {{ form_label(form.taxNumber) }}
-            {{ form_widget(form.taxNumber, {'attr': {'class': 'form-control'}}) }}
-        </div>
-        <div class='row'> 
-            {{ form_label(form.taxable) }}
-            {{ form_widget(form.taxable, {'attr': {'class': 'form-control'}}) }}
-        </div>
-        <div class='row'>           
-            {{ form_label(form.address) }}
-            {{ form_widget(form.address, {'attr': {'class': 'form-control'}}) }}  
-        </div>
-        
-        <button type="submit" class="{{ button_css|default("btn btn-primary") }}">
-        <i class="fa fa-save" aria-hidden="true"></i> {{ button_label|default('label.saveOrganization'|trans) }}
-    </button>
-
-    {% if include_back_to_home_link|default(false) %}
-        <a href="{{ path('organization_index') }}" class="btn btn-primary">
-            <i class="fa fa-list-alt" aria-hidden="true"></i> {{ 'action.back_to_list'|trans }}
-        </a>
-    {% endif %}
-        
-    {{ form_end(form) }}
+    <div class="jumbotron">         
+            <div class='row'>
+                <div class="col-sm-7">
+                    <div class="form-group"> 
+                        {{ form_label(form.name, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}
+                        <div class='input-group'>
+                            {{ form_widget(form.name, {'attr': {'class': 'form-control'}}) }}
+                        </div>
+                    </div>
+                </div> 
+                <div class="col-sm-5">
+                    <div class="form-group"> 
+                        {{ form_label(form.shortName, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}
+                        <div class='input-group'>
+                            {{ form_widget(form.shortName, {'attr': {'class': 'form-control'}}) }} 
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class='row'>
+                <div class="col-sm-9">
+                    <div class="form-group"> 
+                        {{ form_label(form.taxNumber, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}
+                        <div class='input-group'>
+                            {{ form_widget(form.taxNumber, {'attr': {'class': 'form-control'}}) }}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group"> 
+                        {{ form_label(form.taxable, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}
+                        <div class='input-group'>
+                            {{ form_widget(form.taxable, {'attr': {'class': 'form-control'}}) }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class='row'> 
+                <div class="col-sm-9">
+                    <div class="form-group">           
+                        {{ form_label(form.address, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}
+                        <div class='input-group'>
+                            {{ form_widget(form.address, {'attr': {'class': 'form-control'}}) }} 
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3">
+                    <div class="form-group" >
+                        <label class='col-form-label-lg' for="addAddressBtn">{{ 'label.newAddress'|trans }}</label>
+                        <div class='input-group'>
+                            <button type='button' id='addAddressBtn' class='btn btn-md btn-success'><i class="fa fa-plus" aria-hidden="true"></i></button>    
+                            {{ include('dashboard/organization/addAddressModal.html.twig', { form: addressForm }) }}
+                        </div>
+                    </div>
+                </div> 
+            </div>
+            
+            
+            
+            <div class='row'> 
+                <div class="col-sm-3">
+                    <div class="form-group">            
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fa fa-save" aria-hidden="true"></i> {{ button_label|default('label.saveOrganization'|trans) }}
+                        </button>
+                    </div>
+                </div>
+                {% if include_back_to_home_link|default(false) %}
+                    <div class="col-sm-3">
+                        <div class="form-group">
+                            <a href="{{ path('organization_index') }}" class="btn btn-primary">
+                                <i class="fa fa-list-alt" aria-hidden="true"></i> {{ 'action.back_to_list'|trans }}
+                            </a>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>        
+    </div>        
+{{ form_end(form) }}

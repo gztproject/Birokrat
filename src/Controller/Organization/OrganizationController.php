@@ -72,8 +72,7 @@ class OrganizationController extends AbstractController
         $c = new CreateOrganizationCommand();
         $c->code = OrganizationCodeFactory::factory('App\Entity\Organization\Organization', $this->getDoctrine())->generate();
         
-        $form = $this->createForm(OrganizationType::class, $c)
-            ->add('saveAndCreateNew', SubmitType::class);
+        $form = $this->createForm(OrganizationType::class, $c);
                 
         $form->handleRequest($request);
         
