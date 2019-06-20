@@ -149,6 +149,11 @@ class Transaction extends Base
 		return $this->konto;
 	}
 	
+	public function getCounterKonto(): ?Konto
+	{
+		return $this-counterKonto;
+	}
+
 	public function getSum()
 	{
 		return $this->sum;
