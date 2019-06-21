@@ -27,6 +27,16 @@ class InvoiceRepository extends ServiceEntityRepository
     		->orderBy('i.dateOfIssue', 'DESC')
     		->addOrderBy('i.number', 'DESC');    	 
     }
+    
+    public function getActive(): QueryBuilder
+    {
+    	return $this->createQueryBuilder('i')
+    	->addSelect('i')
+    	->where('i.state IN states')    	
+    	->orderBy('i.dateOfIssue', 'DESC')
+    	->addOrderBy('i.number', 'DESC')
+    	->setParameter('states', '10,20,30');
+    }
 
     // /**
     //  * @return Invoice[] Returns an array of Invoice objects

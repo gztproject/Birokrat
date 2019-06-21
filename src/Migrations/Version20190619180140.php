@@ -20,6 +20,7 @@ final class Version20190619180140 extends AbstractMigration implements Container
 	private $konto110id;
 	private $konto120id;
 	private $konto760id;
+	private $konto285id;
 	
 	public function getDescription() : string
 	{
@@ -162,6 +163,61 @@ final class Version20190619180140 extends AbstractMigration implements Container
     			$stmt = $em->getConnection()->prepare($sql);
     			$stmt->execute();
     			$em->flush();
+    			
+    			$sql = "SELECT k.id FROM konto AS k WHERE k.number = 486";
+    			$stmt = $em->getConnection()->prepare($sql);
+    			$stmt->execute();
+    			$res = $stmt->fetchAll();
+    			if($res != null)
+    				$konto486id = $res[0]['id'];
+    			$em->flush();
+    			
+    			$sql = "SELECT k.id FROM konto AS k WHERE k.number = 285";
+    			$stmt = $em->getConnection()->prepare($sql);
+    			$stmt->execute();
+    			$res = $stmt->fetchAll();
+    			if($res != null)
+    				$konto285id = $res[0]['id'];
+    			$em->flush();
+    			
+    			$sql = "SELECT te.*, (te.total_distance * te.rate) AS sum FROM travel_expense AS te WHERE te.state=10";
+    			$stmt = $em->getConnection()->prepare($sql);
+    			$stmt->execute();
+    			$travelExpenses = $stmt->fetchAll();
+    			$em->flush();
+    			$debit486 = 0.0;
+    			$credit285 = 0.0;
+    			    			
+    			if($travelExpenses!=null)
+    			{
+    				foreach($travelExpenses as $te)
+    				{
+    					$id = Uuid::uuid1();
+    					$date = $te['date'];
+    					$konto = $konto285id;
+    					$counterKonto = $konto486id;
+    					$sum = $te['sum'];
+    					
+    					$expense = $te['id'];
+    					$sql = "INSERT INTO transaction (id, date, sum, konto_id, counter_konto_id, invoice_id, travel_expense_id, travel_expense_bundle_id, created_by_id, updated_by_id, created_on, updated_on)
+						 VALUES ('$id', '$date', '$sum', '$konto', '$counterKonto', NULL, '$expense', NULL, '$this->dbMigratorId', NULL, '$date', NULL);";
+    					$debit486 += $sum;
+    					$credit285 += $sum;
+    					$stmt = $em->getConnection()->prepare($sql);
+    					$stmt->execute();
+    					$em->flush();
+    				}
+    			}
+    			
+    			$sql = "UPDATE konto SET debit = $debit486, updated_on = '$date', updated_by_id = '$this->dbMigratorId' WHERE id = '$konto486id';";
+    			$stmt = $em->getConnection()->prepare($sql);
+    			$stmt->execute();
+    			$em->flush();
+    			
+    			$sql = "UPDATE konto SET credit = $credit285, updated_on = '$date', updated_by_id = '$this->dbMigratorId' WHERE id = '$konto285id';";
+    			$stmt = $em->getConnection()->prepare($sql);
+    			$stmt->execute();
+    			$em->flush();
     		}
     }
 
@@ -191,14 +247,6 @@ final class Version20190619180140 extends AbstractMigration implements Container
     	{
     		$this->dbMigratorId = $dbMigratorUser[0]["id"];
     	}
-    	
-    	$sql = "SELECT k.id FROM konto AS k WHERE k.number = 110";
-    	$stmt = $em->getConnection()->prepare($sql);
-    	$stmt->execute();
-    	$res = $stmt->fetchAll();
-    	if($res != null)
-    		$this->konto110id = $res[0]['id'];
-    		$em->flush();
     		
     	$sql = "SELECT k.id FROM konto AS k WHERE k.number = 120";
     	$stmt = $em->getConnection()->prepare($sql);
@@ -208,15 +256,20 @@ final class Version20190619180140 extends AbstractMigration implements Container
     		$this->konto120id = $res[0]['id'];
     	$em->flush();
     			
-    	$sql = "SELECT k.id FROM konto AS k WHERE k.number = 760";
+    	$sql = "SELECT k.id FROM konto AS k WHERE k.number = 285";
     	$stmt = $em->getConnection()->prepare($sql);
     	$stmt->execute();
     	$res = $stmt->fetchAll();
     	if($res != null)
-    		$this->konto760id = $res[0]['id'];
+    		$this->konto285id = $res[0]['id'];
     	$em->flush();
     	
     	$sql = "DELETE FROM transaction where konto_id = '$this->konto120id'";
+    	$stmt = $em->getConnection()->prepare($sql);
+    	$stmt->execute();
+    	$em->flush();
+    	
+    	$sql = "DELETE FROM transaction where konto_id = '$this->konto285id'";
     	$stmt = $em->getConnection()->prepare($sql);
     	$stmt->execute();
     	$em->flush();
