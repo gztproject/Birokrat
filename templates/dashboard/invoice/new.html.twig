@@ -139,13 +139,26 @@
             </table>   
         </div> 
         <div class="row">
-            <div class="col-sm-6">
+        <div class="col-sm-7">                
+            </div>
+            <div class="col-sm-2">
                 <div class="form-group">                    
                         {{ form_label(form.discount, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}
                         <div id="discount" class='input-group'>
                         {{ form_widget(form.discount, {'attr': {'class': 'form-control'}}) }}   
                         <div class="input-group-append">
                             <span class="input-group-text">%</span>
+                        </div>
+                    </div>                 
+                </div>
+            </div>            
+            <div class="col-sm-3">
+                <div class="form-group">                    
+                        <label for="totalPrice" class="col-form-label-lg">{{ 'label.total'|trans }}</label>
+                        <div class='input-group'>
+                            <input id="totalPrice" class='form-control' type="text" placeholder="0,00" readonly="">  
+                        <div class="input-group-append">
+                            <span class="input-group-text">€</span>
                         </div>
                     </div>                 
                 </div>

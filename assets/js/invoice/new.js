@@ -124,11 +124,10 @@ jQuery(document).ready(function() {
         refreshInvNumber();
         refreshDefaultDueInDays();
     }); 
-    
-    $('.quantityInput').on('keydown', function(e){
-        var index = e.target.id.split('_')[2]; 
-        setTimeout(function () {       
-            setItemValue(index, calculateValue(index));
+
+    $('#invoice_discount').on('keydown', function(){ 
+        setTimeout(function () {                
+            setTotalPrice(calculateTotal());
         });
     });
     
@@ -176,18 +175,40 @@ function calculateValue(index){
     return (qty*price)*(1-(discount/100));
 }
 
+function calculateTotal(){
+    var subtotal = 0;
+
+    $('.valueInput').each(function() {
+        subtotal += $(this).val().replace(',','.').replace(' ', '').replace('€', '')*1    
+    });
+    
+    var discount = $('#invoice_discount').val();
+    discount = discount=="" ? 0 : (discount.replace(',','.'))*1;
+    return subtotal*(1-(discount/100));
+}
+
 function setItemValue(index, value){
+    $("#iiValue_"+index).val(formatPrice(value) + " €");
+    $("#iiValue_"+index).change();
+}
+
+function setTotalPrice(value){
+    $('#totalPrice').val(formatPrice(value));
+}
+
+function formatPrice(value)
+{
     value += '';
     var x = value.split('.');
     var x1 = x[0];
-    var x2 = x.length > 1 ? ('.' + (x[1].length == 1 ? x[1] + '0' : x[1][0] + (x[1].length == 2 ? x[1][1] : ( x[1][2]*1 >= 5 ? (x[1][1]*1 + 1) : x[1][1] )))) : '.00';
+    var x2 = x.length > 1 ? (',' + (x[1].length == 1 ? x[1] + '0' : x[1][0] + (x[1].length == 2 ? x[1][1] : ( x[1][2]*1 >= 5 ? (x[1][1]*1 + 1) : x[1][1] )))) : ',00';
     var rgx = /(\d+)(\d{3})/;
     while (rgx.test(x1)) {
         x1 = x1.replace(rgx, '$1' + ' ' + '$2');
     }
-    
-    $("#iiValue_"+index).val(x1 + x2 + " €");
+    return x1 + x2;
 }
+
 
 function addInvoiceItemForm($collectionHolder, $addRemoveInvoiceItemButtons, $number) {
     for(var i=0; i<$number;i++){
@@ -222,7 +243,8 @@ function addInvoiceItemForm($collectionHolder, $addRemoveInvoiceItemButtons, $nu
         $collectionHolder.append($addRemoveInvoiceItemButtons);
 
         $('#remove-invoice-item'+index).on('click', function() {        
-            removeInvoiceItemForm($collectionHolder, index);        
+            removeInvoiceItemForm($collectionHolder, index); 
+            setTotalPrice(calculateTotal());       
         }); 
 
         $('#invoice_createInvoiceItemCommands_' + index + '_quantity').on('keydown', function(e){
@@ -238,11 +260,21 @@ function addInvoiceItemForm($collectionHolder, $addRemoveInvoiceItemButtons, $nu
             });
         });
         $('#invoice_createInvoiceItemCommands_' + index + '_discount').on('keydown', function(e){
-            var index = e.target.id.split('_')[2]; 
-            setTimeout(function () {       
-                setItemValue(index, calculateValue(index));
-            });
+            var index = e.target.id.split('_')[2];
+            setTimeout(function () {
+                setItemValue(index, calculateValue(index));   
+            });            
         });
+
+        $('#iiValue_' + index).on('change', function(){                 
+            setTotalPrice(calculateTotal());
+        });
+
+        $('#invoice_createInvoiceItemCommands_' + index + '_code').val(index+1);
+        $('#invoice_createInvoiceItemCommands_' + index + '_quantity').val(1);
+        $('#invoice_createInvoiceItemCommands_' + index + '_unit').val('x');
+        $('#invoice_createInvoiceItemCommands_' + index + '_discount').val(0);
+
         setItemValue(index,0);
     }    
 }
