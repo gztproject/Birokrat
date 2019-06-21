@@ -11,8 +11,7 @@
     <h1>{{ 'title.invoice_new'|trans }}</h1>
 
     {{ form_start(form) }} 
-    <div class="list-group"> 
-    <div class="list-group-item list-group-item-action flex-column align-items-start">
+    <div class="jumbotron" id="InvoiceFormContainer"> 
         <div class="row">
             <div class="col-sm-6">
                 <div class="form-group">                    
@@ -104,14 +103,13 @@
                 </div>
             </div>
         </div> 
-        </div>
-        <div class="list-group-item list-group-item-action flex-column align-items-start">
-        <div class="bs-component table-responsive">            
-            <table id="invoice-items-table" class="table table-hover">
+        
+        <div class="bs-component table-responsive-sm">            
+            <table id="invoice-items-table" class="table table-sm w-auto">                
                 <thead>
                     <tr>
-                        <th>{{ 'label.code'|trans }}</th>
-                        <th>{{ 'label.name'|trans }}</th>
+                        <th class="th-sm">{{ 'label.code'|trans }}</th>
+                        <th class="th-lg">{{ 'label.name'|trans }}</th>
                         <th>{{ 'label.quantity'|trans }}</th>
                         <th>{{ 'label.unit'|trans }}</th>
                         <th>{{ 'label.price'|trans }}</th>
@@ -130,7 +128,7 @@
                         <td>{{ form_widget(invoiceItem.unit, {'attr': {'class': 'form-control'}})}}</td>
                         <td>{{ form_widget(invoiceItem.price, {'attr': {'class': 'form-control'}})}}</td>
                         <td class='input-group'>{{ form_widget(invoiceItem.discount, {'attr': {'class': 'form-control'}})}}</td>
-                        <td></td>
+                        <td>{{ ((invoiceItem.price * invoiceItem.Quantity) * (1-invoiceItem.discount/100))|number_format(2, ',', ' ') }}</td>
                         <td></td>
                         <!-- <td><div class="form-group"><div class='input-group'>{{ form_widget(invoiceItem.price, {'attr': {'class': 'form-control'}})}}                        <div class="input-group-append">
                             <span class="input-group-text">€</span>
@@ -139,17 +137,28 @@
                 {% endfor %}
                 </tbody>
             </table>   
-        </div>   
-        </div>
-        <div class="list-group-item list-group-item-action flex-column align-items-start">
+        </div> 
         <div class="row">
-            <div class="col-sm-6">
+        <div class="col-sm-7">                
+            </div>
+            <div class="col-sm-2">
                 <div class="form-group">                    
                         {{ form_label(form.discount, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}
                         <div id="discount" class='input-group'>
                         {{ form_widget(form.discount, {'attr': {'class': 'form-control'}}) }}   
                         <div class="input-group-append">
                             <span class="input-group-text">%</span>
+                        </div>
+                    </div>                 
+                </div>
+            </div>            
+            <div class="col-sm-3">
+                <div class="form-group">                    
+                        <label for="totalPrice" class="col-form-label-lg">{{ 'label.total'|trans }}</label>
+                        <div class='input-group'>
+                            <input id="totalPrice" class='form-control' type="text" placeholder="0,00" readonly="">  
+                        <div class="input-group-append">
+                            <span class="input-group-text">€</span>
                         </div>
                     </div>                 
                 </div>
@@ -164,7 +173,7 @@
             <a href="{{ path('invoice_index') }}" class="btn btn-link">
                 <i class="fa fa-list-alt" aria-hidden="true"></i> {{ 'action.back_to_list'|trans }}
             </a>
-       </div>
+       
     </div>
     {{ form_row(form._token) }}
     {{ form_end(form, {'render_rest': false}) }}
