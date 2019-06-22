@@ -63,13 +63,13 @@ class User extends Base implements UserInterface, \Serializable
     private $email;
     
     /**
-     * @ORM\Column(type="string", length=20)
+     * @ORM\Column(type="string", length=20, nullable=true)
      * @ORM\JoinColumn(nullable=true)
      */
     private $mobile;
     
     /**
-     * @ORM\Column(type="string", length=20)
+     * @ORM\Column(type="string", length=20, nullable=true)
      * @ORM\JoinColumn(nullable=true)
      */
     private $phone;

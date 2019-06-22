@@ -30,14 +30,13 @@ abstract class Base
     protected $createdBy;
     
     /**
-     * @ORM\Column(type="datetime")
-     * @ORM\JoinColumn(nullable=true)
+     * @ORM\Column(type="datetime", nullable=true)
      */
     protected $updatedOn;
     
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User\User")
-     * @ORM\JoinColumn(nullable=true)
+     * @ORM\JoinColumn(name="updated_by_id", referencedColumnName="id", nullable=true)
      */
     protected $updatedBy;
     

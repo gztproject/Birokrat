@@ -95,7 +95,6 @@ final class Version20190619180140 extends AbstractMigration implements Container
         $this->addSql('ALTER TABLE konto_class ADD debit DOUBLE PRECISION NOT NULL, ADD credit DOUBLE PRECISION NOT NULL');
         $this->addSql('ALTER TABLE transaction DROP INDEX UNIQ_723705D1AA203AA8, ADD INDEX IDX_723705D1AA203AA8 (travel_expense_id)');        
 		$this->addSql('ALTER TABLE transaction DROP INDEX UNIQ_723705D12989F1FD, ADD INDEX IDX_723705D12989F1FD (invoice_id)');
-        
     }
     
     public function postUp(Schema $schema) : void
@@ -219,6 +218,10 @@ final class Version20190619180140 extends AbstractMigration implements Container
     			$stmt->execute();
     			$em->flush();
     		}
+    		$sql ='ALTER TABLE transaction CHANGE counter_konto_id counter_konto_id CHAR(36) NOT NULL COMMENT \'(DC2Type:uuid)\'';
+    		$stmt = $em->getConnection()->prepare($sql);
+    		$stmt->execute();
+    		$em->flush();
     }
 
     public function preDown(Schema $schema) : void
