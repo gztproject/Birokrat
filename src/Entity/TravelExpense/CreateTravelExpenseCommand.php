@@ -11,6 +11,7 @@ class CreateTravelExpenseCommand
 	public $createTravelStopCommands;
     public $date;    
     public $employee;
+    public $organization;
     public $rate;
 
     public function __get($name) {

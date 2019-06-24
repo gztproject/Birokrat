@@ -34,6 +34,11 @@ class OrganizationSettings extends Base
     private $kontoPreference;
     
     /**
+     * @ORM\Column(type="float", nullable=true)
+     */
+    private $travelExpenseRate;
+    
+    /**
      * @ORM\OneToOne(targetEntity="App\Entity\Organization\Organization", inversedBy="organizationSettings", cascade={"persist", "remove"})
      */
     private $organization;
@@ -103,6 +108,11 @@ class OrganizationSettings extends Base
     public function getKontoPreference(): KontoPreference
     {
     	return $this->kontoPreference;
+    }
+    
+    public function getTravelExpenseRate(): ?float
+    {
+    	return $this->travelExpenseRate;
     }
     
     

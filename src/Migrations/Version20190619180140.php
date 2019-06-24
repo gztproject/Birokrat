@@ -86,15 +86,19 @@ final class Version20190619180140 extends AbstractMigration implements Container
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
         
-        $this->addSql('ALTER TABLE transaction ADD counter_konto_id CHAR(36) COMMENT \'(DC2Type:uuid)\' DEFAULT NULL');
-        $this->addSql('ALTER TABLE transaction ADD CONSTRAINT FK_723705D11D53F7D8 FOREIGN KEY (counter_konto_id) REFERENCES konto (id)');
-        $this->addSql('CREATE INDEX IDX_723705D11D53F7D8 ON transaction (counter_konto_id)');
+        $this->addSql('ALTER TABLE transaction ADD debit_konto_id CHAR(36) COMMENT \'(DC2Type:uuid)\' DEFAULT NULL');
+        $this->addSql('ALTER TABLE transaction ADD CONSTRAINT FK_723705D11D53F7D8 FOREIGN KEY (debit_konto_id) REFERENCES konto (id)');
+        $this->addSql('CREATE INDEX IDX_723705D1DE39B264 ON transaction (debit_konto_id)');
+        $this->addSql('ALTER TABLE transaction CHANGE konto_id credit_konto_id CHAR(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT \'(DC2Type:uuid)\';');
+        $this->addSql('ALTER TABLE transaction RENAME INDEX idx_723705d151b48cda TO IDX_723705D1FA5F35E4');
         
         $this->addSql('ALTER TABLE konto_category ADD debit DOUBLE PRECISION NOT NULL, ADD credit DOUBLE PRECISION NOT NULL');
         $this->addSql('ALTER TABLE konto ADD debit DOUBLE PRECISION NOT NULL, ADD credit DOUBLE PRECISION NOT NULL');
         $this->addSql('ALTER TABLE konto_class ADD debit DOUBLE PRECISION NOT NULL, ADD credit DOUBLE PRECISION NOT NULL');
         $this->addSql('ALTER TABLE transaction DROP INDEX UNIQ_723705D1AA203AA8, ADD INDEX IDX_723705D1AA203AA8 (travel_expense_id)');        
 		$this->addSql('ALTER TABLE transaction DROP INDEX UNIQ_723705D12989F1FD, ADD INDEX IDX_723705D12989F1FD (invoice_id)');
+		
+		
     }
     
     public function postUp(Schema $schema) : void
@@ -288,8 +292,9 @@ final class Version20190619180140 extends AbstractMigration implements Container
         $this->addSql('ALTER TABLE konto_class DROP debit, DROP credit');        
         $this->addSql('ALTER TABLE transaction DROP FOREIGN KEY FK_723705D11D53F7D8');
         $this->addSql('DROP INDEX IDX_723705D11D53F7D8 ON transaction');
-        $this->addSql('ALTER TABLE transaction DROP counter_konto_id'); 
+        $this->addSql('ALTER TABLE transaction DROP debit_konto_id'); 
         $this->addSql('ALTER TABLE transaction DROP INDEX IDX_723705D1AA203AA8, ADD UNIQUE INDEX UNIQ_723705D1AA203AA8 (travel_expense_id)');
         $this->addSql('ALTER TABLE transaction DROP INDEX IDX_723705D12989F1FD, ADD UNIQUE INDEX UNIQ_723705D12989F1FD (invoice_id)');
+        $this->addSql('ALTER TABLE transaction CHANGE credit_konto_id konto_id CHAR(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT \'(DC2Type:uuid)\';');
     }
 }

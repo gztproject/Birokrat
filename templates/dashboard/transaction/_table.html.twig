@@ -24,8 +24,8 @@
                 {% endif %}
                 </td>
                 <td>{{ transaction.sum }}€</td>                      
-                <td>{{ transaction.counterKonto.number }}</td>          
-                <td>{{ transaction.konto.number }}</td>
+                <td>{{ transaction.debitKonto.number }}</td>          
+                <td>{{ transaction.creditKonto.number }}</td>
             </tr>
         {% else %}
             <tr class="table-warning">

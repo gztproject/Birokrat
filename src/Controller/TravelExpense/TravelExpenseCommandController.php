@@ -31,10 +31,11 @@ class TravelExpenseCommandController extends AbstractController
     	if ($form->isSubmitted() && $form->isValid()) {
     		
     		$c->employee = $this->getUser();
-    		//ToDo: Get rate from organizationSettings
-    		$c->rate = 0.37;
+    		//$c->rate = 0.37;
     		
-    		$te = $this->getUser()->createTravelExpense($c);    		
+    		$te = $this->getUser()->createTravelExpense($c);  
+    		
+    		
     		
     		$em = $this->getDoctrine()->getManager();
     		
@@ -44,7 +45,10 @@ class TravelExpenseCommandController extends AbstractController
     			$em->persist($ts);
     		}
     		
+    		$transaction = $te->setNew($this->getUser());
     		$em->persist($te);
+    		$em->persist($transaction);
+    		
     		$em->flush();
     		    		
     		return $this->redirectToRoute('travelExpense_index');

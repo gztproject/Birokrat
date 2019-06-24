@@ -149,13 +149,12 @@ class Invoice extends Base implements iTransactionDocument
     
     /**
      * Sets the invoice issued and creates the transaction.
-     * @param Konto $konto Konto for the transaction
      * @param \DateTime $date 
      * @param string $number Invoice number (in case of other new invoices being issued later)
-     * @param Issuing user
+     * @param User $user Issuing user
      * @return Transaction
      */
-    public function setIssued(Konto $konto, \DateTime $date, string $number, User $user): Transaction
+    public function setIssued(\DateTime $date, string $number, User $user): Transaction
     {
     	$this->setState(20);
     	parent::updateBase($user);
@@ -167,7 +166,12 @@ class Invoice extends Base implements iTransactionDocument
     	
     	$c = new CreateTransactionCommand();
     	$c->date = $this->dateOfIssue;
-    	$c->konto = $konto;
+    	$cc = $this->issuer->getOrganizationSettings()->getKontoPreference()->getIssueInvoiceCredit();
+    	$dc = $this->issuer->getOrganizationSettings()->getKontoPreference()->getIssueInvoiceDebit();
+    	if($cc == null || $dc == null)
+    		throw new \Exception("Please set konto preferences for this organization before issuing invoices.");
+    	$c->creditKonto = $cc;
+    	$c->debitKonto = $dc;
     	$c->sum = $this->totalPrice;
     	
     	$transaction = new Transaction($c, $user, $this);
@@ -175,11 +179,25 @@ class Invoice extends Base implements iTransactionDocument
     	return $transaction;
     }
     
-    public function setPaid(\DateTime $date, User $user)
+    public function setPaid(\DateTime $date, User $user): Transaction
     {    	
     	$this->setState(30);
     	parent::updateBase($user);
     	$this->datePaid = $date;
+    	
+    	$c = new CreateTransactionCommand();
+    	$c->date = $this->dateOfIssue;
+    	$cc = $this->issuer->getOrganizationSettings()->getKontoPreference()->getInvoicePaidCredit();
+    	$dc = $this->issuer->getOrganizationSettings()->getKontoPreference()->getInvoicePaidDebit();
+    	if($cc == null || $dc == null)
+    		throw new \Exception("Please set konto preferences for this organization before issuing invoices.");
+    	$c->creditKonto = $cc;
+    	$c->debitKonto = $dc;
+    	$c->sum = $this->totalPrice;
+    		
+    	$transaction = new Transaction($c, $user, $this);
+    		
+    	return $transaction;
     }
     
     /**

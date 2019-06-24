@@ -31,7 +31,7 @@ abstract class KontoBase extends Base
      * @ORM\Column(type="float")
      */
     protected $credit;
-
+        
     public function getNumber(): ?int
     {
         return $this->number;

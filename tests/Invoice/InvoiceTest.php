@@ -8,6 +8,8 @@ use App\Entity\User\User;
 use App\Entity\Invoice\CreateInvoiceCommand;
 use App\Entity\Invoice\Invoice;
 use App\Entity\Konto\Konto;
+use App\Entity\Settings\OrganizationSettings;
+use App\Entity\Settings\KontoPreference;
 
 class InvoiceTest extends TestCase
 {
@@ -28,18 +30,32 @@ class InvoiceTest extends TestCase
     public function testIssueInvoice()
     {
     	$user = $this->createMock(User::class);
-    	$issuer = $this->createMock(Organization::class);
+    	
     	$recepient = $this->createMock(Client::class);
     	
-    	$konto = $this->getMockBuilder(Konto::class)->disableOriginalConstructor()->getMock();
-    	$konto->method('getNumber')->willReturn(760);
+    	$cc = $this->getMockBuilder(Konto::class)->disableOriginalConstructor()->getMock();
+    	$cc->method('getNumber')->willReturn(760);
+    	
+    	$dc = $this->getMockBuilder(Konto::class)->disableOriginalConstructor()->getMock();
+    	$dc->method('getNumber')->willReturn(120);
+    	
+    	$kp = $this->createMock(KontoPreference::class);
+    	$kp->method('getIssueInvoiceCredit')->willReturn($cc);
+    	$kp->method('getIssueInvoiceDebit')->willReturn($dc);
+    	
+    	$os = $this->createMock(OrganizationSettings::class);
+    	$os->method('getKontoPreference')->willReturn($kp);
+    	
+    	$issuer = $this->createMock(Organization::class);
+    	$issuer->method('getOrganizationSettings')->willReturn($os);
     	    	
     	$inv = $this->createInvoice($user, $issuer, $recepient); 
     	
-    	$transaction = $inv->setIssued($konto, new \DateTime, "TST-2019-0001", $user);
+    	$transaction = $inv->setIssued(new \DateTime, "TST-2019-0001", $user);
     	
     	$this->assertEquals($transaction->getSum(), $inv->getTotalValue());
-    	$this->assertEquals(760, $transaction->getKonto()->getNumber());
+    	$this->assertEquals(760, $transaction->getCreditKonto()->getNumber());
+    	$this->assertEquals(120, $transaction->getDebitKonto()->getNumber());
     	$this->assertEquals(20, $inv->getState());
     	
     	$this->expectException(\Exception::class);
@@ -52,22 +68,39 @@ class InvoiceTest extends TestCase
     public function testPayInvoice()
     {
     	$user = $this->createMock(User::class);
-    	$issuer = $this->createMock(Organization::class);
     	$recepient = $this->createMock(Client::class);
     	
-    	$konto = $this->getMockBuilder(Konto::class)->disableOriginalConstructor()->getMock();
-    	$konto->method('getNumber')->willReturn(760);
+    	$cc = $this->getMockBuilder(Konto::class)->disableOriginalConstructor()->getMock();
+    	$cc->method('getNumber')->willReturn(760);
+    	
+    	$dc = $this->getMockBuilder(Konto::class)->disableOriginalConstructor()->getMock();
+    	$dc->method('getNumber')->willReturn(120);
+    	
+    	$dcp = $this->getMockBuilder(Konto::class)->disableOriginalConstructor()->getMock();
+    	$dcp->method('getNumber')->willReturn(110);
+    	
+    	$kp = $this->createMock(KontoPreference::class);
+    	$kp->method('getIssueInvoiceCredit')->willReturn($cc);
+    	$kp->method('getIssueInvoiceDebit')->willReturn($dc);
+    	$kp->method('getInvoicePaidCredit')->willReturn($dc);
+    	$kp->method('getInvoicePaidDebit')->willReturn($dcp);
+    	
+    	$os = $this->createMock(OrganizationSettings::class);
+    	$os->method('getKontoPreference')->willReturn($kp);
+    	
+    	$issuer = $this->createMock(Organization::class);
+    	$issuer->method('getOrganizationSettings')->willReturn($os);
     	
     	$inv = $this->createInvoice($user, $issuer, $recepient);
     	
-    	$transaction = $inv->setIssued($konto, new \DateTime, "TST-2019-0001", $user);
+    	$transaction = $inv->setIssued(new \DateTime, "TST-2019-0001", $user);
     	
     	$inv->setPaid(new \DateTime, $user);
     	    	
     	$this->assertEquals(30, $inv->getState());
     	
     	$this->expectException(\Exception::class);
-    	$inv->setIssued($konto, new \DateTime, "TST-2019-0002", $user);
+    	$inv->setIssued(new \DateTime, "TST-2019-0002", $user);
     	
     	$this->expectException(\Exception::class);
     	$inv->setPaid(new \DateTime, $user);

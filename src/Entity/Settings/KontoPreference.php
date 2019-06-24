@@ -15,7 +15,7 @@ class KontoPreference extends Base
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Konto\Konto")
      */
-    private $IssueInvoicedevit;
+    private $IssueInvoiceDebit;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Konto\Konto")
@@ -97,7 +97,7 @@ class KontoPreference extends Base
 
     public function getIssueInvoiceDebit(): ?Konto
     {
-        return $this->IssueInvoicedevit;
+        return $this->IssueInvoiceDebit;
     }
 
     public function getIssueInvoiceCredit(): ?Konto

@@ -7,8 +7,10 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use App\Entity\Base\Base;
 use App\Entity\Konto\Konto;
+use App\Entity\Organization\Organization;
 use App\Entity\User\User;
 use App\Entity\Transaction\Transaction;
+use App\Entity\Transaction\CreateTransactionCommand;
 use App\Entity\Transaction\iTransactionDocument;
 
 /**
@@ -26,6 +28,12 @@ class TravelExpense extends Base implements iTransactionDocument
      * @ORM\JoinColumn(nullable=false)
      */
     private $employee;
+    
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Organization\Organization")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $organization;
 
     /**
      * @ORM\Column(type="decimal", precision=10, scale=2)
@@ -59,10 +67,33 @@ class TravelExpense extends Base implements iTransactionDocument
         $this->travelStops = new ArrayCollection();
         
         $this->date = $c->date;
+        $this->organization = $c->organization;
         $this->employee = $c->employee;
-        $this->rate = $c->rate;
-        
-    }    
+        $rate = $this->organization->getOrganizationSettings()->getTravelExpenseRate();
+        if($rate == null)
+        	throw new \Exception("Please set default travel expense rate for your organization.");
+        $this->rate = $c->rate ?: $rate;
+    }   
+    
+    
+    public function setNew(User $user): Transaction
+    {
+    	$this->setState(10);
+    	
+    	parent::updateBase($user);
+    	
+    	$c = new CreateTransactionCommand();
+    	$c->date = new \DateTime();
+    	$cc = $this->organization->getOrganizationSettings()->getKontoPreference()->getIncurredTravelExpenseCredit();
+    	$dc = $this->organization->getOrganizationSettings()->getKontoPreference()->getIncurredTravelExpenseDebit();
+    	if($cc == null || $dc == null)
+    		throw new \Exception("Please set konto preferences for this organization before issuing invoices.");
+    	$c->creditKonto = $cc;
+    	$c->debitKonto = $dc;
+    	$c->organization = $this->organization;
+    	$c->sum = $this->totalDistance * $this->rate;
+    	return new Transaction($c, $user, $this);
+    }
     
     /**
      * Updates the TravelExpense.
@@ -226,9 +257,14 @@ class TravelExpense extends Base implements iTransactionDocument
     	return $this->date->format('d. m. Y');
     }    
     
-    public function getEmployee(): ?User
+    public function getEmployee(): User
     {
     	return $this->employee;
+    }
+    
+    public function getOrganization(): Organization
+    {
+    	return $this->organization;
     }
     
     public function getTotalDistance()
