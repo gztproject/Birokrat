@@ -9,10 +9,13 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use App\Entity\Organization\Organization;
-use App\Form\Geography\AddressDTO;
+use App\Entity\Organization\UpdateOrganizationCommand;
 use App\Entity\Organization\OrganizationCodeFactory;
 use App\Repository\Organization\OrganizationRepository;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use App\Entity\Organization\CreateOrganizationCommand;
+use App\Entity\Geography\CreateAddressCommand;
+use App\Entity\Geography\UpdateAddressCommand;
 
 class OrganizationController extends AbstractController
 {
@@ -66,17 +69,17 @@ class OrganizationController extends AbstractController
      */
     public function new(Request $request)
     {
-        $organization = new Organization();
+        $c = new CreateOrganizationCommand();
+        $c->code = OrganizationCodeFactory::factory('App\Entity\Organization\Organization', $this->getDoctrine())->generate();
         
-        $code = OrganizationCodeFactory::factory('App\Entity\Organization\Organization', $this->getDoctrine())->generate();
-        $organization->setCode($code);
-        
-        $form = $this->createForm(OrganizationType::class, $organization)
-            ->add('saveAndCreateNew', SubmitType::class);
+        $form = $this->createForm(OrganizationType::class, $c);
                 
         $form->handleRequest($request);
         
-        if ($form->isSubmitted() && $form->isValid()) {    
+        if ($form->isSubmitted() && $form->isValid()) {  
+        	
+        	$organization = $this->getUser()->createOrganization($c);
+        	
         	$entityManager = $this->getDoctrine()->getManager();
         	
         	$entityManager->persist($organization);
@@ -84,7 +87,7 @@ class OrganizationController extends AbstractController
             return $this->redirectToRoute('organization_index');
         }        
        
-        $addressForm = $this->createForm(AddressType::class, new AddressDTO());  
+        $addressForm = $this->createForm(AddressType::class, new CreateAddressCommand());  
         
         return $this->render(
             '/dashboard/organization/new.html.twig',
@@ -114,33 +117,33 @@ class OrganizationController extends AbstractController
      */
     public function edit(Request $request, Organization $organization): Response
     {
-        $form = $this->createForm(OrganizationType::class, $organization);
+    	$updateCommand = new UpdateOrganizationCommand();
+    	$organization->mapTo($updateCommand);
+        $form = $this->createForm(OrganizationType::class, $updateCommand);
         
-        $addressDTO = new AddressDTO();
-        $addressDTO->setLine1($organization->getAddress()->getLine1());
-        $addressDTO->setLine2($organization->getAddress()->getLine2());
-        $addressDTO->setPost($organization->getAddress()->getPost());
+        $c = new UpdateAddressCommand();
+        $c->line1 = $updateCommand->address->getLine1();
+        $c->line2 = $updateCommand->address->getLine2();
+        $c->post = $updateCommand->address->getPost();
         
-        $addressForm = $this->createForm(AddressType::class, $addressDTO);
+        $addressForm = $this->createForm(AddressType::class, $c);
         $form->handleRequest($request);
         
-        if ($form->isSubmitted() && $form->isValid()) {
-            
-            $organization = $form->getData();
-                                   
-            $this->getDoctrine()->getManager()->persist($organization);
-            
-            $this->getDoctrine()->getManager()->flush();
-            
-            $this->addFlash('success', 'organization.updated_successfully');
-            
+        if ($form->isSubmitted() && $form->isValid()) 
+        {            
+            $updateCommand = $form->getData();            
+            $organization->update($updateCommand, $this->getUser());                                   
+            $this->getDoctrine()->getManager()->persist($organization);            
+            $this->getDoctrine()->getManager()->flush();            
+            $this->addFlash('success', 'organization.updated_successfully');            
             return $this->redirectToRoute('organization_edit', ['id' => $organization->getId()]);
         }
         
         return $this->render('dashboard/organization/edit.html.twig', [
-            'organization' => $organization,
+            'organization' => $updateCommand,
             'form' => $form->createView(),
         	'addressForm' => $addressForm->createView(),
+        	'entity' => 'organization',
         ]);
     }    
    

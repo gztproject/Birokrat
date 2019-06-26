@@ -541,6 +541,10 @@
         <source>label.price</source>
         <target>Cena</target>
       </trans-unit>
+      <trans-unit id="label.toPay" resname="label.toPay">
+        <source>label.toPay</source>
+        <target>Za plačilo</target>
+      </trans-unit>
       <trans-unit id="6WjOerB" resname="title.invoice">
         <source>title.invoice</source>
         <target>Račun</target>
@@ -805,6 +809,11 @@
         <source>label.cost</source>
         <target>Strošek</target>
       </trans-unit>
+    <trans-unit id="label.preparedBy" resname="label.preparedBy">
+        <source>label.preparedBy</source>
+        <target>Pripravil</target>
+      </trans-unit>
+      
     </body>
   </file>
 </xliff>

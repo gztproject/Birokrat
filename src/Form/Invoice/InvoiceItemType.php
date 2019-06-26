@@ -1,13 +1,12 @@
 <?php 
-namespace App\Form;
+namespace App\Form\Invoice;
 
-
-use App\Entity\Invoice\InvoiceItem;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use App\Entity\Invoice\CreateInvoiceItemCommand;
 
 class InvoiceItemType extends AbstractType
 {
@@ -44,7 +43,7 @@ class InvoiceItemType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-        	'data_class' => InvoiceItem::class,
+        	'data_class' => CreateInvoiceItemCommand::class,
         ));
     }
 }

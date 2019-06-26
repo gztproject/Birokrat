@@ -2,14 +2,26 @@
 
 namespace App\Entity\User;
 
+use App\Entity\Settings\CreateUserSettingsCommand;
+use App\Entity\Settings\UpdateUserSettingsCommand;
 use App\Entity\Settings\UserSettings;
+use App\Entity\TravelExpense\CreateTravelExpenseCommand;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use App\Entity\Base\Base;
+use App\Entity\Organization\Client;
+use App\Entity\Organization\CreateClientCommand;
+use App\Entity\Organization\CreateOrganizationCommand;
 use App\Entity\Organization\Organization;
+use App\Entity\Invoice\CreateInvoiceCommand;
+use App\Entity\Invoice\Invoice;
+use App\Entity\TravelExpense\TravelExpense;
+use App\Entity\Geography\Country;
+use App\Entity\Geography\CreateCountryCommand;
 
 
 /**
@@ -34,12 +46,6 @@ class User extends Base implements UserInterface, \Serializable
     private $lastName;
     
     /**
-     * @Assert\NotBlank()
-     * @Assert\Length(max=4096)
-     */
-    private $plainPassword;
-
-    /**
      * @ORM\Column(type="string", length=255)
      */
     private $password;
@@ -58,11 +64,13 @@ class User extends Base implements UserInterface, \Serializable
     
     /**
      * @ORM\Column(type="string", length=20)
+     * @ORM\JoinColumn(nullable=true)
      */
     private $mobile;
     
     /**
      * @ORM\Column(type="string", length=20)
+     * @ORM\JoinColumn(nullable=true)
      */
     private $phone;
 
@@ -71,11 +79,6 @@ class User extends Base implements UserInterface, \Serializable
      */
     private $isActive;
     
-    /**
-     * @Assert\NotNull()
-     */
-    private $isRoleAdmin;
-
     /**
      * @ORM\ManyToMany(targetEntity="App\Entity\Organization\Organization", mappedBy="users")
      */
@@ -86,52 +89,184 @@ class User extends Base implements UserInterface, \Serializable
      */
     private $userSettings;
     
-    public function __construct()
+    /**
+     * 
+     * @param CreateUserCommand $c
+     * @param User $user
+     * @param UserPasswordEncoderInterface $passwordEncoder
+     * @return \App\Entity\User\User
+     */
+    public function __construct(CreateUserCommand $c, User $user, UserPasswordEncoderInterface $passwordEncoder)
     {
+    	parent::__construct($user);
         $this->isActive = true;
-        $this->isRoleAdmin = false;
         $this->organizations = new ArrayCollection();
         
-        // not needed with bcrypt
-        // $this->salt = md5(uniqid('', true));
-    }    
-
-    public function getUsername(): ?string
-    {
-        return $this->username;
-    }
-
-    public function setUsername(string $username): self
-    {
-        $this->username = $username;
-
+        $this->username = $c->username;
+        $this->email = $c->email;
+        $this->firstName = $c->firstName;
+        $this->lastName = $c->lastName;
+        $this->mobile = $c->mobile;
+        $this->phone = $c->phone;
+        $this->password = $passwordEncoder->encodePassword($this, $c->password);
+        $this->roles = array($c->isRoleAdmin?'ROLE_ADMIN':'ROLE_USER');
+                
         return $this;
+    }   
+    
+    /**
+     * 
+     * @param CreateUserSettingsCommand $c
+     * @param User $user
+     * @return UserSettings
+     */
+    public function CreateUserSettings(CreateUserSettingsCommand $c, User $user): UserSettings
+    {
+    	parent::updateBase($user);
+    	$this->userSettings = new UserSettings($c, $this, $user);
+    	return $this->userSettings;
     }
     
+    /**
+     * 
+     * @param UpdateUserSettingsCommand $c
+     * @param UserSettings $settings
+     * @param User $user
+     * @throws \Exception
+     * @return UserSettings
+     */
+    public function updateUserSettings(UpdateUserSettingsCommand $c, UserSettings $settings, User $user): UserSettings
+    {
+    	if($this->userSettings != $settings)
+    		throw new \Exception("Can't update settings that are not mine.");
+    		parent::updateBase($user);
+    		$this->userSettings->update($c, $user);
+    		return $this->userSettings;
+    }
+    
+    /**
+     * 
+     * @param Organization $organization
+     * @param User $user
+     * @return self
+     */
+    public function addOrganization(Organization $organization, User $user): self
+    {
+    	parent::updateBase($user);
+    	if (!$this->organizations->contains($organization)) {
+    		$this->organizations[] = $organization;
+    		$organization->addUser($this, $user);
+    	}
+    	
+    	return $this;
+    }
+    
+    /**
+     * 
+     * @param Organization $organization
+     * @param User $user
+     * @return self
+     */
+    public function removeOrganization(Organization $organization, User $user): self
+    {
+    	parent::updateBase($user);
+    	if ($this->organizations->contains($organization)) {
+    		$this->organizations->removeElement($organization);
+    		$organization->removeUser($this, $user);
+    	}
+    	
+    	return $this;
+    }    
+    
+    /*
+     * *****************************************************************
+     * Entity creators (everything should be created by a user)
+     * *****************************************************************
+     */
+    
+    /**
+     * Creates a new User.
+     * @param CreateUserCommand $c
+     * @param UserPasswordEncoderInterface $passwordEncoder
+     * @return User New user
+     */
+    public function createUser(CreateUserCommand $c, UserPasswordEncoderInterface $passwordEncoder): User
+    {
+    	return new User($c, $this, $passwordEncoder);
+    }
+    
+    /**
+     * Creates a new invoice.
+     * @param CreateInvoiceCommand $c
+     * @return Invoice
+     */
+    public function createInvoice(CreateInvoiceCommand $c): Invoice
+    {
+    	return new Invoice($c, $this);
+    }
+    
+    /**
+     * Creates a new travelExpense.
+     * @param CreateTravelExpenseCommand $c
+     * @return TravelExpense
+     */
+    public function createTravelExpense(CreateTravelExpenseCommand $c): TravelExpense
+    {
+    	return new TravelExpense($c, $this);
+    }
+    
+    /**
+     * 
+     * @param CreateCountryCommand $c
+     * @return Country
+     */
+    public function createCountry(CreateCountryCommand $c): Country
+    {
+    	return new Country($c, $this);
+    }
+    
+    /**
+     * 
+     * @param CreateOrganizationCommand $c
+     * @return Organization
+     */
+    public function createOrganization(CreateOrganizationCommand $c): Organization
+    {
+    	return new Organization($c, $this);
+    }
+    
+    /**
+     * 
+     * @param CreateClientCommand $c
+     * @return Client
+     */
+    public function createClient(CreateClientCommand $c): Client
+    {
+    	return new Client($c, $this);
+    }
+    
+    
+    /*
+     * ***************************************************************
+     * Getters (Needed by Symfony)
+     * ***************************************************************
+     */
+    
+    public function getUsername(): ?string
+    {
+        return $this->username;        
+    }
+        
     public function getFirstName(): ?string
     {
         return $this->firstName;
-    }
-    
-    public function setFirstName(string $firstName): self
-    {
-        $this->firstName = $firstName;
-        
-        return $this;
-    }
+    }   
     
     public function getLastName(): ?string
     {
         return $this->lastName;
-    }
-    
-    public function setLastName(string $lastName): self
-    {
-        $this->lastName = $lastName;
+    }    
         
-        return $this;
-    }
-    
     public function getFullname(): ?string
     {
         return $this->firstName . " " . $this->lastName;
@@ -139,38 +274,17 @@ class User extends Base implements UserInterface, \Serializable
     
     public function getPlainPassword(): ?string
     {
-        return "I'm sorry Dave, I'm afraid I can't do that.";
-    }
-    
-    public function setPlainPassword($password): self
-    {
-        $this->plainPassword = $password;
-        
-        return $this;
+        return null;
     }
 
     public function getPassword(): ?string
     {
         return $this->password;
     }
-
-    public function setPassword(string $password): self
-    {
-        $this->password = $password;
-
-        return $this;
-    }
-
+    
     public function getEmail(): ?string
     {
         return $this->email;
-    }
-
-    public function setEmail(string $email): self
-    {
-        $this->email = $email;
-
-        return $this;
     }
     
     public function getMobile(): ?string
@@ -178,48 +292,14 @@ class User extends Base implements UserInterface, \Serializable
         return $this->mobile;
     }
     
-    public function setMobile(string $mobile): self
-    {
-        $this->mobile = $mobile;
-        
-        return $this;
-    }
-    
     public function getPhone(): ?string
     {
         return $this->phone;
-    }
-    
-    public function setPhone(string $phone): self
-    {
-        $this->phone = $phone;
-        
-        return $this;
     }
 
     public function getIsActive(): ?bool
     {
         return $this->isActive;
-    }
-
-    public function setIsActive(bool $isActive): self
-    {
-        $this->isActive = $isActive;
-
-        return $this;
-    }
-    
-    public function getSalt()
-    {
-        //not needed with bcrypt
-        return null;
-    }
-    
-    public function setRoles(array $roles): self
-    {
-        $this->roles = $roles;
-        
-        return $this;
     }
     
     public function getRoles(): array
@@ -227,11 +307,6 @@ class User extends Base implements UserInterface, \Serializable
         if($this->roles == null)            
             return array('ROLE_USER');
         return $this->roles;
-    }
-    
-    public function eraseCredentials()
-    {
-        $this->plainPassword = null;
     }
     
     public function isEnabled()
@@ -244,40 +319,6 @@ class User extends Base implements UserInterface, \Serializable
         return in_array('ROLE_ADMIN', $this->getRoles()) || $this->isRoleAdmin;
     }
     
-    public function setIsRoleAdmin(bool $isRoleAdmin): self
-    {
-        $this->isRoleAdmin = $isRoleAdmin;
-        $this->roles = array($isRoleAdmin?'ROLE_ADMIN':'ROLE_USER');
-        
-        return $this;
-    }
-       
-    /** @see \Serializable::serialize() */
-    public function serialize()
-    {
-        return serialize(array(
-            $this->id,
-            $this->username,
-            $this->password,
-            $this->isActive,
-            //not needed with bcrypt
-            // $this->salt,
-        ));
-    }
-    
-    /** @see \Serializable::unserialize() */
-    public function unserialize($serialized)
-    {
-        list (
-            $this->id,
-            $this->username,
-            $this->password,
-            $this->isActive,
-            //not needed with bcrypt
-            // $this->salt
-            ) = unserialize($serialized);
-    }
-
     /**
      * @return Collection|Organization[]
      */
@@ -285,42 +326,50 @@ class User extends Base implements UserInterface, \Serializable
     {
         return $this->organizations;
     }
-
-    public function addOrganization(Organization $organization): self
-    {
-        if (!$this->organizations->contains($organization)) {
-            $this->organizations[] = $organization;
-            $organization->addUser($this);
-        }
-
-        return $this;
-    }
-
-    public function removeOrganization(Organization $organization): self
-    {
-        if ($this->organizations->contains($organization)) {
-            $this->organizations->removeElement($organization);
-            $organization->removeUser($this);
-        }
-
-        return $this;
-    }
+    
 
     public function getUserSettings(): ?UserSettings
     {
         return $this->userSettings;
     }
 
-    public function setUserSettings(?UserSettings $userSettings): self
+    
+    
+    /*
+     * ********************************************************************
+     * Stuff needed by UserInterface and Serializable
+     * ********************************************************************
+     */
+    
+     /** @see \Serializable::serialize() */
+    public function serialize()
     {
-    	$this->userSettings = $userSettings;
-    	
-    	// set (or unset) the owning side of the relation if necessary
-    	$newUser = $userSettings === null ? null : $this;
-    	if ($newUser !== $userSettings->getUser()) {
-    		$userSettings->setOrganization($newUser);
-    	}
-    	
-    	return $this;
+    	return serialize(array(
+    			$this->id,
+    			$this->username,
+    			$this->password,
+    			$this->isActive,
+    	));
+    }
+    
+    /** @see \Serializable::unserialize() */
+    public function unserialize($serialized)
+    {
+    	list (
+    			$this->id,
+    			$this->username,
+    			$this->password,
+    			$this->isActive,
+    			) = unserialize($serialized);
+    }
+        
+    public function eraseCredentials()
+    {
+    	return;
+    }
+    
+    public function getSalt()
+    {
+    	return;
     }
 }

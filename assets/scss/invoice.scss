@@ -1,3 +1,8 @@
+#InvoiceFormContainer{
+    padding-top: 1rem;
+    padding-bottom: 1rem; 
+}
+
 .table {
     max-width: none;
 }
@@ -13,9 +18,38 @@ input.quantityInput{
 input.unitInput{
     width: 100%;
 }
-input.valueInput{
+input.priceInput{
     width: 100%;
 }
 input.discountInput{
     width: 100%;
+}
+input.valueInput{
+    width: 100%;
+}
+
+
+td.codeInput{
+    width: 5%;
+}
+td.nameInput{
+    width: 40%;
+}
+td.quantityInput{
+    width: 5%;
+}
+td.unitInput{
+    width: 5%;
+}
+td.priceInput{
+    width: 10%;
+}
+td.discountInput{
+    width: 5%;
+}
+td.valueInput{
+    width: 10%;
+}
+td.removeBtn{
+    width: 5%;
 }

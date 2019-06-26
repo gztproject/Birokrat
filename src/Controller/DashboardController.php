@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Repository\InvoiceRepository;
+use App\Repository\Invoice\InvoiceRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;

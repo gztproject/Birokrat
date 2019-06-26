@@ -13,11 +13,13 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Symfony\Component\Config\Definition\Exception\Exception;
 use App\Entity\Organization\Client;
 use App\Entity\Transaction\Transaction;
+use App\Entity\Transaction\iTransactionDocument;
+use App\Entity\Transaction\CreateTransactionCommand;
 
 /**
- * @ORM\Entity(repositoryClass="App\Repository\InvoiceRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\Invoice\InvoiceRepository")
  */
-class Invoice extends Base
+class Invoice extends Base implements iTransactionDocument
 {
     /**
      * @ORM\Column(type="datetime")
@@ -70,13 +72,7 @@ class Invoice extends Base
      *  @ORM\Column(type="integer")
      */
     private $state;
-
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\User\User")
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $issuedBy;
-    
+        
     /**
      * @ORM\Column(type="date")
      */
@@ -109,49 +105,81 @@ class Invoice extends Base
     
     /**
      * Creates new invoice
-     *
+     * @param CreateInvoiceCommand $c
      * @param User $issuedBy User that created the invoice
-     * @param Organization $issuer Issuing Organization
-     * @param String $number Invoice number (generate using InvoiceNumberFactory)
      */
-    public function __construct(User $issuedBy, Organization $issuer, String $number)
+    public function __construct(CreateInvoiceCommand $c, User $user)
     {
-        $this->invoiceItems = new ArrayCollection();
-        
+    	parent::__construct($user);
+        $this->invoiceItems = new ArrayCollection();        
+        $this->cancelReason = null;
+        $this->dateCancelled = null;
+        $this->datePaid = null;
         //We have to initialize the state (see checkState()).
-        $this->state = 00;      
-        $this->setIssuedBy($issuedBy);        
-        $this->setIssuer($issuer);
+        $this->state = 00;         
         
-        $this->setNumber($number);
-        
-        $this->setDateOfIssue(\DateTime::createFromFormat('U', date("U")));
-        $this->setDueInDays($this->issuer->getOrganizationSettings()->getDefaultPaymentDueIn());
+        $this->dateOfIssue = $c->dateOfIssue;
+        $this->dateServiceRenderedFrom = $c->dateServiceRenderedFrom;
+        $this->dateServiceRenderedTo = $c->dateServiceRenderedTo;
+        $this->discount = $c->discount/100;
+        $this->dueDate = $c->dueDate;
+        $this->issuer = $c->issuer;        
+        $this->number = $c->number;
+        $this->recepient = $c->recepient;
+                
+        //Do we really need this here or can we set it when we actually issue it?
+        $this->calculateReference();
+        $this->calculateTotals();
+        $this->setState(10);
     }
     
-    public function setNew()    
-    {  	
-    	$this->calculateReference();
-    	$this->calculateTotals();
-    	$this->setState(10);    	  
-    }
-    
-    public function setIssued(Konto $konto, \DateTime $date): Transaction
+    /**
+     * Creates a new InvoiceItem on this invoice
+     * @param CreateInvoiceItemCommand $c
+     * @return InvoiceItem
+     */
+    public function createInvoiceItem(CreateInvoiceItemCommand $c): InvoiceItem
     {
-    	$this->setDateOfIssue($date);
+    	$ii = new InvoiceItem($c, $this);
+    	$this->invoiceItems[] = $ii;
+    	$this->calculateTotals();
+    	    	
+    	return $ii;
+    }
+    
+    /**
+     * Sets the invoice issued and creates the transaction.
+     * @param Konto $konto Konto for the transaction
+     * @param \DateTime $date 
+     * @param string $number Invoice number (in case of other new invoices being issued later)
+     * @param Issuing user
+     * @return Transaction
+     */
+    public function setIssued(Konto $konto, \DateTime $date, string $number, User $user): Transaction
+    {
+    	$this->setState(20);
+    	parent::updateBase($user);
+    	
+    	$this->number = $number;
+    	$this->calculateReference();
+    	$this->dateOfIssue = $date;
     	$this->calculateTotals();
     	
-    	$transaction = new Transaction();
-    	$transaction->initWithInvoice($this->getDateOfIssue(), $konto, $this->getTotalPrice(), $this);
+    	$c = new CreateTransactionCommand();
+    	$c->date = $this->dateOfIssue;
+    	$c->konto = $konto;
+    	$c->sum = $this->totalPrice;
     	
-    	$this->setState(20);
+    	$transaction = new Transaction($c, $user, $this);
+    	    	    	
     	return $transaction;
     }
     
-    public function setPaid(\DateTime $date)
+    public function setPaid(\DateTime $date, User $user)
     {    	
-    	$this->setDatePaid($date);
     	$this->setState(30);
+    	parent::updateBase($user);
+    	$this->datePaid = $date;
     }
     
     /**
@@ -161,15 +189,15 @@ class Invoice extends Base
      */
     public function cancel(String $reason)
     {
-    	$this->setDateCancelled(\DateTime::createFromFormat('U', date("U")));
-    	$this->setCancelReason($reason);
+    	$this->dateCancelled = \DateTime::createFromFormat('U', date("U"));
+    	$this->cancelReason = $reason;
     	$this->setState(40);
     }
     
     /**
      * Sets invoice state
      * 
-     * @param integer $state 00-new, 10-draft, 20-issued, 30-paid, 40-cancelled. Draft state is kinda useless ATM but I'm keeping it for the time being.
+     * @param integer $state 00-draft, 10-new, 20-issued, 30-paid, 40-cancelled, 50-rejected.
      */
     private function setState(?int $state): self
     {
@@ -197,7 +225,7 @@ class Invoice extends Base
     				throw new \Exception("Can't transition to state $newState from $currState");
     			break;
     		case 20: //issued
-    			if ($newState != 30 && $newState != 40) //Do we really want to be able to cancel issued invoices?
+    			if ($newState != 30 && $newState != 50) 
     				throw new \Exception("Can't transition to state $newState from $currState");
     			break;
     		case 30: //paid
@@ -206,6 +234,9 @@ class Invoice extends Base
     		case 40: //cancelled
     			throw new \Exception("Can't do anything with cancelled invoice.");
     			break;
+    		case 50: //rejected
+    			throw new \Exception("Can't do anything with rejected invoice.");
+    			break;
     		default:
     			throw new \Exception('This InvoiceState is unknown!');
     			break;
@@ -213,7 +244,10 @@ class Invoice extends Base
     	
     }
     
-    private function calculateTotals(): self
+    /**
+     * Calculates and sets totalValue and totalPrice.
+     */
+    private function calculateTotals(): void
     {
     	$price = 0;
     	foreach($this->getInvoiceItems() as $ii)
@@ -222,102 +256,77 @@ class Invoice extends Base
     	}
     	$this->totalValue = $price;
     	$this->totalPrice = $price * (1 - $this->discount);
-    	
-    	return $this;
     }
     
     // http://www.eclectica.ca/howto/modulus-11-self-check.php
     // http://www.zbs-giz.si/system/file.asp?FileId=3707
-    private function calculateReference(): self
+    /**
+     * Calculates and sets ReferenceNumber. Make sure the invoice number is set beforehand.
+     * @throws Exception
+     */
+    private function calculateReference()
     {
     	if (strlen($this->number) > 20)
     		throw new Exception("Input string must be shorter than 20 characters.");
     		
-    		//Remove prefix (if there is one)
-    		$number = explode('-', $this->number);
-    		if(count($number) > 2)
-    			array_shift($number);
+    	//Remove prefix (if there is one)
+    	$number = explode('-', $this->number);
+    	if(count($number) > 2)
+    		array_shift($number);
     			
-    			$result = "SI01 ";
-    			$base = array(implode('-', $number));
+    		$result = "SI01 ";
+    		$base = array(implode('-', $number));
     			
-    			foreach ($base as $base_val) {
+    		foreach ($base as $base_val) {
     				
-    				if (strlen($base_val) > 12)
-    					throw new Exception("Input string must be shorter than 12 characters.");
+    			if (strlen($base_val) > 12)
+    				throw new Exception("Input string must be shorter than 12 characters.");
     					
-    					$weight = array(2,3,4,5,6,7,8,9,10,11,12,13);
+    			$weight = array(2,3,4,5,6,7,8,9,10,11,12,13);
     					
-    					/* For convenience, reverse the string and work left to right. */
-    					$reversed_base_val = strrev(str_replace("-","", $base_val));
+    			/* For convenience, reverse the string and work left to right. */
+    			$reversed_base_val = strrev(str_replace("-","", $base_val));
     					
-    					for ($i = 0, $sum = 0; $i < strlen($reversed_base_val); $i ++) {
-    						/* Calculate product and accumulate. */
-    						$sum += substr($reversed_base_val, $i, 1) * $weight[$i];
-    					}
-    					
-    					$remainder = $sum % 11;
-    					
-    					$check = 11 - $remainder;
-    					if ($remainder == 1 || $remainder == 0)
-    						$check = 0;
-    						
-    						if ($base_val != $base[0])
-    							$result .= "-";
-    							
-    							$result .= $base_val . $check;
+    			for ($i = 0, $sum = 0; $i < strlen($reversed_base_val); $i ++) {
+    				/* Calculate product and accumulate. */
+    				$sum += substr($reversed_base_val, $i, 1) * $weight[$i];
     			}
-    			$this->referenceNumber = $result;
-    			return $this;
-    }
-
-    public function getIssuedBy(): ?User
-    {
-        return $this->issuedBy;
-    }
-
-    public function setIssuedBy(?User $issuedBy): self
-    {
-        $this->issuedBy = $issuedBy;
-
-        return $this;
-    }  
+    					
+    			$remainder = $sum % 11;
+    					
+    			$check = 11 - $remainder;
+    			if ($remainder == 1 || $remainder == 0)
+    				$check = 0;
+    						
+    			if ($base_val != $base[0])
+    				$result .= "-";
+    							
+    			$result .= $base_val . $check;
+    		}
+    	$this->referenceNumber = $result;    			
+    }   
     
-    public function getDateServiceRenderedFrom(): ?\DateTimeInterface
+    public function getDateServiceRenderedFrom(): \DateTimeInterface
     {
     	return $this->dateServiceRenderedFrom;
     }
     
-    public function getDateServiceRenderedFromString(): ?string
+    public function getDateServiceRenderedFromString(): string
     {
     	return $this->dateServiceRenderedFrom->format('j. n. Y');
     }
     
-    public function setDateServiceRenderedFrom(\DateTimeInterface $dateServiceRenderedFrom): self
-    {
-    	$this->dateServiceRenderedFrom = $dateServiceRenderedFrom;
-    	
-    	return $this;
-    }
-    
-    public function getDateServiceRenderedTo(): ?\DateTimeInterface
+    public function getDateServiceRenderedTo(): \DateTimeInterface
     {
     	return $this->dateServiceRenderedTo;
     }
     
-    public function getDateServiceRenderedToString(): ?string
+    public function getDateServiceRenderedToString(): string
     {
     	return $this->dateServiceRenderedTo->format('j. n. Y');
     }
     
-    public function setDateServiceRenderedTo(\DateTimeInterface $dateServiceRenderedTo): self
-    {
-    	$this->dateServiceRenderedTo = $dateServiceRenderedTo;
-    	
-    	return $this;
-    }
-    
-    public function getDateServiceRenderedString(): ?string
+    public function getDateServiceRenderedString(): string
     {
     	 $string = $this->dateServiceRenderedFrom->format('j. n. Y');
     	 if ($this->dateServiceRenderedTo > $this->dateServiceRenderedFrom)
@@ -325,107 +334,51 @@ class Invoice extends Base
     	 return $string;
     }
     
-    public function getDateOfIssue(): ?\DateTimeInterface
+    public function getDateOfIssue(): \DateTimeInterface
     {
     	return $this->dateOfIssue;
     }
     
-    public function getDateOfIssueString(): ?string
+    public function getDateOfIssueString(): string
     {
     	return $this->dateOfIssue->format('j. n. Y');
     }
     
-    public function setDateOfIssue(\DateTimeInterface $dateOfIssue): self
-    {
-    	$this->dateOfIssue = $dateOfIssue;
-    	
-    	return $this;
-    }
-    
-    public function getIssuer(): ?Organization
+    public function getIssuer(): Organization
     {
     	return $this->issuer;
     }
     
-    public function setIssuer(?Organization $issuer): self
-    {
-    	$this->issuer = $issuer;
-    	
-    	return $this;
-    }
-    
-    public function getRecepient(): ?Client
+    public function getRecepient(): Client
     {
     	return $this->recepient;
     }
     
-    public function setRecepient(?Client $recepient): self
-    {
-    	$this->recepient = $recepient;
-    	
-    	return $this;
-    }
-    
-    public function getNumber(): ?string
+    public function getNumber(): string
     {
     	return $this->number;
     }
     
-    public function setNumber(string $number): self
-    {
-    	$this->number = $number;
-    	
-    	return $this;
-    }
-    
-    public function getDiscount():?float
+    public function getDiscount():float
     {
     	return $this->discount;
-    }
-    
-    public function setDiscount($discount): self
-    {
-    	$this->discount = $discount;
-    	
-    	return $this;
     }
     
     public function getTotalValue()
     {
     	return $this->totalValue;
     }
-    
-    private function setTotalValue($totalValue): self
-    {
-    	$this->totalValue = $totalValue;
-    	
-    	return $this;
-    }
-    
+
     public function getTotalPrice()
     {
     	return $this->totalPrice;
     }
     
-    private function setTotalPrice($totalPrice): self
-    {
-    	$this->totalPrice = $totalPrice;
-    	
-    	return $this;
-    }
-    
-    public function getReferenceNumber(): ?string
+    public function getReferenceNumber(): string
     {
     	return $this->referenceNumber;
     }
-    
-    private function setReferenceNumber(string $referenceNumber): self
-    {
-    	$this->referenceNumber = $referenceNumber;
-    	
-    	return $this;
-    }
-    
+
     /**
      * @return Collection|InvoiceItem[]
      */
@@ -433,52 +386,27 @@ class Invoice extends Base
     {
     	return $this->invoiceItems;
     }
-    
-    public function addInvoiceItem(InvoiceItem $invoiceItem): self
-    {
-    	if (!$this->invoiceItems->contains($invoiceItem)) {
-    		$this->invoiceItems[] = $invoiceItem;
-    		$invoiceItem->setInvoice($this);
-    	}
-    	
-    	return $this;
-    }
-    
-    public function removeInvoiceItem(InvoiceItem $invoiceItem): self
-    {
-    	if ($this->invoiceItems->contains($invoiceItem)) {
-    		$this->invoiceItems->removeElement($invoiceItem);
-    		// set the owning side to null (unless already changed)
-    		if ($invoiceItem->getInvoice() === $this) {
-    			$invoiceItem->setInvoice(null);
-    		}
-    	}
-    	
-    	return $this;
-    }
-    
-    public function getState(): ?int
+
+    public function getState(): int
     {
     	return $this->state;
     }
 
-    public function getDueDate(): ?\DateTimeInterface
+    public function getDueDate(): \DateTimeInterface
     {
         return $this->dueDate;
     }
     
-    public function getDueDateString(): ?string
+    public function getDueDateString(): string
     {
     	return $this->dueDate->format('j. n. Y');
     }
-
-    public function setDueDate(\DateTimeInterface $dueDate): self
-    {
-        $this->dueDate = $dueDate;
-
-        return $this;
-    }
     
+    /**
+     * @deprecated Shouldn't set this from outside.
+     * @param int $days
+     * @return self
+     */
     public function setDueInDays (int $days): self    
     {
     	//ToDo: Must be a better way to do this...
@@ -490,7 +418,7 @@ class Invoice extends Base
     
     public function getDueInDays(): int
     {	
-    	return date_diff($this->dueDate, $this->dateOfIssue, true)->format("%d")+1;
+    	return date_diff($this->dueDate, $this->dateOfIssue, true)->format("%d");
     }
     
     public function getDatePaid(): ?\DateTimeInterface
@@ -502,14 +430,7 @@ class Invoice extends Base
     {
     	return $this->datePaid->format('j. n. Y');
     }
-    
-    private function setDatePaid(\DateTimeInterface $datePaid): self
-    {
-    	$this->datePaid = $datePaid;
-    	
-    	return $this;
-    }    
-    
+
     public function getDateCancelled(): ?\DateTimeInterface
     {
     	return $this->dateCancelled;
@@ -520,23 +441,18 @@ class Invoice extends Base
     	return $this->dateCancelled->format('j. n. Y');
     }
     
-    private function setDateCancelled(\DateTimeInterface $dateCancelled): self
-    {
-    	$this->dateCancelled = $dateCancelled;
-    	
-    	return $this;
-    } 
-    
     public function getCancelReason(): ?string
     {
     	return $this->cancelReason;
     }
     
-    private function setCancelReason(string $cancelReason): self
+     /**
+      * @deprecated Use createdBy instead.
+      * Returns the creating user
+      * @return User
+      */
+    public function getIssuedBy(): User
     {
-    	$this->cancelReason = $cancelReason;
-    	
-    	return $this;
+    	return $this->createdBy;
     }
-   
 }
