@@ -271,12 +271,12 @@ final class Version20190619180140 extends AbstractMigration implements Container
     		$this->konto285id = $res[0]['id'];
     	$em->flush();
     	
-    	$sql = "DELETE FROM transaction where konto_id = '$this->konto120id'";
+    	$sql = "DELETE FROM transaction where credit_konto_id = '$this->konto120id'";
     	$stmt = $em->getConnection()->prepare($sql);
     	$stmt->execute();
     	$em->flush();
     	
-    	$sql = "DELETE FROM transaction where konto_id = '$this->konto285id'";
+    	$sql = "DELETE FROM transaction where credit_konto_id = '$this->konto285id'";
     	$stmt = $em->getConnection()->prepare($sql);
     	$stmt->execute();
     	$em->flush();
@@ -291,7 +291,7 @@ final class Version20190619180140 extends AbstractMigration implements Container
         $this->addSql('ALTER TABLE konto_category DROP debit, DROP credit');
         $this->addSql('ALTER TABLE konto_class DROP debit, DROP credit');        
         $this->addSql('ALTER TABLE transaction DROP FOREIGN KEY FK_723705D11D53F7D8');
-        $this->addSql('DROP INDEX IDX_723705D11D53F7D8 ON transaction');
+        $this->addSql('DROP INDEX IDX_723705D1DE39B264 ON transaction');
         $this->addSql('ALTER TABLE transaction DROP debit_konto_id'); 
         $this->addSql('ALTER TABLE transaction DROP INDEX IDX_723705D1AA203AA8, ADD UNIQUE INDEX UNIQ_723705D1AA203AA8 (travel_expense_id)');
         $this->addSql('ALTER TABLE transaction DROP INDEX IDX_723705D12989F1FD, ADD UNIQUE INDEX UNIQ_723705D12989F1FD (invoice_id)');
