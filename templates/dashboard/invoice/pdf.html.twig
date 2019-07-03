@@ -113,9 +113,13 @@
     <a href="{{ path('invoice_pdf', {'id': invoice.id}) }}" target="_blank" class="btn btn-sm btn-block btn-success">
             <i class="fa fa-file-pdf" aria-hidden="true"></i> {{ 'action.pdf'|trans }}
     </a>
+    <button id="{{ invoice.id }}" class="sendInvoice btn btn-sm btn-block btn-success">
+            <i class="fa fa-envelope" aria-hidden="true"></i> {{ 'action.send'|trans }}
+    </button>
 
 {% endblock %}
 
 {% block javascripts %}
     {{ parent() }}
+    {{ encore_entry_script_tags('js/invoice/view') }}
 {% endblock %}
