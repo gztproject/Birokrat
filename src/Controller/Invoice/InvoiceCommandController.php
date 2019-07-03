@@ -54,11 +54,16 @@ class InvoiceCommandController extends AbstractController
      */
     public function issue(Request $request): Response
     {
-    	$invoice = $this->getDoctrine()->getRepository(Invoice::class)->findOneBy(['id'=>$request->request->get('id', null)]);
+    	$id = $request->request->get('id', null);
+    	if($id == null)
+    		throw new \Exception("Bad request. I need an id.");
+    	$invoice = $this->getDoctrine()->getRepository(Invoice::class)->findOneBy(['id'=>$id]);
+    	if($invoice == null)
+    		throw new \Exception("Can't find an invoice with id ".$id);
     	$date = new \DateTime($request->request->get('date', null));
     	$entityManager = $this->getDoctrine()->getManager();
     	
-    	$number = InvoiceNumberFactory::factory($invoice->getIssuer, 10, $entityManager)->generate();
+    	$number = InvoiceNumberFactory::factory($invoice->getIssuer(), 10, $this->getDoctrine())->generate();
     	$transaction = $invoice->setIssued($date, $number, $this->getUser());
     	
     	$entityManager->persist($invoice);
