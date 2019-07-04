@@ -96,7 +96,7 @@ class InvoiceQueryController extends AbstractController
      */
     public function getPdf(Invoice $invoice, TCPDFController $tcpdf, TranslatorInterface $translator): Response
     {
-    	return InvoicePdfFactory::factory($invoice, $translator, $tcpdf)->generate();    	
+    	return InvoicePdfFactory::factory($invoice, $translator, $tcpdf, 'I')->generate();    	
     }
     
     /**

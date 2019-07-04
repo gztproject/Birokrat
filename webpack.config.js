@@ -26,8 +26,12 @@ Encore
     //Invoice
     .addEntry('js/invoice/new', './assets/js/invoice/new.js')
     .addEntry('js/invoice/list', './assets/js/invoice/list.js')
+    .addEntry('js/invoice/view', './assets/js/invoice/view.js')
+    
+    //Organization
     .addEntry('js/organization/new', './assets/js/organization/new.js')
     .addEntry('js/organization/show', './assets/js/organization/show.js')
+
     .addEntry('js/poc.typeahead', './assets/js/poc.typeahead.js')
 
     .addStyleEntry('css/app', ['./assets/scss/app.scss'])
