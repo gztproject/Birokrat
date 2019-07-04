@@ -126,21 +126,29 @@ class InvoiceCommandController extends AbstractController
     	if($id == null)
     		throw new \Exception("Bad request. I need an id.");
     	$invoice = $this->getDoctrine()->getRepository(Invoice::class)->findOneBy(['id'=>$id]);    	
-    	$email = $invoice->getRecepient()->getEmail() ?: $request->request->get('email', null);
+    	$email = $request->request->get('email', null);
+    	$subject = $request->request->get('subject', null);
+    	$body = $request->request->get('body', null);
     	try {
     		if($email == null || $email == "")
     		{    					
     			throw new \Exception("Client has no e-mail addres.");
     		}
     		$path = __DIR__."/../../../tmp/";
+    		//Check if the directory already exists.
+    		if(!is_dir($path)){
+    			//Directory does not exist, so lets create it.
+    			mkdir($path, 0755);
+    		}
+    		
     		InvoicePdfFactory::factory($invoice, $translator, $tcpdf, 'F', $path)->generate();
     		$title = $translator->trans('title.invoice').' '.$invoice->getNumber().'.pdf';
     		
     		$emailObject = (new Email())
     		->from('birokrat@gzt.si') //$this->getUser()->getEmail()?:
     			->to($email)
-    			->subject($title)
-    			->html('<p>Račun v prilogi:</p>')    			
+    			->subject($subject)
+    			->html('<p>'.$body.'</p>')    			
     			->attachFromPath($path.$title);    		
     		
     		$mailer->send($emailObject);
