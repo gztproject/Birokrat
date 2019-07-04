@@ -7,13 +7,13 @@
 # Pull master branch
 git pull origin master
 
-#set Environment variables
-php composer.phar dump-env prod
-
 #install new dependencies
-rm -vr vendor/
-php composer.phar install --no-dev --optimize-autoloader
+rm -r vendor/
+composer install --no-dev --optimize-autoloader
 php ./bin/console cache:clear --env=prod
+
+#set Environment variables
+composer dump-env prod
 
 #Build new .js and .css
 yarn install
