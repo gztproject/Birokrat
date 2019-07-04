@@ -11,7 +11,7 @@ git pull origin master
 php composer.phar dump-env prod
 
 #install new dependencies
-rm -vr vendor/
+rm -r vendor/
 php composer.phar install --no-dev --optimize-autoloader
 php ./bin/console cache:clear --env=prod
 
