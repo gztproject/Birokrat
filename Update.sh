@@ -8,11 +8,11 @@
 git pull origin master
 
 #set Environment variables
-php composer.phar dump-env prod
+composer dump-env prod
 
 #install new dependencies
 rm -r vendor/
-php composer.phar install --no-dev --optimize-autoloader
+composer install --no-dev --optimize-autoloader
 php ./bin/console cache:clear --env=prod
 
 #Build new .js and .css
