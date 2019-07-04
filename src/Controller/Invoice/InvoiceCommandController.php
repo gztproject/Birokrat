@@ -15,6 +15,10 @@ use App\Entity\Konto\Konto;
 use App\Entity\Invoice\CreateInvoiceCommand;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
+use App\Entity\Invoice\InvoicePdfFactory;
+use WhiteOctober\TCPDFBundle\Controller\TCPDFController;
+use Symfony\Contracts\Translation\TranslatorInterface;
+
 
 class InvoiceCommandController extends AbstractController
 {    
@@ -116,7 +120,7 @@ class InvoiceCommandController extends AbstractController
     /**
      * @Route("/dashboard/invoice/send", methods={"POST"}, name="invoice_send")
      */
-    public function send(Request $request, MailerInterface $mailer): JsonResponse
+    public function send(Request $request, MailerInterface $mailer, TCPDFController $tcpdf, TranslatorInterface $translator): JsonResponse
     {
     	$id = $request->request->get('id', null);
     	if($id == null)
@@ -128,16 +132,20 @@ class InvoiceCommandController extends AbstractController
     		{    					
     			throw new \Exception("Client has no e-mail addres.");
     		}
+    		$path = __DIR__."/../../../tmp/";
+    		InvoicePdfFactory::factory($invoice, $translator, $tcpdf, 'F', $path)->generate();
+    		$title = $translator->trans('title.invoice').' '.$invoice->getNumber().'.pdf';
     		
     		$emailObject = (new Email())
-    			->from('birokrat@gzt.si')
+    		->from('birokrat@gzt.si') //$this->getUser()->getEmail()?:
     			->to($email)
-    			->subject('Time for Symfony Mailer!')
-    			->text('Sending emails is fun again!')
-    			->html('<p>See Twig integration for better HTML integration!</p>')
-    			->attach("/dashboard/invoice/pdf/$id", 'racun.pdf');    		
+    			->subject($title)
+    			->html('<p>Račun v prilogi:</p>')    			
+    			->attachFromPath($path.$title);    		
     		
     		$mailer->send($emailObject);
+    		
+    		unlink($path.$title);
     		
     		$data = "Invoice sent to ".$email;
     		$status = "ok";

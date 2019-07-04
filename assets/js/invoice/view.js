@@ -11,9 +11,11 @@ jQuery(document).ready(function() {
         },
         function(data, status){  
             if(data[0]['status']=="ok"){
+                $('#notificationBody').html('<div class="alert alert-dismissible alert-success"><strong>Success!</strong></br><p>'+ data[0]['data'][0] + '</p></div>');
+                $('#notificationModal').modal('show');
             }
             else{
-                $('#notificationBody').html("<li>Error sending invoice: " + data[0]['data'][0] + "</li>");
+                $('#notificationBody').html('<div class="alert alert-dismissible alert-danger"><strong>Error sending invoice:</strong></br><p>' + data[0]['data'][0] + '</p></div>');
                 $('#notificationModal').modal('show');
             }
         }); 
