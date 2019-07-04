@@ -148,7 +148,8 @@ class InvoiceCommandController extends AbstractController
     		->from('birokrat@gzt.si') //$this->getUser()->getEmail()?:
     			->to($email)
     			->subject($subject)
-    			->html('<p>'.$body.'</p>')    			
+    			->replyTo($this->getUser()->getEmail())
+    			->html('<p>'.$body.'</p>')  
     			->attachFromPath($path.$title);    		
     		
     		$mailer->send($emailObject);
