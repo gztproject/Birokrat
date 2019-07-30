@@ -20,12 +20,6 @@ class CreateInvoiceCommand
      */
     public $createInvoiceItemCommands;
     
-    /**
-     * @deprecated Using CreatedBy instead of this.
-     * @var User
-     */
-    public $issuedBy;
-    
     public $dateServiceRenderedFrom;
     
     public $dateServiceRenderedTo;

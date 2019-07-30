@@ -155,11 +155,11 @@ class Organization extends LegalEntityBase
     }   
     
     /**
-     * 
-     * @param Class $to
-     * @return Class
+     *
+     * @param object $to
+     * @return object
      */
-    public function mapTo($to)
+    public function mapTo(object $to): object
     {
     	if ($to instanceof UpdateOrganizationCommand) 
     	{
@@ -176,9 +176,9 @@ class Organization extends LegalEntityBase
     	} 
     	else 
     	{
-    		throw(new \Exception('cant map ' . get_class($this) . ' to ' . get_class($to)));
-    		return $to;
+    		throw(new \Exception('cant map ' . get_class($this) . ' to ' . get_class($to)));    		
     	}
+    	return $to;
     }
     
 

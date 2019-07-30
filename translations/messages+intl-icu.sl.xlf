@@ -689,25 +689,21 @@
         <source>action.show_organization</source>
         <target>Pregled organizacije</target>
       </trans-unit>
-      <trans-unit id="Yo.bal7" resname="_modal.title">
-        <source>_modal.title</source>
-        <target>___modal.title</target>
+      <trans-unit id="Yo.bal7" resname="delete_client_modal.title">
+        <source>delete_client_modal.title</source>
+        <target>Brisanje stranke</target>
       </trans-unit>
-      <trans-unit id="PHLkO1C" resname="_modal.body">
-        <source>_modal.body</source>
-        <target>___modal.body</target>
-      </trans-unit>
-      <trans-unit id="50wdmAX" resname="_list">
-        <source>_list</source>
-        <target>seznam</target>
-      </trans-unit>
-      <trans-unit id="AoeZ29B" resname="s_found">
-        <source>s_found</source>
-        <target>__s_found</target>
-      </trans-unit>
-      <trans-unit id="zsOpuJs" resname="Data">
-        <source>Data</source>
-        <target>__Data</target>
+      <trans-unit id="PHLkO1C" resname="delete_client_modal.body">
+        <source>delete_client_modal.body</source>
+        <target>NEVARNO! Ali res želite izbrisati stranko?</target>
+      </trans-unit>   
+      <trans-unit id="label.delete_client" resname="label.delete_client">
+        <source>label.delete_client</source>
+        <target>Izbriši stranko</target>
+      </trans-unit>  
+      <trans-unit id="zsOpuJs" resname="label.clientData">
+        <source>label.clientData</source>
+        <target>Stranka</target>
       </trans-unit>
       <trans-unit id="dEYHXgp" resname="label.saveOrganization">
         <source>label.saveOrganization</source>
@@ -809,9 +805,21 @@
         <source>label.cost</source>
         <target>Strošek</target>
       </trans-unit>
-    <trans-unit id="label.preparedBy" resname="label.preparedBy">
+      <trans-unit id="label.newAddress" resname="label.newAddress">
+        <source>label.newAddress</source>
+        <target>Nov naslov</target>
+      </trans-unit>
+      <trans-unit id="label.preparedBy" resname="label.preparedBy">
         <source>label.preparedBy</source>
         <target>Pripravil</target>
+      </trans-unit>
+      <trans-unit id="action.delete_client" resname="action.delete_client">
+        <source>action.delete_client</source>
+        <target>Izbriši stranko</target>
+      </trans-unit>
+      <trans-unit id="action.create" resname="action.create">
+        <source>action.create</source>
+        <target>Ustvari novo</target>
       </trans-unit>
       
     </body>

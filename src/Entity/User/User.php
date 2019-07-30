@@ -178,6 +178,33 @@ class User extends Base implements UserInterface, \Serializable
     	return $this;
     }    
     
+    /**
+     *
+     * @param object $to
+     * @return object
+     */
+    public function mapTo(object $to): object
+    {
+    	if ($to instanceof UpdateUserCommand)
+    	{
+    		$reflect = new \ReflectionClass($this);
+    		$props  = $reflect->getProperties();
+    		foreach($props as $prop)
+    		{
+    			$name = $prop->getName();
+    			if(property_exists($to, $name))
+    			{
+    				$to->$name = $this->$name;
+    			}
+    		}
+    	}
+    	else
+    	{
+    		throw(new \Exception('cant map ' . get_class($this) . ' to ' . get_class($to)));    		
+    	}
+    	return $to;
+    }
+    
     /*
      * *****************************************************************
      * Entity creators (everything should be created by a user)
@@ -316,7 +343,7 @@ class User extends Base implements UserInterface, \Serializable
         
     public function getIsRoleAdmin(): ?bool
     {
-        return in_array('ROLE_ADMIN', $this->getRoles()) || $this->isRoleAdmin;
+        return in_array('ROLE_ADMIN', $this->getRoles());
     }
     
     /**

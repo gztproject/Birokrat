@@ -14,6 +14,7 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use App\Entity\Organization\Organization;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Entity\User\CreateUserCommand;
+use App\Entity\User\UpdateUserCommand;
 
 class UserController extends AbstractController
 {
@@ -40,9 +41,7 @@ class UserController extends AbstractController
     {
         // 1) build the form
         $createUserCommand = new CreateUserCommand();
-        $form = $this->createForm(UserType::class, $createUserCommand)
-            ->add('saveAndCreateNew', SubmitType::class);
-        
+        $form = $this->createForm(UserType::class, $createUserCommand);        
         
         // 2) handle the submit (will only happen on POST)
         $form->handleRequest($request);
@@ -91,10 +90,11 @@ class UserController extends AbstractController
      */
     public function edit(Request $request, User $user): Response
     {
-        if(!$user->getIsRoleAdmin())
-            $user->setIsRoleAdmin(false);
+    	$c = new UpdateUserCommand();
+    	$user->mapTo($c);
+              
             
-        $form = $this->createForm(UserType::class, $user);
+        $form = $this->createForm(UserType::class, $c);
         $form->handleRequest($request);
         
         if ($form->isSubmitted() && $form->isValid()) {
