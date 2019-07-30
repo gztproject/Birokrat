@@ -8,7 +8,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\Geography\Address;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use App\Form\Geography\AddressDTO;
 use App\Entity\Geography\CreateAddressCommand;
 
 class AddressController extends AbstractController

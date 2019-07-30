@@ -1,6 +1,6 @@
 {% if show_confirmation|default(true) %}
     {% set attr = {'data-confirmation': 'true'} %}
-    {{ include ('dashboard/organization/_delete_organization_confirmation.html.twig', {entity: entity}) }}
+    {{ include ('dashboard/client/_delete_client_confirmation.html.twig') }}
 {% endif %}
 
 {{ form_start(form) }}
@@ -67,14 +67,14 @@
                 <div class="col-sm-3">
                     <div class="form-group">            
                         <button type="submit" class="btn btn-primary">
-                            <i class="fa fa-save" aria-hidden="true"></i> {{ ('label.save_' ~ entity)|trans }}
+                            <i class="fa fa-save" aria-hidden="true"></i> {{ button_label|default(('label.save_client')|trans) }}
                         </button>
                     </div>
                 </div>
                 {% if include_back_to_home_link|default(false) %}
                     <div class="col-sm-3">
                         <div class="form-group">
-                            <a href="{{ path(entity~'_index') }}" class="btn btn-primary">
+                            <a href="{{ path('client_index') }}" class="btn btn-primary">
                                 <i class="fa fa-list-alt" aria-hidden="true"></i> {{ 'action.back_to_list'|trans }}
                             </a>
                         </div>

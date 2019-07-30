@@ -26,7 +26,7 @@ class ClientController extends AbstractController
     {
         $myClients = $clients->findBy([], ['name' => 'DESC']);
         
-        return $this->render('dashboard/organization/index.html.twig', ['organizations' => $myClients, 'entity' => 'client']);
+        return $this->render('dashboard/client/index.html.twig', ['clients' => $myClients]);
     }
     
     /**
@@ -34,15 +34,11 @@ class ClientController extends AbstractController
      */
     public function new(Request $request)
     {
-        $c = new CreateClientCommand();
+        $c = new CreateClientCommand();                
+        $c->code = OrganizationCodeFactory::factory('App\Entity\Organization\Client', $this->getDoctrine())->generate();        
+        $form = $this->createForm(ClientType::class, $c);
                 
-        $c->code = OrganizationCodeFactory::factory('App\Entity\Organization\Client', $this->getDoctrine())->generate();
-        
-        $form = $this->createForm(ClientType::class, $c)
-            ->add('saveAndCreateNew', SubmitType::class);
-                
-        $form->handleRequest($request);
-        
+        $form->handleRequest($request);        
         if ($form->isSubmitted() && $form->isValid()) {  
         	
         	$client = $this->getUser()->createClient($c);
@@ -56,11 +52,10 @@ class ClientController extends AbstractController
         $addressForm = $this->createForm(AddressType::class, new CreateAddressCommand());  
         
         return $this->render(
-            '/dashboard/organization/new.html.twig',
+            '/dashboard/client/new.html.twig',
             array(
             		'form' => $form->createView(),
-            		'addressForm' => $addressForm->createView(),
-            		'entity' => 'client'
+            		'addressForm' => $addressForm->createView()
             )
         );
     }
@@ -70,9 +65,8 @@ class ClientController extends AbstractController
      */
     public function show(Client $client): Response
     {           
-        return $this->render('dashboard/organization/show.html.twig', [
-        		'organization' => $client,
-        		'entity' => 'client'
+        return $this->render('dashboard/client/show.html.twig', [
+        		'client' => $client,
         ]);
     }
     
@@ -105,11 +99,10 @@ class ClientController extends AbstractController
             return $this->redirectToRoute('client_edit', ['id' => $client->getId()]);
         }
         
-        return $this->render('dashboard/organization/edit.html.twig', [
-            'organization' => $client,
+        return $this->render('dashboard/client/edit.html.twig', [
+            'client' => $client,
             'form' => $form->createView(),
         	'addressForm' => $addressForm->createView(),
-        	'entity' => 'client',
         ]);
     }    
    
@@ -129,7 +122,7 @@ class ClientController extends AbstractController
         $em->remove($client);
         $em->flush();
         
-        $this->addFlash('success', 'organization.deleted_successfully');
+        $this->addFlash('success', 'client.deleted_successfully');
         
         return $this->redirectToRoute('client_index');
     }

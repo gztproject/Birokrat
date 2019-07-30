@@ -1,14 +1,13 @@
 {% extends 'dashboard/layout.html.twig' %}
 
-{% block body_id entity ~ '_new' %}
+{% block body_id 'client_new' %}
 
 {% block main %}
-    <h1>{{ 'title.' ~ entity ~ '_new'|trans }}</h1>
+    <h1>{{ 'title.client_new'|trans }}</h1>
     
     
-    {{ include('dashboard/organization/_form.html.twig', {
+    {{ include('dashboard/client/_form.html.twig', {
         form: form,
-        entity: entity,
         addressForm: addressForm,
         button_label: 'action.create'|trans,
         include_back_to_home_link: true,        
