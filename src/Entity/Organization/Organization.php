@@ -155,7 +155,7 @@ class Organization extends LegalEntityBase
     }   
     
     /**
-     * 
+     *
      * @param object $to
      * @return object
      */

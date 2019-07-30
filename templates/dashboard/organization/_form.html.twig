@@ -54,8 +54,8 @@
                     <div class="form-group" >
                         <label class='col-form-label-lg' for="addAddressBtn">{{ 'label.newAddress'|trans }}</label>
                         <div class='input-group'>
-                            <button type='button' id='addAddressBtn' class='btn btn-md btn-success'><i class="fa fa-plus" aria-hidden="true"></i></button>    
-                            {{ include('dashboard/organization/addAddressModal.html.twig', { form: addressForm }) }}
+                            <button type='button' id='addAddressBtn' class='btn btn-md btn-success'><i class="fa fa-plus" aria-hidden="true"></i></button>   
+                            
                         </div>
                     </div>
                 </div> 
@@ -83,3 +83,5 @@
             </div>        
     </div>        
 {{ form_end(form) }}
+
+{{ include('dashboard/organization/addAddressModal.html.twig', { form: addressForm }) }}
