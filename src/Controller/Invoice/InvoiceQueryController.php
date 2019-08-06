@@ -63,11 +63,40 @@ class InvoiceQueryController extends AbstractController
     }
     
     /**
+     * @Route("/dashboard/invoice/getDefaultDueInDays", methods={"POST"}, name="invoice_getDefaultDueInDays")
+     */
+    public function getDefaultDueInDays(Request $request): JsonResponse
+    {
+    	$doctrine = $this->getDoctrine();
+    	$issuer = $doctrine->getRepository(Organization::class)->findOneBy(['id'=>$request->request->get('issuerId', null)]);
+    	try {
+    		$data = $issuer->getOrganizationSettings()!=null?$issuer->getOrganizationSettings()->getDefaultPaymentDueIn():15;
+    		$status = "ok";
+    	}
+    	catch (Exception $e)
+    	{
+    		$status = "error";
+    		$data = $e->getMessage();
+    	}
+    	
+    	return new JsonResponse(
+    			array(
+    					array(
+    							'status'=>$status,
+    							'data'=>array(
+    									$data
+    							)
+    					)
+    			)
+    			);
+    }
+    
+    /**
      * @Route("/dashboard/invoice/pdf/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}", methods={"GET"}, name="invoice_pdf")
      */
     public function getPdf(Invoice $invoice, TCPDFController $tcpdf, TranslatorInterface $translator): Response
     {
-    	return InvoicePdfFactory::factory($invoice, $translator, $tcpdf)->generate();    	
+    	return InvoicePdfFactory::factory($invoice, $translator, $tcpdf, 'I')->generate();    	
     }
     
     /**

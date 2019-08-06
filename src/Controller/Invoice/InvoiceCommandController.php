@@ -3,14 +3,22 @@ namespace App\Controller\Invoice;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Exception;
 use App\Entity\Invoice\Invoice;
 use App\Entity\Invoice\InvoiceNumberFactory;
 use App\Form\Invoice\InvoiceType;
 use App\Entity\Konto\Konto;
 use App\Entity\Invoice\CreateInvoiceCommand;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
+use App\Entity\Invoice\InvoicePdfFactory;
+use WhiteOctober\TCPDFBundle\Controller\TCPDFController;
+use Symfony\Contracts\Translation\TranslatorInterface;
+
 
 class InvoiceCommandController extends AbstractController
 {    
@@ -54,12 +62,17 @@ class InvoiceCommandController extends AbstractController
      */
     public function issue(Request $request): Response
     {
-    	$invoice = $this->getDoctrine()->getRepository(Invoice::class)->findOneBy(['id'=>$request->request->get('id', null)]);
+    	$id = $request->request->get('id', null);
+    	if($id == null)
+    		throw new \Exception("Bad request. I need an id.");
+    	$invoice = $this->getDoctrine()->getRepository(Invoice::class)->findOneBy(['id'=>$id]);
+    	if($invoice == null)
+    		throw new \Exception("Can't find an invoice with id ".$id);
     	$konto = $this->getDoctrine()->getRepository(Konto::class)->findOneBy(['number'=>760]); //760 for services or 762 for goods
     	$date = new \DateTime($request->request->get('date', null));
     	$entityManager = $this->getDoctrine()->getManager();
     	
-    	$number = InvoiceNumberFactory::factory($invoice->getIssuer, 10, $entityManager)->generate();
+    	$number = InvoiceNumberFactory::factory($invoice->getIssuer(), 10, $this->getDoctrine())->generate();
     	$transaction = $invoice->setIssued($konto, $date, $number, $this->getUser());
     	
     	$entityManager->persist($invoice);
@@ -102,5 +115,56 @@ class InvoiceCommandController extends AbstractController
     	$entityManager->flush();
     	
     	return $this->redirectToRoute('invoice_index');
+    }
+    
+    /**
+     * @Route("/dashboard/invoice/send", methods={"POST"}, name="invoice_send")
+     */
+    public function send(Request $request, MailerInterface $mailer, TCPDFController $tcpdf, TranslatorInterface $translator): JsonResponse
+    {
+    	$id = $request->request->get('id', null);
+    	if($id == null)
+    		throw new \Exception("Bad request. I need an id.");
+    	$invoice = $this->getDoctrine()->getRepository(Invoice::class)->findOneBy(['id'=>$id]);    	
+    	$email = $request->request->get('email', null);
+    	$subject = $request->request->get('subject', null);
+    	$body = $request->request->get('body', null);
+    	try {
+    		if($email == null || $email == "")
+    		{    					
+    			throw new \Exception("Client has no e-mail addres.");
+    		}
+    		$path = __DIR__."/../../../tmp/";
+    		//Check if the directory already exists.
+    		if(!is_dir($path)){
+    			//Directory does not exist, so lets create it.
+    			mkdir($path, 0755);
+    		}
+    		
+    		InvoicePdfFactory::factory($invoice, $translator, $tcpdf, 'F', $path)->generate();
+    		$title = $translator->trans('title.invoice').' '.$invoice->getNumber().'.pdf';
+    		
+    		$emailObject = (new Email())
+    		->from('birokrat@gzt.si') //$this->getUser()->getEmail()?:
+    			->to($email)
+    			->subject($subject)
+    			->replyTo($this->getUser()->getEmail())
+    			->html('<p>'.$body.'</p>')  
+    			->attachFromPath($path.$title);    		
+    		
+    		$mailer->send($emailObject);
+    		
+    		unlink($path.$title);
+    		
+    		$data = "Invoice sent to ".$email;
+    		$status = "ok";
+    	}
+    	catch (Exception $e)
+    	{
+    		$status = "error";
+    		$data = $e->getMessage();
+    	}
+    	
+    	return new JsonResponse(array(array('status'=>$status,'data'=>array($data))));
     }
 }

@@ -4,27 +4,46 @@ namespace App\Entity\Invoice;
 
 use Symfony\Contracts\Translation\TranslatorInterface;
 use WhiteOctober\TCPDFBundle\Controller\TCPDFController;
+use phpDocumentor\Reflection\Types\Mixed_;
 class InvoicePdfFactory
 {
 	private $__invoice = null;
 	private $__translator = null;
 	private $__tcpdf = null;
+	private $__dest = null;
+	private $__path = null;
 
-   	public function __construct(Invoice $invoice, TranslatorInterface $translator, TCPDFController $tcpdf)
+	public function __construct(Invoice $invoice, TranslatorInterface $translator, TCPDFController $tcpdf, string $dest, ?string $path)
    	{
    		$this->__invoice = $invoice;
    		$this->__translator = $translator;
    		$this->__tcpdf = $tcpdf;
+   		$this->__dest = $dest;
+   		$this->__path = $path;
    	}
 
-   	public static function factory(Invoice $invoice, TranslatorInterface $translator, TCPDFController $tcpdf): InvoicePdfFactory
+   	/**
+   	 * 
+   	 * @param Invoice $invoice
+   	 * @param TranslatorInterface $translator
+   	 * @param TCPDFController $tcpdf
+   	 * @param string $dest (Inline, Download, File, String, F + I, F + D, Email)
+   	 * @return InvoicePdfFactory
+   	 */
+   	public static function factory(Invoice $invoice, TranslatorInterface $translator, TCPDFController $tcpdf, string $dest = "I", ?string $path = null): InvoicePdfFactory
    	{
-   		return new InvoicePdfFactory($invoice, $translator, $tcpdf);
+   		$validDests = array('I', 'D', 'F', 'S', 'FI', 'FD', 'E');  
+   		if($dest == 'F' && $path == null)
+   			throw new \Exception('No path provided for the file.');
+   		return new InvoicePdfFactory($invoice, $translator, $tcpdf, in_array($dest, $validDests) ? $dest : 'I', $dest == 'F' ? $path : null);
    	}
 
-   	public function generate(): String
+   	public function generate()
    	{
-   		$title = $this->__translator->trans('title.invoice').' '.$this->__invoice->getNumber();
+   		$title = "";
+   		if($this->__path != null)
+   			$title .= $this->__path;
+   		$title .= $this->__translator->trans('title.invoice').' '.$this->__invoice->getNumber();
    		
    		//ToDo: Move this to Invoice
    		$pdf = $this->__tcpdf->create(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'utf-8', false);
@@ -193,7 +212,7 @@ class InvoicePdfFactory
    				
    				//Close and output PDF document
    				
-   				$pdf->Output($title.'.pdf', 'I');
+   				$pdf->Output($title.'.pdf', $this->__dest);
    				
    				//============================================================+
    				// END OF FILE

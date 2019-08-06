@@ -76,10 +76,11 @@ $(function() {
         $('#invoice_dateServiceRenderedFrom').data("DateTimePicker").maxDate(e.date);
     });
     refreshInvNumber();
+    refreshDefaultDueInDays();    
 });
 
 var $collectionHolder;
-var $addInvoiceItemButton = $('<tr class="table-primary"><td colspan="6"><a id="add-invoice-item" class="btn btn-sm btn-block btn-success"><i class="fa fa-plus" aria-hidden="true"></i></a></td></tr>');
+var $addInvoiceItemButton = $('<tr class="table-primary"><td colspan="7"><a id="add-invoice-item" class="btn btn-sm btn-block btn-success"><i class="fa fa-plus" aria-hidden="true"></i></a></td></tr>');
 
 
 jQuery(document).ready(function() {
@@ -88,10 +89,12 @@ jQuery(document).ready(function() {
     
     $collectionHolder.data('index', $collectionHolder.find(':input').length);
     addInvoiceItemForm($collectionHolder, $addInvoiceItemButton, 1);
+    setItemValue(0,0);
         
     $('#add-invoice-item').on('click', function() {
         // add a new tag form (see next code block)
-        addInvoiceItemForm($collectionHolder, $addInvoiceItemButton, 1);        
+        addInvoiceItemForm($collectionHolder, $addInvoiceItemButton, 1); 
+
     });
 
     $('#invoice_dueDate').on('dp.change', function(){
@@ -119,6 +122,13 @@ jQuery(document).ready(function() {
 
     $('#invoice_issuer').on('change', function(){
         refreshInvNumber();
+        refreshDefaultDueInDays();
+    }); 
+
+    $('#invoice_discount').on('keydown', function(){ 
+        setTimeout(function () {                
+            setTotalPrice(calculateTotal());
+        });
     });
     
 });
@@ -137,6 +147,68 @@ function refreshInvNumber(){
             }
         }); 
 }
+
+function refreshDefaultDueInDays(){
+    $.post("/dashboard/invoice/getDefaultDueInDays",
+        {           
+            issuerId: $('#invoice_issuer option:selected').val()
+        },
+        function(data, status){  
+            if(data[0]['status']=="ok"){        
+                $('#invoice_dueInDays').val(data[0]['data'][0]);
+                $('#invoice_dueInDays').change();
+            }
+            else{
+                $('#notificationBody').html("<li>Error getting invoice number: " + data[0]['data'][0] + "</li>");
+                $('#notificationModal').modal('show');
+            }
+        }); 
+}
+
+function calculateValue(index){
+    var qty = $('#invoice_createInvoiceItemCommands_'+index+'_quantity').val();    
+    qty = qty=="" ? 1 : (qty.replace(',','.'))*1;
+    var price = $('#invoice_createInvoiceItemCommands_'+index+'_price').val();
+    price = price=="" ? 0 : (price.replace(',','.'))*1;
+    var discount = $('#invoice_createInvoiceItemCommands_'+index+'_discount').val();
+    discount = discount=="" ? 0 : (discount.replace(',','.'))*1;
+    return (qty*price)*(1-(discount/100));
+}
+
+function calculateTotal(){
+    var subtotal = 0;
+
+    $('.valueInput').each(function() {
+        subtotal += $(this).val().replace(',','.').replace(' ', '').replace('€', '')*1    
+    });
+    
+    var discount = $('#invoice_discount').val();
+    discount = discount=="" ? 0 : (discount.replace(',','.'))*1;
+    return subtotal*(1-(discount/100));
+}
+
+function setItemValue(index, value){
+    $("#iiValue_"+index).val(formatPrice(value) + " €");
+    $("#iiValue_"+index).change();
+}
+
+function setTotalPrice(value){
+    $('#totalPrice').val(formatPrice(value));
+}
+
+function formatPrice(value)
+{
+    value += '';
+    var x = value.split('.');
+    var x1 = x[0];
+    var x2 = x.length > 1 ? (',' + (x[1].length == 1 ? x[1] + '0' : x[1][0] + (x[1].length == 2 ? x[1][1] : ( x[1][2]*1 >= 5 ? (x[1][1]*1 + 1) : x[1][1] )))) : ',00';
+    var rgx = /(\d+)(\d{3})/;
+    while (rgx.test(x1)) {
+        x1 = x1.replace(rgx, '$1' + ' ' + '$2');
+    }
+    return x1 + x2;
+}
+
 
 function addInvoiceItemForm($collectionHolder, $addRemoveInvoiceItemButtons, $number) {
     for(var i=0; i<$number;i++){
@@ -158,20 +230,52 @@ function addInvoiceItemForm($collectionHolder, $addRemoveInvoiceItemButtons, $nu
 
         // Display the form in the page in an li, before the "Add a tag" link li
         var $newFormLi = $('<tr class="invoice-item-tr-' + index + '">'+
-        '<td>' + $('#invoice_createInvoiceItemCommands_' + index + '_code', newForm).parent().html() + '</td>'+
-        '<td data-item-index="' + index + '">' + $('#invoice_createInvoiceItemCommands_' + index + '_name' ,newForm).parent().html() + '</td>'+
-        '<td>' + $('#invoice_createInvoiceItemCommands_' + index + '_quantity', newForm).parent().html()+'</td>'+
-        '<td>' + $('#invoice_createInvoiceItemCommands_' + index + '_unit', newForm).parent().html()+'</td>'+
-        '<td>' + $('#invoice_createInvoiceItemCommands_' + index + '_price', newForm).parent().html()+'</td>'+
-        '<td>' + $('#invoice_createInvoiceItemCommands_' + index + '_discount', newForm).parent().html()+'</td>'+
-        '<td><a id="remove-invoice-item'+ index +'" class="btn btn-sm btn-block btn-danger"><i class="fa fa-minus" aria-hidden="true"></i></a></td></tr>');        
+        '<td class="codeInput">' + $('#invoice_createInvoiceItemCommands_' + index + '_code', newForm).parent().html() + '</td>'+
+        '<td class="nameInput" data-item-index="' + index + '">' + $('#invoice_createInvoiceItemCommands_' + index + '_name' ,newForm).parent().html() + '</td>'+
+        '<td class="quantityInput">' + $('#invoice_createInvoiceItemCommands_' + index + '_quantity', newForm).parent().html()+'</td>'+
+        '<td class="unitInput">' + $('#invoice_createInvoiceItemCommands_' + index + '_unit', newForm).parent().html()+'</td>'+
+        '<td class="priceInput">' + $('#invoice_createInvoiceItemCommands_' + index + '_price', newForm).parent().html()+'</td>'+
+        '<td class="discountInput">' + $('#invoice_createInvoiceItemCommands_' + index + '_discount', newForm).parent().html()+'</td>'+
+        '<td class="valueInput"><input id="iiValue_'+index+'" class="valueInput" type="text" placeholder="0,00" readonly=""></td>'+
+        '<td class="removeBtn"><a id="remove-invoice-item'+ index +'" class="btn btn-sm btn-block btn-danger removeBtn"><i class="fa fa-minus" aria-hidden="true"></i></a></td></tr>');        
         
         $collectionHolder.append($newFormLi);
         $collectionHolder.append($addRemoveInvoiceItemButtons);
 
         $('#remove-invoice-item'+index).on('click', function() {        
-            removeInvoiceItemForm($collectionHolder, index);        
+            removeInvoiceItemForm($collectionHolder, index); 
+            setTotalPrice(calculateTotal());       
         }); 
+
+        $('#invoice_createInvoiceItemCommands_' + index + '_quantity').on('keydown', function(e){
+            var index = e.target.id.split('_')[2]; 
+            setTimeout(function () {       
+                setItemValue(index, calculateValue(index));
+            });
+        });
+        $('#invoice_createInvoiceItemCommands_' + index + '_price').on('keydown', function(e){
+            var index = e.target.id.split('_')[2]; 
+            setTimeout(function () {       
+                setItemValue(index, calculateValue(index));
+            });
+        });
+        $('#invoice_createInvoiceItemCommands_' + index + '_discount').on('keydown', function(e){
+            var index = e.target.id.split('_')[2];
+            setTimeout(function () {
+                setItemValue(index, calculateValue(index));   
+            });            
+        });
+
+        $('#iiValue_' + index).on('change', function(){                 
+            setTotalPrice(calculateTotal());
+        });
+
+        $('#invoice_createInvoiceItemCommands_' + index + '_code').val(index+1);
+        $('#invoice_createInvoiceItemCommands_' + index + '_quantity').val(1);
+        $('#invoice_createInvoiceItemCommands_' + index + '_unit').val('x');
+        $('#invoice_createInvoiceItemCommands_' + index + '_discount').val(0);
+
+        setItemValue(index,0);
     }    
 }
 

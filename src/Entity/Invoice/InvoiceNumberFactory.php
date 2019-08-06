@@ -43,16 +43,19 @@ class InvoiceNumberFactory
    		$lastInvoice =  $stmt->fetchAll();
    		
 	   	$lastNumber = "";
-	   	if($lastInvoice[0])
+	   	$prefix = $this->__issuer->getOrganizationSettings()!=null?$this->__issuer->getOrganizationSettings()->getInvoicePrefix():"";
+	   	
+	   	if(count($lastInvoice)>0)
    			$lastNumber = $lastInvoice[0]['number'];
    		else
-   		{
-   			$prefix = $this->__issuer->getOrganizationSettings()->getInvoicePrefix();
+   		{   			
    			$lastNumber = $prefix ? $prefix.'-' : '';
    			$lastNumber .= date("Y") . '-' . '0000';
    		}
    		
    		$parts = explode('-', $lastNumber);
+   		if(count($parts) == 3)
+   			$parts[array_key_first($parts)] = $prefix;
    		$parts[array_key_last ($parts)] = sprintf('%04d', $parts[array_key_last ($parts)]+1);
    		
    		return implode('-', $parts);
