@@ -22,7 +22,7 @@ use App\Entity\Transaction\CreateTransactionCommand;
 class Invoice extends Base implements iTransactionDocument
 {
     /**
-     * @ORM\Column(type="datetime")
+     * @ORM\Column(type="date")
      */
     private $dateOfIssue;
     

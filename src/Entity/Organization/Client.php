@@ -65,6 +65,11 @@ class Client extends LegalEntityBase
 		return $this;
 	}
 	
+	/**
+	 *
+	 * @param object $to
+	 * @return object
+	 */
 	public function mapTo($to)
 	{
 		if ($to instanceof UpdateClientCommand)

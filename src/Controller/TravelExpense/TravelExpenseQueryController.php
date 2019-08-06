@@ -2,18 +2,14 @@
 
 namespace App\Controller\TravelExpense;
 
+use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
 use App\Repository\TravelExpense\TravelExpenseRepository;
 use App\Entity\Konto\Konto;
 use App\Entity\TravelExpense\TravelExpense;
-use App\Form\TravelExpense\TravelExpenseType;
 use Knp\Component\Pager\PaginatorInterface;
-use App\Entity\TravelExpense\TravelExpenseBundle;
-use Symfony\Component\HttpFoundation\JsonResponse;
 
 class TravelExpenseQueryController extends AbstractController
 {    

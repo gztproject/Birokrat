@@ -33,7 +33,7 @@ class ClientType extends AbstractType
             ])
             ->add('taxable', CheckboxType::class,[
             		'label' => 'label.taxable', 'required' => false
-            ])
+            ])            
             ->get('taxable')
             ->addModelTransformer(new CallbackTransformer(
             		function($boolToCheckbox){
@@ -44,8 +44,7 @@ class ClientType extends AbstractType
             				return false;
             				return $checkboxToBool?:false;
             		}
-           ))
-        ;
+           ));
     }
 
     public function configureOptions(OptionsResolver $resolver)

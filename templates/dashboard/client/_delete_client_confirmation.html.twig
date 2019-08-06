@@ -2,15 +2,15 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-body">
-                <h4>{{ ('delete_' ~ entity ~ '_modal.title')|trans }}</h4>
-                <p>{{ ('delete_' ~ entity ~ '_modal.body')|trans }}</p>
+                <h4>{{ ('delete_client_modal.title')|trans }}</h4>
+                <p>{{ ('delete_client_modal.body')|trans }}</p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" id="btnNo" data-dismiss="modal">
                     <i class="fa fa-ban" aria-hidden="true"></i> {{ 'label.cancel'|trans }}
                 </button>
                 <button type="button" class="btn btn-danger" id="btnYes" data-dismiss="modal">
-                    <i class="fa fa-trash" aria-hidden="true"></i> {{ ('label.delete_' ~ entity) |trans }}
+                    <i class="fa fa-trash" aria-hidden="true"></i> {{ ('label.delete_client') |trans }}
                 </button>
             </div>
         </div>
