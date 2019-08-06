@@ -39,13 +39,11 @@
                     {% endif %}
                 </td>
                 <td class="text-right">
-                    <div class="item-actions">                        
-                        {% if invoice.State == 00 or invoice.State == 10 %}
-                            <a href="{{ path('invoice_pdf_debug', {'id': invoice.id}) }}" class="btn btn-sm btn-primary">
-                                <i class="fa fa-edit" aria-hidden="true"></i> {{ 'action.edit'|trans }}
-                            </a>                                                        
-                        {% endif %} 
+                    <div class="item-actions">  
                         {% if invoice.State == 10 %}
+                            <a href="{{ path('invoice_edit', {'id': invoice.id}) }}" class="btn btn-sm btn-primary">
+                                <i class="fa fa-edit" aria-hidden="true"></i> {{ 'action.edit'|trans }}
+                            </a> 
                             <button class="set-issued btn btn-sm btn-success" type="submit" name="id" value={{ invoice.id }}><i class="fa fa-share-square" aria-hidden="true"></i> 
                                     {{ 'action.setIssued'|trans }}
                             </button>                                                      
@@ -60,7 +58,7 @@
                                     {{ 'action.cancel'|trans }}
                         </button>
                         {% endif %} 
-                        <a href="{{ path('invoice_pdf_debug', {'id': invoice.id}) }}" class="btn btn-sm btn-default">
+                        <a href="{{ path('invoice_show', {'id': invoice.id}) }}" class="btn btn-sm btn-default">
                             <i class="fa fa-eye" aria-hidden="true"></i> {{ 'action.show'|trans }}
                         </a>                        
                     </div>

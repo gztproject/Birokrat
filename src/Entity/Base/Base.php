@@ -48,6 +48,7 @@ abstract class Base
      */
     public function __construct(User $user)
     {
+    	$this->id = Uuid::uuid1();
     	$this->createdOn = new Datetime('now');
     	//ToDo: Do some checks?
     	$this->createdBy = $user;

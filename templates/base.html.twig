@@ -124,7 +124,7 @@
             </header>
         {% endblock %}
 
-        <div class="container-fluid" style="margin-top:80px">
+        <div id="main_container" class="container-fluid">
             {% block body %}
                 <div class="row">
                     <div id="main" class="col-sm-9">
@@ -145,11 +145,11 @@
         </div>
 
         {% block footer %}
-            <footer class="page-footer fixed-bottom font-small stylish-color-dark pt-4">
+            <footer class="page-footer font-small stylish-color-dark pt-4">
                 <div class="container">
                     <div class="row">
                         <div id="footer-copyright" class="col-md-6">                        
-                            <p><span class="copyleft">&copy;</span> {{ 'now'|date('Y') }} - GZT Project</p>
+                            <p><span class="copyleft">&copy;</span> 2018 - {{ 'now'|date('Y') }}  GZT Project</p>
                         </div>
                         <div id="footer-resources" class="col-md-6">                            
                         </div>

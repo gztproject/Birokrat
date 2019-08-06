@@ -4,6 +4,7 @@ namespace App\Entity\Invoice;
 
 class CreateInvoiceItemCommand
 {
+	public $id;
 
     public $code;
 

@@ -100,11 +100,11 @@ class InvoiceQueryController extends AbstractController
     }
     
     /**
-     * @Route("/dashboard/invoice/pdf-debug/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}", methods={"GET"}, name="invoice_pdf_debug")
+     * @Route("/dashboard/invoice/show/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}", methods={"GET"}, name="invoice_show")
      */
-    public function getPdfDebug(Invoice $invoice): Response
+    public function show(Invoice $invoice): Response
     {
-    	return $this->render('dashboard/invoice/pdf.html.twig', [
+    	return $this->render('dashboard/invoice/show.html.twig', [
     			'invoice' => $invoice
     	]);    	    	
     }

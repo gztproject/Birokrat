@@ -1,6 +1,6 @@
 {% extends 'dashboard/layout.html.twig' %}
 
-{% block body_id 'invoice_new' %}
+{% block body_id 'invoice_edit' %}
 
 {% block stylesheets %}
     {{ parent() }}
@@ -8,12 +8,12 @@
 {% endblock %}
 
 {% block main %}
-    <h1>{{ 'title.invoice_new'|trans }}</h1>
+    <h1>{{ 'title.invoice_edit'|trans }}</h1>
 
     {{ include('dashboard/invoice/_form.html.twig', {
         form: form,
-        button_label: 'label.create_invoice'|trans,
-        include_back_to_home_link: true,    
+        button_label: 'label.update_invoice'|trans,
+        include_back_to_home_link: true,        
     }, with_context = false) }}
 
 {% endblock %}
