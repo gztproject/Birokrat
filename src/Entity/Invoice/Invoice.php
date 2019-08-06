@@ -178,6 +178,8 @@ class Invoice extends Base implements iTransactionDocument
     			$this->removeInvoiceItem($ii);
     		}
     	}
+    	$this->calculateReference();
+    	$this->calculateTotals();
     	
     	return $this;
     }
@@ -202,6 +204,25 @@ class Invoice extends Base implements iTransactionDocument
     		$this->invoiceItems->removeElement($ii);
     	else 
     		throw new \Exception("Can't remove item that's not there!");
+    }
+    
+    /**
+     * Makes a copy of itself
+     * @param User $user The cloning user
+     * @return Invoice Cloned invoice (sub-clones all InvoiceItems too.)
+     */
+    public function clone(User $user) : Invoice
+    {
+    	$c = new CreateInvoiceCommand();
+    	$this->mapTo($c);
+    	$invoice = $user->createInvoice($c);
+    	foreach($this->invoiceItems as $ii)
+    	{
+    		$cii = new CreateInvoiceItemCommand();
+    		$ii->mapTo($cii);
+    		$invoice->createInvoiceItem($cii);
+    	}
+    	return $invoice;
     }
     
     /**
@@ -308,7 +329,7 @@ class Invoice extends Base implements iTransactionDocument
      */
     public function mapTo($to)
     {
-    	if ($to instanceof UpdateInvoiceCommand)
+    	if ($to instanceof UpdateInvoiceCommand || $to instanceof CreateInvoiceCommand)
     	{
     		$reflect = new \ReflectionClass($this);
     		$props  = $reflect->getProperties();

@@ -821,6 +821,30 @@
         <source>action.create</source>
         <target>Ustvari novo</target>
       </trans-unit>
+      <trans-unit id="action.OK" resname="action.OK">
+        <source>action.OK</source>
+        <target>OK</target>
+      </trans-unit>
+      <trans-unit id="action.clone" resname="action.clone">
+        <source>action.clone</source>
+        <target>Podvoji</target>
+      </trans-unit>
+      <trans-unit id="title.invoice_edit" resname="title.invoice_edit">
+        <source>title.invoice_edit</source>
+        <target>Urejanje računa</target>
+      </trans-unit>
+      <trans-unit id="label.update_invoice" resname="label.update_invoice">
+        <source>label.update_invoice</source>
+        <target>Shrani</target>
+      </trans-unit>
+       <trans-unit id="label.total" resname="label.total">
+        <source>label.total</source>
+        <target>Skupaj</target>
+      </trans-unit>
+       <trans-unit id="label.save_invoice" resname="label.save_invoice">
+        <source>label.save_invoice</source>
+        <target>Shrani</target>
+      </trans-unit>
       
     </body>
   </file>

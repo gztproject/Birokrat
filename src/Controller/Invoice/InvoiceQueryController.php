@@ -92,7 +92,7 @@ class InvoiceQueryController extends AbstractController
     }
     
     /**
-     * @Route("/dashboard/invoice/pdf/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}", methods={"GET"}, name="invoice_pdf")
+     * @Route("/dashboard/invoice/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/pdf", methods={"GET"}, name="invoice_pdf")
      */
     public function getPdf(Invoice $invoice, TCPDFController $tcpdf, TranslatorInterface $translator): Response
     {
@@ -100,7 +100,7 @@ class InvoiceQueryController extends AbstractController
     }
     
     /**
-     * @Route("/dashboard/invoice/show/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}", methods={"GET"}, name="invoice_show")
+     * @Route("/dashboard/invoice/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/show", methods={"GET"}, name="invoice_show")
      */
     public function show(Invoice $invoice): Response
     {

@@ -60,7 +60,10 @@
                         {% endif %} 
                         <a href="{{ path('invoice_show', {'id': invoice.id}) }}" class="btn btn-sm btn-default">
                             <i class="fa fa-eye" aria-hidden="true"></i> {{ 'action.show'|trans }}
-                        </a>                        
+                        </a>   
+                        <a href="{{ path('invoice_clone', {'id': invoice.id}) }}" class="btn btn-sm btn-default">
+                            <i class="fa fa-copy" aria-hidden="true"></i> {{ 'action.clone'|trans }}
+                        </a>                     
                     </div>
                 </td>
             </tr>

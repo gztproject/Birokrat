@@ -101,6 +101,34 @@ class InvoiceCommandController extends AbstractController
     }
     
     /**
+     * Displays a form to edit an existing invoice entity.
+     *
+     * @Route("/dashboard/invoice/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/clone", methods={"GET"}, name="invoice_clone")
+     */
+    public function clone(Invoice $invoice): Response
+    {
+    	$clone = $invoice->clone($this->getUser());
+    	
+    	$updateInvoiceCommand = new UpdateInvoiceCommand();
+    	$clone->mapTo($updateInvoiceCommand);
+    	
+    	foreach($clone->getInvoiceItems() as $ii)
+    	{
+    		$uiic = new UpdateInvoiceItemCommand();
+    		$ii->mapTo($uiic);
+    		array_push($updateInvoiceCommand->invoiceItemCommands, $uiic);
+    	}
+    	
+    	$form = $this->createForm(InvoiceType::class, $updateInvoiceCommand);
+    	
+    	return $this->render('dashboard/invoice/edit.html.twig', [
+    			'invoice' => $clone,
+    			'form' => $form->createView(),
+    	]);
+    }
+    
+    
+    /**
      * @Route("/dashboard/invoice/issue", methods={"POST"}, name="invoice_issue")
      */
     public function issue(Request $request): Response
