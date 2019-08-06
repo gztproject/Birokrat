@@ -205,6 +205,25 @@ class Invoice extends Base implements iTransactionDocument
     }
     
     /**
+     * Makes a copy of itself
+     * @param User $user The cloning user
+     * @return Invoice Cloned invoice (sub-clones all InvoiceItems too.)
+     */
+    public function clone(User $user) : Invoice
+    {
+    	$c = new CreateInvoiceCommand();
+    	$this->mapTo($c);
+    	$invoice = $user->createInvoice($c);
+    	foreach($this->invoiceItems as $ii)
+    	{
+    		$cii = new CreateInvoiceItemCommand();
+    		$ii->mapTo($cii);
+    		$invoice->createInvoiceItem($cii);
+    	}
+    	return $invoice;
+    }
+    
+    /**
      * Sets the invoice issued and creates the transaction.
      * @param Konto $konto Konto for the transaction
      * @param \DateTime $date 
@@ -308,7 +327,7 @@ class Invoice extends Base implements iTransactionDocument
      */
     public function mapTo($to)
     {
-    	if ($to instanceof UpdateInvoiceCommand)
+    	if ($to instanceof UpdateInvoiceCommand || $to instanceof CreateInvoiceCommand)
     	{
     		$reflect = new \ReflectionClass($this);
     		$props  = $reflect->getProperties();

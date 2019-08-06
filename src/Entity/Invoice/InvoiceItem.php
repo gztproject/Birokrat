@@ -77,7 +77,7 @@ class InvoiceItem extends Base
     	
     	return $this;
     }
-    
+        
     /**
      *
      * @param object $to
@@ -85,7 +85,7 @@ class InvoiceItem extends Base
      */
     public function mapTo($to)
     {
-    	if ($to instanceof UpdateInvoiceItemCommand)
+    	if ($to instanceof UpdateInvoiceItemCommand || $to instanceof CreateInvoiceItemCommand)
     	{
     		$reflect = new \ReflectionClass($this);
     		$props  = $reflect->getProperties();
