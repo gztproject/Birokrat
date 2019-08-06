@@ -59,6 +59,52 @@ class InvoiceItem extends Base
     	$this->unit = $c->unit;    	
     }
     
+    public function update(UpdateInvoiceItemCommand $c, Invoice $invoice) : InvoiceItem
+    {
+    	parent::updateBase($invoice->getUpdatedBy());
+    	if($c->code != null && $c->code != $this->code)
+    		$this->code = $c->code;
+    	if($c->discount != null && $c->discount/100 != $this->discount)
+    		$this->discount = $c->discount/100;
+    	if($c->name != null && $c->name != $this->name)
+    		$this->name = $c->name;
+    	if($c->price != null && $c->price != $this->price)
+    		$this->price = $c->price;
+    	if($c->quantity != null && $c->quantity != $this->quantity)
+    		$this->quantity = $c->quantity;
+    	if($c->unit != null && $c->unit != $this->unit)
+    		$this->unit = $c->unit;
+    	
+    	return $this;
+    }
+        
+    /**
+     *
+     * @param object $to
+     * @return object
+     */
+    public function mapTo($to)
+    {
+    	if ($to instanceof UpdateInvoiceItemCommand || $to instanceof CreateInvoiceItemCommand)
+    	{
+    		$reflect = new \ReflectionClass($this);
+    		$props  = $reflect->getProperties();
+    		foreach($props as $prop)
+    		{
+    			$name = $prop->getName();
+    			if(property_exists($to, $name))
+    			{
+    				$to->$name = $this->$name;
+    			}
+    		}
+    	}
+    	else
+    	{
+    		throw(new \Exception('cant map ' . get_class($this) . ' to ' . get_class($to)));
+    		return $to;
+    	}
+    }
+    
     /*
      * Getters...
      */

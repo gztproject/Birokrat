@@ -18,6 +18,8 @@ use Symfony\Component\Mime\Email;
 use App\Entity\Invoice\InvoicePdfFactory;
 use WhiteOctober\TCPDFBundle\Controller\TCPDFController;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use App\Entity\Invoice\UpdateInvoiceCommand;
+use App\Entity\Invoice\UpdateInvoiceItemCommand;
 
 
 class InvoiceCommandController extends AbstractController
@@ -30,8 +32,7 @@ class InvoiceCommandController extends AbstractController
     {
     	$createInvoiceCommand = new CreateInvoiceCommand();
     	
-    	$form = $this->createForm(InvoiceType::class, $createInvoiceCommand)
-    	->add('saveAndCreateNew', SubmitType::class);
+    	$form = $this->createForm(InvoiceType::class, $createInvoiceCommand);
     	
     	$form->handleRequest($request);
     	
@@ -40,7 +41,7 @@ class InvoiceCommandController extends AbstractController
     		$invoice = $this->getUser()->createInvoice($createInvoiceCommand);
     		    		
     		$em = $this->getDoctrine()->getManager();
-    		foreach($createInvoiceCommand->createInvoiceItemCommands as $c)
+    		foreach($createInvoiceCommand->invoiceItemCommands as $c)
     		{
     			$ii = $invoice->createInvoiceItem($c);
     			$em->persist($ii);
@@ -49,13 +50,83 @@ class InvoiceCommandController extends AbstractController
     		$em->persist($invoice);
     		$em->flush();
     		
-    		return $this->redirectToRoute('invoice_pdf_debug', array('id'=> $invoice->getId()));
+    		return $this->redirectToRoute('invoice_show', array('id'=> $invoice->getId()));
     	}
     	
     	return $this->render('dashboard/invoice/new.html.twig', [
     			'form' => $form->createView(),
     	]);
     }
+    
+    
+    /**
+     * Displays a form to edit an existing invoice entity.
+     *
+     * @Route("/dashboard/invoice/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/edit",methods={"GET", "POST"}, name="invoice_edit")
+     */
+    public function edit(Request $request, Invoice $invoice): Response
+    {
+    	$updateInvoiceCommand = new UpdateInvoiceCommand();
+    	$invoice->mapTo($updateInvoiceCommand);    	
+    	    	
+    	foreach($invoice->getInvoiceItems() as $ii)
+    	{
+    		$uiic = new UpdateInvoiceItemCommand();
+    		$ii->mapTo($uiic);
+    		array_push($updateInvoiceCommand->invoiceItemCommands, $uiic);
+    	}
+    	
+    	$form = $this->createForm(InvoiceType::class, $updateInvoiceCommand);
+    	$form->handleRequest($request);
+    	
+    	if ($form->isSubmitted() && $form->isValid()) {
+    		$invoice->update($updateInvoiceCommand, $this->getUser());
+    		$em = $this->getDoctrine()->getManager();
+    		
+    		foreach($invoice->getInvoiceItems() as $ii)
+    		{
+    			$em->persist($ii);
+    		}
+    		
+    		$em->persist($invoice);
+    		$em->flush();
+    		
+    		return $this->redirectToRoute('invoice_show', array('id'=> $invoice->getId()));
+    	}
+    	
+    	return $this->render('dashboard/invoice/edit.html.twig', [
+    			'invoice' => $invoice,
+    			'form' => $form->createView(),
+    	]);
+    }
+    
+    /**
+     * Displays a form to edit an existing invoice entity.
+     *
+     * @Route("/dashboard/invoice/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/clone", methods={"GET"}, name="invoice_clone")
+     */
+    public function clone(Invoice $invoice): Response
+    {
+    	$clone = $invoice->clone($this->getUser());
+    	
+    	$updateInvoiceCommand = new UpdateInvoiceCommand();
+    	$clone->mapTo($updateInvoiceCommand);
+    	
+    	foreach($clone->getInvoiceItems() as $ii)
+    	{
+    		$uiic = new UpdateInvoiceItemCommand();
+    		$ii->mapTo($uiic);
+    		array_push($updateInvoiceCommand->invoiceItemCommands, $uiic);
+    	}
+    	
+    	$form = $this->createForm(InvoiceType::class, $updateInvoiceCommand);
+    	
+    	return $this->render('dashboard/invoice/edit.html.twig', [
+    			'invoice' => $clone,
+    			'form' => $form->createView(),
+    	]);
+    }
+    
     
     /**
      * @Route("/dashboard/invoice/issue", methods={"POST"}, name="invoice_issue")
