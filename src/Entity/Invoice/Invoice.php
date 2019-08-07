@@ -178,6 +178,8 @@ class Invoice extends Base implements iTransactionDocument
     			$this->removeInvoiceItem($ii);
     		}
     	}
+    	$this->calculateReference();
+    	$this->calculateTotals();
     	
     	return $this;
     }
