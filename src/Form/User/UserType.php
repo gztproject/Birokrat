@@ -23,7 +23,8 @@ class UserType extends AbstractType
                 'label' => 'label.email'
             ])
             ->add('mobile', TextType::class,[
-            		'label' => 'label.mobile'
+            		'label' => 'label.mobile',
+            		'required' => false,
             ])
             ->add('username', TextType::class,[
                 'label' => 'label.username'
@@ -36,22 +37,29 @@ class UserType extends AbstractType
             ])
             ->add('password', RepeatedType::class, array(
                 'type' => PasswordType::class,
+            	'invalid_message' => 'The password fields must match.',
                 'first_options'  => array('label' => 'label.password'),
                 'second_options' => array('label' => 'label.repeat_password'),
-            ))            
+            	'required' => false,
+            	'empty_data' => '',
+            ))  
+            ->add('oldPassword', PasswordType::class,[ 
+            		'label' => 'label.oldPassword',
+            		'required' => false,            		
+            		'empty_data' => '',
+            ])            
             ->add('isRoleAdmin', CheckboxType::class,[
-                'label' => 'label.isRoleAdmin', 'required' => false
+                'label' => 'label.isRoleAdmin',
+            	'required' => false,
             ])
             ->get('isRoleAdmin')
                 ->addModelTransformer(new CallbackTransformer(
-                    function($boolToCheckbox){
-                        
+                    function($boolToCheckbox){                        
                         return $boolToCheckbox?:false;
                     },
                     function($checkboxToBool){
-                        if($checkboxToBool===null)
-                            return false;
-                            return $checkboxToBool?:false;
+                        if($checkboxToBool===null) return false;
+                        return $checkboxToBool?:false;
                     }
                 ))
         ;
