@@ -126,9 +126,9 @@
 
         <div id="main_container" class="container-fluid">
             {% block body %}
-                <div class="row">
-                    <div id="main" class="col-sm-9">
-                        {{ include('default/_flash_messages.html.twig') }}
+                <div class="row">                    
+                    <div id="main" class="col-sm-9">  
+                    {{ include('default/_flash_messages.html.twig') }}                      
                         {% block main %}
                         
                         {% endblock %}
@@ -139,9 +139,9 @@
                             
                         {% endblock %}
                     </div>
-                </div>
-                {{ include ('_notificationModal.html.twig') }}
+                </div>                
             {% endblock %}
+            
         </div>
 
         {% block footer %}
