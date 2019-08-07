@@ -41,7 +41,7 @@ class InvoiceQueryController extends AbstractController
     	$doctrine = $this->getDoctrine();
     	$issuer = $doctrine->getRepository(Organization::class)->findOneBy(['id'=>$request->request->get('issuerId', null)]);
     	try {
-    		$data = InvoiceNumberFactory::factory($issuer, 00, $doctrine)->generate();
+    		$data = InvoiceNumberFactory::factory($issuer, 10, $doctrine)->generate();
     		$status = "ok";
     	} 
     	catch (Exception $e) 
