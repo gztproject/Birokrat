@@ -103,9 +103,9 @@ class InvoiceCommandController extends AbstractController
     /**
      * Displays a form to edit an existing invoice entity.
      *
-     * @Route("/dashboard/invoice/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/clone", methods={"GET"}, name="invoice_clone")
+     * @Route("/dashboard/invoice/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/clone",methods={"GET", "POST"}, name="invoice_clone")
      */
-    public function clone(Invoice $invoice): Response
+    public function clone(Request $request, Invoice $invoice): Response
     {
     	$clone = $invoice->clone($this->getUser());
     	
@@ -120,6 +120,23 @@ class InvoiceCommandController extends AbstractController
     	}
     	
     	$form = $this->createForm(InvoiceType::class, $updateInvoiceCommand);
+    	
+    	$form->handleRequest($request);
+    	
+    	if ($form->isSubmitted() && $form->isValid()) {
+    		$clone->update($updateInvoiceCommand, $this->getUser());
+    		$em = $this->getDoctrine()->getManager();
+    		
+    		foreach($clone->getInvoiceItems() as $ii)
+    		{
+    			$em->persist($ii);
+    		}
+    		
+    		$em->persist($clone);
+    		$em->flush();
+    		
+    		return $this->redirectToRoute('invoice_show', array('id'=> $clone->getId()));
+    	}
     	
     	return $this->render('dashboard/invoice/edit.html.twig', [
     			'invoice' => $clone,
