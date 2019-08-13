@@ -18,7 +18,7 @@ class CreateInvoiceCommand
      * Need this for getting them from the form to controller...
      * @var Array[CreateInvoiceItemCommand]
      */
-    public $createInvoiceItemCommands;
+    public $invoiceItemCommands;
     
     public $dateServiceRenderedFrom;
     

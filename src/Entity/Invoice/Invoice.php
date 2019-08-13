@@ -133,6 +133,57 @@ class Invoice extends Base implements iTransactionDocument
         $this->setState(10);
     }
     
+    public function update(UpdateInvoiceCommand $c, User $user) : Invoice
+    {
+    	//We can only update invoices in state 10.
+    	if($this->state != 10)
+    		throw new \Exception("Only new invoices can be updated.");
+    	parent::updateBase($user);
+    	if($c->dateOfIssue != null && $c->dateOfIssue != $this->dateOfIssue)
+    		$this->dateOfIssue = $c->dateOfIssue;
+    	if($c->dateServiceRenderedFrom != null && $c->dateServiceRenderedFrom != $this->dateServiceRenderedFrom)
+    		$this->dateServiceRenderedFrom = $c->dateServiceRenderedFrom;
+    	if($c->dateServiceRenderedTo != null && $c->dateServiceRenderedTo != $this->dateServiceRenderedTo)
+    		$this->dateServiceRenderedTo = $c->dateServiceRenderedTo;
+    	if($c->discount != null && $c->discount/100 != $this->discount)
+    		$this->discount = $c->discount/100;
+    	if($c->dueDate != null && $c->dueDate != $this->dueDate)
+    		$this->dueDate = $c->dueDate;
+    	if($c->issuer != null && $c->issuer != $this->issuer)
+    		$this->issuer = $c->issuer;
+    	if($c->number != null && $c->number != $this->number)
+    		$this->number = $c->number;
+    	if($c->recepient != null && $c->recepient != $this->recepient)
+    		$this->recepient = $c->recepient;
+    	
+    	    
+    	$itemsToKeep = new ArrayCollection();
+    	foreach($c->invoiceItemCommands as $uiic)
+    	{    		
+    		$ii = array_filter($this->invoiceItems->toArray(), function ($v) use ($uiic) {return $v->getId() == $uiic->id;})[0]??null;
+    		if($ii == null)
+    		{
+    			$itemsToKeep->add($this->createInvoiceItem($uiic));
+    		}
+    		else
+    		{
+    			$itemsToKeep->add($ii->update($uiic, $this));
+    		}
+    	}
+    	
+    	foreach($this->invoiceItems as $ii)
+    	{
+    		if(!$itemsToKeep->contains($ii))
+    		{    			
+    			$this->removeInvoiceItem($ii);
+    		}
+    	}
+    	$this->calculateReference();
+    	$this->calculateTotals();
+    	
+    	return $this;
+    }
+    
     /**
      * Creates a new InvoiceItem on this invoice
      * @param CreateInvoiceItemCommand $c
@@ -141,10 +192,37 @@ class Invoice extends Base implements iTransactionDocument
     public function createInvoiceItem(CreateInvoiceItemCommand $c): InvoiceItem
     {
     	$ii = new InvoiceItem($c, $this);
-    	$this->invoiceItems[] = $ii;
+    	$this->invoiceItems->add($ii);
     	$this->calculateTotals();
     	    	
     	return $ii;
+    }
+    
+    private function removeInvoiceItem(InvoiceItem $ii)
+    {
+    	if($this->invoiceItems->contains($ii))
+    		$this->invoiceItems->removeElement($ii);
+    	else 
+    		throw new \Exception("Can't remove item that's not there!");
+    }
+    
+    /**
+     * Makes a copy of itself
+     * @param User $user The cloning user
+     * @return Invoice Cloned invoice (sub-clones all InvoiceItems too.)
+     */
+    public function clone(User $user) : Invoice
+    {
+    	$c = new CreateInvoiceCommand();
+    	$this->mapTo($c);
+    	$invoice = $user->createInvoice($c);
+    	foreach($this->invoiceItems as $ii)
+    	{
+    		$cii = new CreateInvoiceItemCommand();
+    		$ii->mapTo($cii);
+    		$invoice->createInvoiceItem($cii);
+    	}
+    	return $invoice;
     }
     
     /**
@@ -263,6 +341,33 @@ class Invoice extends Base implements iTransactionDocument
     }
     
     /**
+     *
+     * @param object $to
+     * @return object
+     */
+    public function mapTo($to)
+    {
+    	if ($to instanceof UpdateInvoiceCommand || $to instanceof CreateInvoiceCommand)
+    	{
+    		$reflect = new \ReflectionClass($this);
+    		$props  = $reflect->getProperties();
+    		foreach($props as $prop)
+    		{
+    			$name = $prop->getName();
+    			if(property_exists($to, $name))
+    			{
+    				$to->$name = $this->$name;
+    			}
+    		}
+    	}
+    	else
+    	{
+    		throw(new \Exception('cant map ' . get_class($this) . ' to ' . get_class($to)));
+    		return $to;
+    	}
+    }
+    
+    /**
      * Calculates and sets totalValue and totalPrice.
      */
     private function calculateTotals(): void
@@ -374,7 +479,14 @@ class Invoice extends Base implements iTransactionDocument
     
     public function getNumber(): string
     {
-    	return $this->number;
+    	if($this->state === 20 || $this->state === 30)
+    	{
+    		return $this->number;
+    	}
+    	else
+    	{
+    		return "";
+    	}
     }
     
     public function getDiscount():float
@@ -394,7 +506,14 @@ class Invoice extends Base implements iTransactionDocument
     
     public function getReferenceNumber(): string
     {
-    	return $this->referenceNumber;
+    	if($this->state === 20 || $this->state === 30)
+    	{
+    		return $this->referenceNumber;
+    	}
+    	else 
+    	{
+    		return "-";
+    	}
     }
 
     /**

@@ -71,7 +71,7 @@ class ClientController extends AbstractController
     }
     
     /**
-     * Displays a form to edit an existing invoice entity.
+     * Displays a form to edit an existing client entity.
      *
      * @Route("/dashboard/client/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/edit",methods={"GET", "POST"}, name="client_edit")
      */

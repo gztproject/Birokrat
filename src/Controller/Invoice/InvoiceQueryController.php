@@ -41,7 +41,7 @@ class InvoiceQueryController extends AbstractController
     	$doctrine = $this->getDoctrine();
     	$issuer = $doctrine->getRepository(Organization::class)->findOneBy(['id'=>$request->request->get('issuerId', null)]);
     	try {
-    		$data = InvoiceNumberFactory::factory($issuer, 00, $doctrine)->generate();
+    		$data = InvoiceNumberFactory::factory($issuer, 10, $doctrine)->generate();
     		$status = "ok";
     	} 
     	catch (Exception $e) 
@@ -92,7 +92,7 @@ class InvoiceQueryController extends AbstractController
     }
     
     /**
-     * @Route("/dashboard/invoice/pdf/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}", methods={"GET"}, name="invoice_pdf")
+     * @Route("/dashboard/invoice/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/pdf", methods={"GET"}, name="invoice_pdf")
      */
     public function getPdf(Invoice $invoice, TCPDFController $tcpdf, TranslatorInterface $translator): Response
     {
@@ -100,11 +100,11 @@ class InvoiceQueryController extends AbstractController
     }
     
     /**
-     * @Route("/dashboard/invoice/pdf-debug/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}", methods={"GET"}, name="invoice_pdf_debug")
+     * @Route("/dashboard/invoice/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/show", methods={"GET"}, name="invoice_show")
      */
-    public function getPdfDebug(Invoice $invoice): Response
+    public function show(Invoice $invoice): Response
     {
-    	return $this->render('dashboard/invoice/pdf.html.twig', [
+    	return $this->render('dashboard/invoice/show.html.twig', [
     			'invoice' => $invoice
     	]);    	    	
     }

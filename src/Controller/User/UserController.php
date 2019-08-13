@@ -13,8 +13,11 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use App\Entity\Organization\Organization;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use App\Entity\User\CreateUserCommand;
 use App\Entity\User\UpdateUserCommand;
+use Symfony\Component\Form\FormErrorIterator;
+use Symfony\Component\Form\FormError;
 
 class UserController extends AbstractController
 {
@@ -47,15 +50,49 @@ class UserController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             
-        	$user = $this->getUser()->createUser($createUserCommand, $passwordEncoder);
-            
+        	//Handle the file stuff
+        	$signatureFile = $form['signature']->getData();        	
+        	if($signatureFile)
+        	{
+        		$originalFilename = pathinfo($signatureFile->getClientOriginalName(), PATHINFO_FILENAME);
+        		// this is needed to safely include the file name as part of the URL
+        		$safeFilename = transliterator_transliterate('Any-Latin; Latin-ASCII; [^A-Za-z0-9_] remove; Lower()', $originalFilename);
+        		$newFilename = $safeFilename.'-'.uniqid().'.'.$signatureFile->guessExtension();
+        		
+        		// Move the file to the directory where brochures are stored
+        		try {
+        			$signatureFile->move(
+        					$this->getParameter('signatures_directory'),
+        					$newFilename
+        					);
+        		} catch (FileException $e) {
+        			// ... handle exception if something happens during file upload
+        		}        		
+        		$createUserCommand->signatureFilename = $newFilename;
+        	}
+        	
+        	try
+        	{
+        		$user = $this->getUser()->createUser($createUserCommand, $passwordEncoder);
+        	}            
+        	catch (\Exception $e)
+        	{
+        		$this->addFlash('danger', "Model Exception: ".$e->getMessage());
+        		return $this->render(
+        				'/admin/user/new.html.twig',
+        				array('form' => $form->createView())
+        				);
+        	}
+        	
+        	
+        	
             // 4) save the User!
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($user);
             $entityManager->flush();
             
             // ... do any other work - like sending them an email, etc
-            // maybe set a "flash" success message for the user
+            $this->addFlash('success', 'user.saved_successfully');
             
             return $this->redirectToRoute('admin_user_index');
         }
@@ -82,13 +119,13 @@ class UserController extends AbstractController
     }
     
     /**
-     * Displays a form to edit an existing invoice entity.
+     * Displays a form to edit an existing user entity.
      *
      * @Route("/user/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/edit",methods={"GET", "POST"}, name="user_edit")
      * @Route("/admin/user/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/edit",methods={"GET", "POST"}, name="admin_user_edit")
      * @IsGranted("edit", subject="user", message="Users can only be edited by their authors.")
      */
-    public function edit(Request $request, User $user): Response
+    public function edit(Request $request, User $user, UserPasswordEncoderInterface $passwordEncoder): Response
     {
     	$c = new UpdateUserCommand();
     	$user->mapTo($c);
@@ -98,8 +135,50 @@ class UserController extends AbstractController
         $form->handleRequest($request);
         
         if ($form->isSubmitted() && $form->isValid()) {
+        	
+        	//Handle the file stuff
+        	$signatureFile = $form['signature']->getData();
+        	if($signatureFile)
+        	{
+        		$originalFilename = pathinfo($signatureFile->getClientOriginalName(), PATHINFO_FILENAME);
+        		// this is needed to safely include the file name as part of the URL
+        		$safeFilename = transliterator_transliterate('Any-Latin; Latin-ASCII; [^A-Za-z0-9_] remove; Lower()', $originalFilename);
+        		$newFilename = $safeFilename.'-'.uniqid().'.'.$signatureFile->guessExtension();
+        		
+        		// Move the file to the directory where brochures are stored
+        		try {
+        			$signatureFile->move(
+        					$this->getParameter('signatures_directory'),
+        					$newFilename
+        					);
+        			
+        			//delete old file
+        			unlink($this->getParameter('signatures_directory').'/'.$user->getSignatureFilename());
+        		} catch (\Exception $e) {
+        			$this->addFlash('warning', "File Exception: ".$e->getMessage());
+        			return $this->render('admin/user/edit.html.twig', [
+        					'user' => $user,
+        					'form' => $form->createView(),
+        					'showChangePassword' => true,
+        			]);
+        		}
+        		$c->signatureFilename = $newFilename;
+        	}
+        	
+        	try 
+        	{
+        		$user->update($c, $this->getUser(), $passwordEncoder);
+        	} 
+        	catch (\Exception $e) 
+        	{
+        		$this->addFlash('danger', "Model Exception: ".$e->getMessage());
+        		return $this->render('admin/user/edit.html.twig', [
+        				'user' => $user,
+        				'form' => $form->createView(),
+        				'showChangePassword' => true,
+        		]);
+        	}
             
-            $user = $form->getData();
                                    
             $this->getDoctrine()->getManager()->persist($user);
             
@@ -107,12 +186,22 @@ class UserController extends AbstractController
             
             $this->addFlash('success', 'user.updated_successfully');
             
-            return $this->redirectToRoute('admin_user_edit', ['id' => $user->getId()]);
+            return $this->redirectToRoute('admin_user_show', ['id' => $user->getId()]);
+        
+        }
+        
+        if($form->isSubmitted() && !$form->isValid())
+        {
+        	foreach($form->getErrors(true) as $e)
+        	{
+        		$this->addFlash('danger', $e->getMessage());
+        	}
         }
         
         return $this->render('admin/user/edit.html.twig', [
             'user' => $user,
             'form' => $form->createView(),
+        	'showChangePassword' => $this->getUser() === $user,
         ]);
     }  
     

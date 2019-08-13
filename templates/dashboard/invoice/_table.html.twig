@@ -6,7 +6,7 @@
                 <th scope="col" class="text-center">{{ 'label.recepient'|trans }}</th>
                 <th scope="col" class="text-center">{{ 'label.reference'|trans }}</th>
                 <th scope="col" class="text-center">{{ 'label.sum'|trans }}</th>
-                <th scope="col" class="text-center">{{ 'label.paid'|trans }}</th>
+                <th scope="col" class="text-center">{{ 'label.dueDate'|trans }}/{{ 'label.paid'|trans }}</th>
                 <th scope="col" class="text-center">{{ 'label.actions'|trans }}</th>
             </tr>
         </thead>
@@ -27,7 +27,7 @@
             {% else %}
                 <tr class="table-primary">
             {% endif %}
-                <td>{{ invoice.number }}</td>
+                <td>{% if invoice.state == 10 %} {{ 'label.draft'|trans }} {% elseif invoice.state == 40 %} {{ 'label.cancelled'|trans }} {% else %} {{ invoice.number }} {%  endif %}</td>
                 <td>{{ invoice.dateOfIssueString }}</td>
                 <td>{{ invoice.Recepient.ShortName }}</td>
                 <td>{{ invoice.ReferenceNumber }}</td>
@@ -39,13 +39,11 @@
                     {% endif %}
                 </td>
                 <td class="text-right">
-                    <div class="item-actions">                        
-                        {% if invoice.State == 00 or invoice.State == 10 %}
-                            <a href="{{ path('invoice_pdf_debug', {'id': invoice.id}) }}" class="btn btn-sm btn-primary">
-                                <i class="fa fa-edit" aria-hidden="true"></i> {{ 'action.edit'|trans }}
-                            </a>                                                        
-                        {% endif %} 
+                    <div class="item-actions">  
                         {% if invoice.State == 10 %}
+                            <a href="{{ path('invoice_edit', {'id': invoice.id}) }}" class="btn btn-sm btn-primary">
+                                <i class="fa fa-edit" aria-hidden="true"></i> {{ 'action.edit'|trans }}
+                            </a> 
                             <button class="set-issued btn btn-sm btn-success" type="submit" name="id" value={{ invoice.id }}><i class="fa fa-share-square" aria-hidden="true"></i> 
                                     {{ 'action.setIssued'|trans }}
                             </button>                                                      
@@ -60,9 +58,12 @@
                                     {{ 'action.cancel'|trans }}
                         </button>
                         {% endif %} 
-                        <a href="{{ path('invoice_pdf_debug', {'id': invoice.id}) }}" class="btn btn-sm btn-default">
+                        <a href="{{ path('invoice_show', {'id': invoice.id}) }}" class="btn btn-sm btn-primary">
                             <i class="fa fa-eye" aria-hidden="true"></i> {{ 'action.show'|trans }}
-                        </a>                        
+                        </a>   
+                        <a href="{{ path('invoice_clone', {'id': invoice.id}) }}" class="btn btn-sm btn-primary">
+                            <i class="fa fa-copy" aria-hidden="true"></i> {{ 'action.clone'|trans }}
+                        </a>                     
                     </div>
                 </td>
             </tr>

@@ -18,7 +18,7 @@
                 <td>{{ transaction.dateString }}</td>
                 <td>
                 {% if transaction.invoice != null %}
-                    <a href="{{ path('invoice_pdf_debug', {'id': transaction.invoice.id}) }}">{{'label.invoice'|trans }}: {{ transaction.invoice.number }}</a>
+                    <a href="{{ path('invoice_show', {'id': transaction.invoice.id}) }}">{{'label.invoice'|trans }}: {{ transaction.invoice.number }}</a>
                 {% elseif transaction.travelExpense != null %}
                     <a href="{{ path('travelExpense_show', {'id': transaction.travelExpense.id}) }}">{{'label.travelExpense'|trans }}: {{ transaction.travelExpense.TravelDescription }}</a>
                 {% endif %}

@@ -71,7 +71,7 @@ class InvoiceType extends AbstractType
             	// prevents rendering it as type="date", to avoid HTML5 date pickers
             	'html5' => false,
             ])
-            ->add('createInvoiceItemCommands', CollectionType::class, [
+            ->add('invoiceItemCommands', CollectionType::class, [
             		'entry_type' => InvoiceItemType::class,
             		//'entry_options' => ['label' => false],
             		'allow_add' => true,

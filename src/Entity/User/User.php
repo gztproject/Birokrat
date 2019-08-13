@@ -90,6 +90,11 @@ class User extends Base implements UserInterface, \Serializable
     private $userSettings;
     
     /**
+     * @ORM\Column(type="string")
+     */
+    private $signatureFilename;
+    
+    /**
      * 
      * @param CreateUserCommand $c
      * @param User $user
@@ -108,11 +113,53 @@ class User extends Base implements UserInterface, \Serializable
         $this->lastName = $c->lastName;
         $this->mobile = $c->mobile;
         $this->phone = $c->phone;
+        $this->signatureFilename = $c->signatureFilename;
+        
+        $this->checkPasswordRequirements($c->password);
         $this->password = $passwordEncoder->encodePassword($this, $c->password);
+        
         $this->roles = array($c->isRoleAdmin?'ROLE_ADMIN':'ROLE_USER');
                 
         return $this;
-    }   
+    }  
+    
+    public function update(UpdateUserCommand $c, User $user, UserPasswordEncoderInterface $passwordEncoder)
+    {
+    	parent::updateBase($user);
+    	if($c->username != null && $c->username != $this->username) $this->username = $c->username;
+    	if($c->email != null && $c->email != $this->email) $this->email = $c->email;
+    	if($c->firstName != null && $c->firstName != $this->firstName) $this->firstName = $c->firstName;
+    	if($c->lastName != null && $c->lastName != $this->lastName) $this->lastName = $c->lastName;
+    	if($c->mobile != null && $c->mobile != $this->mobile) $this->mobile = $c->mobile;
+    	if($c->phone != null && $c->phone != $this->phone) $this->phone = $c->phone;
+    	if($c->signatureFilename != null && $c->signatureFilename != $this->signatureFilename) $this->signatureFilename = $c->signatureFilename;
+    	
+    	if(strlen($c->password) != 0) 
+    	{
+    		$this->checkPasswordRequirements($c->password);
+    		if($passwordEncoder->isPasswordValid($this, $c->oldPassword))
+    			$this->password = $passwordEncoder->encodePassword($this, $c->password);
+    		else throw new \Exception("Old password is incorrect.");
+    	}
+    	
+    }
+    
+    private function checkPasswordRequirements(string $password)
+    {
+    	//ToDo: Read this from application settings?
+    	$minPasswordLength = 4;
+    	$passwordMustHaveNumbers = true;
+    	$passwordMustHaveSpecials = true;
+    	
+    	if(strlen($password) < $minPasswordLength)
+    		throw new \Exception("The password is too short.");
+    	
+    	if($passwordMustHaveNumbers && preg_match('/\\d/', $password) === 0)
+    		throw new \Exception("The password must contain at least one number.");
+    	    	
+    	if($passwordMustHaveSpecials && preg_match('/[\'\/~`\!@#\$%\^&\*\(\)_\-\+=\{\}\[\]\|;:"\<\>,\.\?\\\]/', $password) === 0)
+    		throw new \Exception("The password must contain at least one special character.");
+    }
     
     /**
      * 
@@ -197,6 +244,8 @@ class User extends Base implements UserInterface, \Serializable
     				$to->$name = $this->$name;
     			}
     		}
+    		$to->isRoleAdmin = $this->getIsRoleAdmin();
+    		$to->password = "";
     	}
     	else
     	{
@@ -341,7 +390,7 @@ class User extends Base implements UserInterface, \Serializable
         return $this->isActive;
     }
         
-    public function getIsRoleAdmin(): ?bool
+    public function getIsRoleAdmin(): bool
     {
         return in_array('ROLE_ADMIN', $this->getRoles());
     }
@@ -358,6 +407,11 @@ class User extends Base implements UserInterface, \Serializable
     public function getUserSettings(): ?UserSettings
     {
         return $this->userSettings;
+    }
+    
+    public function getSignatureFilename(): ?string
+    {
+    	return $this->signatureFilename;
     }
 
     

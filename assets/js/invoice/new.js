@@ -87,9 +87,48 @@ jQuery(document).ready(function() {
     // Get the ul that holds the collection of tags
     $collectionHolder = $('tbody.invoiceItems');
     
-    $collectionHolder.data('index', $collectionHolder.find(':input').length);
-    addInvoiceItemForm($collectionHolder, $addInvoiceItemButton, 1);
-    setItemValue(0,0);
+    $collectionHolder.data('index', $collectionHolder.find('tr').length);   
+
+    if($collectionHolder.find('tr').length == 0)
+    {         
+        addInvoiceItemForm($collectionHolder, $addInvoiceItemButton, 1);
+        setItemValue(0,0);
+    }
+    else
+    {        
+        for(var i=0;i<$collectionHolder.find('tr').length;i++)
+        {        
+            $('#remove-invoice-item-' + i).on('click', function(e) {   
+                var index = e.target.id.split('-')[3];      
+                removeInvoiceItemForm($collectionHolder, index); 
+                setTotalPrice(calculateTotal());       
+            });             
+            $('#invoice_invoiceItemCommands_' + i + '_quantity').on('keydown', function(e){
+                var index = e.target.id.split('_')[2]; 
+                setTimeout(function () {       
+                    setItemValue(index, calculateValue(index));
+                });
+            });
+            $('#invoice_invoiceItemCommands_' + i + '_price').on('keydown', function(e){
+                var index = e.target.id.split('_')[2]; 
+                setTimeout(function () {       
+                    setItemValue(index, calculateValue(index));
+                });
+            });
+            $('#invoice_invoiceItemCommands_' + i + '_discount').on('keydown', function(e){
+                var index = e.target.id.split('_')[2];
+                setTimeout(function () {
+                    setItemValue(index, calculateValue(index));   
+                });            
+            });
+
+            $('#iiValue_' + i).on('change', function(){                 
+                setTotalPrice(calculateTotal());
+            });
+        }
+        $collectionHolder.append($addInvoiceItemButton);
+        setTotalPrice(calculateTotal());
+    }
         
     $('#add-invoice-item').on('click', function() {
         // add a new tag form (see next code block)
@@ -166,11 +205,11 @@ function refreshDefaultDueInDays(){
 }
 
 function calculateValue(index){
-    var qty = $('#invoice_createInvoiceItemCommands_'+index+'_quantity').val();    
+    var qty = $('#invoice_invoiceItemCommands_'+index+'_quantity').val();    
     qty = qty=="" ? 1 : (qty.replace(',','.'))*1;
-    var price = $('#invoice_createInvoiceItemCommands_'+index+'_price').val();
+    var price = $('#invoice_invoiceItemCommands_'+index+'_price').val();
     price = price=="" ? 0 : (price.replace(',','.'))*1;
-    var discount = $('#invoice_createInvoiceItemCommands_'+index+'_discount').val();
+    var discount = $('#invoice_invoiceItemCommands_'+index+'_discount').val();
     discount = discount=="" ? 0 : (discount.replace(',','.'))*1;
     return (qty*price)*(1-(discount/100));
 }
@@ -216,7 +255,7 @@ function addInvoiceItemForm($collectionHolder, $addRemoveInvoiceItemButtons, $nu
         var prototype = $collectionHolder.data('prototype');
 
         // get the new index
-        var index = $collectionHolder.data('index');
+        var index = $collectionHolder.data('index')*1;
 
         var newForm = prototype;
         
@@ -230,36 +269,36 @@ function addInvoiceItemForm($collectionHolder, $addRemoveInvoiceItemButtons, $nu
 
         // Display the form in the page in an li, before the "Add a tag" link li
         var $newFormLi = $('<tr class="invoice-item-tr-' + index + '">'+
-        '<td class="codeInput">' + $('#invoice_createInvoiceItemCommands_' + index + '_code', newForm).parent().html() + '</td>'+
-        '<td class="nameInput" data-item-index="' + index + '">' + $('#invoice_createInvoiceItemCommands_' + index + '_name' ,newForm).parent().html() + '</td>'+
-        '<td class="quantityInput">' + $('#invoice_createInvoiceItemCommands_' + index + '_quantity', newForm).parent().html()+'</td>'+
-        '<td class="unitInput">' + $('#invoice_createInvoiceItemCommands_' + index + '_unit', newForm).parent().html()+'</td>'+
-        '<td class="priceInput">' + $('#invoice_createInvoiceItemCommands_' + index + '_price', newForm).parent().html()+'</td>'+
-        '<td class="discountInput">' + $('#invoice_createInvoiceItemCommands_' + index + '_discount', newForm).parent().html()+'</td>'+
+        '<td class="codeInput">' + $('#invoice_invoiceItemCommands_' + index + '_code', newForm).parent().html() + '</td>'+
+        '<td class="nameInput" data-item-index="' + index + '">' + $('#invoice_invoiceItemCommands_' + index + '_name' ,newForm).parent().html() + '</td>'+
+        '<td class="quantityInput">' + $('#invoice_invoiceItemCommands_' + index + '_quantity', newForm).parent().html()+'</td>'+
+        '<td class="unitInput">' + $('#invoice_invoiceItemCommands_' + index + '_unit', newForm).parent().html()+'</td>'+
+        '<td class="priceInput">' + $('#invoice_invoiceItemCommands_' + index + '_price', newForm).parent().html()+'</td>'+
+        '<td class="discountInput">' + $('#invoice_invoiceItemCommands_' + index + '_discount', newForm).parent().html()+'</td>'+
         '<td class="valueInput"><input id="iiValue_'+index+'" class="valueInput" type="text" placeholder="0,00" readonly=""></td>'+
-        '<td class="removeBtn"><a id="remove-invoice-item'+ index +'" class="btn btn-sm btn-block btn-danger removeBtn"><i class="fa fa-minus" aria-hidden="true"></i></a></td></tr>');        
+        '<td class="removeBtn"><a id="remove-invoice-item-'+ index +'" class="btn btn-sm btn-block btn-danger removeBtn"><i class="fa fa-minus" aria-hidden="true"></i></a></td></tr>');        
         
         $collectionHolder.append($newFormLi);
         $collectionHolder.append($addRemoveInvoiceItemButtons);
 
-        $('#remove-invoice-item'+index).on('click', function() {        
+        $('#remove-invoice-item-'+index).on('click', function() {        
             removeInvoiceItemForm($collectionHolder, index); 
             setTotalPrice(calculateTotal());       
         }); 
 
-        $('#invoice_createInvoiceItemCommands_' + index + '_quantity').on('keydown', function(e){
+        $('#invoice_invoiceItemCommands_' + index + '_quantity').on('keydown', function(e){
             var index = e.target.id.split('_')[2]; 
             setTimeout(function () {       
                 setItemValue(index, calculateValue(index));
             });
         });
-        $('#invoice_createInvoiceItemCommands_' + index + '_price').on('keydown', function(e){
+        $('#invoice_invoiceItemCommands_' + index + '_price').on('keydown', function(e){
             var index = e.target.id.split('_')[2]; 
             setTimeout(function () {       
                 setItemValue(index, calculateValue(index));
             });
         });
-        $('#invoice_createInvoiceItemCommands_' + index + '_discount').on('keydown', function(e){
+        $('#invoice_invoiceItemCommands_' + index + '_discount').on('keydown', function(e){
             var index = e.target.id.split('_')[2];
             setTimeout(function () {
                 setItemValue(index, calculateValue(index));   
@@ -270,10 +309,10 @@ function addInvoiceItemForm($collectionHolder, $addRemoveInvoiceItemButtons, $nu
             setTotalPrice(calculateTotal());
         });
 
-        $('#invoice_createInvoiceItemCommands_' + index + '_code').val(index+1);
-        $('#invoice_createInvoiceItemCommands_' + index + '_quantity').val(1);
-        $('#invoice_createInvoiceItemCommands_' + index + '_unit').val('x');
-        $('#invoice_createInvoiceItemCommands_' + index + '_discount').val(0);
+        $('#invoice_invoiceItemCommands_' + index + '_code').val(index+1);
+        $('#invoice_invoiceItemCommands_' + index + '_quantity').val(1);
+        $('#invoice_invoiceItemCommands_' + index + '_unit').val('x');
+        $('#invoice_invoiceItemCommands_' + index + '_discount').val(0);
 
         setItemValue(index,0);
     }    
@@ -285,7 +324,7 @@ function removeInvoiceItemForm($collectionHolder, index) {
         alert("Can't delete last item!");
         return;
     }
-    //$collectionHolder.data('index', index);
+    $collectionHolder.data('index', index);
     $('.invoice-item-tr-' + index, $collectionHolder).remove()
     
 }
