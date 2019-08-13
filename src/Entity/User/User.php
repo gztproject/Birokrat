@@ -90,6 +90,11 @@ class User extends Base implements UserInterface, \Serializable
     private $userSettings;
     
     /**
+     * @ORM\Column(type="string")
+     */
+    private $signatureFilename;
+    
+    /**
      * 
      * @param CreateUserCommand $c
      * @param User $user
@@ -108,6 +113,7 @@ class User extends Base implements UserInterface, \Serializable
         $this->lastName = $c->lastName;
         $this->mobile = $c->mobile;
         $this->phone = $c->phone;
+        $this->signatureFilename = $c->signatureFilename;
         
         $this->checkPasswordRequirements($c->password);
         $this->password = $passwordEncoder->encodePassword($this, $c->password);
@@ -126,6 +132,7 @@ class User extends Base implements UserInterface, \Serializable
     	if($c->lastName != null && $c->lastName != $this->lastName) $this->lastName = $c->lastName;
     	if($c->mobile != null && $c->mobile != $this->mobile) $this->mobile = $c->mobile;
     	if($c->phone != null && $c->phone != $this->phone) $this->phone = $c->phone;
+    	if($c->signatureFilename != null && $c->signatureFilename != $this->signatureFilename) $this->signatureFilename = $c->signatureFilename;
     	
     	if(strlen($c->password) != 0) 
     	{
@@ -400,6 +407,11 @@ class User extends Base implements UserInterface, \Serializable
     public function getUserSettings(): ?UserSettings
     {
         return $this->userSettings;
+    }
+    
+    public function getSignatureFilename(): ?string
+    {
+    	return $this->signatureFilename;
     }
 
     

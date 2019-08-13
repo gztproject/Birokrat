@@ -8,13 +8,43 @@
     <p class="user-email">
         <span class="email"><i class="fa fa-email"></i> {{ user.email }}</span>
     </p>
-
-    <div class="card text-white bg-primary mb-3"> 
-    <div class="card-header">
-            <strong>{{ 'label.userData'|trans }}</strong>
-        </div>    
-        <div class="card-body">                    
-            <strong>{{ 'label.username'|trans }}</strong>: {{ user.username }}            
+    <div class="row">
+        <div class="col-8">
+            <div class="card text-white bg-primary mb-3"> 
+            <div class="card-header">
+                    <strong>{{ 'label.userData'|trans }}</strong>
+                </div>    
+                <div class="card-body">                    
+                    <strong>{{ 'label.username'|trans }}</strong>: {{ user.username }} 
+                        
+                </div>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="card text-white bg-primary mb-3"> 
+            <div class="card-header">
+                    <strong>{{ 'label.images'|trans }}</strong>
+                </div>    
+                <div class="card-body"> 
+                    <div class="row">
+                        <div class="col-6">
+                            {{ "label.profilePicture"|trans }}
+                        </div>
+                        <div class="col-6">
+                            {{ "label.signaturePicture"|trans }}
+                        </div>
+                    </div>                 
+                    <div class="row">  
+                        <div class="col-6">
+                            
+                        </div>
+                        <div class="col-6">
+                            <img src="{{ asset('uploads/signatures/' ~ user.signatureFilename) }}" alt="User signature" width="100%">
+                        </div>
+                    </div>  
+                </div>
+            </div>
+            
         </div>
     </div>
     

@@ -13,6 +13,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use App\Entity\Organization\Organization;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use App\Entity\User\CreateUserCommand;
 use App\Entity\User\UpdateUserCommand;
 use Symfony\Component\Form\FormErrorIterator;
@@ -49,6 +50,27 @@ class UserController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             
+        	//Handle the file stuff
+        	$signatureFile = $form['signature']->getData();        	
+        	if($signatureFile)
+        	{
+        		$originalFilename = pathinfo($signatureFile->getClientOriginalName(), PATHINFO_FILENAME);
+        		// this is needed to safely include the file name as part of the URL
+        		$safeFilename = transliterator_transliterate('Any-Latin; Latin-ASCII; [^A-Za-z0-9_] remove; Lower()', $originalFilename);
+        		$newFilename = $safeFilename.'-'.uniqid().'.'.$signatureFile->guessExtension();
+        		
+        		// Move the file to the directory where brochures are stored
+        		try {
+        			$signatureFile->move(
+        					$this->getParameter('signatures_directory'),
+        					$newFilename
+        					);
+        		} catch (FileException $e) {
+        			// ... handle exception if something happens during file upload
+        		}        		
+        		$createUserCommand->signatureFilename = $newFilename;
+        	}
+        	
         	try
         	{
         		$user = $this->getUser()->createUser($createUserCommand, $passwordEncoder);
@@ -61,6 +83,8 @@ class UserController extends AbstractController
         				array('form' => $form->createView())
         				);
         	}
+        	
+        	
         	
             // 4) save the User!
             $entityManager = $this->getDoctrine()->getManager();
@@ -111,6 +135,28 @@ class UserController extends AbstractController
         $form->handleRequest($request);
         
         if ($form->isSubmitted() && $form->isValid()) {
+        	
+        	//Handle the file stuff
+        	$signatureFile = $form['signature']->getData();
+        	if($signatureFile)
+        	{
+        		$originalFilename = pathinfo($signatureFile->getClientOriginalName(), PATHINFO_FILENAME);
+        		// this is needed to safely include the file name as part of the URL
+        		$safeFilename = transliterator_transliterate('Any-Latin; Latin-ASCII; [^A-Za-z0-9_] remove; Lower()', $originalFilename);
+        		$newFilename = $safeFilename.'-'.uniqid().'.'.$signatureFile->guessExtension();
+        		
+        		// Move the file to the directory where brochures are stored
+        		try {
+        			$signatureFile->move(
+        					$this->getParameter('signatures_directory'),
+        					$newFilename
+        					);
+        		} catch (FileException $e) {
+        			// ... handle exception if something happens during file upload
+        		}
+        		$c->signatureFilename = $newFilename;
+        	}
+        	
         	try 
         	{
         		$user->update($c, $this->getUser(), $passwordEncoder);
