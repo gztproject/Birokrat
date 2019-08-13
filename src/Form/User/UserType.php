@@ -6,6 +6,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
@@ -13,6 +14,7 @@ use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\CallbackTransformer;
 use App\Entity\User\CreateUserCommand;
 use Doctrine\DBAL\Types\StringType;
+use Symfony\Component\Validator\Constraints\File;
 
 class UserType extends AbstractType
 {
@@ -47,7 +49,22 @@ class UserType extends AbstractType
             		'label' => 'label.oldPassword',
             		'required' => false,            		
             		'empty_data' => '',
-            ])            
+            ])  
+            ->add('signature', FileType::class, [
+            		'label' => 'Signature (.png/.jpg image)',
+            		'mapped' => false,
+            		'required' => false,
+            		'constraints' => [
+            				new File([
+            						'maxSize' => '1024k',
+            						'mimeTypes' => [
+            								'image/png',
+            								'image/jpeg'
+            						],
+            						'mimeTypesMessage' => 'Please upload a valid png or jpg image',
+            				])
+            		],
+            ])
             ->add('isRoleAdmin', CheckboxType::class,[
                 'label' => 'label.isRoleAdmin',
             	'required' => false,
@@ -61,7 +78,7 @@ class UserType extends AbstractType
                         if($checkboxToBool===null) return false;
                         return $checkboxToBool?:false;
                     }
-                ))
+                ))			
         ;
     }
 

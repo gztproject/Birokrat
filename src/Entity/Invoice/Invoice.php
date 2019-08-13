@@ -461,7 +461,14 @@ class Invoice extends Base implements iTransactionDocument
     
     public function getNumber(): string
     {
-    	return $this->number;
+    	if($this->state === 20 || $this->state === 30)
+    	{
+    		return $this->number;
+    	}
+    	else
+    	{
+    		return "";
+    	}
     }
     
     public function getDiscount():float
@@ -481,7 +488,14 @@ class Invoice extends Base implements iTransactionDocument
     
     public function getReferenceNumber(): string
     {
-    	return $this->referenceNumber;
+    	if($this->state === 20 || $this->state === 30)
+    	{
+    		return $this->referenceNumber;
+    	}
+    	else 
+    	{
+    		return "-";
+    	}
     }
 
     /**

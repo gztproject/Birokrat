@@ -208,6 +208,13 @@ class InvoicePdfFactory
    				$pdf->Ln(7);
    				$pdf->Cell( 120, 0, $this->__translator->trans('label.preparedBy').':', 0, 1, '', 0, '', 0, false, 'T', 'B' );
    				$pdf->Cell( 120, 0, $this->__invoice->getCreatedBy()->getFullname(), 0, 0, '', 0, '', 0, false, 'T', 'B' );
+   				if($this->__invoice->getState() === 20 || $this->__invoice->getState() === 30)
+   				{
+   					if(substr($this->__invoice->getCreatedBy()->getSignatureFilename(), -4) === "jpeg")
+   						$pdf->Image('uploads/signatures/'.$this->__invoice->getCreatedBy()->getSignatureFilename(), 40, 250, 0, 22, 'JPG', 'signature', '', true, 150, '', false, false, 0, false, false, false);
+   					elseif(substr($this->__invoice->getCreatedBy()->getSignatureFilename(), -3) === "png")
+   						$pdf->Image('uploads/signatures/'.$this->__invoice->getCreatedBy()->getSignatureFilename(), 40, 250, 0, 22, 'PNG', 'signature', '', true, 150, '', false, false, 0, false, false, false);
+   				}
    				// ---------------------------------------------------------
    				
    				//Close and output PDF document
