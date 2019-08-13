@@ -25,3 +25,5 @@ yarn-error.log
 ###< symfony/webpack-encore-bundle ###
 
 CHEATSHEET\.txt
+
+public/uploads/signatures/

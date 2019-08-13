@@ -151,8 +151,16 @@ class UserController extends AbstractController
         					$this->getParameter('signatures_directory'),
         					$newFilename
         					);
-        		} catch (FileException $e) {
-        			// ... handle exception if something happens during file upload
+        			
+        			//delete old file
+        			unlink($this->getParameter('signatures_directory').'/'.$user->getSignatureFilename());
+        		} catch (\Exception $e) {
+        			$this->addFlash('warning', "File Exception: ".$e->getMessage());
+        			return $this->render('admin/user/edit.html.twig', [
+        					'user' => $user,
+        					'form' => $form->createView(),
+        					'showChangePassword' => true,
+        			]);
         		}
         		$c->signatureFilename = $newFilename;
         	}
