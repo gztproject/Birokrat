@@ -167,7 +167,7 @@ class InvoiceCommandController extends AbstractController
     	$entityManager->persist($transaction);
     	$entityManager->flush();
     	
-    	return $this->render('dashboard/invoice/pdf.html.twig', [
+    	return $this->render('dashboard/invoice/show.html.twig', [
     			'invoice' => $invoice
     	]);
     }
