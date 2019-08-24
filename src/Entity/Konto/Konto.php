@@ -3,7 +3,7 @@
 namespace App\Entity\Konto;
 
 use Doctrine\ORM\Mapping as ORM;
-use App\Entity\Base\Base;
+use App\Entity\Base\AggregateBase;
 use App\Entity\User\User;
 
 /**

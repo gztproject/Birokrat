@@ -3,7 +3,7 @@
 namespace App\Entity\TravelExpense;
 
 use Doctrine\ORM\Mapping as ORM;
-use App\Entity\Base\Base;
+use App\Entity\Base\AggregateBase;
 use App\Entity\Geography\Address;
 use App\Entity\Geography\Post;
 use App\Entity\Organization\Organization;
@@ -12,7 +12,7 @@ use App\Entity\User\User;
 /**
  * @ORM\Entity(repositoryClass="App\Repository\TravelStopRepository")
  */
-class TravelStop extends Base
+class TravelStop extends AggregateBase
 {
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Geography\Post")

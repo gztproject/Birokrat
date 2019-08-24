@@ -3,9 +3,9 @@
 namespace App\Entity\Konto;
 
 use Doctrine\ORM\Mapping as ORM;
-use App\Entity\Base\Base;
+use App\Entity\Base\AggregateBase;
 
-abstract class KontoBase extends Base
+abstract class KontoBase extends AggregateBase
 {
     /**
      * @ORM\Column(type="integer")

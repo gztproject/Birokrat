@@ -12,6 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
 class UserSettings extends Base
 {
     /**
+     * @ORM\Id()
      * @ORM\OneToOne(targetEntity="App\Entity\User\User", inversedBy="userSettings", cascade={"persist", "remove"})
      */
     private $user;

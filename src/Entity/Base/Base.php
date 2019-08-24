@@ -3,20 +3,11 @@
 namespace App\Entity\Base;
 
 use Doctrine\ORM\Mapping as ORM;
-use Ramsey\Uuid\Uuid;
 use App\Entity\User\User;
 use DateTime;
 
 abstract class Base
-{
-    /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue(strategy="UUID")
-     * @ORM\Column(type="uuid")
-     * @ORM\JoinColumn(nullable=false)
-     */
-    protected $id;
-    
+{       
     /**
      * @ORM\Column(type="datetime")
      * @ORM\JoinColumn(nullable=false)
@@ -47,12 +38,10 @@ abstract class Base
      * @return Uuid Returns the Uuid of created entity.
      */
     public function __construct(User $user)
-    {
-    	$this->id = Uuid::uuid1();
+    {    	
     	$this->createdOn = new Datetime('now');
     	//ToDo: Do some checks?
     	$this->createdBy = $user;
-    	return $this->id;
     }
     
     /**
@@ -67,15 +56,6 @@ abstract class Base
     	return $this->id;
     }
 
-    
-    /**
-     * Returns the entity UUID
-     * @return Uuid
-     */
-    public function getId(): Uuid
-    {
-        return $this->id;
-    }    
     
     /**
      * Returns the datetime of entity's creation.

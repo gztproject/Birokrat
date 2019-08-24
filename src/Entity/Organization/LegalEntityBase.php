@@ -5,11 +5,11 @@ namespace App\Entity\Organization;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use App\Entity\Base\Base;
+use App\Entity\Base\AggregateBase;
 use App\Entity\User\User;
 use App\Entity\Geography\Address;
 
-class LegalEntityBase extends Base
+class LegalEntityBase extends AggregateBase
 {
     /**
      * @ORM\Column(type="string", length=50)

@@ -5,7 +5,7 @@ namespace App\Entity\TravelExpense;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use App\Entity\Base\Base;
+use App\Entity\Base\AggregateBase;
 use App\Entity\Konto\Konto;
 use App\Entity\User\User;
 use App\Entity\Transaction\Transaction;
@@ -14,7 +14,7 @@ use App\Entity\Transaction\iTransactionDocument;
 /**
  * @ORM\Entity(repositoryClass="App\Repository\TravelExpenseRepository")
  */
-class TravelExpense extends Base implements iTransactionDocument
+class TravelExpense extends AggregateBase implements iTransactionDocument
 {
     /**
      * @ORM\Column(type="datetime")
