@@ -18,7 +18,7 @@ class TravelExpenseType extends AbstractType
             		'widget' => 'single_text',
             		'format' => 'dd. MM. yyyy',
             ]) 
-            ->add('createTravelStopCommands', CollectionType::class, [
+            ->add('travelStopCommands', CollectionType::class, [
             		'entry_type' => TravelStopType::class,
             		//'entry_options' => ['label' => false],
             		'allow_add' => true,

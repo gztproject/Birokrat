@@ -155,6 +155,25 @@ class TravelExpense extends AggregateBase implements iTransactionDocument
     }
     
     /**
+     * Makes a copy of itself
+     * @param User $user The cloning user
+     * @return TravelExpense Cloned invoice (sub-clones all InvoiceItems too.)
+     */
+    public function clone(User $user) : TravelExpense
+    {
+    	$c = new CreateTravelExpenseCommand();
+    	$this->mapTo($c);
+    	$te = $user->createTravelExpense($c);
+    	foreach($this->travelStops as $ts)
+    	{
+    		$cts = new CreateTravelStopCommand();
+    		$ts->mapTo($cts);
+    		$te->createTravelStop($cts);
+    	}
+    	return $te;
+    }
+    
+    /**
      * Sets TE state
      *
      * @param integer $state 00-new, 10-unbooked, 20-booked, 100-cancelled.
@@ -208,6 +227,33 @@ class TravelExpense extends AggregateBase implements iTransactionDocument
     			$this->totalDistance += $ts->getDistanceFromPrevious();
     	}
     	return $this->totalDistance;
+    }
+    
+    /**
+     *
+     * @param object $to
+     * @return object
+     */
+    public function mapTo($to)
+    {
+    	if ($to instanceof UpdateTravelExpenseCommand || $to instanceof CreateTravelExpenseCommand)
+    	{
+    		$reflect = new \ReflectionClass($this);
+    		$props  = $reflect->getProperties();
+    		foreach($props as $prop)
+    		{
+    			$name = $prop->getName();
+    			if(property_exists($to, $name))
+    			{
+    				$to->$name = $this->$name;
+    			}
+    		}
+    	}
+    	else
+    	{
+    		throw(new \Exception('cant map ' . get_class($this) . ' to ' . get_class($to)));
+    		return $to;
+    	}
     }
     
 

@@ -73,6 +73,8 @@ class TravelStop extends AggregateBase
     	$this->stopOrder = $c->stopOrder;
     }
     
+    
+    
     /**
      * Used to update stop order in case of removing/adding stops to TE.
      * @param int $order
@@ -118,6 +120,33 @@ class TravelStop extends AggregateBase
     	
     	if($c->stopOrder != null && $c->stopOrder != $this->stopOrder)
     		$this->stopOrder = $c->stopOrder;
+    }
+    
+    /**
+     *
+     * @param object $to
+     * @return object
+     */
+    public function mapTo($to)
+    {
+    	if ($to instanceof UpdateTravelStopCommand || $to instanceof CreateTravelStopCommand)
+    	{
+    		$reflect = new \ReflectionClass($this);
+    		$props  = $reflect->getProperties();
+    		foreach($props as $prop)
+    		{
+    			$name = $prop->getName();
+    			if(property_exists($to, $name))
+    			{
+    				$to->$name = $this->$name;
+    			}
+    		}
+    	}
+    	else
+    	{
+    		throw(new \Exception('cant map ' . get_class($this) . ' to ' . get_class($to)));
+    		return $to;
+    	}
     }
     
 

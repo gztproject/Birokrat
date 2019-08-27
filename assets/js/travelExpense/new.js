@@ -43,7 +43,8 @@ $( document ).ready(function() {
 
 
 var $collectionHolder;
-var $addTravelStopButton = $('<tr class="table-primary"><td colspan="4"><a id="add-travel-stop" class="btn btn-sm btn-block btn-success"><i class="fa fa-plus" aria-hidden="true"></i></a></td></tr>');
+var $addTravelStopButton = $('<tr class="table-primary"><td colspan="5"><a id="add-travel-stop" class="btn btn-sm btn-block btn-success">' +
+        '<i class="fa fa-plus" aria-hidden="true"></i></a></td></tr>');
 
 
 jQuery(document).ready(function() {
@@ -51,11 +52,26 @@ jQuery(document).ready(function() {
     $collectionHolder = $('tbody.travelStops');
     
     $collectionHolder.data('index', $collectionHolder.find(':input').length);
-    addTravelStopForm($collectionHolder, $addTravelStopButton, 2);
+    
+    if($collectionHolder.find('tr').length == 0)
+    { 
+        addTravelStopForm($collectionHolder, $addTravelStopButton, 2);
+    }
+    else
+    { 
+        for(var i=0;i<$collectionHolder.find('tr').length;i++)
+        { 
+            $('#remove-travel-stop-' + i).on('click', function(e) {   
+                var index = e.target.id.split('-')[3];      
+                removeTravelStopForm($collectionHolder, index);               
+            }); 
+        }
+        $collectionHolder.append($addTravelStopButton);
+    }
    
-    var value = $('#travel_expense_createTravelStopCommands_0_post option:contains("Škofja Loka")', $collectionHolder)[0].value;
-    $('#travel_expense_createTravelStopCommands_0_post', $collectionHolder)[0].value = value;
-    $('#travel_expense_createTravelStopCommands_0_distanceFromPrevious', $collectionHolder).val(0);
+    var value = $('#travel_expense_travelStopCommands_0_post option:contains("Škofja Loka")', $collectionHolder)[0].value;
+    $('#travel_expense_travelStopCommands_0_post', $collectionHolder)[0].value = value;
+    $('#travel_expense_travelStopCommands_0_distanceFromPrevious', $collectionHolder).val(0);
     
 
     $('#add-travel-stop').on('click', function(e) {
@@ -83,17 +99,21 @@ function addTravelStopForm($collectionHolder, $addRemoveTravelStopButtons, $numb
         
 
         // Display the form in the page in an li, before the "Add a tag" link li
-        var $newFormLi = $('<tr class="travel-stop-tr-' + index + '"><td>' + $('#travel_expense_createTravelStopCommands_' + index + '_stopOrder', newForm).parent().html() + 
-            '</td><td class="post-Selector" data-stop-index="' + index + '">' + $('#travel_expense_createTravelStopCommands_' + index + '_post' ,newForm).parent().html() + '</td><td>' + 
-            $('#travel_expense_createTravelStopCommands_' + index + '_distanceFromPrevious', newForm).parent().html()+'</td><td><a id="remove-travel-stop'+ index +'" class="btn btn-sm btn-block btn-danger"><i class="fa fa-minus" aria-hidden="true"></i></a></td></tr>');        
+        var $newFormLi = $('<tr class="form group travel-stop-tr-' + index + '">'+
+                                '<td>' + $('#travel_expense_travelStopCommands_' + index + '_stopOrder', newForm).parent().html() + '</td>' + 
+                                '<td class="post-Selector" data-stop-index="' + index + '">' + 
+                                    $('#travel_expense_travelStopCommands_' + index + '_post' ,newForm).parent().html() + '</td>'+
+                                '<td colspan="2">' + $('#travel_expense_createTravelStopCommands_' + index + '_distanceFromPrevious', newForm).parent().html()+'</td>'+
+                                '<td> <a id="remove-travel-stop-'+ index +'" class="btn btn-sm btn-block btn-danger"><i class="fa fa-minus" aria-hidden="true"></i></a></td>'+
+                            '</tr>');        
 
-        $('#travel_expense_createTravelStopCommands_' + index + '_stopOrder', $newFormLi).val(index+1); 
-        $('#travel_expense_createTravelStopCommands_' + index + '_post', $newFormLi).val('');
+        $('#travel_expense_travelStopCommands_' + index + '_stopOrder', $newFormLi).val(index+1); 
+        $('#travel_expense_travelStopCommands_' + index + '_post', $newFormLi).val('');
         
         $collectionHolder.append($newFormLi);
         $collectionHolder.append($addRemoveTravelStopButtons);
 
-        $('#remove-travel-stop'+index).on('click', function(e) {        
+        $('#remove-travel-stop-'+index).on('click', function(e) {        
             removeTravelStopForm($collectionHolder, index);        
         }); 
     }
@@ -127,21 +147,21 @@ function autoFillDistance($collectionHolder, index){
         origin["country"]='Slovenija';
         destination["country"]='Slovenija';
         
-        origin["city"] = $('#travel_expense_createTravelStopCommands_' + (parseInt(index) - 1) + '_post option:selected', $collectionHolder)[0].text;
-        destination["city"] = $('#travel_expense_createTravelStopCommands_' + index + '_post option:selected', $collectionHolder)[0].text;
+        origin["city"] = $('#travel_expense_travelStopCommands_' + (parseInt(index) - 1) + '_post option:selected', $collectionHolder)[0].text;
+        destination["city"] = $('#travel_expense_travelStopCommands_' + index + '_post option:selected', $collectionHolder)[0].text;
         
         origin["address"]='';
         destination["address"]='';
 
         getDistanceOSM(origin, destination, function(distance){
-            $('#travel_expense_createTravelStopCommands_' + index + '_distanceFromPrevious', $collectionHolder).val((index == 0) ? 0 : distance/1000);
+            $('#travel_expense_travelStopCommands_' + index + '_distanceFromPrevious', $collectionHolder).val((index == 0) ? 0 : distance/1000);
             if(rowCount > (parseInt(index) + 1))
             {        
                 origin["country"]='Slovenija';
                 destination["country"]='Slovenija';
         
-                origin["city"] = $('#travel_expense_createTravelStopCommands_' + index + '_post option:selected', $collectionHolder)[0].text;
-                destination["city"] = $('#travel_expense_createTravelStopCommands_' + (parseInt(index) + 1) + '_post option:selected', $collectionHolder)[0].text;
+                origin["city"] = $('#travel_expense_travelStopCommands_' + index + '_post option:selected', $collectionHolder)[0].text;
+                destination["city"] = $('#travel_expense_travelStopCommands_' + (parseInt(index) + 1) + '_post option:selected', $collectionHolder)[0].text;
         
                 origin["address"]='';
                 destination["address"]='';
@@ -157,7 +177,8 @@ function autoFillDistance($collectionHolder, index){
 function getDistanceOSM(origin, destination, callback){
     geocodeOsm(origin, destination, function(origin, destination){
         //alert(origin.lat +'\n'+ origin.lon +'\n'+ destination.lat +'\n'+ destination.lon)
-        var url = 'http://engine.osrm.gzt.si/table/v1/driving/' + origin.lon + "," + origin.lat + ";" + destination.lon + "," + destination.lat + '?sources=0&destinations=1&annotations=distance';
+        var url = 'http://engine.osrm.gzt.si/table/v1/driving/' + origin.lon + "," + origin.lat + ";" + destination.lon + "," + destination.lat + 
+            '?sources=0&destinations=1&annotations=distance';
         $.ajax(
         {
             url: url,

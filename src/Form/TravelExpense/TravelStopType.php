@@ -16,16 +16,19 @@ class TravelStopType extends AbstractType
     	$builder  
         	->add('stopOrder', TextType::class, array(
       			'label' => false,
+        		'attr' => ['class' => 'form-control'],
         	))
             ->add('post', EntityType::class, array(
            		'class' => Post::class,
            		'choice_label' => 'name',
            		'expanded'=>false,
            		'multiple'=>false,
-           		'label' => false,            	
+           		'label' => false,    
+            	'attr' => ['class' => 'form-control'],
             ))
             ->add('distanceFromPrevious', TextType::class, array(
             		'label' => false,
+            		'attr' => ['class' => 'form-control'],
             ))
         ;
     }
