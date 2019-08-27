@@ -90,6 +90,28 @@ class TravelExpense extends AggregateBase implements iTransactionDocument
     	if($c->rate != null && $c->rate != $this->rate)
     		$this->rate = $c->rate;
     	
+    	$stopsToKeep = new ArrayCollection();
+    	foreach($c->travelStopCommands as $utsc)
+    	{
+    		$ts = array_filter($this->travelStops->toArray(), function ($v) use ($utsc) {return $v->getId() == $utsc->id;})[0]??null;
+    		if($ts == null)
+    		{
+    			$stopsToKeep->add($this->createTravelStop($utsc));
+    		}
+    		else
+    		{
+    			$stopsToKeep->add($ts->update($utsc, $this));
+    		}
+    	}
+    	
+    	foreach($this->travelStops as $ts)
+    	{
+    		if(!$stopsToKeep->contains($ts))
+    		{
+    			$this->removeTravelStop($ts);
+    		}
+    	}
+    	
     	return $this;
     }
     
@@ -117,8 +139,9 @@ class TravelExpense extends AggregateBase implements iTransactionDocument
      * @param User $user Updating user.
      * @throws \Exception If the TravelStop is not in this TravelExpense or the updating user is not set.
      * @return TravelStop Updated TravelStop.
+     * @deprecated
      */
-    public function updateTravelStop(UpdateTravelStopCommand $c, TravelStop $ts, User $user): TravelStop
+    private function updateTravelStop(UpdateTravelStopCommand $c, TravelStop $ts, User $user): TravelStop
     {
     	if($user == null)
     		throw new \Exception("Updating user must be set.");
@@ -128,10 +151,8 @@ class TravelExpense extends AggregateBase implements iTransactionDocument
     	return $ts;
     }
         
-    public function removeTravelStop(TravelStop $ts, User $user): TravelExpense
+    private function removeTravelStop(TravelStop $ts): TravelExpense
     {
-    	if($user == null)
-    		throw new \Exception("Updating user must be set.");  
     	if($this->state > 10)
     		throw new \Exception("Can't update booked or cancelled TravelExpenses.");
     	if(!$this->travelStops->contains($ts))

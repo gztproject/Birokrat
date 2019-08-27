@@ -51,7 +51,7 @@ jQuery(document).ready(function() {
     // Get the ul that holds the collection of tags
     $collectionHolder = $('tbody.travelStops');
     
-    $collectionHolder.data('index', $collectionHolder.find(':input').length);
+    $collectionHolder.data('index', $collectionHolder.find('tr').length);
     
     if($collectionHolder.find('tr').length == 0)
     { 
@@ -86,7 +86,7 @@ function addTravelStopForm($collectionHolder, $addRemoveTravelStopButtons, $numb
         var prototype = $collectionHolder.data('prototype');
 
         // get the new index
-        var index = $collectionHolder.data('index');
+        var index = $collectionHolder.data('index')*1;
 
         var newForm = prototype;
         
@@ -101,9 +101,9 @@ function addTravelStopForm($collectionHolder, $addRemoveTravelStopButtons, $numb
         // Display the form in the page in an li, before the "Add a tag" link li
         var $newFormLi = $('<tr class="form group travel-stop-tr-' + index + '">'+
                                 '<td>' + $('#travel_expense_travelStopCommands_' + index + '_stopOrder', newForm).parent().html() + '</td>' + 
-                                '<td class="post-Selector" data-stop-index="' + index + '">' + 
+                                '<td class="post-Selector" data-index="' + index + '">' + 
                                     $('#travel_expense_travelStopCommands_' + index + '_post' ,newForm).parent().html() + '</td>'+
-                                '<td colspan="2">' + $('#travel_expense_createTravelStopCommands_' + index + '_distanceFromPrevious', newForm).parent().html()+'</td>'+
+                                '<td colspan="2">' + $('#travel_expense_travelStopCommands_' + index + '_distanceFromPrevious', newForm).parent().html()+'</td>'+
                                 '<td> <a id="remove-travel-stop-'+ index +'" class="btn btn-sm btn-block btn-danger"><i class="fa fa-minus" aria-hidden="true"></i></a></td>'+
                             '</tr>');        
 
@@ -119,8 +119,7 @@ function addTravelStopForm($collectionHolder, $addRemoveTravelStopButtons, $numb
     }
     $(".post-Selector").prop("onchange", null).off("change");
 
-    $('.post-Selector').on('change', function(e){
-        var index = e.currentTarget.dataset.stopIndex;        
+    $('.post-Selector').on('change', function(e){        
         autoFillDistance($collectionHolder, index);
     });
 }
@@ -147,8 +146,10 @@ function autoFillDistance($collectionHolder, index){
         origin["country"]='Slovenija';
         destination["country"]='Slovenija';
         
-        origin["city"] = $('#travel_expense_travelStopCommands_' + (parseInt(index) - 1) + '_post option:selected', $collectionHolder)[0].text;
-        destination["city"] = $('#travel_expense_travelStopCommands_' + index + '_post option:selected', $collectionHolder)[0].text;
+        origin["city"] = ($('#travel_expense_travelStopCommands_' + (parseInt(index) - 1) + '_post option:selected', $collectionHolder[0]) || 
+                            $('#travel_expense_travelStopCommands_' + (parseInt(index) - 1) + '_post', $collectionHolder).selectedOptions[0]).text();
+        destination["city"] = ($('#travel_expense_travelStopCommands_' + index + '_post option:selected', $collectionHolder[0]) ||
+                                $('#travel_expense_travelStopCommands_' + index + '_post', $collectionHolder).selectedOptions[0]).text();
         
         origin["address"]='';
         destination["address"]='';
@@ -160,8 +161,10 @@ function autoFillDistance($collectionHolder, index){
                 origin["country"]='Slovenija';
                 destination["country"]='Slovenija';
         
-                origin["city"] = $('#travel_expense_travelStopCommands_' + index + '_post option:selected', $collectionHolder)[0].text;
-                destination["city"] = $('#travel_expense_travelStopCommands_' + (parseInt(index) + 1) + '_post option:selected', $collectionHolder)[0].text;
+                origin["city"] = ($('#travel_expense_travelStopCommands_' + index + '_post option:selected', $collectionHolder[0]) || 
+                                    $('#travel_expense_travelStopCommands_' + index + '_post', $collectionHolder).selectedOptionsf[0]).text();
+                destination["city"] = ($('#travel_expense_travelStopCommands_' + (parseInt(index) + 1) + '_post option:selected', $collectionHolder[0]) ||
+                                        $('#travel_expense_travelStopCommands_' + (parseInt(index) + 1) + '_post', $collectionHolder).selectedOptions[0]).text();
         
                 origin["address"]='';
                 destination["address"]='';

@@ -91,7 +91,7 @@ class TravelExpenseCommandController extends AbstractController
     		$em->persist($te);
     		$em->flush();
     		
-    		return $this->redirectToRoute('invoice_show', array('id'=> $te->getId()));
+    		return $this->redirectToRoute('travelExpense_show', array('id'=> $te->getId()));
     	}
     	
     	return $this->render('dashboard/travelExpense/edit.html.twig', [

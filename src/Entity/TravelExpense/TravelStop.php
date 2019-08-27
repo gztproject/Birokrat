@@ -92,9 +92,9 @@ class TravelStop extends AggregateBase
     	$this->travelExpense = null;
     }
     
-    protected function update(UpdateTravelStopCommand $c, User $user)
+    public function update(UpdateTravelStopCommand $c, TravelExpense $te)
     {
-    	parent::updateBase($user);
+    	parent::updateBase($te->getUpdatedBy());
     	
     	if($c->organization != null && $c->organization != $this->organization)
     	{
