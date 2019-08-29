@@ -71,9 +71,7 @@ class TravelStop extends AggregateBase
     	
     	$this->distanceFromPrevious = $c->distanceFromPrevious;
     	$this->stopOrder = $c->stopOrder;
-    }
-    
-    
+    }  
     
     /**
      * Used to update stop order in case of removing/adding stops to TE.
@@ -92,7 +90,7 @@ class TravelStop extends AggregateBase
     	$this->travelExpense = null;
     }
     
-    public function update(UpdateTravelStopCommand $c, TravelExpense $te)
+    public function update(UpdateTravelStopCommand $c, TravelExpense $te): TravelStop
     {
     	parent::updateBase($te->getUpdatedBy());
     	
@@ -120,6 +118,8 @@ class TravelStop extends AggregateBase
     	
     	if($c->stopOrder != null && $c->stopOrder != $this->stopOrder)
     		$this->stopOrder = $c->stopOrder;
+    	
+    	return $this;
     }
     
     /**
@@ -184,4 +184,14 @@ class TravelStop extends AggregateBase
     {
         return $this->distanceFromPrevious;
     }
+    
+    public function __toString(): string
+    {
+    	$ret = "";
+    	if($this->address != null)
+    		$ret .= $this->address.", ";
+    	$ret .= $this->post;    	
+    	$ret .= ", stop order ".$this->stopOrder;	
+    	return $ret;
+    }    
 }

@@ -139,4 +139,9 @@ class Post extends AggregateBase
     {
     	return $this->code . " " . $this->name;
     }
+    
+    public function __toString(): string
+    {
+    	return $this->getNameAndCode()." (".$this->country->getNameInt().")";
+    }
 }

@@ -94,12 +94,15 @@ class TravelExpense extends AggregateBase implements iTransactionDocument
     	foreach($c->travelStopCommands as $utsc)
     	{
     		$ts = array_filter($this->travelStops->toArray(), function ($v) use ($utsc) {return $v->getId() == $utsc->id;})[0]??null;
+    		echo("UTSC: ".$utsc->id.";       ");
     		if($ts == null)
     		{
+    			echo("New TS: ".$utsc->id.";       ");
     			$stopsToKeep->add($this->createTravelStop($utsc));
     		}
     		else
     		{
+    			echo("Update TS: ".$ts.";       ");
     			$stopsToKeep->add($ts->update($utsc, $this));
     		}
     	}
@@ -122,12 +125,14 @@ class TravelExpense extends AggregateBase implements iTransactionDocument
      * @throws \Exception If the TravelExpense is already booked or cancelled.
      * @return TravelStop
      */
-    public function createTravelStop(CreateTravelStopCommand $c): TravelStop
+    private function createTravelStop(CreateTravelStopCommand $c): TravelStop
     {
+    	echo("Creating new TravelStop with post ".$c->post.". ");
     	if($this->state > 10)
     		throw new \Exception("Can't update booked or cancelled TravelExpenses.");
     	$ts = new TravelStop($c, $this);
-    	$this->travelStops[] = $ts;
+    	echo("Created ".$ts);
+    	$this->travelStops->add($ts);
     	$this->calculateTotalDistance();
     	return $ts;
     }
@@ -159,6 +164,8 @@ class TravelExpense extends AggregateBase implements iTransactionDocument
     		throw new \Exception("Can't remove a travelStop that's not in this TravelExpense.");
     	if($this->travelStops->count() < 3) 
     		throw new \Exception("Can't remove last two TravelStops.");
+    	
+    	echo("Removing TravelStop ".$ts.". ");
     		    	
     	$this->travelStops->removeElement($ts);    		
     	if ($ts->getTravelExpense() === $this) {
@@ -169,7 +176,7 @@ class TravelExpense extends AggregateBase implements iTransactionDocument
     	foreach($this->getTravelStops() as $stop)
     	{
     		if($stop->getStopOrder()>=$index)
-    			$stop->setStopOrder($stop->getStopOrder()-1);
+    			$stop->setStopOrder($stop->getStopOrder());
     	}
     	$this->calculateTotalDistance();
     	return $this;
@@ -341,6 +348,17 @@ class TravelExpense extends AggregateBase implements iTransactionDocument
     public function getTravelExpenseBundle(): ?TravelExpenseBundle
     {
         return $this->travelExpenseBundle;
+    }
+    
+    public function __toString(): string
+    {
+    	$ret = $this->getDateString().", ";    	
+    	$ret .= $this->employee.", stops:";
+    	foreach($this->travelStops as $ts)
+    	{
+    		$ret .= $ts.", ";
+    	}
+    	return $ret;
     }
     
 }

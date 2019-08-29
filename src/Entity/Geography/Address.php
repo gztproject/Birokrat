@@ -86,4 +86,9 @@ class Address extends AggregateBase
     {
     	return explode(", ", $this->getFullAddress());    	
     }
+    
+    public function __toString(): string
+    {
+    	return $this->getFullAddress();
+    }
 }

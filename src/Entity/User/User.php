@@ -413,6 +413,11 @@ class User extends AggregateBase implements UserInterface, \Serializable
     {
     	return $this->signatureFilename;
     }
+    
+    public function __toString(): string
+    {
+    	return $this->username.": ".$this->getFullname();
+    }
 
     
     
