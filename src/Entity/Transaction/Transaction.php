@@ -3,7 +3,7 @@
 namespace App\Entity\Transaction;
 
 use Doctrine\ORM\Mapping as ORM;
-use App\Entity\Base\Base;
+use App\Entity\Base\AggregateBase;
 use App\Entity\Konto\Konto;
 use App\Entity\Organization\Organization;
 use App\Entity\Invoice\Invoice;
@@ -29,7 +29,7 @@ use App\Entity\User\User;
 /**
  * @ORM\Entity(repositoryClass="App\Repository\Transaction\TransactionRepository")
  */
-class Transaction extends Base
+class Transaction extends AggregateBase
 {
 	/**
 	 * @ORM\ManyToOne(targetEntity="App\Entity\Organization\Organization")

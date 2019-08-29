@@ -2,7 +2,7 @@
 
 namespace App\Entity\TravelExpense;
 
-use App\Entity\Base\Base;
+use App\Entity\Base\AggregateBase;
 use App\Entity\Konto\Konto;
 use App\Entity\Transaction\Transaction;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -13,7 +13,7 @@ use App\Entity\Transaction\iTransactionDocument;
 /**
  * @ORM\Entity(repositoryClass="App\Repository\TravelExpense\TravelExpenseBundleRepository")
  */
-class TravelExpenseBundle extends Base implements iTransactionDocument
+class TravelExpenseBundle extends AggregateBase implements iTransactionDocument
 {    
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\TravelExpense\TravelExpense", mappedBy="travelExpenseBundle")

@@ -5,13 +5,13 @@ namespace App\Entity\Geography;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use App\Entity\Base\Base;
+use App\Entity\Base\AggregateBase;
 use App\Entity\User\User;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\PostRepository")
  */
-class Post extends Base
+class Post extends AggregateBase
 {
     /**
      * @ORM\Column(type="string", length=10)
@@ -138,5 +138,10 @@ class Post extends Base
     public function getNameAndCode(): string
     {
     	return $this->code . " " . $this->name;
+    }
+    
+    public function __toString(): string
+    {
+    	return $this->getNameAndCode()." (".$this->country->getNameInt().")";
     }
 }

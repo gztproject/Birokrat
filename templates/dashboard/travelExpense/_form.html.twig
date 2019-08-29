@@ -1,55 +1,46 @@
-{#
-    By default, forms enable client-side validation. This means that you can't
-    test the server-side validation errors from the browser. To temporarily
-    disable this validation, add the 'novalidate' attribute:
-
-    {{ form_start(form, {attr: {novalidate: 'novalidate'}}) }}
-#}
-
-{% if show_confirmation|default(true) %}
-    {% set attr = {'data-confirmation': 'true'} %}
-    {{ include('admin/user/_delete_user_confirmation.html.twig') }}
-{% endif %}
-
-{{ form_start(form, {attr: attr|default({})}) }}
-   
-    {{ form_errors(form) }}
-    <div class="form-group">
-        {{ form_label(form.email) }}
-        {{ form_widget(form.email, {'attr': {'class': 'form-control'}}) }}
-    </div>
-    <div class="form-group">
-        {{ form_label(form.username) }}
-        {{ form_widget(form.username, {'attr': {'class': 'form-control'}}) }}
-    </div>
-    <div class="form-group">
-        {{ form_label(form.name) }}
-        {{ form_widget(form.name, {'attr': {'class': 'form-control'}}) }}
-    </div>
-    <div class="form-group">
-        {{ form_label(form.surname) }}
-        {{ form_widget(form.surname, {'attr': {'class': 'form-control'}}) }}
-    </div>
-    <div class="form-group">
-        {{ form_label(form.plainPassword.first) }}
-        {{ form_widget(form.plainPassword.first, {'attr': {'class': 'form-control'}}) }}
-    </div>
-    <div class="form-group">
-        {{ form_label(form.plainPassword.second) }}
-        {{ form_widget(form.plainPassword.second, {'attr': {'class': 'form-control'}}) }}
-    </div>
-    <div class="form-group">
-        {{ form_label(form.isRoleAdmin, "",{'label_attr': {'class': 'form-check-label'}}) }}
-        {{ form_widget(form.isRoleAdmin, {'attr': {'class': 'form-check-input'}}) }}
-    </div>
-
-    <button type="submit" class="{{ button_css|default("btn btn-primary") }}">
-        <i class="fa fa-save" aria-hidden="true"></i> {{ button_label|default('label.create_user'|trans) }}
-    </button>
-
-    {% if include_back_to_home_link|default(false) %}
-        <a href="{{ path('admin_user_index') }}" class="btn btn-primary">
-            <i class="fa fa-list-alt" aria-hidden="true"></i> {{ 'action.back_to_list'|trans }}
-        </a>
-    {% endif %}
-{{ form_end(form) }}
+{{ form_start(form, {'attr': {'class': 'bs-component'}}) }}   
+     
+        <div class="form-group">
+            <div class='input-group date' id='TeDatePicker'>
+                {{ form_label(form.date) }}
+                {{ form_widget(form.date, {'attr': {'class': 'form-control'}}) }}
+                <div class="input-group-append">
+                    <span class="input-group-text"><i class="fa fa-calendar" aria-hidden="true"></i></span>
+                </div>
+            </div>
+        </div>
+        <div class="bs-component">            
+            <table id="travel-stops-table" class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>{{ 'label.stop_number'|trans }}</th>
+                        <th>{{ 'label.post'|trans }}</th>
+                        <th>{{ 'label.distance'|trans }}</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id='tableBody' class="travelStops" data-prototype="{{ form_widget(form.travelStopCommands.vars.prototype)|e('html_attr') }}">
+                
+                {% for travelStop in form.travelStopCommands %}
+                    <tr class="form-group travel-stop-tr-{{ loop.index0 }}">
+                        <td>{{ form_widget(travelStop.stopOrder, {'attr': {'class': 'form-control'}})}}</td>
+                        <td class="post-Selector" data-stop-index="{{ loop.index0 }}">{{ form_widget(travelStop.post, {'attr': {'class': 'form-control'}})}}</td>
+                        <td colspan="2">{{ form_widget(travelStop.distanceFromPrevious, {'attr': {'class': 'form-control'}})}}</td>
+                        <td><a id="remove-travel-stop-{{ loop.index0 }}'" class="btn btn-sm btn-block btn-danger"><i class="fa fa-minus" aria-hidden="true"></i></a></td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>   
+        </div>
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary">
+                <i class="fa fa-save" aria-hidden="true"></i> {{ 'label.create_travelExpense'|trans }}
+            </button>
+            {{ form_widget(form.saveAndCreateNew, {label: 'label.save_and_create_new', attr: {class: 'btn btn-primary'}}) }}
+            <a href="{{ path('travelExpense_index') }}" class="btn btn-link">
+                <i class="fa fa-list-alt" aria-hidden="true"></i> {{ 'action.back_to_list'|trans }}
+            </a>
+       </div>
+    {{ form_row(form._token) }}
+    {{ form_end(form, {'render_rest': false}) }}

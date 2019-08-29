@@ -3,20 +3,11 @@
 namespace App\Entity\Base;
 
 use Doctrine\ORM\Mapping as ORM;
-use Ramsey\Uuid\Uuid;
 use App\Entity\User\User;
 use DateTime;
 
 abstract class Base
-{
-    /**
-     * @ORM\Id()
-     * @ORM\GeneratedValue(strategy="UUID")
-     * @ORM\Column(type="uuid")
-     * @ORM\JoinColumn(nullable=false)
-     */
-    protected $id;
-    
+{       
     /**
      * @ORM\Column(type="datetime")
      * @ORM\JoinColumn(nullable=false)
@@ -46,35 +37,22 @@ abstract class Base
      * @return Uuid Returns the Uuid of created entity.
      */
     public function __construct(User $user)
-    {
-    	$this->id = Uuid::uuid1();
+    {    	
     	$this->createdOn = new Datetime('now');
     	//ToDo: Do some checks?
     	$this->createdBy = $user;
-    	return $this->id;
     }
     
     /**
      * Sets the updating user and datetime for the entity being updated.
      * @param User $user User that is updating the entity. (@see entity's update method)
-     * @return Uuid Returns the Uuid of updated entity. - we have to support null for PHPUnit tests...
      */
-    protected function updateBase(User $user): ?Uuid
+    protected function updateBase(User $user)
     {
     	$this->updatedOn = new Datetime('now');
     	$this->updatedBy = $user;
-    	return $this->id;
     }
 
-    
-    /**
-     * Returns the entity UUID
-     * @return Uuid
-     */
-    public function getId(): Uuid
-    {
-        return $this->id;
-    }    
     
     /**
      * Returns the datetime of entity's creation.

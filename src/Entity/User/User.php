@@ -12,7 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
-use App\Entity\Base\Base;
+use App\Entity\Base\AggregateBase;
 use App\Entity\Organization\Client;
 use App\Entity\Organization\CreateClientCommand;
 use App\Entity\Organization\CreateOrganizationCommand;
@@ -28,7 +28,7 @@ use App\Entity\Geography\CreateCountryCommand;
  * @ORM\Table(name="app_users")
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  */
-class User extends Base implements UserInterface, \Serializable
+class User extends AggregateBase implements UserInterface, \Serializable
 {
     /**
      * @ORM\Column(type="string", length=255)
@@ -412,6 +412,11 @@ class User extends Base implements UserInterface, \Serializable
     public function getSignatureFilename(): ?string
     {
     	return $this->signatureFilename;
+    }
+    
+    public function __toString(): string
+    {
+    	return $this->username.": ".$this->getFullname();
     }
 
     

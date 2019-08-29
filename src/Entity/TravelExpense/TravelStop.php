@@ -3,7 +3,7 @@
 namespace App\Entity\TravelExpense;
 
 use Doctrine\ORM\Mapping as ORM;
-use App\Entity\Base\Base;
+use App\Entity\Base\AggregateBase;
 use App\Entity\Geography\Address;
 use App\Entity\Geography\Post;
 use App\Entity\Organization\Organization;
@@ -12,7 +12,7 @@ use App\Entity\User\User;
 /**
  * @ORM\Entity(repositoryClass="App\Repository\TravelStopRepository")
  */
-class TravelStop extends Base
+class TravelStop extends AggregateBase
 {
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Geography\Post")
@@ -71,7 +71,7 @@ class TravelStop extends Base
     	
     	$this->distanceFromPrevious = $c->distanceFromPrevious;
     	$this->stopOrder = $c->stopOrder;
-    }
+    }  
     
     /**
      * Used to update stop order in case of removing/adding stops to TE.
@@ -90,9 +90,9 @@ class TravelStop extends Base
     	$this->travelExpense = null;
     }
     
-    protected function update(UpdateTravelStopCommand $c, User $user)
+    public function update(UpdateTravelStopCommand $c, TravelExpense $te): TravelStop
     {
-    	parent::updateBase($user);
+    	parent::updateBase($te->getUpdatedBy());
     	
     	if($c->organization != null && $c->organization != $this->organization)
     	{
@@ -118,6 +118,35 @@ class TravelStop extends Base
     	
     	if($c->stopOrder != null && $c->stopOrder != $this->stopOrder)
     		$this->stopOrder = $c->stopOrder;
+    	
+    	return $this;
+    }
+    
+    /**
+     *
+     * @param object $to
+     * @return object
+     */
+    public function mapTo($to)
+    {
+    	if ($to instanceof UpdateTravelStopCommand || $to instanceof CreateTravelStopCommand)
+    	{
+    		$reflect = new \ReflectionClass($this);
+    		$props  = $reflect->getProperties();
+    		foreach($props as $prop)
+    		{
+    			$name = $prop->getName();
+    			if(property_exists($to, $name))
+    			{
+    				$to->$name = $this->$name;
+    			}
+    		}
+    	}
+    	else
+    	{
+    		throw(new \Exception('cant map ' . get_class($this) . ' to ' . get_class($to)));
+    		return $to;
+    	}
     }
     
 
@@ -155,4 +184,14 @@ class TravelStop extends Base
     {
         return $this->distanceFromPrevious;
     }
+    
+    public function __toString(): string
+    {
+    	$ret = "";
+    	if($this->address != null)
+    		$ret .= $this->address.", ";
+    	$ret .= $this->post;    	
+    	$ret .= ", stop order ".$this->stopOrder;	
+    	return $ret;
+    }    
 }

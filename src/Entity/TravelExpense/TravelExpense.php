@@ -5,7 +5,7 @@ namespace App\Entity\TravelExpense;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use App\Entity\Base\Base;
+use App\Entity\Base\AggregateBase;
 use App\Entity\Konto\Konto;
 use App\Entity\Organization\Organization;
 use App\Entity\User\User;
@@ -16,7 +16,7 @@ use App\Entity\Transaction\iTransactionDocument;
 /**
  * @ORM\Entity(repositoryClass="App\Repository\TravelExpenseRepository")
  */
-class TravelExpense extends Base implements iTransactionDocument
+class TravelExpense extends AggregateBase implements iTransactionDocument
 {
     /**
      * @ORM\Column(type="datetime")
@@ -121,6 +121,31 @@ class TravelExpense extends Base implements iTransactionDocument
     	if($c->rate != null && $c->rate != $this->rate)
     		$this->rate = $c->rate;
     	
+    	$stopsToKeep = new ArrayCollection();
+    	foreach($c->travelStopCommands as $utsc)
+    	{
+    		$ts = array_filter($this->travelStops->toArray(), function ($v) use ($utsc) {return $v->getId() == $utsc->id;})[0]??null;
+    		echo("UTSC: ".$utsc->id.";       ");
+    		if($ts == null)
+    		{
+    			echo("New TS: ".$utsc->id.";       ");
+    			$stopsToKeep->add($this->createTravelStop($utsc));
+    		}
+    		else
+    		{
+    			echo("Update TS: ".$ts.";       ");
+    			$stopsToKeep->add($ts->update($utsc, $this));
+    		}
+    	}
+    	
+    	foreach($this->travelStops as $ts)
+    	{
+    		if(!$stopsToKeep->contains($ts))
+    		{
+    			$this->removeTravelStop($ts);
+    		}
+    	}
+    	
     	return $this;
     }
     
@@ -131,12 +156,14 @@ class TravelExpense extends Base implements iTransactionDocument
      * @throws \Exception If the TravelExpense is already booked or cancelled.
      * @return TravelStop
      */
-    public function createTravelStop(CreateTravelStopCommand $c): TravelStop
+    private function createTravelStop(CreateTravelStopCommand $c): TravelStop
     {
+    	echo("Creating new TravelStop with post ".$c->post.". ");
     	if($this->state > 10)
     		throw new \Exception("Can't update booked or cancelled TravelExpenses.");
     	$ts = new TravelStop($c, $this);
-    	$this->travelStops[] = $ts;
+    	echo("Created ".$ts);
+    	$this->travelStops->add($ts);
     	$this->calculateTotalDistance();
     	return $ts;
     }
@@ -148,8 +175,9 @@ class TravelExpense extends Base implements iTransactionDocument
      * @param User $user Updating user.
      * @throws \Exception If the TravelStop is not in this TravelExpense or the updating user is not set.
      * @return TravelStop Updated TravelStop.
+     * @deprecated
      */
-    public function updateTravelStop(UpdateTravelStopCommand $c, TravelStop $ts, User $user): TravelStop
+    private function updateTravelStop(UpdateTravelStopCommand $c, TravelStop $ts, User $user): TravelStop
     {
     	if($user == null)
     		throw new \Exception("Updating user must be set.");
@@ -159,16 +187,16 @@ class TravelExpense extends Base implements iTransactionDocument
     	return $ts;
     }
         
-    public function removeTravelStop(TravelStop $ts, User $user): TravelExpense
+    private function removeTravelStop(TravelStop $ts): TravelExpense
     {
-    	if($user == null)
-    		throw new \Exception("Updating user must be set.");  
     	if($this->state > 10)
     		throw new \Exception("Can't update booked or cancelled TravelExpenses.");
     	if(!$this->travelStops->contains($ts))
     		throw new \Exception("Can't remove a travelStop that's not in this TravelExpense.");
     	if($this->travelStops->count() < 3) 
     		throw new \Exception("Can't remove last two TravelStops.");
+    	
+    	echo("Removing TravelStop ".$ts.". ");
     		    	
     	$this->travelStops->removeElement($ts);    		
     	if ($ts->getTravelExpense() === $this) {
@@ -179,10 +207,29 @@ class TravelExpense extends Base implements iTransactionDocument
     	foreach($this->getTravelStops() as $stop)
     	{
     		if($stop->getStopOrder()>=$index)
-    			$stop->setStopOrder($stop->getStopOrder()-1);
+    			$stop->setStopOrder($stop->getStopOrder());
     	}
     	$this->calculateTotalDistance();
     	return $this;
+    }
+    
+    /**
+     * Makes a copy of itself
+     * @param User $user The cloning user
+     * @return TravelExpense Cloned invoice (sub-clones all InvoiceItems too.)
+     */
+    public function clone(User $user) : TravelExpense
+    {
+    	$c = new CreateTravelExpenseCommand();
+    	$this->mapTo($c);
+    	$te = $user->createTravelExpense($c);
+    	foreach($this->travelStops as $ts)
+    	{
+    		$cts = new CreateTravelStopCommand();
+    		$ts->mapTo($cts);
+    		$te->createTravelStop($cts);
+    	}
+    	return $te;
     }
     
     /**
@@ -239,6 +286,33 @@ class TravelExpense extends Base implements iTransactionDocument
     			$this->totalDistance += $ts->getDistanceFromPrevious();
     	}
     	return $this->totalDistance;
+    }
+    
+    /**
+     *
+     * @param object $to
+     * @return object
+     */
+    public function mapTo($to)
+    {
+    	if ($to instanceof UpdateTravelExpenseCommand || $to instanceof CreateTravelExpenseCommand)
+    	{
+    		$reflect = new \ReflectionClass($this);
+    		$props  = $reflect->getProperties();
+    		foreach($props as $prop)
+    		{
+    			$name = $prop->getName();
+    			if(property_exists($to, $name))
+    			{
+    				$to->$name = $this->$name;
+    			}
+    		}
+    	}
+    	else
+    	{
+    		throw(new \Exception('cant map ' . get_class($this) . ' to ' . get_class($to)));
+    		return $to;
+    	}
     }
     
 
@@ -310,6 +384,17 @@ class TravelExpense extends Base implements iTransactionDocument
     public function getTravelExpenseBundle(): ?TravelExpenseBundle
     {
         return $this->travelExpenseBundle;
+    }
+    
+    public function __toString(): string
+    {
+    	$ret = $this->getDateString().", ";    	
+    	$ret .= $this->employee.", stops:";
+    	foreach($this->travelStops as $ts)
+    	{
+    		$ret .= $ts.", ";
+    	}
+    	return $ret;
     }
     
 }

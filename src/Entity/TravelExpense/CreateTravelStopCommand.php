@@ -4,6 +4,7 @@ namespace App\Entity\TravelExpense;
 
 class CreateTravelStopCommand
 {    
+	public $id;
     public $post;
     public $address;
     public $organization;

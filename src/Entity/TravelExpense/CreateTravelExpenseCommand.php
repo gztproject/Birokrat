@@ -8,7 +8,7 @@ class CreateTravelExpenseCommand
 	 * Need this for getting them from the form to controller...
 	 * @var Array[CreateTravelStopCommand]
 	 */
-	public $createTravelStopCommands;
+	public $travelStopCommands;
     public $date;    
     public $employee;
     public $organization;

@@ -3,13 +3,13 @@
 namespace App\Entity\Geography;
 
 use Doctrine\ORM\Mapping as ORM;
-use App\Entity\Base\Base;
+use App\Entity\Base\AggregateBase;
 use App\Entity\User\User;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\AddressRepository")
  */
-class Address extends Base
+class Address extends AggregateBase
 {
     /**
      * @ORM\Column(type="string", length=255)
@@ -85,5 +85,10 @@ class Address extends Base
     public function getFullFormattedAddress(): array
     {
     	return explode(", ", $this->getFullAddress());    	
+    }
+    
+    public function __toString(): string
+    {
+    	return $this->getFullAddress();
     }
 }

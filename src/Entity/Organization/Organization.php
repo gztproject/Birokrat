@@ -6,7 +6,7 @@ use App\Entity\Settings\OrganizationSettings;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use App\Entity\Base\Base;
+use App\Entity\Base\AggregateBase;
 use App\Entity\User\User;
 use App\Entity\Geography\Address;
 use App\Entity\Settings\CreateOrganizationSettingsCommand;

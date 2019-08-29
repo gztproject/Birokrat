@@ -4,7 +4,7 @@ namespace App\Entity\Organization;
 
 use App\Entity\User\User;
 use Doctrine\ORM\Mapping as ORM;
-use App\Entity\Base\Base;
+use App\Entity\Base\AggregateBase;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\Organization\ClientRepository")

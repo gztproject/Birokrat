@@ -14,6 +14,7 @@ class OrganizationSettings extends Base
 {
         
     /**
+     * @ORM\Id()
      * @ORM\Column(type="string", length=100, nullable=true)
      */
     private $invoicePrefix;
