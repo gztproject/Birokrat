@@ -5,7 +5,7 @@ namespace App\Entity\Invoice;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use App\Entity\Base\Base;
+use App\Entity\Base\AggregateBase;
 use App\Entity\Konto\Konto;
 use App\Entity\Organization\Organization;
 use App\Entity\User\User;
@@ -19,7 +19,7 @@ use App\Entity\Transaction\CreateTransactionCommand;
 /**
  * @ORM\Entity(repositoryClass="App\Repository\Invoice\InvoiceRepository")
  */
-class Invoice extends Base implements iTransactionDocument
+class Invoice extends AggregateBase implements iTransactionDocument
 {
     /**
      * @ORM\Column(type="date")

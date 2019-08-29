@@ -13,6 +13,10 @@ use App\Form\TravelExpense\TravelExpenseType;
 use App\Entity\TravelExpense\TravelExpenseBundle;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Entity\TravelExpense\CreateTravelExpenseCommand;
+use App\Entity\TravelExpense\TravelExpense;
+use App\Entity\TravelExpense\UpdateTravelExpenseCommand;
+use App\Entity\TravelExpense\UpdateTravelStopCommand;
+use Psr\Log\LoggerInterface;
 
 class TravelExpenseCommandController extends AbstractController
 {    
@@ -38,7 +42,7 @@ class TravelExpenseCommandController extends AbstractController
     		
     		$em = $this->getDoctrine()->getManager();
     		
-    		foreach($c->createTravelStopCommands as $tsc)
+    		foreach($c->tavelStopCommands as $tsc)
     		{
     			$ts = $te->createTravelStop($tsc);
     			$em->persist($ts);
@@ -53,7 +57,98 @@ class TravelExpenseCommandController extends AbstractController
     	return $this->render('dashboard/travelExpense/new.html.twig', [
     			'form' => $form->createView(),
     	]);
-    }    
+    }   
+    
+    /**
+     * Displays a form to edit an existing TravelExpense.
+     *
+     * @Route("/dashboard/travelExpense/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/edit",methods={"GET", "POST"}, name="travelExpense_edit")
+     */
+    public function edit(Request $request, TravelExpense $te, LoggerInterface $logger): Response
+    {
+    	$updateTECommand = new UpdateTravelExpenseCommand();
+    	$te->mapTo($updateTECommand);
+    	
+    	foreach($te->getTravelStops() as $ts)
+    	{
+    		$utsc = new UpdateTravelStopCommand();
+    		$ts->mapTo($utsc);
+    		array_push($updateTECommand->travelStopCommands, $utsc);
+    	}
+    	
+    	$form = $this->createForm(TravelExpenseType::class, $updateTECommand)
+    		->add('saveAndCreateNew', SubmitType::class);
+    	$form->handleRequest($request);
+    	
+    	if ($form->isSubmitted() && $form->isValid()) {
+    		$te->update($updateTECommand, $this->getUser());    		
+    		$em = $this->getDoctrine()->getManager();
+    		
+    		foreach($te->getTravelStops() as $ts)
+    		{
+    			$logger->debug("Persisting TravelStop ".$ts.". ");
+    			$em->persist($ts);
+    		}
+    		
+    		$logger->debug("Persisting TravelExpense ".$te.". ");
+    		$em->persist($te);
+    		$em->flush();
+    		
+    		return $this->redirectToRoute('travelExpense_show', array('id'=> $te->getId()));
+    	}
+    	
+    	return $this->render('dashboard/travelExpense/edit.html.twig', [
+    			'travelExpense' => $te,
+    			'form' => $form->createView(),
+    	]);
+    }
+    
+    /**
+     * Clones an existing invoice and opens it in editor.
+     *
+     * @Route("/dashboard/travelExpense/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/clone",methods={"GET", "POST"}, name="travelExpense_clone")
+     */
+    public function clone(Request $request, TravelExpense $te, LoggerInterface $logger): Response
+    {
+    	$clone = $te->clone($this->getUser());
+    	
+    	$updateTECommand = new UpdateTravelExpenseCommand();
+    	$clone->mapTo($updateTECommand);
+    	
+    	foreach($clone->getTravelStops() as $ts)
+    	{
+    		$utsc = new UpdateTravelStopCommand();
+    		$ts->mapTo($utsc);
+    		array_push($updateTECommand->travelStopCommands, $utsc);
+    	}
+    	
+    	$form = $this->createForm(TravelExpenseType::class, $updateTECommand)
+    		->add('saveAndCreateNew', SubmitType::class);
+    	
+    	$form->handleRequest($request);
+    	
+    	if ($form->isSubmitted() && $form->isValid()) {
+    		$clone->update($updateTECommand, $this->getUser());
+    		$em = $this->getDoctrine()->getManager();
+    		
+    		foreach($clone->getTravelStops() as $ts)
+    		{
+    			$logger->debug("Persisting Cloned TravelStop ".$ts.". ");
+    			$em->persist($ts);
+    		}
+    		
+    		$logger->debug("Persisting Cloned TravelExpense ".$clone.". ");
+    		$em->persist($clone);
+    		$em->flush();
+    		
+    		return $this->redirectToRoute('travelExpense_show', array('id'=> $clone->getId()));
+    	}
+    	
+    	return $this->render('dashboard/travelExpense/edit.html.twig', [
+    			'travelExpense' => $clone,
+    			'form' => $form->createView(),
+    	]);
+    }
     
     /**
      * @Route("/dashboard/travelExpense/bookInBundle/withFilter", methods={"POST"}, name="travelExpense_bookinBundle_withFilter")

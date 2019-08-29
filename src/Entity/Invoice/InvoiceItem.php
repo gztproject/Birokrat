@@ -3,12 +3,12 @@
 namespace App\Entity\Invoice;
 
 use Doctrine\ORM\Mapping as ORM;
-use App\Entity\Base\Base;
+use App\Entity\Base\AggregateBase;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\Invoice\InvoiceItemRepository")
  */
-class InvoiceItem extends Base
+class InvoiceItem extends AggregateBase
 {
     /**
      * @ORM\Column(type="string", length=255)

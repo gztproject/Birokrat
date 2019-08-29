@@ -20,8 +20,11 @@
                         <a href="{{ path('travelExpense_show', {'id': travelExpense.id}) }}" class="btn btn-sm btn-primary">
                             <i class="fa fa-eye" aria-hidden="true"></i> {{ 'action.show'|trans }}
                         </a>
-                        <a href="{{ path('travelExpense_show', {'id': travelExpense.id}) }}" class="btn btn-sm btn-primary">
+                        <a href="{{ path('travelExpense_edit', {'id': travelExpense.id}) }}" class="btn btn-sm btn-primary">
                             <i class="fa fa-edit" aria-hidden="true"></i> {{ 'action.edit'|trans }}
+                        </a>
+                        <a href="{{ path('travelExpense_clone', {'id': travelExpense.id}) }}" class="btn btn-sm btn-primary">
+                            <i class="fa fa-copy" aria-hidden="true"></i> {{ 'action.clone'|trans }}
                         </a>
                         {% if ShowCBs is defined and ShowCBs == true%}                            
                             <input class="form-check-input TECheckBox" type="checkbox" value={{ travelExpense.id }}>                                    
