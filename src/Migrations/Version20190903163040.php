@@ -13,7 +13,7 @@ use Ramsey\Uuid\Uuid;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20190619180140 extends AbstractMigration implements ContainerAwareInterface
+final class Version20190903163040 extends AbstractMigration implements ContainerAwareInterface
 {
 	use ContainerAwareTrait;
 	private $dbMigratorId;
@@ -90,7 +90,7 @@ final class Version20190619180140 extends AbstractMigration implements Container
         $this->addSql('ALTER TABLE transaction ADD CONSTRAINT FK_723705D11D53F7D8 FOREIGN KEY (debit_konto_id) REFERENCES konto (id)');
         $this->addSql('CREATE INDEX IDX_723705D1DE39B264 ON transaction (debit_konto_id)');
         $this->addSql('ALTER TABLE transaction CHANGE konto_id credit_konto_id CHAR(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT \'(DC2Type:uuid)\';');
-        $this->addSql('ALTER TABLE transaction RENAME INDEX idx_723705d151b48cda TO IDX_723705D1FA5F35E4');
+        $this->addSql('ALTER TABLE transaction RENAME INDEX IDX_723705D151B48CDA TO IDX_723705D1FA5F35E4');
         
         $this->addSql('ALTER TABLE konto_category ADD debit DOUBLE PRECISION NOT NULL, ADD credit DOUBLE PRECISION NOT NULL');
         $this->addSql('ALTER TABLE konto ADD debit DOUBLE PRECISION NOT NULL, ADD credit DOUBLE PRECISION NOT NULL');
@@ -107,7 +107,7 @@ final class Version20190619180140 extends AbstractMigration implements Container
     	$em = $this->container->get('doctrine.orm.entity_manager');
     	    	
     		
-    		$sql = "SELECT t.id, t.sum, t.konto_id, t.date, t.invoice_id, i.state, i.date_paid FROM transaction AS t LEFT OUTER JOIN invoice as i ON i.id = t.invoice_id WHERE t.invoice_id IS NOT NULL";
+    		$sql = "SELECT t.id, t.sum, t.credit_konto_id, t.date, t.invoice_id, i.state, i.date_paid FROM transaction AS t LEFT OUTER JOIN invoice as i ON i.id = t.invoice_id WHERE t.invoice_id IS NOT NULL";
     		$stmt = $em->getConnection()->prepare($sql);
     		$stmt->execute();
     		$transactions = $stmt->fetchAll();
@@ -123,10 +123,10 @@ final class Version20190619180140 extends AbstractMigration implements Container
     			{
     				$id = $t['id'];
     				$sum = $t['sum']*1;
-    				$konto = $this->konto760id;
-    				$counterKonto = $this->konto120id;
+    				$debitKonto = $this->konto120id;
+    				$creditKonto = $this->konto760id;
     				$date = date('Y-m-d H:i:s', strtotime($t['date']));
-    				$sql = "UPDATE transaction SET counter_konto_id = '$counterKonto', created_on = '$date' WHERE `transaction`.`id` = '$id';";
+    				$sql = "UPDATE transaction SET debit_konto_id = '$debitKonto', created_on = '$date' WHERE `transaction`.`id` = '$id';";
     				$debit120 += $sum;
     				$credit760 += $sum;
     				
@@ -138,12 +138,12 @@ final class Version20190619180140 extends AbstractMigration implements Container
     				{
     					$id = Uuid::uuid1();
     					$datePaid = date('Y-m-d H:i:s', strtotime($t['date_paid']));
-    					$konto = $this->konto120id;
-    					$counterKonto = $this->konto110id;
+    					$debitKonto = $this->konto110id;
+    					$creditKonto = $this->konto120id;
     					    					
     					$inv = $t['invoice_id'];
-    					$sql = "INSERT INTO transaction (id, date, sum, konto_id, counter_konto_id, invoice_id, travel_expense_id, travel_expense_bundle_id, created_by_id, updated_by_id, created_on, updated_on)
-						 VALUES ('$id', '$datePaid', '$sum', '$konto', '$counterKonto', '$inv', NULL, NULL, '$this->dbMigratorId', NULL, '$datePaid', NULL);";
+    					$sql = "INSERT INTO transaction (id, date, sum, credit_konto_id, debit_konto_id, invoice_id, travel_expense_id, travel_expense_bundle_id, created_by_id, updated_by_id, created_on, updated_on)
+						 VALUES ('$id', '$datePaid', '$sum', '$creditKonto', '$debitKonto', '$inv', NULL, NULL, '$this->dbMigratorId', NULL, '$datePaid', NULL);";
     					$debit110 += $sum;
     					$credit120 += $sum;
     					$stmt = $em->getConnection()->prepare($sql);
@@ -197,13 +197,13 @@ final class Version20190619180140 extends AbstractMigration implements Container
     				{
     					$id = Uuid::uuid1();
     					$date = $te['date'];
-    					$konto = $konto285id;
-    					$counterKonto = $konto486id;
+    					$debitKonto = $konto486id;
+    					$creditKonto = $konto285id;
     					$sum = $te['sum'];
     					
     					$expense = $te['id'];
-    					$sql = "INSERT INTO transaction (id, date, sum, konto_id, counter_konto_id, invoice_id, travel_expense_id, travel_expense_bundle_id, created_by_id, updated_by_id, created_on, updated_on)
-						 VALUES ('$id', '$date', '$sum', '$konto', '$counterKonto', NULL, '$expense', NULL, '$this->dbMigratorId', NULL, '$date', NULL);";
+    					$sql = "INSERT INTO transaction (id, date, sum, debit_konto_id, credit_konto_id, invoice_id, travel_expense_id, travel_expense_bundle_id, created_by_id, updated_by_id, created_on, updated_on)
+						 VALUES ('$id', '$date', '$sum', '$debitKonto', '$creditKonto', NULL, '$expense', NULL, '$this->dbMigratorId', NULL, '$date', NULL);";
     					$debit486 += $sum;
     					$credit285 += $sum;
     					$stmt = $em->getConnection()->prepare($sql);
@@ -222,7 +222,12 @@ final class Version20190619180140 extends AbstractMigration implements Container
     			$stmt->execute();
     			$em->flush();
     		}
-    		$sql ='ALTER TABLE transaction CHANGE counter_konto_id counter_konto_id CHAR(36) NOT NULL COMMENT \'(DC2Type:uuid)\'';
+    		$sql ='ALTER TABLE transaction CHANGE credit_konto_id credit_konto_id CHAR(36) NOT NULL COMMENT \'(DC2Type:uuid)\'';
+    		$stmt = $em->getConnection()->prepare($sql);
+    		$stmt->execute();
+    		$em->flush();
+    		
+    		$sql ='ALTER TABLE transaction CHANGE debit_konto_id debit_konto_id CHAR(36) NOT NULL COMMENT \'(DC2Type:uuid)\'';
     		$stmt = $em->getConnection()->prepare($sql);
     		$stmt->execute();
     		$em->flush();
@@ -296,5 +301,6 @@ final class Version20190619180140 extends AbstractMigration implements Container
         $this->addSql('ALTER TABLE transaction DROP INDEX IDX_723705D1AA203AA8, ADD UNIQUE INDEX UNIQ_723705D1AA203AA8 (travel_expense_id)');
         $this->addSql('ALTER TABLE transaction DROP INDEX IDX_723705D12989F1FD, ADD UNIQUE INDEX UNIQ_723705D12989F1FD (invoice_id)');
         $this->addSql('ALTER TABLE transaction CHANGE credit_konto_id konto_id CHAR(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT \'(DC2Type:uuid)\';');
+        $this->addSql('ALTER TABLE transaction RENAME INDEX IDX_723705D1FA5F35E4 TO IDX_723705D151B48CDA');
     }
 }

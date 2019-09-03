@@ -13,7 +13,7 @@ use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20190622112701 extends AbstractMigration implements ContainerAwareInterface
+final class Version20190903163101 extends AbstractMigration implements ContainerAwareInterface
 {
 	use ContainerAwareTrait;	
 	private $dbMigratorId;
@@ -56,7 +56,18 @@ final class Version20190622112701 extends AbstractMigration implements Container
         // this up() migration is auto-generated, please modify it to your needs
         $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
-        $this->addSql('CREATE TABLE konto_preference (id CHAR(36) NOT NULL COMMENT \'(DC2Type:uuid)\', issue_invoice_debit_id CHAR(36) DEFAULT NULL COMMENT \'(DC2Type:uuid)\', issue_invoice_credit_id CHAR(36) DEFAULT NULL COMMENT \'(DC2Type:uuid)\', invoice_paid_debit_id CHAR(36) DEFAULT NULL COMMENT \'(DC2Type:uuid)\', invoice_paid_credit_id CHAR(36) DEFAULT NULL COMMENT \'(DC2Type:uuid)\', incurred_travel_expense_debit_id CHAR(36) DEFAULT NULL COMMENT \'(DC2Type:uuid)\', incurred_travel_expense_credit_id CHAR(36) DEFAULT NULL COMMENT \'(DC2Type:uuid)\', paid_travel_expense_debit_id CHAR(36) DEFAULT NULL COMMENT \'(DC2Type:uuid)\', paid_travel_expense_credit_id CHAR(36) DEFAULT NULL COMMENT \'(DC2Type:uuid)\', created_by_id CHAR(36) NOT NULL COMMENT \'(DC2Type:uuid)\', updated_by_id CHAR(36) DEFAULT NULL COMMENT \'(DC2Type:uuid)\', created_on DATETIME NOT NULL, updated_on DATETIME DEFAULT NULL, INDEX IDX_ABFFA5149167574 (issue_invoice_debit_id), INDEX IDX_ABFFA514DE910D54 (issue_invoice_credit_id), INDEX IDX_ABFFA5142EB2B7FC (invoice_paid_debit_id), INDEX IDX_ABFFA5143DD5A284 (invoice_paid_credit_id), INDEX IDX_ABFFA51498B8BBDD (incurred_travel_expense_debit_id), INDEX IDX_ABFFA514710AB8D6 (incurred_travel_expense_credit_id), INDEX IDX_ABFFA5143B5EA62B (paid_travel_expense_debit_id), INDEX IDX_ABFFA514257709E2 (paid_travel_expense_credit_id), INDEX IDX_ABFFA514B03A8386 (created_by_id), INDEX IDX_ABFFA514896DBBDE (updated_by_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB');
+        $this->addSql('CREATE TABLE konto_preference (issue_invoice_debit_id CHAR(36) DEFAULT NULL COMMENT \'(DC2Type:uuid)\', 
+						issue_invoice_credit_id CHAR(36) DEFAULT NULL COMMENT \'(DC2Type:uuid)\', invoice_paid_debit_id CHAR(36) DEFAULT NULL COMMENT \'(DC2Type:uuid)\', 
+						invoice_paid_credit_id CHAR(36) DEFAULT NULL COMMENT \'(DC2Type:uuid)\', incurred_travel_expense_debit_id CHAR(36) DEFAULT NULL COMMENT \'(DC2Type:uuid)\', 
+						incurred_travel_expense_credit_id CHAR(36) DEFAULT NULL COMMENT \'(DC2Type:uuid)\', 
+						paid_travel_expense_debit_id CHAR(36) DEFAULT NULL COMMENT \'(DC2Type:uuid)\', paid_travel_expense_credit_id CHAR(36) DEFAULT NULL COMMENT \'(DC2Type:uuid)\', 
+						created_by_id CHAR(36) NOT NULL COMMENT \'(DC2Type:uuid)\', updated_by_id CHAR(36) DEFAULT NULL COMMENT \'(DC2Type:uuid)\', created_on DATETIME NOT NULL, 
+						updated_on DATETIME DEFAULT NULL, INDEX IDX_ABFFA5149167574 (issue_invoice_debit_id), INDEX IDX_ABFFA514DE910D54 (issue_invoice_credit_id), 
+						INDEX IDX_ABFFA5142EB2B7FC (invoice_paid_debit_id), INDEX IDX_ABFFA5143DD5A284 (invoice_paid_credit_id), 
+						INDEX IDX_ABFFA51498B8BBDD (incurred_travel_expense_debit_id), INDEX IDX_ABFFA514710AB8D6 (incurred_travel_expense_credit_id), 
+						INDEX IDX_ABFFA5143B5EA62B (paid_travel_expense_debit_id), INDEX IDX_ABFFA514257709E2 (paid_travel_expense_credit_id), 
+						INDEX IDX_ABFFA514B03A8386 (created_by_id), INDEX IDX_ABFFA514896DBBDE (updated_by_id), 
+						PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB');
         $this->addSql('ALTER TABLE konto_preference ADD CONSTRAINT FK_ABFFA51442D7E17E FOREIGN KEY (issue_invoice_debit_id) REFERENCES konto (id)');
         $this->addSql('ALTER TABLE konto_preference ADD CONSTRAINT FK_ABFFA514DE910D54 FOREIGN KEY (issue_invoice_credit_id) REFERENCES konto (id)');
         $this->addSql('ALTER TABLE konto_preference ADD CONSTRAINT FK_ABFFA5142EB2B7FC FOREIGN KEY (invoice_paid_debit_id) REFERENCES konto (id)');
@@ -86,12 +97,15 @@ final class Version20190622112701 extends AbstractMigration implements Container
     		foreach($res as $os)
     		{
     			$id = Uuid::uuid1();
-    			$sql = "INSERT INTO konto_preference(id, issue_invoice_debit_id, issue_invoice_credit_id, invoice_paid_debit_id, invoice_paid_credit_id, incurred_travel_expense_debit_id, incurred_travel_expense_credit_id, paid_travel_expense_debit_id, paid_travel_expense_credit_id, created_by_id, created_on) 
-					VALUES ('$id', '".$kontos['120']."', '".$kontos['760']."', '".$kontos['110']."', '".$kontos['120']."', '".$kontos['486']."', '".$kontos['285']."', '".$kontos['285']."', '".$kontos['919']."', '$this->dbMigratorId', '$date');";
+    			$sql = "INSERT INTO konto_preference(id, issue_invoice_debit_id, issue_invoice_credit_id, invoice_paid_debit_id, invoice_paid_credit_id, 
+							incurred_travel_expense_debit_id, incurred_travel_expense_credit_id, paid_travel_expense_debit_id, paid_travel_expense_credit_id, 
+							created_by_id, created_on) 
+					VALUES ('$id', '".$kontos['120']."', '".$kontos['760']."', '".$kontos['110']."', '".$kontos['120']."', '".$kontos['486']."', '".$kontos['285']."', '
+						".$kontos['285']."', '".$kontos['919']."', '$this->dbMigratorId', '$date');";
     			$stmt = $em->getConnection()->prepare($sql);
     			$stmt->execute();    			
     			$em->flush();
-    			$sql = "UPDATE organization_settings SET konto_preference_id = '$id', updated_by_id='$this->dbMigratorId', updated_on='$date' WHERE id='".$os['id']."'";
+    			$sql = "UPDATE organization_settings SET konto_preference_id = '$id', updated_by_id='$this->dbMigratorId', updated_on='$date' WHERE id='".$os['organization_id']."'";
     			$stmt = $em->getConnection()->prepare($sql);
     			$stmt->execute();
     			$em->flush();

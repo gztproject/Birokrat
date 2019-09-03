@@ -3,6 +3,7 @@
 namespace App\Entity\Settings;
 
 use App\Entity\Base\Base;
+use App\Entity\Konto\Konto;
 use App\Entity\Organization\Organization;
 use App\Entity\User\User;
 use Doctrine\ORM\Mapping as ORM;
@@ -14,7 +15,6 @@ class OrganizationSettings extends Base
 {
         
     /**
-     * @ORM\Id()
      * @ORM\Column(type="string", length=100, nullable=true)
      */
     private $invoicePrefix;
@@ -30,16 +30,52 @@ class OrganizationSettings extends Base
     private $referenceModel;
     
     /**
-     * @ORM\OneToOne(targetEntity="App\Entity\Settings\KontoPreference", cascade={"persist", "remove"})
-     */
-    private $kontoPreference;
-    
-    /**
      * @ORM\Column(type="float", nullable=true)
      */
     private $travelExpenseRate;
     
     /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Konto\Konto")
+     */
+    private $IssueInvoiceDebit;
+    
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Konto\Konto")
+     */
+    private $IssueInvoiceCredit;
+    
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Konto\Konto")
+     */
+    private $InvoicePaidDebit;
+    
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Konto\Konto")
+     */
+    private $InvoicePaidCredit;
+    
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Konto\Konto")
+     */
+    private $IncurredTravelExpenseDebit;
+    
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Konto\Konto")
+     */
+    private $IncurredTravelExpenseCredit;
+    
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Konto\Konto")
+     */
+    private $PaidTravelExpenseDebit;
+    
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Konto\Konto")
+     */
+    private $PaidTravelExpenseCredit;
+    
+    /**
+     * @ORM\Id()
      * @ORM\OneToOne(targetEntity="App\Entity\Organization\Organization", inversedBy="organizationSettings", cascade={"persist", "remove"})
      */
     private $organization;
@@ -51,14 +87,21 @@ class OrganizationSettings extends Base
      * @param Organization $organization
      * @param User $user
      */
-    public function __construct(CreateOrganizationSettingsCommand $c, CreateKontoPreferenceCommand $ck, Organization $organization, User $user)
+    public function __construct(CreateOrganizationSettingsCommand $c, Organization $organization, User $user)
     {
     	parent::__construct($user);
     	$this->organization = $organization;
     	$this->defaultPaymentDueIn = $c->defaultPaymentDueIn;
     	$this->invoicePrefix = $c->invoicePrefix;
     	$this->referenceModel = $c->referenceModel;
-    	$this->kontoPreference = new KontoPreference($ck, $user);
+    	$this->IssueInvoiceCredit = $c->IssueInvoiceCredit;
+    	$this->IssueInvoiceDebit = $c->IssueInvoiceDebit;
+    	$this->InvoicePaidCredit = $c->InvoicePaidCredit;
+    	$this->InvoicePaidDebit = $c->InvoicePaidDebit;
+    	$this->IncurredTravelExpenseCredit = $c->IncurredTravelExpenseCredit;
+    	$this->IncurredTravelExpenseDebit = $c->IncurredTravelExpenseDebit;
+    	$this->PaidTravelExpenseCredit = $c->PaidTravelExpenseCredit;
+    	$this->PaidTravelExpenseDebit = $c->PaidTravelExpenseDebit;
     }
     
     /**
@@ -68,19 +111,25 @@ class OrganizationSettings extends Base
      * @param User $user
      * @throws \Exception
      */     
-    public function update(UpdateOrganizationSettingsCommand $c, ?UpdateKontoPreferenceCommand $ck, User $user): OrganizationSettings
+    public function update(UpdateOrganizationSettingsCommand $c, User $user): OrganizationSettings
     {    	
+    	//ToDo: do some checks first...
     	parent::updateBase($user);
     	
     	$this->defaultPaymentDueIn = $c->defaultPaymentDueIn;
     	$this->invoicePrefix = $c->invoicePrefix;
-    	$this->referenceModel = $c->referenceModel;
-    	if($ck != null)
-    	{
-    		if($ck->id != $this->kontoPreference->getId())
-	    		throw new \Exception("Can't update someone else's preferences");
-	    		$this->kontoPreference->update($ck, $user);
-    	}
+    	$this->referenceModel = $c->referenceModel;    	
+    	
+    	//ToDo: check for nulls...
+    	$this->IssueInvoiceCredit = $c->IssueInvoiceCredit;
+    	$this->IssueInvoiceDebit = $c->IssueInvoiceDebit;
+    	$this->InvoicePaidCredit = $c->InvoicePaidCredit;
+    	$this->InvoicePaidDebit = $c->InvoicePaidDebit;
+    	$this->IncurredTravelExpenseCredit = $c->IncurredTravelExpenseCredit;
+    	$this->IncurredTravelExpenseDebit = $c->IncurredTravelExpenseDebit;
+    	$this->PaidTravelExpenseCredit = $c->PaidTravelExpenseCredit;
+    	$this->PaidTravelExpenseDebit = $c->PaidTravelExpenseDebit;
+    	
     	return $this;
     }
     
@@ -106,14 +155,49 @@ class OrganizationSettings extends Base
         return $this->organization;
     } 
     
-    public function getKontoPreference(): KontoPreference
-    {
-    	return $this->kontoPreference;
-    }
-    
     public function getTravelExpenseRate(): ?float
     {
     	return $this->travelExpenseRate;
+    }
+    
+    public function getIssueInvoiceDebit(): ?Konto
+    {
+    	return $this->IssueInvoiceDebit;
+    }
+    
+    public function getIssueInvoiceCredit(): ?Konto
+    {
+    	return $this->IssueInvoiceCredit;
+    }
+    
+    public function getInvoicePaidDebit(): ?Konto
+    {
+    	return $this->IvnoicePaidDebit;
+    }
+    
+    public function getInvoicePaidCredit(): ?Konto
+    {
+    	return $this->InvoicePaidCredit;
+    }
+    
+    public function getIncurredTravelExpenseDebit(): ?Konto
+    {
+    	return $this->IncurredTravelExpenseDebit;
+    }
+    
+    public function getIncurredTravelExpenseCredit(): ?Konto
+    {
+    	return $this->IncurredTravelExpenseCredit;
+    }
+    
+    public function getPaidTravelExpenseDebit(): ?Konto
+    {
+    	return $this->PaidTravelExpenseDebit;
+    }
+    
+    public function getPaidTravelExpenseCredit(): ?Konto
+    {
+    	return $this->PaidTravelExpenseCredit;
     }
     
     

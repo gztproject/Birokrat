@@ -5,10 +5,11 @@
 {% block main %}
 <h1>{{ 'title.transactions'|trans }}</h1>
     <div class="bs-component">
-    {{ include('dashboard/transaction/_table.html.twig', {
-                transactions: transactions                
+        {{ include('dashboard/transaction/_table.html.twig', {
+                transactions: pagination                
             }, with_context = false) }}
-                </div>
+    </div>
+    {{ knp_pagination_render(pagination) }}
 {% endblock %}
 
 {% block sidebar %}

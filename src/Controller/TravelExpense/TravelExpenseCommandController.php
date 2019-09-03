@@ -34,12 +34,9 @@ class TravelExpenseCommandController extends AbstractController
     	
     	if ($form->isSubmitted() && $form->isValid()) {
     		
-    		$c->employee = $this->getUser();
-    		//$c->rate = 0.37;
+    		$c->employee = $this->getUser();    		
     		
     		$te = $this->getUser()->createTravelExpense($c);  
-    		
-    		
     		
     		$em = $this->getDoctrine()->getManager();
     		
@@ -95,6 +92,7 @@ class TravelExpenseCommandController extends AbstractController
     		}
     		
     		$logger->debug("Persisting TravelExpense ".$te.". ");
+    		//ToDo: Update Transaction
     		$em->persist($te);
     		$em->flush();
     		
@@ -142,7 +140,9 @@ class TravelExpenseCommandController extends AbstractController
     		}
     		
     		$logger->debug("Persisting Cloned TravelExpense ".$clone.". ");
+    		$transaction = $clone->setNew($this->getUser());
     		$em->persist($clone);
+    		$em->persist($transaction);
     		$em->flush();
     		
     		return $this->redirectToRoute('travelExpense_show', array('id'=> $clone->getId()));

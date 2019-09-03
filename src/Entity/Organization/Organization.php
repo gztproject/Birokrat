@@ -11,6 +11,8 @@ use App\Entity\User\User;
 use App\Entity\Geography\Address;
 use App\Entity\Settings\CreateOrganizationSettingsCommand;
 use App\Entity\Settings\UpdateOrganizationSettingsCommand;
+use App\Entity\Settings\KontoPreference;
+use App\Entity\Settings\CreateKontoPreferenceCommand;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\Organization\OrganizationRepository")
@@ -26,7 +28,7 @@ class Organization extends LegalEntityBase
      * @ORM\OneToOne(targetEntity="App\Entity\Settings\OrganizationSettings", mappedBy="organization", cascade={"persist", "remove"})
      */
     private $organizationSettings;
-
+    
     /**
      * 
      * @param CreateOrganizationCommand $c
@@ -53,7 +55,9 @@ class Organization extends LegalEntityBase
     	if($c->accountNumber)
     		$this->accountNumber = $c->accountNumber;
     	if($c->bic)
-    		$this->bic = $c->bic;    		
+    		$this->bic = $c->bic;    
+    	
+    	$this->organizationSettings = $this->CreateOrganizationSettings(new CreateOrganizationSettingsCommand(), $user);
     }
     
     /**
@@ -89,6 +93,13 @@ class Organization extends LegalEntityBase
     	if($c->bic != null && $c->bic != $this->bic)
     		$this->bic = $c->bic;
     	
+    	//ToDo: Updating OrganizationSettings
+    	$ck = null;
+    	if($ck != null)
+    	{
+    		$this->updateOrganizationSettings($ck, $user);
+    	}
+    	
     	return $this;
     }
      
@@ -113,9 +124,9 @@ class Organization extends LegalEntityBase
      * @throws \Exception
      * @return OrganizationSettings
      */
-    public function updateOrganizationSettings(UpdateOrganizationSettingsCommand $c, OrganizationSettings $settings, User $user): OrganizationSettings
+    public function updateOrganizationSettings(UpdateOrganizationSettingsCommand $c, User $user): OrganizationSettings
     {
-    	if($this->organizationSettings != $settings)
+    	if($this->organizationSettings->getOrganization() != $this)
     		throw new \Exception("Can't update settings that are not mine.");
     	parent::updateBase($user);
     	$this->organizationSettings->update($c, $user);
@@ -194,6 +205,5 @@ class Organization extends LegalEntityBase
     {
         return $this->organizationSettings;
     }
-
         
 }

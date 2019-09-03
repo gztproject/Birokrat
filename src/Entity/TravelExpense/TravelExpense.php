@@ -14,7 +14,7 @@ use App\Entity\Transaction\CreateTransactionCommand;
 use App\Entity\Transaction\iTransactionDocument;
 
 /**
- * @ORM\Entity(repositoryClass="App\Repository\TravelExpenseRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\TravelExpense\TravelExpenseRepository")
  */
 class TravelExpense extends AggregateBase implements iTransactionDocument
 {
@@ -83,9 +83,9 @@ class TravelExpense extends AggregateBase implements iTransactionDocument
     	parent::updateBase($user);
     	
     	$c = new CreateTransactionCommand();
-    	$c->date = new \DateTime();
-    	$cc = $this->organization->getOrganizationSettings()->getKontoPreference()->getIncurredTravelExpenseCredit();
-    	$dc = $this->organization->getOrganizationSettings()->getKontoPreference()->getIncurredTravelExpenseDebit();
+    	$c->date = $this->date;
+    	$cc = $this->organization->getOrganizationSettings()->getIncurredTravelExpenseCredit();
+    	$dc = $this->organization->getOrganizationSettings()->getIncurredTravelExpenseDebit();
     	if($cc == null || $dc == null)
     		throw new \Exception("Please set konto preferences for this organization before issuing invoices.");
     	$c->creditKonto = $cc;
