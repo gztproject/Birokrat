@@ -5,7 +5,9 @@ namespace App\Entity\User;
 use App\Entity\Settings\CreateUserSettingsCommand;
 use App\Entity\Settings\UpdateUserSettingsCommand;
 use App\Entity\Settings\UserSettings;
+use App\Entity\TravelExpense\CreateTravelExpenseBundleCommand;
 use App\Entity\TravelExpense\CreateTravelExpenseCommand;
+use App\Entity\TravelExpense\TravelExpenseBundle;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -289,6 +291,16 @@ class User extends AggregateBase implements UserInterface, \Serializable
     public function createTravelExpense(CreateTravelExpenseCommand $c): TravelExpense
     {
     	return new TravelExpense($c, $this);
+    }
+    
+    /**
+     * Creates a new travelExpenseBundle.
+     * @param CreateTravelExpenseBundleCommand $c
+     * @return TravelExpenseBundle
+     */
+    public function createTravelExpenseBundle(CreateTravelExpenseBundleCommand $c): TravelExpenseBundle
+    {
+    	return new TravelExpenseBundle($c, $this);
     }
     
     /**

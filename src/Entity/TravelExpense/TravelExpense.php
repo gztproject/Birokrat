@@ -149,6 +149,38 @@ class TravelExpense extends AggregateBase implements iTransactionDocument
     	return $this;
     }
     
+    public function setTravelExpenseBundle(TravelExpenseBundle $teb, User $user): TravelExpense
+    {
+    	if($user == null)
+    		throw new \Exception("Updating user must be set.");
+    		
+    	if($this->state != 10)
+    		throw new \Exception("I can only bundle new expenses.");
+    	
+    	if ($this->travelExpenseBundle != null)
+    		throw new \Exception("This TravelExpense is already bundled.");
+    	
+    	parent::updateBase($user);
+    	$this->travelExpenseBundle = $teb;
+    	
+    	return $this;
+    }
+    
+    public function setBooked(\DateTime $date, User $user): TravelExpense
+    {
+    	if($user == null)
+    		throw new \Exception("Updating user must be set.");
+    		
+    	if($this->state != 10)
+    		throw new \Exception("I can only book new expenses.");
+    			
+    	parent::updateBase($user);
+    	$this->setState(20);
+    	
+    	return $this;
+    	
+    }
+    
     
     /**
      * Createss a new TravelStop.
@@ -179,6 +211,8 @@ class TravelExpense extends AggregateBase implements iTransactionDocument
      */
     private function updateTravelStop(UpdateTravelStopCommand $c, TravelStop $ts, User $user): TravelStop
     {
+    	if($this->state > 10)
+    		throw new \Exception("Can't update booked or cancelled TravelExpenses.");
     	if($user == null)
     		throw new \Exception("Updating user must be set.");
     	if(!$this->travelStops->contains($ts))

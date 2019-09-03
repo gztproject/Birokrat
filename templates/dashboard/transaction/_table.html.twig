@@ -21,6 +21,8 @@
                     <a href="{{ path('invoice_show', {'id': transaction.invoice.id}) }}">{{'label.invoice'|trans }}: {{ transaction.invoice.number }}</a>
                 {% elseif transaction.travelExpense != null %}
                     <a href="{{ path('travelExpense_show', {'id': transaction.travelExpense.id}) }}">{{'label.travelExpense'|trans }}: {{ transaction.travelExpense.TravelDescription }}</a>
+                {% elseif transaction.travelExpenseBundle != null %}
+                    <a href="{{ path('travelExpenseBundle_show', {'id': transaction.travelExpenseBundle.id}) }}">{{'label.travelExpenseBundle'|trans }}: {{ transaction.travelExpenseBundle.DateRange }}</a>
                 {% endif %}
                 </td>
                 <td>{{ transaction.sum }} €</td>                      

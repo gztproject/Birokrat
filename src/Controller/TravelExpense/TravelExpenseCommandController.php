@@ -17,6 +17,8 @@ use App\Entity\TravelExpense\TravelExpense;
 use App\Entity\TravelExpense\UpdateTravelExpenseCommand;
 use App\Entity\TravelExpense\UpdateTravelStopCommand;
 use Psr\Log\LoggerInterface;
+use App\Entity\TravelExpense\CreateTravelExpenseBundleCommand;
+use Doctrine\Common\Collections\ArrayCollection;
 
 class TravelExpenseCommandController extends AbstractController
 {    
@@ -157,7 +159,7 @@ class TravelExpenseCommandController extends AbstractController
     /**
      * @Route("/dashboard/travelExpense/bookInBundle/withFilter", methods={"POST"}, name="travelExpense_bookinBundle_withFilter")
      */
-    public function issue(TravelExpenseRepository $repo, Request $request): JsonResponse
+    public function book(TravelExpenseRepository $repo, Request $request): JsonResponse
     {
     	$dateFrom = $request->request->get('dateFrom', 0);
     	$dateTo = $request->request->get('dateTo', 0);
@@ -166,22 +168,37 @@ class TravelExpenseCommandController extends AbstractController
     	$queryBuilder = $repo->getFilteredQuery($dateFrom, $dateTo, $unbooked, $booked);
     	
     	$travelExpenses = $queryBuilder->getQuery()->getResult();
-    	    	
-    	$bundle = new TravelExpenseBundle();
+    	
+    	$organizations = new ArrayCollection();
+    	
     	foreach($travelExpenses as $te)
     	{
-    		$bundle->addTravelExpense($te);
+    		if(!$organizations->contains($te->getOrganization()))
+    			$organizations->add($te->getOrganization());    		
     	}
     	
-    	$konto = $this->getDoctrine()->getRepository(Konto::class)->findOneBy(['number'=>486]); //486 	POVRAČILA STROŠKOV S.P. POSAMEZNIKOM
-    	$date = new \DateTime($request->request->get('date', null));
-    	$entityManager = $this->getDoctrine()->getManager();
-    	
-    	$transaction = $bundle->setBooked($konto, $date);
-    	
-    	$entityManager->persist($bundle);
-    	$entityManager->persist($transaction);
-    	$entityManager->flush();
+    	foreach($organizations as $org)
+    	{
+    		$myTes = array_filter($travelExpenses, function ($v) use ($org) {return $v->getOrganization() == $org;});
+    		$c = new CreateTravelExpenseBundleCommand();
+    		$c->travelExpenses = $myTes;
+    		$c->organization = $org;
+    		
+    		$bundle = $this->getUser()->createTravelExpenseBundle($c);      	
+	    	
+    		$date = new \DateTime($request->request->get('date', null));
+    		$entityManager = $this->getDoctrine()->getManager();
+	    	
+    		$transaction = $bundle->setBooked($date, $this->getUser());
+	    	
+    		foreach($myTes as $te)
+    		{
+	    		$entityManager->persist($te);
+    		}
+    		$entityManager->persist($bundle);
+    		$entityManager->persist($transaction);
+    		$entityManager->flush();
+    	}
     	
     	return new JsonResponse($travelExpenses);
     }

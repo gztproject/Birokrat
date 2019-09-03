@@ -244,8 +244,8 @@ class Invoice extends AggregateBase implements iTransactionDocument
     	
     	$c = new CreateTransactionCommand();
     	$c->date = $this->dateOfIssue;
-    	$cc = $this->issuer->getOrganizationSettings()->getKontoPreference()->getIssueInvoiceCredit();
-    	$dc = $this->issuer->getOrganizationSettings()->getKontoPreference()->getIssueInvoiceDebit();
+    	$cc = $this->issuer->getOrganizationSettings()->getIssueInvoiceCredit();
+    	$dc = $this->issuer->getOrganizationSettings()->getIssueInvoiceDebit();
     	if($cc == null || $dc == null)
     		throw new \Exception("Please set konto preferences for this organization before issuing invoices.");
     	$c->creditKonto = $cc;
@@ -265,8 +265,8 @@ class Invoice extends AggregateBase implements iTransactionDocument
     	
     	$c = new CreateTransactionCommand();
     	$c->date = $this->dateOfIssue;
-    	$cc = $this->issuer->getOrganizationSettings()->getKontoPreference()->getInvoicePaidCredit();
-    	$dc = $this->issuer->getOrganizationSettings()->getKontoPreference()->getInvoicePaidDebit();
+    	$cc = $this->issuer->getOrganizationSettings()->getInvoicePaidCredit();
+    	$dc = $this->issuer->getOrganizationSettings()->getInvoicePaidDebit();
     	if($cc == null || $dc == null)
     		throw new \Exception("Please set konto preferences for this organization before issuing invoices.");
     	$c->creditKonto = $cc;
