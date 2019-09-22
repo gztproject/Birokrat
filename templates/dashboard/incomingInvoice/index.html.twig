@@ -1,0 +1,27 @@
+{% extends 'dashboard/layout.html.twig' %}
+
+{% block body_id 'invoice_index' %}
+
+{% block main %}
+    <h1>{{ 'title.invoices'|trans }} ({{ pagination.getTotalItemCount }})</h1>
+    <div class="bs-component">
+    {{ include('dashboard/invoice/_table.html.twig', {
+            invoices: pagination
+        }, with_context = false) }}
+    </div>
+    {{ knp_pagination_render(pagination) }}
+{% endblock %}
+
+{% block sidebar %}
+    
+    {{ parent() }}
+    <a href="{{ path('invoice_new') }}" class="btn btn-sm btn-block btn-success">
+            <i class="fa fa-plus" aria-hidden="true"></i> {{ 'action.create_invoice'|trans }}
+    </a>
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('js/invoice/list') }}
+{% endblock %}

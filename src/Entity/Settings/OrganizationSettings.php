@@ -117,7 +117,6 @@ class OrganizationSettings extends Base
     /**
      * 
      * @param CreateOrganizationSettingsCommand $c
-     * @param CreateKontoPreferenceCommand $ck
      * @param Organization $organization
      * @param User $user
      */

@@ -1,0 +1,29 @@
+{% extends 'dashboard/layout.html.twig' %}
+
+{% block body_id 'invoice_new' %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    {{ encore_entry_link_tags('css/invoice') }}
+{% endblock %}
+
+{% block main %}
+    <h1>{{ 'title.invoice_new'|trans }}</h1>
+
+    {{ include('dashboard/invoice/_form.html.twig', {
+        form: form,
+        button_label: 'label.create_invoice'|trans,
+        include_back_to_home_link: true,    
+    }, with_context = false) }}
+
+{% endblock %}
+
+{% block sidebar %}
+    {{ parent() }}
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('js/invoice/new') }}
+{% endblock %}

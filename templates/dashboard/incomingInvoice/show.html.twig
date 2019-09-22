@@ -1,0 +1,165 @@
+{% extends 'dashboard/layout.html.twig' %}
+
+{% block body_id 'invoice_view' %}
+
+{% block main %}
+        <div class="container-fluid">
+            <div class="jumbotron">
+            <div class='row' id='head'>
+                <div class='col-md-7'>
+                    <div class="row">
+                        <div class='col-sm-3'>
+                            <img src="http://www.gzt-project.si/logo.png" alt="Logo" height="100" width="100"> 
+                        </div>
+                        <div class='col-sm-9'>                    
+                            <h4>{{ invoice.issuer.name }}</h4>
+                            {% for line in invoice.issuer.address.getFullFormattedAddress %}
+                                {{ line }}</br>
+                            {% endfor %}              
+                        </div>  
+                    </div>              
+                </div>
+                <div class='col-md-5'>
+                    WWW:        {{ invoice.issuer.getWww }} </br>      
+                    E-mail:     {{ invoice.issuer.getEmail }} </br>    
+                    GSM:        {{ invoice.issuer.getMobile }} </br>
+                    Davčna št.:  {{ invoice.issuer.getFullTaxNumber }}        </br>
+                    TRR:        {{ invoice.issuer.getAccountNumber }}  </br>
+                    BIC:        {{ invoice.issuer.getBic }}      </br>                    
+                </div>
+            </div>
+            </br></br>
+            
+            <div class='row' id='invoiceData'>            
+                <div class='col-md-7'>
+                    Naročnik:</br></br>
+                    <h4>{{ invoice.recepient.shortName }}</h4>
+                    {% for line in invoice.recepient.address.getFullFormattedAddress %}
+                    {{ line }}</br>
+                    {% endfor %}
+                    </br></br>
+                    Davčna št.: {{ invoice.recepient.getFullTaxNumber }}
+                    
+                    
+                </div>
+                <div class='col-md-5'>
+                    <h4>RAČUN št.: {{ invoice.number }}</h4>
+                    {{ invoice.issuer.address.post.name }}, {{ invoice.dateOfIssueString }}</br></br>
+                    Rok plačila: {{ invoice.dueInDays }} dni</br>
+                    Zapade: {{ invoice.dueDateString }}</br>
+                    Sklic/referenca: {{ invoice.referenceNumber }}</br>
+                    Datum storitve: {{ invoice.dateServiceRenderedFromString }} - {{ invoice.dateServiceRenderedToString }}</br>
+                    
+                </div>
+            </div>
+            </br>
+            <div class='row' id='invoiceItems'>
+                <div class='col-md-12'>
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Koda</th>
+                                <th>Naziv</th>
+                                <th>Količina</th>
+                                <th>EM</th>
+                                <th>Cena</th>
+                                <th>Popust</th>
+                                <th>Vrednost</th>
+                            </tr>
+                        </thead>
+                        <tbody id='tableBody' class="invoiceItems" }}">
+                            {% for ii in invoice.invoiceItems %}
+                                <tr>
+                                    <td>{{ ii.code }}</td>
+                                    <td>{{ ii.name }}</td>
+                                    <td>{{ ii.quantity }}</td>
+                                    <td>{{ ii.unit }}</td>
+                                    <td>{{ ii.price|number_format(2, ',', ' ') }} €</td>
+                                    <td>{{ ii.discount * 100 }} %</td>
+                                    <td>{{ (ii.price * (1-ii.discount) * ii.quantity)|number_format(2, ',', ' ') }} €</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col"></br></br></br></br></div>
+            </div>
+            <div class='row' id='footer'>
+                <div class='col-md-9'>
+                        V skladu s 1. točko 94. člena ZDDV-1 DDV ni obračunan.
+                    </br></br>
+                        Pripravil:</br>
+                        {{ invoice.createdBy.getFullName }}
+                </div>                
+                <div class='col-md-3'>
+                    <table>
+                        <tr>
+                            <td>Skupaj:</td><td>{{ (invoice.totalValue)|number_format(2, ',', ' ') }} €</td>                            
+                        </tr>
+                        <tr>
+                            <td>Popust:</td><td>{{ (invoice.discount * 100)|number_format(2, ',', ' ')}} %</td>
+                        </tr>
+                        <tr>
+                            <td>Za plačilo:</td><td>{{ invoice.totalPrice|number_format(2, ',', ' ') }} €</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+              </div>
+        </div>    
+        
+        <!-- Modal -->
+        <div id="emailModal" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+            <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">{{ 'label.SendInvoiceHeader' | trans }}</h4>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            <div class="form-group">
+                                <label for="emailInput">{{ 'label.email' | trans }}</label>
+                                <input type="email" class="form-control" id="emailInput" aria-describedby="emailHelp" placeholder="Enter email" value="{{ invoice.recepient.email }}">
+                            </div>
+                            <div class="form-group">
+                                <label for="subjectInput">{{ 'label.subject' | trans }}</label>
+                                <input type="text" class="form-control" id="subjectInput" aria-describedby="subjectHelp" placeholder="Enter subject" value="{{ 'label.invoice' | trans ~ ' ' ~ invoice.number }}">
+                            </div>
+                            <div class="form-group">
+                                <label for="bodyInput">{{ 'label.body' | trans }}</label>
+                                <textarea class="form-control" id="bodyInput" aria-describedby="bodyHelp" placeholder="Enter body">{# {{ invoice.issuer.organizationSettings.invoiceEmailBody }} #}Račun v prilogi.</textarea>
+                            </div>
+                            
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="sendEmailBtn" type="button" class="btn btn-default">Send</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+{% endblock %}
+
+{% block sidebar %}
+    
+    {{ parent() }}
+    <a href="{{ path('invoice_pdf', {'id': invoice.id}) }}" target="_blank" class="btn btn-sm btn-block btn-success">
+        <i class="fa fa-file-pdf" aria-hidden="true"></i> {{ 'action.pdf'|trans }}
+    </a>
+    
+    <button id="{{ invoice.id }}" class="sendInvoice btn btn-sm btn-block btn-success{% if invoice.state < 20 %} disabled{% endif %}">
+        <i class="fa fa-envelope" aria-hidden="true"></i> {{ 'action.send'|trans }}
+    </button>
+    
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('js/invoice/view') }}
+{% endblock %}

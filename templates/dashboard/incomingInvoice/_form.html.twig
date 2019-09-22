@@ -1,0 +1,168 @@
+{{ form_start(form) }} 
+    <div class="jumbotron" id="InvoiceFormContainer"> 
+        
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">                    
+                        {{ form_label(form.issuer, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}
+                        <div class='input-group'>
+                        {{ form_widget(form.issuer, {'attr': {'class': 'form-control'}}) }}                
+                    </div>
+                </div>            
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">                    
+                        {{ form_label(form.number, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}
+                        <div class='input-group'>
+                        {{ form_widget(form.number, {'attr': {'class': 'form-control'}}) }}                
+                    </div>
+                </div>
+            </div>     
+        </div> 
+       
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    {{ form_label(form.recepient, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}
+                    <div class='input-group'>
+                        {{ form_widget(form.recepient, {'attr': {'class': 'form-control'}}) }}                
+                    </div>
+                </div>            
+            </div> 
+            <div class="col-sm-3">
+                <div class="form-group">
+                        <label class='col-form-label-lg' for='invoice_dueInDays'>{{ 'label.dueInDays' | trans }}</label>
+                        <div id="dueInDays"  class='input-group'>
+                        <input id='invoice_dueInDays' class='form-control' type='number'>
+                        <div class="input-group-append">
+                            <span class="input-group-text">{{ 'label.days' | trans }}</span>
+                        </div>                       
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">                    
+                        {{ form_label(form.dueDate, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}
+                        <div id="dueDate" class='input-group'>
+                        {{ form_widget(form.dueDate, {'attr': {'class': 'form-control'}}) }}
+                        <div class="input-group-append">
+                            <span class="input-group-text"><i class="fa fa-calendar" aria-hidden="true"></i></span>
+                        </div>
+                    </div>
+                </div>
+            </div> 
+                                    
+        </div>
+        
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-group">                   
+                        {{ form_label(form.dateOfIssue, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}
+                         <div id="dateOfIssue" class='input-group'>
+                        {{ form_widget(form.dateOfIssue, {'attr': {'class': 'form-control'}}) }}
+                        <div class="input-group-append">
+                            <span class="input-group-text"><i class="fa fa-calendar" aria-hidden="true"></i></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+            </div>
+            <div class="col-sm-3">
+                 <div class="form-group">                    
+                        {{ form_label(form.dateServiceRenderedFrom, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}
+                        <div id='dateServiceRenderedFrom' class='input-group'>
+                        {{ form_widget(form.dateServiceRenderedFrom, {'attr': {'class': 'form-control'}}) }} 
+                        <div class="input-group-append">
+                            <span class="input-group-text"><i class="fa fa-calendar" aria-hidden="true"></i></span>
+                        </div>                   
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                 <div class="form-group">                    
+                        {{ form_label(form.dateServiceRenderedTo, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}
+                        <div id='dateServiceRenderedTo' class='input-group'>
+                        {{ form_widget(form.dateServiceRenderedTo, {'attr': {'class': 'form-control'}}) }}  
+                        <div class="input-group-append">
+                            <span class="input-group-text"><i class="fa fa-calendar" aria-hidden="true"></i></span>
+                        </div>                      
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+            </div>
+            
+        </div> 
+        
+        <div class="bs-component table-responsive-sm">            
+            <table id="invoice-items-table" class="table table-sm w-auto">                
+                <thead>
+                    <tr>
+                        <th class="th-sm">{{ 'label.code'|trans }}</th>
+                        <th class="th-lg">{{ 'label.name'|trans }}</th>
+                        <th>{{ 'label.quantity'|trans }}</th>
+                        <th>{{ 'label.unit'|trans }}</th>
+                        <th>{{ 'label.price'|trans }}</th>
+                        <th>{{ 'label.discount'|trans }}</th>
+                        <th>{{ 'label.value'|trans }}</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id='tableBody' class="invoiceItems" data-prototype="{{ form_widget(form.invoiceItemCommands.vars.prototype)|e('html_attr') }}">
+
+                {% for invoiceItem in form.invoiceItemCommands %}
+                    <tr class="invoice-item-tr-{{ loop.index0 }}">
+                        <td class="codeInput">{{ form_widget(invoiceItem.code)}}</td>
+                        <td class="nameInput" data-item-index={{ loop.index0 }}>{{ form_widget(invoiceItem.name)}}</td>
+                        <td class="quantityInput">{{ form_widget(invoiceItem.quantity)}}</td>
+                        <td class="unitInput">{{ form_widget(invoiceItem.unit)}}</td>
+                        <td class="priceInput">{{ form_widget(invoiceItem.price)}}</td>
+                        <td class="discountInput">{{ form_widget(invoiceItem.discount)}}</td>
+                        <td class="valueInput"><input id="iiValue_{{ loop.index0 }}" class="valueInput" type="text" placeholder="0,00" value={{ ((invoiceItem.vars.value.price * invoiceItem.vars.value.quantity) * (1-invoiceItem.vars.value.discount))|number_format(2, ',', ' ') }} readonly=""></td>
+                        <td class="removeBtn"><a id="remove-invoice-item-{{ loop.index0 }}" class="btn btn-sm btn-block btn-danger removeBtn"><i class="fa fa-minus" aria-hidden="true"></i></a></td>                        
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>   
+        </div> 
+        <div class="row">
+        <div class="col-sm-7">                
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group">                    
+                        {{ form_label(form.discount, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}
+                        <div id="discount" class='input-group'>
+                        {{ form_widget(form.discount, {'attr': {'class': 'form-control', 'value': '0' }}) }}   
+                        <div class="input-group-append">
+                            <span class="input-group-text">%</span>
+                        </div>
+                    </div>                 
+                </div>
+            </div>            
+            <div class="col-sm-3">
+                <div class="form-group">                    
+                        <label for="totalPrice" class="col-form-label-lg">{{ 'label.total'|trans }}</label>
+                        <div class='input-group'>
+                            <input id="totalPrice" class='form-control' type="text" placeholder="0,00" readonly="">  
+                        <div class="input-group-append">
+                            <span class="input-group-text">€</span>
+                        </div>
+                    </div>                 
+                </div>
+            </div>  
+        </div>
+    </div>
+    
+    {% if include_bottom_buttons|default(true) %}
+        {{ include('dashboard/invoice/_form_actions.html.twig', {
+        button_label: button_label,
+        include_back_to_home_link: include_back_to_home_link,        
+    }, with_context = false) }}
+    {% endif %}
+
+{{ form_row(form._token) }}
+{{ form_end(form, {'render_rest': false}) }}
