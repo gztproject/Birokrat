@@ -75,6 +75,40 @@ class OrganizationSettings extends Base
     private $PaidTravelExpenseCredit;
     
     /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Konto\Konto")
+     */
+    private $ReceivedIncomingInvoiceCredit;
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Konto\Konto")
+     */
+    private $ReceivedIncomingInvoiceDebit;
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Konto\Konto")
+     */
+    private $PaidIncomingInvoiceCredit;
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Konto\Konto")
+     */
+    private $PaidIncomingInvoiceDebit;
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Konto\Konto")
+     */
+    private $RefundedIncomingInvoiceCredit;
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Konto\Konto")
+     */
+    private $RefundedIncomingInvoiceDebit;
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Konto\Konto")
+     */
+    private $RejectedIncomingInvoiceCredit;
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Konto\Konto")
+     */
+    private $RejectedIncomingInvoiceDebit;
+    
+    
+    /**
      * @ORM\Id()
      * @ORM\OneToOne(targetEntity="App\Entity\Organization\Organization", inversedBy="organizationSettings", cascade={"persist", "remove"})
      */
@@ -102,6 +136,14 @@ class OrganizationSettings extends Base
     	$this->IncurredTravelExpenseDebit = $c->IncurredTravelExpenseDebit;
     	$this->PaidTravelExpenseCredit = $c->PaidTravelExpenseCredit;
     	$this->PaidTravelExpenseDebit = $c->PaidTravelExpenseDebit;
+    	$this->ReceivedIncomingInvoiceCredit = $c->ReceivedIncomingInvoiceCredit;
+    	$this->ReceivedIncomingInvoiceDebit = $c->ReceivedIncomingInvoiceDebit;
+    	$this->PaidIncomingInvoiceCredit = $c->PaidIncomingInvoiceCredit;
+    	$this->PaidIncomingInvoiceDebit = $c->PaidIncomingInvoiceDebit;
+    	$this->RefundedIncomingInvoiceCredit = $c->RefundedIncomingInvoiceCredit;
+    	$this->RefundedIncomingInvoiceDebit = $c->RefundedIncomingInvoiceDebit;
+    	$this->RejectedIncomingInvoiceCredit = $c->RejectedIncomingInvoiceCredit;
+    	$this->RejectedIncomingInvoiceDebit = $c->RejectedIncomingInvoiceDebit;
     }
     
     /**
@@ -129,6 +171,14 @@ class OrganizationSettings extends Base
     	$this->IncurredTravelExpenseDebit = $c->IncurredTravelExpenseDebit;
     	$this->PaidTravelExpenseCredit = $c->PaidTravelExpenseCredit;
     	$this->PaidTravelExpenseDebit = $c->PaidTravelExpenseDebit;
+    	$this->ReceivedIncomingInvoiceCredit = $c->ReceivedIncomingInvoiceCredit;
+    	$this->ReceivedIncomingInvoiceDebit = $c->ReceivedIncomingInvoiceDebit;
+    	$this->PaidIncomingInvoiceCredit = $c->PaidIncomingInvoiceCredit;
+    	$this->PaidIncomingInvoiceDebit = $c->PaidIncomingInvoiceDebit;
+    	$this->RefundedIncomingInvoiceCredit = $c->RefundedIncomingInvoiceCredit;
+    	$this->RefundedIncomingInvoiceDebit = $c->RefundedIncomingInvoiceDebit;
+    	$this->RejectedIncomingInvoiceCredit = $c->RejectedIncomingInvoiceCredit;
+    	$this->RejectedIncomingInvoiceDebit = $c->RejectedIncomingInvoiceDebit;
     	
     	return $this;
     }
@@ -200,5 +250,44 @@ class OrganizationSettings extends Base
     	return $this->PaidTravelExpenseCredit;
     }
     
+    public function getReceivedIncomingInvoiceCredit(): ?Konto
+    {
+    	return $this->ReceivedIncomingInvoiceCredit;
+    }
+    
+    public function getReceivedIncomingInvoiceDebit(): ?Konto
+    {
+    	return $this->ReceivedIncomingInvoiceDebit;
+    }
+    
+    public function getPaidIncomingInvoiceCredit(): ?Konto
+    {
+    	return $this->PaidIncomingInvoiceCredit;
+    }
+    
+    public function getPaidIncomingInvoiceDebit(): ?Konto
+    {
+    	return $this->PaidIncomingInvoiceDebit;
+    }
+
+    public function getRefundedIncomingInvoiceCredit(): ?Konto
+    {
+    	return $this->RefundedIncomingInvoiceCredit;
+    }
+    
+    public function getRefundedIncomingInvoiceDebit(): ?Konto
+    {
+    	return $this->RefundedIncomingInvoiceDebit;
+    }
+    
+    public function getRejectedIncomingInvoiceCredit(): ?Konto
+    {
+    	return $this->RejectedIncomingInvoiceCredit;
+    }
+    
+    public function getRejectedIncomingInvoiceDebit(): ?Konto
+    {
+    	return $this->RejectedIncomingInvoiceDebit;
+    }  
     
 }

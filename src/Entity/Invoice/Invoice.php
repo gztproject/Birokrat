@@ -264,7 +264,7 @@ class Invoice extends AggregateBase implements iTransactionDocument
     	$this->datePaid = $date;
     	
     	$c = new CreateTransactionCommand();
-    	$c->date = $this->dateOfIssue;
+    	$c->date = $this->datePaid;
     	$cc = $this->issuer->getOrganizationSettings()->getInvoicePaidCredit();
     	$dc = $this->issuer->getOrganizationSettings()->getInvoicePaidDebit();
     	if($cc == null || $dc == null)

@@ -15,6 +15,14 @@ class CreateOrganizationSettingsCommand
     public $IncurredTravelExpenseCredit;
     public $PaidTravelExpenseDebit;
     public $PaidTravelExpenseCredit;
+    public $ReceivedIncomingInvoiceCredit;
+    public $ReceivedIncomingInvoiceDebit;
+    public $PaidIncomingInvoiceCredit;
+    public $PaidIncomingInvoiceDebit;
+    public $RefundedIncomingInvoiceCredit;
+    public $RefundedIncomingInvoiceDebit;
+    public $RejectedIncomingInvoiceCredit;
+    public $RejectedIncomingInvoiceDebit;
     
     public function __get($name) {
     	return $this->$name;

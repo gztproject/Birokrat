@@ -21,6 +21,8 @@ use App\Entity\Organization\CreateOrganizationCommand;
 use App\Entity\Organization\Organization;
 use App\Entity\Invoice\CreateInvoiceCommand;
 use App\Entity\Invoice\Invoice;
+use App\Entity\IncomingInvoice\CreateIncomingInvoiceCommand;
+use App\Entity\IncomingInvoice\IncomingInvoice;
 use App\Entity\TravelExpense\TravelExpense;
 use App\Entity\Geography\Country;
 use App\Entity\Geography\CreateCountryCommand;
@@ -281,6 +283,16 @@ class User extends AggregateBase implements UserInterface, \Serializable
     public function createInvoice(CreateInvoiceCommand $c): Invoice
     {
     	return new Invoice($c, $this);
+    }
+    
+    /**
+     * Creates a new IncomingInvoice.
+     * @param CreateIncomingInvoiceCommand $c
+     * @return IncomingInvoice
+     */
+    public function createIncomingInvoice(CreateIncomingInvoiceCommand $c): IncomingInvoice
+    {
+    	return new IncomingInvoice($c, $this);
     }
     
     /**
