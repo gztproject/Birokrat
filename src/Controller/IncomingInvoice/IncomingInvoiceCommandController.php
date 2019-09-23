@@ -1,5 +1,5 @@
 <?php 
-namespace App\Controller\Invoice;
+namespace App\Controller\IncomingInvoice;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
