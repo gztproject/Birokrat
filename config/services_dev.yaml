@@ -4,4 +4,3 @@ services:
         tags: ['kernel.event_subscriber']
         arguments:
             $sender: null
-            $recipients: ['gasper.doljak@gmail.com']
