@@ -73,7 +73,7 @@ class TravelExpense extends AggregateBase implements iTransactionDocument
         if($rate == null)
         	throw new \Exception("Please set default travel expense rate for your organization.");
         $this->rate = $c->rate ?: $rate;
-    }   
+    }    
     
     
     public function setNew(User $user): Transaction
