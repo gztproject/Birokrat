@@ -27,3 +27,11 @@ yarn-error.log
 CHEATSHEET\.txt
 
 public/uploads/signatures/
+
+src/DataFixtures/InitData/clients.tsv
+
+src/DataFixtures/InitData/organizations.tsv
+
+src/DataFixtures/InitData/partners.tsv
+
+src/DataFixtures/InitData/users.tsv
