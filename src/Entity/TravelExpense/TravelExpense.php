@@ -61,6 +61,7 @@ class TravelExpense extends AggregateBase implements iTransactionDocument
         $this->date = $c->date;
         $this->employee = $c->employee;
         $this->rate = $c->rate;
+        $this->setState(10);
         
     }    
     
