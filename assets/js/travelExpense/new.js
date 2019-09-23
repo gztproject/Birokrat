@@ -180,7 +180,8 @@ function autoFillDistance($collectionHolder, index){
 function getDistanceOSM(origin, destination, callback){
     geocodeOsm(origin, destination, function(origin, destination){
         //alert(origin.lat +'\n'+ origin.lon +'\n'+ destination.lat +'\n'+ destination.lon)
-        var url = 'http://engine.osrm.gzt.si/table/v1/driving/' + origin.lon + "," + origin.lat + ";" + destination.lon + "," + destination.lat + 
+        var host = process.env.OSRM_HOST;
+        var url = host + '/table/v1/driving/' + origin.lon + "," + origin.lat + ";" + destination.lon + "," + destination.lat + 
             '?sources=0&destinations=1&annotations=distance';
         $.ajax(
         {
@@ -237,28 +238,4 @@ function geocodeOsm(origin, destination, callback){
         }
     });
 }
-
-
-// //obsolete - moved to OSM 'cause it's free :)
-// function getDistance(origin, destination, callback){
-//     var service = new google.maps.DistanceMatrixService();
-    
-//     service.getDistanceMatrix(
-//     {
-//         origins: [origin],
-//         destinations: [destination],
-//         travelMode: 'DRIVING',
-//         unitSystem: google.maps.UnitSystem.METRIC,
-//         avoidHighways: false,
-//         avoidTolls: false
-//     }, 
-//     function (response, status) {
-//         if (status !== 'OK') {
-//             alert('Error was: ' + status);
-//         } 
-//         else {             
-//             callback(response.rows[0].elements[0].distance.value);           
-//         }
-//     });
-// }
 

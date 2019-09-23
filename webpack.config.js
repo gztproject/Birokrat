@@ -1,3 +1,5 @@
+// webpack.config.js
+const Dotenv = require('dotenv-webpack');
 var Encore = require('@symfony/webpack-encore');
 
 Encore    
@@ -39,12 +41,15 @@ Encore
     .addStyleEntry('css/admin', ['./assets/scss/admin.scss'])
     .addStyleEntry('css/dashboard', ['./assets/scss/dashboard.scss'])
     .addStyleEntry('css/invoice', ['./assets/scss/invoice.scss'])
+
+    //plugins
+
+    .addPlugin(new Dotenv({path: './.env.local'}))
     .splitEntryChunks()
     .enableSourceMaps(!Encore.isProduction())
     .enableSingleRuntimeChunk()
 ;
 
-module.exports = Encore.getWebpackConfig();
+module.exports = Encore.getWebpackConfig();    
+
 const CopyWebpackPlugin = require('copy-webpack-plugin');
-
-
