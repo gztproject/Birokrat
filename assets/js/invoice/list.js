@@ -70,4 +70,14 @@ jQuery(document).ready(function() {
             });
         });
     });
+
+    $(".invoiceRow").on('click', function () {
+
+        var id = $(this).data('id');
+        var url = "";
+        if (window.location.pathname.endsWith("dashboard"))
+            url += "dashboard/";
+        url += "invoice/" + id + "/show";
+        window.location = url;
+});
 });
