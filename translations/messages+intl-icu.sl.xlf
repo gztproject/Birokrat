@@ -841,10 +841,27 @@
         <source>label.total</source>
         <target>Skupaj</target>
       </trans-unit>
-       <trans-unit id="label.save_invoice" resname="label.save_invoice">
+      <trans-unit id="label.save_invoice" resname="label.save_invoice">
         <source>label.save_invoice</source>
         <target>Shrani</target>
       </trans-unit>
+      <trans-unit id="menu.travelExpenses" resname="menu.travelExpenses">
+        <source>menu.travelExpenses</source>
+        <target>Potni stroški</target>
+      </trans-unit>
+       <trans-unit id="menu.transactions" resname="menu.transactions">
+        <source>menu.transactions</source>
+        <target>Transakcije</target>
+      </trans-unit>
+      <trans-unit id="menu.outgoing" resname="menu.outgoing">
+        <source>menu.outgoing</source>
+        <target>Izdani</target>
+      </trans-unit>
+      <trans-unit id="menu.incoming" resname="menu.incoming">
+        <source>menu.incoming</source>
+        <target>Prejeti</target>
+      </trans-unit>
+
       
     </body>
   </file>

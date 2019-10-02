@@ -188,7 +188,7 @@ class TravelExpense extends AggregateBase implements iTransactionDocument
      * @throws \Exception If the TravelExpense is already booked or cancelled.
      * @return TravelStop
      */
-    private function createTravelStop(CreateTravelStopCommand $c): TravelStop
+    public function createTravelStop(CreateTravelStopCommand $c): TravelStop
     {
     	echo("Creating new TravelStop with post ".$c->post.". ");
     	if($this->state > 10)
