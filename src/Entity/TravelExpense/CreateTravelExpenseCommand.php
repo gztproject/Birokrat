@@ -12,6 +12,11 @@ class CreateTravelExpenseCommand
     public $date;    
     public $employee;
     public $rate;
+    
+    public function __construct()
+    {
+    	$this->travelStopCommands = array();
+    }
 
     public function __get($name) {
     	return $this->$name;

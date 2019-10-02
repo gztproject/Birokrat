@@ -42,7 +42,7 @@ class TravelExpenseCommandController extends AbstractController
     		
     		$em = $this->getDoctrine()->getManager();
     		
-    		foreach($c->tavelStopCommands as $tsc)
+    		foreach($c->travelStopCommands as $tsc)
     		{
     			$ts = $te->createTravelStop($tsc);
     			$em->persist($ts);
