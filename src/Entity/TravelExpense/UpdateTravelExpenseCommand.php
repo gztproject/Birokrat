@@ -6,7 +6,7 @@ class UpdateTravelExpenseCommand extends CreateTravelExpenseCommand
 {
 	public function __construct()
 	{
-		$this->travelStopCommands = array();
+		parent::__construct();
 	}
 
 }
