@@ -11,6 +11,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use App\Entity\Organization\Client;
 use App\Entity\Organization\Organization;
 use App\Entity\IncomingInvoice\CreateIncomingInvoiceCommand;
+use App\Entity\Konto\Konto;
 
 class IncomingInvoiceType extends AbstractType
 {
@@ -18,7 +19,7 @@ class IncomingInvoiceType extends AbstractType
     {
         $builder
         	->add('issuer', EntityType::class, array(
-        		'class' => Organization::class,
+        		'class' => Client::class,
         		'choice_label' => 'name',
         		'expanded'=>false,
         		'multiple'=>false,
@@ -28,7 +29,7 @@ class IncomingInvoiceType extends AbstractType
         		'label' => 'label.number'
         	])        	
         	->add('recepient', EntityType::class, array(
-        			'class' => Client::class,
+        			'class' => Organization::class,
         			'choice_label' => 'name',
         			'expanded'=>false,
         			'multiple'=>false,
@@ -50,6 +51,13 @@ class IncomingInvoiceType extends AbstractType
             		// prevents rendering it as type="date", to avoid HTML5 date pickers
             		'html5' => false,
             ])
+            ->add('debitKonto', EntityType::class, array(
+            		'class' => Konto::class,
+            		'choice_label' => 'konto',
+            		'expanded'=>false,
+            		'multiple'=>false,
+            		'label' => 'label.recievedIncomingInvoiceKonto',
+            ))
         ;
     }
 
