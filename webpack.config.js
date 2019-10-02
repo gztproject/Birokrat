@@ -29,6 +29,11 @@ Encore
     .addEntry('js/invoice/new', './assets/js/invoice/new.js')
     .addEntry('js/invoice/list', './assets/js/invoice/list.js')
     .addEntry('js/invoice/view', './assets/js/invoice/view.js')
+
+    //IncimingInvoice
+    .addEntry('js/incomingInvoice/new', './assets/js/incomingInvoice/new.js')
+    .addEntry('js/incomingInvoice/list', './assets/js/incomingInvoice/list.js')
+    .addEntry('js/incomingInvoice/view', './assets/js/incomingInvoice/view.js')
     
     //Organization
     .addEntry('js/organization/new', './assets/js/organization/new.js')
