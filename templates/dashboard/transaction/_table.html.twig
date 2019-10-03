@@ -10,7 +10,7 @@
         </thead>
         <tbody>
     {% for transaction in transactions %}
-        {% if transaction.sum > 0 %}
+        {% if transaction.debitKonto.category.class.number != 4 %}
             <tr class="table-success">
         {% else %}
             <tr class="table-danger">
@@ -18,11 +18,13 @@
                 <td>{{ transaction.dateString }}</td>
                 <td>
                 {% if transaction.invoice != null %}
-                    <a href="{{ path('invoice_show', {'id': transaction.invoice.id}) }}">{{'label.invoice'|trans }}: {{ transaction.invoice.number }}</a>
+                    <a href="{{ path('invoice_show', {'id': transaction.invoice.id}) }}">{{'label.invoice'|trans }}: {{ transaction.invoice.number }} ({{ transaction.invoice.recepient.shortName }})</a>
                 {% elseif transaction.travelExpense != null %}
                     <a href="{{ path('travelExpense_show', {'id': transaction.travelExpense.id}) }}">{{'label.travelExpense'|trans }}: {{ transaction.travelExpense.TravelDescription }}</a>
                 {% elseif transaction.travelExpenseBundle != null %}
                     <a href="{{ path('travelExpenseBundle_show', {'id': transaction.travelExpenseBundle.id}) }}">{{'label.travelExpenseBundle'|trans }}: {{ transaction.travelExpenseBundle.DateRange }}</a>
+                    {% elseif transaction.incomingInvoice != null %}
+                    <a href="{{ path('incomingInvoice_show', {'id': transaction.incomingInvoice.id}) }}">{{'label.incomingInvoice'|trans }}: {{ transaction.incomingInvoice.issuer.shortName }} ({{ transaction.incomingInvoice.number }})</a>
                 {% endif %}
                 </td>
                 <td>{{ transaction.sum }} €</td>                      

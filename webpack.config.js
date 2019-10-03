@@ -49,6 +49,10 @@ Encore
     //plugins
 
     .addPlugin(new Dotenv({path: './.env.local'}))
+
+    .configureBabel(function(babelConfig) {
+    })
+
     .splitEntryChunks()
     .enableSourceMaps(!Encore.isProduction())
     .enableSingleRuntimeChunk()

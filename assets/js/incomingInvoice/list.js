@@ -12,8 +12,10 @@ $(function() {
         format: 'dd. mm. yyyy',
     });   
 }); 
-jQuery(document).ready(function() {   
-    $('.set-paid').on('click', function(){
+jQuery(document).ready(function() {
+   
+    $('.set-paid').on('click', function(e){
+        e.stopPropagation();
         $("#dateId").val($(this).val());
         $('#modalDate').data("DateTimePicker").date(moment(new Date(), 'dd. mm. yyyy'));
         $('#dateModal').modal('show');        
@@ -22,7 +24,8 @@ jQuery(document).ready(function() {
             $.post("/dashboard/incomingInvoice/pay",
                 {
                     id: $('#dateId').val(),
-                    date: date.format()
+                    date: date.format(),
+                    mode: $('#modalPaymentMethod').val()
                 },
                 function(){
                         $('#submitDate').off('click');
@@ -32,7 +35,8 @@ jQuery(document).ready(function() {
         })
     });
 
-    $('.reject').on('click', function(){          
+    $('.reject').on('click', function(e){
+        e.stopPropagation();
         $("#rejectId").val($(this).val());
         $('#rejectReasonModal').modal('show');
         $('#submitReject').on('click', function(){
@@ -52,7 +56,7 @@ jQuery(document).ready(function() {
         });
     });
 
-    $(".invoiceRow").on('click', function () {
+    $(".invoiceRow").on('click', function (e) {
 
         var id = $(this).data('id');
         var url = "";

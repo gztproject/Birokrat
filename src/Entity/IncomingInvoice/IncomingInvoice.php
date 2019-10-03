@@ -4,6 +4,7 @@ namespace App\Entity\IncomingInvoice;
 
 use Doctrine\ORM\Mapping as ORM;
 use App\Entity\Base\AggregateBase;
+use App\Entity\Konto\Konto;
 use App\Entity\Organization\Organization;
 use App\Entity\User\User;
 use App\Entity\Organization\Client;
@@ -12,7 +13,7 @@ use App\Entity\Transaction\iTransactionDocument;
 use App\Entity\Transaction\CreateTransactionCommand;
 
 /**
- * @ORM\Entity(repositoryClass="App\Repository\Invoice\InvoiceRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\IncomingInvoice\IncomingInvoiceRepository")
  */
 class IncomingInvoice extends AggregateBase implements iTransactionDocument
 {
@@ -22,13 +23,13 @@ class IncomingInvoice extends AggregateBase implements iTransactionDocument
     private $dateOfIssue;
     
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Organization\Organization")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Organization\Client")
      * @ORM\JoinColumn(nullable=false)
      */
     private $issuer;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Organization\Client")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Organization\Organization")
      * @ORM\JoinColumn(nullable=false)
      */
     private $recepient;
@@ -44,7 +45,7 @@ class IncomingInvoice extends AggregateBase implements iTransactionDocument
     private $price;
 
     /**
-     * @ORM\Column(type="string", length=50)
+     * @ORM\Column(type="string", length=50, nullable=true)
      */
     private $referenceNumber;
 
@@ -84,12 +85,12 @@ class IncomingInvoice extends AggregateBase implements iTransactionDocument
     private $refundReason;
     
     /**
-     * @ORM\Column(type="string", length=512)
+     * @ORM\Column(type="string", length=512, nullable=true)
      */
     private $note;
     
     /**
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="string", nullable=true)
      */
     private $scanFilename;
     
@@ -115,6 +116,7 @@ class IncomingInvoice extends AggregateBase implements iTransactionDocument
         $this->issuer = $c->issuer;        
         $this->number = $c->number;
         $this->recepient = $c->recepient;  
+        $this->price = $c->price;
     }
     
     public function update(UpdateIncomingInvoiceCommand $c, User $user) : IncomingInvoice
@@ -145,19 +147,22 @@ class IncomingInvoice extends AggregateBase implements iTransactionDocument
      * @param User $user Issuing user
      * @return Transaction
      */
-    public function setReceived(\DateTime $date, User $user): Transaction
+    public function setReceived(\DateTime $date, User $user, Konto $cdc = null): Transaction
     {
     	$this->setState(10);
     	parent::updateBase($user);
     	
     	$c = new CreateTransactionCommand();
     	$c->date = $this->dateOfIssue;
-    	$cc = $this->issuer->getOrganizationSettings()->getReceivedIncomingInvoiceCredit();
-    	$dc = $this->issuer->getOrganizationSettings()->getReceivedIncomingInvoiceDebit();
+    	$c->organization = $this->recepient;    	
+    	$dc = $cdc!=null ? $cdc : $this->recepient->getOrganizationSettings()->getReceivedIncomingInvoiceDebit();
+    	$cc = $this->recepient->getOrganizationSettings()->getReceivedIncomingInvoiceCredit();
     	if($cc == null || $dc == null)
     		throw new \Exception("Please set konto preferences for this organization before issuing invoices.");
     	$c->creditKonto = $cc;
     	$c->debitKonto = $dc;
+    	if($this->price === null)
+    		throw new \Exception("No price is set.");
     	$c->sum = $this->price;
     		
     	$transaction = new Transaction($c, $user, $this);
@@ -180,16 +185,35 @@ class IncomingInvoice extends AggregateBase implements iTransactionDocument
     	return $invoice;
     }
     
-    public function setPaid(\DateTime $date, User $user): Transaction
+    /**
+     * Marks the invoice paid.
+     * @param \DateTime $date
+     * @param User $user
+     * @param int $mode Mode of payment (00-cash, 10-transaction)
+     * @throws \Exception
+     * @return Transaction
+     */
+    public function setPaid(\DateTime $date, User $user, int $mode): Transaction
     {    	
-    	$this->setState(10);
+    	$this->setState(20);
     	parent::updateBase($user);
     	$this->datePaid = $date;
     	
     	$c = new CreateTransactionCommand();
-    	$c->date = $this->datePaid;
-    	$cc = $this->issuer->getOrganizationSettings()->getIncomingInvoicePaidCredit();
-    	$dc = $this->issuer->getOrganizationSettings()->getIncomingInvoicePaidDebit();
+    	$c->date = $this->datePaid; 
+    	$c->organization = $this->recepient;
+    	$dc = $this->recepient->getOrganizationSettings()->getPaidIncomingInvoiceDebit();
+    	$cc = null;
+    	switch ($mode){
+    		case 00:
+    			$cc = $this->recepient->getOrganizationSettings()->getPaidCashIncomingInvoiceCredit();
+    			break;
+    		case 10:
+    			$cc = $this->recepient->getOrganizationSettings()->getPaidTransactionIncomingInvoiceCredit();
+	    		break;
+    		default:
+    			throw new \Exception("Unknown mode of payment.");
+    	}    	
     	if($cc == null || $dc == null)
     		throw new \Exception("Please set konto preferences for this organization before boking incoming invoices.");
     	$c->creditKonto = $cc;
@@ -331,7 +355,7 @@ class IncomingInvoice extends AggregateBase implements iTransactionDocument
     
     public function getReferenceNumber(): string
     {
-    	return $this->referenceNumber;
+    	return $this->referenceNumber!=null?$this->referenceNumber:"";
     }
 
     public function getState(): int

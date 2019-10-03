@@ -31,7 +31,7 @@ class IncomingInvoiceCommandController extends AbstractController
     	if ($form->isSubmitted() && $form->isValid()) {
     		 		
     		$invoice = $this->getUser()->createIncomingInvoice($c);
-    		$transaction = $invoice->setReceived(new \DateTime('now'), $this->getUser());
+    		$transaction = $invoice->setReceived(new \DateTime('now'), $this->getUser(), $c->debitKonto);
     		    		
     		$em = $this->getDoctrine()->getManager();
     		    		    		
@@ -124,8 +124,9 @@ class IncomingInvoiceCommandController extends AbstractController
     	$invoice = $this->getDoctrine()->getRepository(IncomingInvoice::class)->findOneBy(['id'=>$request->request->get('id', null)]);
     	$date = new \DateTime($request->request->get('date', null));    	
     	$entityManager = $this->getDoctrine()->getManager();
+    	
     	    	
-    	$transaction = $invoice->setPaid($date, $this->getUser());
+    	$transaction = $invoice->setPaid($date, $this->getUser(), $request->request->get('mode', null));
     	    	
     	$entityManager->persist($invoice);  
     	$entityManager->persist($transaction);

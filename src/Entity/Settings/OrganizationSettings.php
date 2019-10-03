@@ -85,7 +85,11 @@ class OrganizationSettings extends Base
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Konto\Konto")
      */
-    private $PaidIncomingInvoiceCredit;
+    private $PaidCashIncomingInvoiceCredit;
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Konto\Konto")
+     */
+    private $PaidTransactionIncomingInvoiceCredit;
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Konto\Konto")
      */
@@ -259,9 +263,14 @@ class OrganizationSettings extends Base
     	return $this->ReceivedIncomingInvoiceDebit;
     }
     
-    public function getPaidIncomingInvoiceCredit(): ?Konto
+    public function getPaidCashIncomingInvoiceCredit(): ?Konto
     {
-    	return $this->PaidIncomingInvoiceCredit;
+    	return $this->PaidCashIncomingInvoiceCredit;
+    }
+    
+    public function getPaidTransactionIncomingInvoiceCredit(): ?Konto
+    {
+    	return $this->PaidTransactionIncomingInvoiceCredit;
     }
     
     public function getPaidIncomingInvoiceDebit(): ?Konto

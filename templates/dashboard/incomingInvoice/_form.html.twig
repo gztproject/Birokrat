@@ -69,7 +69,7 @@
             <div class="col-sm-3">
                 <div class="form-group">                   
                         {{ form_label(form.reference, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}
-                         <div id="dateOfIssue" class='input-group'>
+                         <div id="reference" class='input-group'>
                         {{ form_widget(form.reference, {'attr': {'class': 'form-control'}}) }}                        
                     </div>
                 </div>
@@ -82,6 +82,7 @@
         </div>
         <div class="row">
             <div class="col-sm-6">
+                
             </div>
             
         </div>         
@@ -90,26 +91,23 @@
             <div class="col-sm-7"> 
                 <div class="form-group">                   
                         {{ form_label(form.debitKonto, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}
-                         <div id="dateOfIssue" class='input-group'>
+                         <div id="debitKonto" class='input-group'>
                         {{ form_widget(form.debitKonto, {'attr': {'class': 'form-control'}}) }}                        
                     </div>
                 </div>               
             </div>
-            <div class="col-sm-2">                
+            <div class="col-sm-2">  
+                      
             </div>            
             <div class="col-sm-3">
                 <div class="form-group">                    
-                        <label for="totalPrice" class="col-form-label-lg">{{ 'label.total'|trans }}</label>
-                        <div class='input-group'>
-                            <input id="totalPrice" class='form-control' type="text">  
-                        <div class="input-group-append">
-                            <span class="input-group-text">€</span>
-                        </div>
-                    </div>                 
-                </div>
-            </div>  
+                    {{ form_label(form.price, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}
+                    <div id="price" class='input-group'>
+                        {{ form_widget(form.price, {'attr': {'class': 'form-control'}}) }}                     
+                    </div>
+                </div>  
+            </div>
         </div>
-    </div>
     
     {% if include_bottom_buttons|default(true) %}
         {{ include('dashboard/incomingInvoice/_form_actions.html.twig', {
