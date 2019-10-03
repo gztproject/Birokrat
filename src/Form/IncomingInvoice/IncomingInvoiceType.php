@@ -27,7 +27,13 @@ class IncomingInvoiceType extends AbstractType
         	))
         	->add('number', TextType::class,[
         		'label' => 'label.number'
-        	])        	
+        	])     
+        	->add('reference', TextType::class,[
+        			'label' => 'label.reference'
+        	]) 
+        	->add('price', TextType::class,[
+        			'label' => 'label.price'
+        	]) 
         	->add('recepient', EntityType::class, array(
         			'class' => Organization::class,
         			'choice_label' => 'name',
@@ -53,7 +59,7 @@ class IncomingInvoiceType extends AbstractType
             ])
             ->add('debitKonto', EntityType::class, array(
             		'class' => Konto::class,
-            		'choice_label' => 'konto',
+            		'choice_label' => 'name',
             		'expanded'=>false,
             		'multiple'=>false,
             		'label' => 'label.recievedIncomingInvoiceKonto',

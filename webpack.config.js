@@ -33,7 +33,6 @@ Encore
     //IncimingInvoice
     .addEntry('js/incomingInvoice/new', './assets/js/incomingInvoice/new.js')
     .addEntry('js/incomingInvoice/list', './assets/js/incomingInvoice/list.js')
-    .addEntry('js/incomingInvoice/view', './assets/js/incomingInvoice/view.js')
     
     //Organization
     .addEntry('js/organization/new', './assets/js/organization/new.js')

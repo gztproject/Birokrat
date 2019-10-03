@@ -3,7 +3,7 @@
             <tr>
                 <th scope="col">{{ 'label.invoiceNumber'|trans }}</th>
                 <th scope="col"><i class="fa fa-calendar" aria-hidden="true"></i> {{ 'label.dateOfIssue'|trans }}</th>
-                <th scope="col" class="text-center">{{ 'label.recepient'|trans }}</th>
+                <th scope="col" class="text-center">{{ 'label.issuer'|trans }}</th>
                 <th scope="col" class="text-center">{{ 'label.reference'|trans }}</th>
                 <th scope="col" class="text-center">{{ 'label.sum'|trans }}</th>
                 <th scope="col" class="text-center">{{ 'label.dueDate'|trans }}/{{ 'label.paid'|trans }}</th>
@@ -12,26 +12,26 @@
         </thead>
         <tbody>
         {% for invoice in invoices %}
-            {% if invoice.State == 00 or invoice.State == 10%}
-                <tr class="table-secondary">
-            {% elseif invoice.State == 20 %}
+            {% if invoice.State == 00%}
+                <tr class="table-primary">
+            {% elseif invoice.State == 10 %}
                 {% if date() > invoice.dueDate|date_modify("+1 day") %}   <!-- date(invoice.dueDate) -->             
                     <tr class="table-warning">
                 {% else %}
                     <tr class="table-info">
                 {% endif %}
-            {% elseif invoice.State == 30 %}
+            {% elseif invoice.State == 20 %}
                 <tr class="table-success">
-            {% elseif invoice.State == 40 %}
+            {% elseif invoice.State >= 100 %}
                 <tr class="table-danger">
             {% else %}
                 <tr class="table-primary">
             {% endif %}
-                <td>{% if invoice.state == 10 %} {{ 'label.draft'|trans }} {% elseif invoice.state == 40 %} {{ 'label.cancelled'|trans }} {% else %} {{ invoice.number }} {%  endif %}</td>
+                <td>{{ invoice.number }}</td>
                 <td>{{ invoice.dateOfIssueString }}</td>
-                <td>{{ invoice.Recepient.ShortName }}</td>
+                <td>{{ invoice.Issuer.ShortName }}</td>
                 <td>{{ invoice.ReferenceNumber }}</td>
-                <td>{{ invoice.TotalPrice }}</td>
+                <td>{{ invoice.Price }}</td>
                 <td>{% if invoice.datePaid %}
                         {{ invoice.DatePaidString }}
                     {% else %}
@@ -39,23 +39,15 @@
                     {% endif %}
                 </td>
                 <td class="text-right">
-                    <div class="item-actions">  
+                    <div class="item-actions">
                         {% if invoice.State == 10 %}
-                            <a href="{{ path('invoice_edit', {'id': invoice.id}) }}" class="btn btn-sm btn-primary">
-                                <i class="fa fa-edit" aria-hidden="true"></i> {{ 'action.edit'|trans }}
-                            </a> 
-                            <button class="set-issued btn btn-sm btn-success" type="submit" name="id" value={{ invoice.id }}><i class="fa fa-share-square" aria-hidden="true"></i> 
-                                    {{ 'action.setIssued'|trans }}
-                            </button>                                                      
-                        {% endif %}
-                        {% if invoice.State == 20 %}
                             <button class="set-paid btn btn-sm btn-success" type="submit" name="id" value={{ invoice.id }}><i class="fa fa-euro-sign" aria-hidden="true"></i> 
                                     {{ 'action.setPaid'|trans }}
                             </button>                        
                         {% endif %}
-                        {% if invoice.State == 00 or invoice.State == 10 %}
-                        <button class="cancel btn btn-sm btn-danger" type="submit" name="id" value={{ invoice.id }}><i class="fa fa-times" aria-hidden="true"></i> 
-                                    {{ 'action.cancel'|trans }}
+                        {% if invoice.State == 10 %}
+                        <button class="reject btn btn-sm btn-danger" type="submit" name="id" value={{ invoice.id }}><i class="fa fa-times" aria-hidden="true"></i> 
+                                    {{ 'action.reject'|trans }}
                         </button>
                         {% endif %} 
                         <a href="{{ path('invoice_show', {'id': invoice.id}) }}" class="btn btn-sm btn-primary">

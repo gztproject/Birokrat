@@ -11,8 +11,14 @@ class CreateIncomingInvoiceCommand
     public $recepient;
     
     public $number;
+    
+    public $reference;
+    
+    public $price;
 
     public $dueDate;
+    
+    public $debitKonto;
     
     public function __get($name) {
 		return $this->$name;
