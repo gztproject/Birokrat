@@ -689,28 +689,28 @@
         <source>action.show_organization</source>
         <target>Pregled organizacije</target>
       </trans-unit>
-      <trans-unit id="Yo.bal7" resname="delete_client_modal.title">
-        <source>delete_client_modal.title</source>
+      <trans-unit id="Yo.bal7" resname="delete_partner_modal.title">
+        <source>delete_partner_modal.title</source>
         <target>Brisanje stranke</target>
       </trans-unit>
-      <trans-unit id="PHLkO1C" resname="delete_client_modal.body">
-        <source>delete_client_modal.body</source>
+      <trans-unit id="PHLkO1C" resname="delete_partner_modal.body">
+        <source>delete_partner_modal.body</source>
         <target>NEVARNO! Ali res želite izbrisati stranko?</target>
       </trans-unit>   
-      <trans-unit id="label.delete_client" resname="label.delete_client">
-        <source>label.delete_client</source>
+      <trans-unit id="label.delete_partner" resname="label.delete_partner">
+        <source>label.delete_partner</source>
         <target>Izbriši stranko</target>
       </trans-unit>  
-      <trans-unit id="zsOpuJs" resname="label.clientData">
-        <source>label.clientData</source>
+      <trans-unit id="zsOpuJs" resname="label.partnerData">
+        <source>label.partnerData</source>
         <target>Stranka</target>
       </trans-unit>
       <trans-unit id="dEYHXgp" resname="label.saveOrganization">
         <source>label.saveOrganization</source>
         <target>Shrani organizacijo</target>
       </trans-unit>
-      <trans-unit id="5kxNYmo" resname="menu.clients">
-        <source>menu.clients</source>
+      <trans-unit id="5kxNYmo" resname="menu.partners">
+        <source>menu.partners</source>
         <target>Stranke</target>
       </trans-unit>
       <trans-unit id="VicYq9d" resname="label.document">
@@ -813,8 +813,8 @@
         <source>label.preparedBy</source>
         <target>Pripravil</target>
       </trans-unit>
-      <trans-unit id="action.delete_client" resname="action.delete_client">
-        <source>action.delete_client</source>
+      <trans-unit id="action.delete_partner" resname="action.delete_partner">
+        <source>action.delete_partner</source>
         <target>Izbriši stranko</target>
       </trans-unit>
       <trans-unit id="action.create" resname="action.create">
@@ -841,10 +841,27 @@
         <source>label.total</source>
         <target>Skupaj</target>
       </trans-unit>
-       <trans-unit id="label.save_invoice" resname="label.save_invoice">
+      <trans-unit id="label.save_invoice" resname="label.save_invoice">
         <source>label.save_invoice</source>
         <target>Shrani</target>
       </trans-unit>
+      <trans-unit id="menu.travelExpenses" resname="menu.travelExpenses">
+        <source>menu.travelExpenses</source>
+        <target>Potni stroški</target>
+      </trans-unit>
+       <trans-unit id="menu.transactions" resname="menu.transactions">
+        <source>menu.transactions</source>
+        <target>Transakcije</target>
+      </trans-unit>
+      <trans-unit id="menu.outgoing" resname="menu.outgoing">
+        <source>menu.outgoing</source>
+        <target>Izdani</target>
+      </trans-unit>
+      <trans-unit id="menu.incoming" resname="menu.incoming">
+        <source>menu.incoming</source>
+        <target>Prejeti</target>
+      </trans-unit>
+
       
     </body>
   </file>

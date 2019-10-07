@@ -13,10 +13,29 @@
 {% endblock %}
 
 {% block header_navigation_links %}
-    <li class="nav-item">
-        <a class="nav-link" href="{{ path('invoice_index') }}">
-            <i class="fa fa-receipt" aria-hidden="true"></i> {{ 'menu.invoices'|trans }}
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-expanded="false" id="codesheets">
+            <i class="fa fa-receipt" aria-hidden="true"></i>
+            {{ 'menu.invoices'|trans }}
         </a>
+        <ul class="dropdown-menu" role="menu" aria-labelledby="user">
+            <a class="nav-link" href="{{ path('invoice_index') }}">
+                <i class="fa fa-sign-out-alt" aria-hidden="true"></i> {{ 'menu.outgoing'|trans }}
+            </a>
+            <a class="nav-link" href="{{ path('incomingInvoice_index') }}">
+                <i class="fa fa-sign-in-alt" aria-hidden="true"></i> {{ 'menu.incoming'|trans }}
+            </a>
+        </ul>
+    </li>  
+    <li class="nav-item">
+        <a class="nav-link" href="{{ path('travelExpense_index') }}">
+            <i class="fa fa-map-marked-alt" aria-hidden="true"></i> {{ 'menu.travelExpenses'|trans }}
+        </a>        
+    </li>  
+    <li class="nav-item">
+        <a class="nav-link" href="{{ path('transaction_index') }}">
+            <i class="fa fa-file" aria-hidden="true"></i> {{ 'menu.transactions'|trans }}
+        </a>        
     </li>  
     <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-expanded="false" id="codesheets">
@@ -30,7 +49,7 @@
                 </a>
             </li>
             <li>
-                <a class="nav-link" href="{{ path('client_index')}}">
+                <a class="nav-link" href="{{ path('partner_index')}}">
                     <i class="fa fa-tasks" aria-hidden="true"></i> {{ 'menu.clients'|trans }}
                 </a>
             </li>            

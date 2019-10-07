@@ -1,11 +1,11 @@
 {% extends 'dashboard/layout.html.twig' %}
 
-{% block body_id 'client_edit' %}
+{% block body_id 'partner_edit' %}
 
 {% block main %}
-    <h1>{{ 'title.client_edit'|trans({'%client%': client.name}) }}</h1>
+    <h1>{{ 'title.partner_edit'|trans({'%partner%': partner.name}) }}</h1>
 
-    {{ include('dashboard/client/_form.html.twig', {
+    {{ include('dashboard/partner/_form.html.twig', {
         form: form,        
         addressForm: addressForm,
         button_label: 'action.save'|trans,
@@ -21,13 +21,13 @@
 
 {% block sidebar %}
     <div class="section">
-        <a href="{{ path('client_show', {id: client.id}) }}" class="btn btn-sm btn-block btn-success">
-            <i class="fa fa-eye" aria-hidden="true"></i> {{ 'action.show_client'|trans }}
+        <a href="{{ path('partner_show', {id: partner.id}) }}" class="btn btn-sm btn-block btn-success">
+            <i class="fa fa-eye" aria-hidden="true"></i> {{ 'action.show_partner'|trans }}
         </a>
     </div>
 
     <div class="section actions">
-        {{ include('dashboard/client/_delete_form.html.twig', {client: client}, with_context = false) }}
+        {{ include('dashboard/partner/_delete_form.html.twig', {partner: partner}, with_context = false) }}
     </div>
 
     {{ parent() }}

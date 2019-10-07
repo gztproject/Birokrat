@@ -9,9 +9,9 @@ use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\CallbackTransformer;
 use App\Entity\Geography\Address;
-use App\Entity\Organization\CreateClientCommand;
+use App\Entity\Organization\CreatePartnerCommand;
 
-class ClientType extends AbstractType
+class PartnerType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -31,26 +31,25 @@ class ClientType extends AbstractType
             		'choice_label' => 'fullAddress',            		
             		'label' => 'label.address',
             ])
+            ->add('isClient', CheckboxType::class, array(
+            		'label' => 'label.isClient',
+            		'required' => false,
+            ))
+            ->add('isSupplier', CheckboxType::class, array(
+            		'label' => 'label.isSupplier',
+            		'required' => false,
+            ))
             ->add('taxable', CheckboxType::class,[
-            		'label' => 'label.taxable', 'required' => false
+            		'label' => 'label.taxable', 
+            		'required' => false
             ])            
-            ->get('taxable')
-            ->addModelTransformer(new CallbackTransformer(
-            		function($boolToCheckbox){
-            			return $boolToCheckbox?:false;
-            		},
-            		function($checkboxToBool){
-            			if($checkboxToBool===null)
-            				return false;
-            				return $checkboxToBool?:false;
-            		}
-           ));
+            ;
     }
 
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => CreateClientCommand::class,
+            'data_class' => CreatePartnerCommand::class,
         ));
     }
 }

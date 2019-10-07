@@ -7,11 +7,21 @@ use Doctrine\ORM\Mapping as ORM;
 use App\Entity\Base\AggregateBase;
 
 /**
- * @ORM\Entity(repositoryClass="App\Repository\Organization\ClientRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\Organization\PartnerRepository")
  */
-class Client extends LegalEntityBase
+class Partner extends LegalEntityBase
 {    
-	public function __construct(CreateClientCommand $c, User $user)
+	/**
+	 * @ORM\Column(type="boolean")
+	 */
+	private $isSupplier;
+	
+	/**
+	 * @ORM\Column(type="boolean")
+	 */
+	private $isClient;
+	
+	public function __construct(CreatePartnerCommand $c, User $user)
 	{
 		parent::__construct($user);
 		$this->code = $c->code;
@@ -33,9 +43,11 @@ class Client extends LegalEntityBase
 			$this->accountNumber = $c->accountNumber;
 		if($c->bic)
 			$this->bic = $c->bic;
+		$this->isClient = $c->isClient;
+		$this->isSupplier = $c->isSupplier;
 	}
 	
-	public function update (UpdateClientCommand $c, User $user): Client
+	public function update (UpdatePartnerCommand $c, User $user): Partner
 	{
 		//Should we make a copy and deactivate old one not to mix up old stuff?
 		parent::updateBase($user);
@@ -61,6 +73,10 @@ class Client extends LegalEntityBase
 			$this->accountNumber = $c->accountNumber;
 		if($c->bic != null && $c->bic != $this->bic)
 			$this->bic = $c->bic;
+		if($c->isClient != null && $c->isClient != $this->isClient)
+			$this->isClient = $c->isClient;
+		if($c->isSupplier != null && $c->isSupplier != $this->isSupplier)
+			$this->isSupplier = $c->isSupplier;
 									
 		return $this;
 	}
@@ -72,7 +88,7 @@ class Client extends LegalEntityBase
 	 */
 	public function mapTo($to)
 	{
-		if ($to instanceof UpdateClientCommand)
+		if ($to instanceof UpdatePartnerCommand)
 		{
 			$reflect = new \ReflectionClass($this);
 			$props  = $reflect->getProperties();
@@ -90,6 +106,16 @@ class Client extends LegalEntityBase
 			throw(new \Exception('cant map ' . get_class($this) . ' to ' . get_class($to)));
 			return $to;
 		}
+	}
+	
+	public function isClient(): bool
+	{
+		return $this->isClient;
+	}
+	
+	public function isSupplier(): bool
+	{
+		return $this->isSupplier;
 	}
     
 }

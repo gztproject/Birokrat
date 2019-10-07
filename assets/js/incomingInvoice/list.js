@@ -12,27 +12,8 @@ $(function() {
         format: 'dd. mm. yyyy',
     });   
 }); 
-jQuery(document).ready(function() {    
-    $('.set-issued').on('click', function(e){ 
-        e.stopPropagation();        
-        $("#dateId").val($(this).val());
-        $('#modalDate').data("DateTimePicker").date(moment(new Date(), 'dd. mm. yyyy'));
-        $('#dateModal').modal('show');        
-        $('#submitDate').on('click', function(){        
-            var date = moment($('#modalDate').data("DateTimePicker").date()).tz('Europe/Belgrade');
-            $.post("/dashboard/invoice/issue",
-                {
-                    id: $('#dateId').val(),
-                    date: date.format()
-                },
-                function(){
-                        $('#submitDate').off('click');
-                        $('#dateModal').modal('hide');
-                        location.reload();                    
-                });
-        })
-    });
-
+jQuery(document).ready(function() {
+   
     $('.set-paid').on('click', function(e){
         e.stopPropagation();
         $("#dateId").val($(this).val());
@@ -40,10 +21,11 @@ jQuery(document).ready(function() {
         $('#dateModal').modal('show');        
         $('#submitDate').on('click', function(){        
             var date = moment($('#modalDate').data("DateTimePicker").date()).tz('Europe/Belgrade');
-            $.post("/dashboard/invoice/pay",
+            $.post("/dashboard/incomingInvoice/pay",
                 {
                     id: $('#dateId').val(),
-                    date: date.format()
+                    date: date.format(),
+                    mode: $('#modalPaymentMethod').val()
                 },
                 function(){
                         $('#submitDate').off('click');
@@ -53,34 +35,34 @@ jQuery(document).ready(function() {
         })
     });
 
-    $('.cancel').on('click', function(e){ 
-        e.stopPropagation();         
-        $("#cancelId").val($(this).val());
-        $('#cancelReasonModal').modal('show');
-        $('#submitCancel').on('click', function(){
-            if($('#cancelReason').val() == ""){
+    $('.reject').on('click', function(e){
+        e.stopPropagation();
+        $("#rejectId").val($(this).val());
+        $('#rejectReasonModal').modal('show');
+        $('#submitReject').on('click', function(){
+            if($('#rejectReason').val() == ""){
                 alert("You must enter a reason.")
                 return;
             }
-            $.post("/dashboard/invoice/cancel",
+            $.post("/dashboard/incomingInvoice/reject",
             {
-                id: $('#cancelId').val(),
-                reason: $('#cancelReason').val() 
+                id: $('#rejectId').val(),
+                reason: $('#rejectReason').val() 
             },
             function(data, status){
-                $('#cancelReasonModal').modal('hide');
+                $('#rejectReasonModal').modal('hide');
                 location.reload();
             });
         });
     });
 
-    $(".invoiceRow").on('click', function () {
+    $(".invoiceRow").on('click', function (e) {
 
         var id = $(this).data('id');
         var url = "";
         if (window.location.pathname.endsWith("dashboard"))
             url += "dashboard/";
-        url += "invoice/" + id + "/show";
+        url += "incomingInvoice/" + id + "/show";
         window.location = url;
 });
 });

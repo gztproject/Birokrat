@@ -6,6 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 use App\Entity\Base\AggregateBase;
 use App\Entity\Konto\Konto;
 use App\Entity\Organization\Organization;
+use App\Entity\IncomingInvoice\IncomingInvoice;
 use App\Entity\Invoice\Invoice;
 use App\Entity\TravelExpense\TravelExpense;
 use App\Entity\TravelExpense\TravelExpenseBundle;
@@ -65,6 +66,11 @@ class Transaction extends AggregateBase
 	private $invoice;
 	
 	/**
+	 * @ORM\ManyToOne(targetEntity="App\Entity\IncomingInvoice\IncomingInvoice")
+	 */
+	private $incomingInvoice;
+	
+	/**
 	 * @ORM\ManyToOne(targetEntity="App\Entity\TravelExpense\TravelExpense")
 	 */
 	private $travelExpense;
@@ -80,6 +86,10 @@ class Transaction extends AggregateBase
 			case Invoice::class:
 				parent::__construct($user);
 				$this->initWithInvoice($c, $document);
+				break;
+			case IncomingInvoice::class:
+				parent::__construct($user);
+				$this->initWithIncomingInvoice($c, $document);
 				break;
 			case TravelExpense::class:
 				parent::__construct($user);
@@ -111,6 +121,10 @@ class Transaction extends AggregateBase
 				parent::updateBase($user);
 				$this->updateWithInvoice($c, $document);
 				break;
+			case IncomingInvoice::class:
+				parent::updateBase($user);
+				$this->updateWithIncomingInvoice($c, $document);
+				break;
 			case TravelExpense::class:
 				parent::updateBase($user);
 				$this->updateWithTravelExpense($c, $document);
@@ -131,6 +145,11 @@ class Transaction extends AggregateBase
 		$this->invoice = $invoice;
 	}
 	
+	private function initWithIncomingInvoice(CreateTransactionCommand $c, IncomingInvoice $incomingInvoice)
+	{
+		$this->incomingInvoice = $incomingInvoice;
+	}
+	
 	private function initWithTravelExpenseBundle(CreateTransactionCommand $c, TravelExpenseBundle $bundle)
 	{		
 		$this->travelExpenseBundle = $bundle;
@@ -148,6 +167,14 @@ class Transaction extends AggregateBase
 		$this->creditKonto = $c->creditKonto;
 		$this->debitKonto = $c->debitKonto;
 		$this->invoice = $invoice;
+	}
+	
+	private function updateWithIncomingInvoice(UpdateTransactionCommand $c, IncomingInvoice $incomingInvoice)
+	{
+		$this->date = $c->date;
+		$this->sum = $c->sum;
+		$this->creditKonto = $c->creditKonto;
+		$this->debitKonto = $c->debitKonto;
 	}
 	
 	private function updateWithTravelExpense(UpdateTransactionCommand $c, TravelExpense $travelExpense)
@@ -207,6 +234,11 @@ class Transaction extends AggregateBase
 	public function getInvoice(): ?Invoice
 	{
 		return $this->invoice;
+	}
+	
+	public function getIncomingInvoice(): ?IncomingInvoice
+	{
+		return $this->incomingInvoice;
 	}
 	
 	public function getTravelExpense(): ?TravelExpense
