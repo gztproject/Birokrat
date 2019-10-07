@@ -9,9 +9,9 @@ use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\CallbackTransformer;
 use App\Entity\Geography\Address;
-use App\Entity\Organization\CreateClientCommand;
+use App\Entity\Organization\CreatePartnerCommand;
 
-class ClientType extends AbstractType
+class PartnerType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -50,7 +50,7 @@ class ClientType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => CreateClientCommand::class,
+            'data_class' => CreatePartnerCommand::class,
         ));
     }
 }

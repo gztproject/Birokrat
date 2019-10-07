@@ -1,16 +1,16 @@
 {% extends 'dashboard/layout.html.twig' %}
 
-{% block body_id 'client_show' %}
+{% block body_id 'partner_show' %}
 
 {% block main %}
-    <h1>{{ client.name }}</h1>
+    <h1>{{ partner.name }}</h1>
     
     <div class="card text-white bg-primary mb-3"> 
     <div class="card-header">
-            <strong>{{ ('label.clientData')|trans }}</strong>
+            <strong>{{ ('label.partnerData')|trans }}</strong>
         </div>    
         <div class="card-body">                    
-            <strong>{{ 'label.name'|trans }}</strong>: {{ client.name }}            
+            <strong>{{ 'label.name'|trans }}</strong>: {{ partner.name }}            
         </div>
     </div>
     
@@ -21,7 +21,7 @@
         <div class="card-body">            
             <div class="card border-primary mb-3" style="max-width: 15rem;">               
                 <div class="card-body">                            
-                    {% for line in client.address.getFullFormattedAddress %}
+                    {% for line in partner.address.getFullFormattedAddress %}
                         {{ line }}</br>
                     {% endfor %}
                 </div>  
@@ -32,13 +32,13 @@
 
 {% block sidebar %}
     <div class="section">
-        <a href="{{ path('client_edit', {id: client.id}) }}" class="btn btn-sm btn-block btn-success">
+        <a href="{{ path('partner_edit', {id: partner.id}) }}" class="btn btn-sm btn-block btn-success">
             <i class="fa fa-edit" aria-hidden="true"></i> {{ 'action.edit_contents'|trans }}
         </a>
     </div>
 
     <div class="section">
-        {{ include('dashboard/client/_delete_form.html.twig', {client: client}, with_context = false) }}
+        {{ include('dashboard/partner/_delete_form.html.twig', {partner: partner}, with_context = false) }}
     </div>
 
     {{ parent() }}

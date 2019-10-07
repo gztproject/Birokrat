@@ -15,8 +15,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use App\Entity\Base\AggregateBase;
-use App\Entity\Organization\Client;
-use App\Entity\Organization\CreateClientCommand;
+use App\Entity\Organization\Partner;
+use App\Entity\Organization\CreatePartnerCommand;
 use App\Entity\Organization\CreateOrganizationCommand;
 use App\Entity\Organization\Organization;
 use App\Entity\Invoice\CreateInvoiceCommand;
@@ -337,12 +337,12 @@ class User extends AggregateBase implements UserInterface, \Serializable
     
     /**
      * 
-     * @param CreateClientCommand $c
-     * @return Client
+     * @param CreatePartnerCommand $c
+     * @return Partner
      */
-    public function createClient(CreateClientCommand $c): Client
+    public function createPartner(CreatePartnerCommand $c): Partner
     {
-    	return new Client($c, $this);
+    	return new Partner($c, $this);
     }
     
     

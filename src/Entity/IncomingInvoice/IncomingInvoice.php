@@ -7,7 +7,7 @@ use App\Entity\Base\AggregateBase;
 use App\Entity\Konto\Konto;
 use App\Entity\Organization\Organization;
 use App\Entity\User\User;
-use App\Entity\Organization\Client;
+use App\Entity\Organization\Partner;
 use App\Entity\Transaction\Transaction;
 use App\Entity\Transaction\iTransactionDocument;
 use App\Entity\Transaction\CreateTransactionCommand;
@@ -23,7 +23,7 @@ class IncomingInvoice extends AggregateBase implements iTransactionDocument
     private $dateOfIssue;
     
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Organization\Client")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Organization\Partner")
      * @ORM\JoinColumn(nullable=false)
      */
     private $issuer;
@@ -381,7 +381,7 @@ class IncomingInvoice extends AggregateBase implements iTransactionDocument
     	return $this->dateOfIssue->format('j. n. Y');
     }
     
-    public function getIssuer(): Client
+    public function getIssuer(): Partner
     {
     	return $this->issuer;
     }

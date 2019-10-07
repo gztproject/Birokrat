@@ -11,7 +11,7 @@ use App\Entity\Organization\Organization;
 use App\Entity\User\User;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Symfony\Component\Config\Definition\Exception\Exception;
-use App\Entity\Organization\Client;
+use App\Entity\Organization\Partner;
 use App\Entity\Transaction\Transaction;
 use App\Entity\Transaction\iTransactionDocument;
 use App\Entity\Transaction\CreateTransactionCommand;
@@ -33,7 +33,7 @@ class Invoice extends AggregateBase implements iTransactionDocument
     private $issuer;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Organization\Client")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Organization\Partner")
      * @ORM\JoinColumn(nullable=false)
      */
     private $recepient;
@@ -472,7 +472,7 @@ class Invoice extends AggregateBase implements iTransactionDocument
     	return $this->issuer;
     }
     
-    public function getRecepient(): Client
+    public function getRecepient(): Partner
     {
     	return $this->recepient;
     }
