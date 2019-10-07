@@ -15,6 +15,7 @@ use App\Entity\IncomingInvoice\CreateIncomingInvoiceCommand;
 use App\Entity\IncomingInvoice\PaymentMethods;
 use App\Entity\Konto\Konto;
 use App\Repository\KontoRepository;
+use App\Repository\Organization\PartnerRepository;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 
@@ -25,6 +26,13 @@ class IncomingInvoiceType extends AbstractType
         $builder
         	->add('issuer', EntityType::class, array(
         		'class' => Partner::class,
+        		'query_builder' => function(PartnerRepository $repository) {
+        			$qb = $repository->createQueryBuilder('p');
+        			return $qb        			
+        			->where('p.isSupplier = 1')
+        			->orderBy('p.id', 'ASC')
+        			;
+        		},
         		'choice_label' => 'name',
         		'expanded'=>false,
         		'multiple'=>false,

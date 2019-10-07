@@ -32,7 +32,7 @@ class IncomingInvoiceCommandController extends AbstractController
     		 		
     		$invoice = $this->getUser()->createIncomingInvoice($c);
     		if($c->paidOnSpot)
-    			$transaction = $invoice->setRecievedAndPaid(new \DateTime('now'), $this->getUser(), $c->paymentMethod, $c->debitKonto);
+    			$transaction = $invoice->setReceivedAndPaid(new \DateTime('now'), $this->getUser(), $c->paymentMethod, $c->debitKonto);
     		else
     			$transaction = $invoice->setReceived(new \DateTime('now'), $this->getUser(), $c->debitKonto);
     		    		

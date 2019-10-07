@@ -1,4 +1,4 @@
-{{ include('dashboard/patner/_delete_partner_confirmation.html.twig') }}
+{{ include('dashboard/partner/_delete_partner_confirmation.html.twig') }}
 <form action="{{ url('partner_delete', {id: partner.id}) }}" method="post" data-confirmation="true" id="delete-form">
     <input type="hidden" name="token" value="{{ csrf_token('delete') }}" />
     <button type="submit" class="btn btn-sm btn-block btn-danger">

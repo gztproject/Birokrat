@@ -107,5 +107,15 @@ class Partner extends LegalEntityBase
 			return $to;
 		}
 	}
+	
+	public function isClient(): bool
+	{
+		return $this->isClient;
+	}
+	
+	public function isSupplier(): bool
+	{
+		return $this->isSupplier;
+	}
     
 }
