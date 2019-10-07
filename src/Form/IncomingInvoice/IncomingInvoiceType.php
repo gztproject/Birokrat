@@ -12,8 +12,11 @@ use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use App\Entity\Organization\Client;
 use App\Entity\Organization\Organization;
 use App\Entity\IncomingInvoice\CreateIncomingInvoiceCommand;
+use App\Entity\IncomingInvoice\PaymentMethods;
 use App\Entity\Konto\Konto;
 use App\Repository\KontoRepository;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 
 class IncomingInvoiceType extends AbstractType
 {
@@ -28,10 +31,11 @@ class IncomingInvoiceType extends AbstractType
         		'label' => 'label.issuer',
         	))
         	->add('number', TextType::class,[
-        		'label' => 'label.number'
+        		'label' => 'label.number',
         	])     
         	->add('reference', TextType::class,[
-        			'label' => 'label.reference'
+        			'label' => 'label.reference',
+					'required' => false,
         	]) 
         	->add('price', NumberType::class,[
         			'label' => 'label.price'
@@ -46,18 +50,15 @@ class IncomingInvoiceType extends AbstractType
             ->add('dateOfIssue', DateTimePickerType::class,[
                 'label' => 'label.dateOfIssue',
             	'widget' => 'single_text',
-            	'format' => 'dd. MM. yyyy',
-            		
-            	// prevents rendering it as type="date", to avoid HTML5 date pickers
+            	'format' => 'dd. MM. yyyy',            		
             	'html5' => false,            	
             ])
             ->add('dueDate', DateTimePickerType::class,[
             		'label' => 'label.dueDate',
             		'widget' => 'single_text',
-            		'format' => 'dd. MM. yyyy',
-            		
-            		// prevents rendering it as type="date", to avoid HTML5 date pickers
+            		'format' => 'dd. MM. yyyy',            		
             		'html5' => false,
+            		'required' => false,
             ])
             ->add('debitKonto', EntityType::class, array(
             		'class' => Konto::class,
@@ -75,6 +76,18 @@ class IncomingInvoiceType extends AbstractType
             		'expanded'=>false,
             		'multiple'=>false,
             		'label' => 'label.recievedIncomingInvoiceKonto',
+            ))
+            ->add('paymentMethod', ChoiceType::class, array(
+            		'choices' => [
+            				'label.cash' => PaymentMethods::cash,
+            				'label.transaction' => PaymentMethods::transaction
+            		],
+            		'label' => 'label.paymentMethod',
+            		'required' => false,
+            ))
+            ->add('paidOnSpot', CheckboxType::class, array(
+            		'label' => 'label.paidOnSpot',
+            		'required' => false,
             ))
         ;
     }

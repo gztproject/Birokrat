@@ -109,7 +109,7 @@ class IncomingInvoice extends AggregateBase implements iTransactionDocument
         $this->dateRefunded = null;
         $this->datePaid = null;
         //We have to initialize the state (see checkState()).
-        $this->state = 00;         
+        $this->state = States::draft;         
         
         $this->dateOfIssue = $c->dateOfIssue;
         $this->dueDate = $c->dueDate;
@@ -122,8 +122,8 @@ class IncomingInvoice extends AggregateBase implements iTransactionDocument
     public function update(UpdateIncomingInvoiceCommand $c, User $user) : IncomingInvoice
     {
     	//We can only update invoices in state 10.
-    	if($this->state != 10)
-    		throw new \Exception("Only new invoices can be updated.");
+    	if($this->state != States::received)
+    		throw new \LogicException("Only new invoices can be updated.");
     	parent::updateBase($user);
     	if($c->dateOfIssue != null && $c->dateOfIssue != $this->dateOfIssue)
     		$this->dateOfIssue = $c->dateOfIssue;
@@ -145,44 +145,76 @@ class IncomingInvoice extends AggregateBase implements iTransactionDocument
      * Sets the invoice received and creates the transaction.
      * @param \DateTime $date
      * @param User $user Issuing user
+     * @throws \InvalidArgumentException
+     * @throws \LogicException
      * @return Transaction
      */
     public function setReceived(\DateTime $date, User $user, Konto $cdc = null): Transaction
     {
-    	$this->setState(10);
+    	$this->setState(States::received);
     	parent::updateBase($user);
-    	
+    	    	    	
     	$c = new CreateTransactionCommand();
     	$c->date = $this->dateOfIssue;
     	$c->organization = $this->recepient;    	
-    	$dc = $cdc!=null ? $cdc : $this->recepient->getOrganizationSettings()->getReceivedIncomingInvoiceDebit();
+    	$dc = $cdc != null ? $cdc : $this->recepient->getOrganizationSettings()->getReceivedIncomingInvoiceDebit();
     	$cc = $this->recepient->getOrganizationSettings()->getReceivedIncomingInvoiceCredit();
     	if($cc == null || $dc == null)
-    		throw new \Exception("Please set konto preferences for this organization before issuing invoices.");
+    		throw new \LogicException("Please set konto preferences for this organization before issuing invoices.");
     	$c->creditKonto = $cc;
     	$c->debitKonto = $dc;
     	if($this->price === null)
-    		throw new \Exception("No price is set.");
+    		throw new \InvalidArgumentException("No price is set.");
     	$c->sum = $this->price;
     		
     	$transaction = new Transaction($c, $user, $this);
     		
     	return $transaction;
     }
-   
     
     /**
-     * Makes a copy of itself
-     * @param User $user The cloning user
-     * @return IncomingInvoice Cloned incomingInvoice
+     * Sets the invoice recieved and paid directly on the spot.
+     * @param \DateTime $date
+     * @param User $user
+     * @param int $mode
+     * @param Konto $cdc
+     * @throws \InvalidArgumentException
+     * @throws \LogicException
+     * @return Transaction
      */
-    public function clone(User $user) : IncomingInvoice
+    public function setReceivedAndPaid(\DateTime $date, User $user, int $mode, Konto $cdc = null): Transaction
     {
-    	$c = new CreateIncomingInvoiceCommand();
-    	$this->mapTo($c);
-    	$invoice = $user->createIncomingInvoice($c);
+    	$this->setState(States::received);
+    	parent::updateBase($user);
     	
-    	return $invoice;
+    	$c = new CreateTransactionCommand();
+    	$c->date = $this->dateOfIssue;
+    	$c->organization = $this->recepient;
+    	$dc = $cdc != null ? $cdc : $this->recepient->getOrganizationSettings()->getReceivedIncomingInvoiceDebit();
+    	$cc = null;
+    	switch ($mode){
+    		case PaymentMethods::cash:
+    			$cc = $this->recepient->getOrganizationSettings()->getPaidCashIncomingInvoiceCredit();
+    			break;
+    		case PaymentMethods::transaction:
+    			$cc = $this->recepient->getOrganizationSettings()->getPaidTransactionIncomingInvoiceCredit();
+    			break;
+    		default:
+    			throw new \InvalidArgumentException("Unknown mode of payment.");
+    	}    	
+    	if($cc == null || $dc == null)
+    		throw new \LogicException("Please set konto preferences for this organization before issuing invoices.");
+    	$c->creditKonto = $cc;
+    	$c->debitKonto = $dc;
+    	if($this->price === null)
+    		throw new \InvalidArgumentException("No price is set.");
+    	$c->sum = $this->price;
+    	
+    	$this->setState(States::paid);
+    		
+    	$transaction = new Transaction($c, $user, $this);
+    	
+    	return $transaction;
     }
     
     /**
@@ -190,12 +222,13 @@ class IncomingInvoice extends AggregateBase implements iTransactionDocument
      * @param \DateTime $date
      * @param User $user
      * @param int $mode Mode of payment (00-cash, 10-transaction)
-     * @throws \Exception
+     * @throws \InvalidArgumentException
+     * @throws \LogicException
      * @return Transaction
      */
     public function setPaid(\DateTime $date, User $user, int $mode): Transaction
     {    	
-    	$this->setState(20);
+    	$this->setState(States::paid);
     	parent::updateBase($user);
     	$this->datePaid = $date;
     	
@@ -205,17 +238,17 @@ class IncomingInvoice extends AggregateBase implements iTransactionDocument
     	$dc = $this->recepient->getOrganizationSettings()->getPaidIncomingInvoiceDebit();
     	$cc = null;
     	switch ($mode){
-    		case 00:
+    		case PaymentMethods::cash:
     			$cc = $this->recepient->getOrganizationSettings()->getPaidCashIncomingInvoiceCredit();
     			break;
-    		case 10:
+    		case PaymentMethods::transaction:
     			$cc = $this->recepient->getOrganizationSettings()->getPaidTransactionIncomingInvoiceCredit();
 	    		break;
     		default:
-    			throw new \Exception("Unknown mode of payment.");
+    			throw new \InvalidArgumentException("Unknown mode of payment.");
     	}    	
     	if($cc == null || $dc == null)
-    		throw new \Exception("Please set konto preferences for this organization before boking incoming invoices.");
+    		throw new \LogicException("Please set konto preferences for this organization before boking incoming invoices.");
     	$c->creditKonto = $cc;
     	$c->debitKonto = $dc;
     	$c->sum = $this->price;
@@ -234,7 +267,7 @@ class IncomingInvoice extends AggregateBase implements iTransactionDocument
     {
     	$this->dateRefunded = \DateTime::createFromFormat('U', date("U"));
     	$this->refundReason = $reason;
-    	$this->setState(100);
+    	$this->setState(States::refunded);
     }
     
     /**
@@ -246,7 +279,21 @@ class IncomingInvoice extends AggregateBase implements iTransactionDocument
     {
     	$this->dateRejected = \DateTime::createFromFormat('U', date("U"));
     	$this->rejectedReason = $reason;
-    	$this->setState(110);
+    	$this->setState(States::rejected);
+    }
+    
+    /**
+     * Makes a copy of itself
+     * @param User $user The cloning user
+     * @return IncomingInvoice Cloned incomingInvoice
+     */
+    public function clone(User $user) : IncomingInvoice
+    {
+    	$c = new CreateIncomingInvoiceCommand();
+    	$this->mapTo($c);
+    	$invoice = $user->createIncomingInvoice($c);
+    	
+    	return $invoice;
     }
     
     /**
@@ -267,30 +314,31 @@ class IncomingInvoice extends AggregateBase implements iTransactionDocument
      * 
      * @param int $currState Current invoice state
      * @param int $newState New InvoiceState
+     * @throws \LogicException
      */
     private function checkState(int $currState, int $newState)
     {
     	switch ($currState) {
-    		case 00: //draft
-    			if ($newState != 10)    				 
-    				throw new \Exception("Can't transition to state $newState from $currState");
+    		case States::draft:
+    			if ($newState != States::received)    				 
+    				throw new \LogicException("Can't transition to state $newState from $currState");
     			break;
-    		case 10: //received
-    			if ($newState != 20 && $newState != 110)
-    				throw new \Exception("Can't transition to state $newState from $currState");
+    		case States::received:
+    			if ($newState != States::paid && $newState != States::rejected)
+    				throw new \LogicException("Can't transition to state $newState from $currState");
     			break;
-    		case 20: //paid
-    			if ($newState != 100)
-    				throw new \Exception("Can't transition to state $newState from $currState");
+    		case States::paid:
+    			if ($newState != States::refunded)
+    				throw new \LogicException("Can't transition to state $newState from $currState");
     			break;
-    		case 100: //refunded
-    			throw new \Exception("Can't transition to state $newState from $currState");
+    		case States::refounded:
+    			throw new \LogicException("Can't transition to state $newState from $currState");
     			break;
-    		case 110: //rejected
-    			throw new \Exception("Can't transition to state $newState from $currState");
+    		case States::rejected:
+    			throw new \LogicException("Can't transition to state $newState from $currState");
     			break;    		
     		default:
-    			throw new \Exception('This InvoiceState is unknown!');
+    			throw new \LogicException('This InvoiceState is unknown!');
     			break;
     	}
     	
@@ -318,7 +366,7 @@ class IncomingInvoice extends AggregateBase implements iTransactionDocument
     	}
     	else
     	{
-    		throw(new \Exception('cant map ' . get_class($this) . ' to ' . get_class($to)));
+    		throw(new \InvalidArgumentException('cant map ' . get_class($this) . ' to ' . get_class($to)));
     		return $to;
     	}
     }
@@ -387,4 +435,23 @@ class IncomingInvoice extends AggregateBase implements iTransactionDocument
     {
     	return $this->datePaid->format('j. n. Y');
     }
+}
+
+/**
+ * 00-draft, 10-received, 20-paid, 100-refunded, 110-rejected.
+ * @author gapi
+ */
+abstract class States
+{
+	const draft = 00;
+	const received = 10;
+	const paid = 20;
+	const refunded = 100;
+	const rejected = 110;
+}
+
+abstract class PaymentMethods
+{
+	const cash = 00;
+	const transaction = 10;
 }

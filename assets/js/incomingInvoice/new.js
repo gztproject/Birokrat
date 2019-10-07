@@ -38,6 +38,8 @@ $(function() {
 });
 
 
+presetPaidOnSpot();
+
 jQuery(document).ready(function() { 
 
     $('#incoming_invoice_dueDate').on('dp.change', function(){
@@ -60,5 +62,27 @@ jQuery(document).ready(function() {
         var issueDate = moment($('#incoming_invoice_dateOfIssue').data("DateTimePicker").date());
         var date = issueDate.add($(this).val(), 'days').format('L');       
         $('#incoming_invoice_dueDate').data("DateTimePicker").date(date);
-    });        
+    });   
+    
+    $('#incoming_invoice_paidOnSpot').change(function(){
+        if($('#incoming_invoice_paidOnSpot')[0].checked)
+        {
+            $('#paymentMethod').show();
+            $('#dueInDays').hide();
+            $('#dueDate').hide();
+        }
+        else
+        {
+            $('#paymentMethod').hide();
+            $('#dueInDays').show();
+            $('#dueDate').show();
+        }
+    })
 });
+
+function presetPaidOnSpot(){
+    $('#incoming_invoice_paidOnSpot').prop( "checked", true );
+    $('#paymentMethod').show();
+    $('#dueInDays').hide();
+    $('#dueDate').hide();
+};

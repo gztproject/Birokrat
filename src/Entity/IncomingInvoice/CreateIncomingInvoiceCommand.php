@@ -20,6 +20,10 @@ class CreateIncomingInvoiceCommand
     
     public $debitKonto;
     
+    public $paidOnSpot;
+    
+    public $paymentMethod;
+    
     public function __get($name) {
 		return $this->$name;
 	}

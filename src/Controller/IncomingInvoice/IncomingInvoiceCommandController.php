@@ -31,7 +31,10 @@ class IncomingInvoiceCommandController extends AbstractController
     	if ($form->isSubmitted() && $form->isValid()) {
     		 		
     		$invoice = $this->getUser()->createIncomingInvoice($c);
-    		$transaction = $invoice->setReceived(new \DateTime('now'), $this->getUser(), $c->debitKonto);
+    		if($c->paidOnSpot)
+    			$transaction = $invoice->setRecievedAndPaid(new \DateTime('now'), $this->getUser(), $c->paymentMethod, $c->debitKonto);
+    		else
+    			$transaction = $invoice->setReceived(new \DateTime('now'), $this->getUser(), $c->debitKonto);
     		    		
     		$em = $this->getDoctrine()->getManager();
     		    		    		
@@ -46,39 +49,6 @@ class IncomingInvoiceCommandController extends AbstractController
     			'form' => $form->createView(),
     	]);
     }
-    
-    
-// I guess we we shouldn't realy enable editing on an entity with transaction. At least not for now.    
-//     /**
-//      * Displays a form to edit an existing invoice entity.
-//      *
-//      * @Route("/dashboard/incomingInvoice/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/edit",methods={"GET", "POST"}, name="incomingInvoice_edit")
-//      */
-//     public function edit(Request $request, IncomingInvoice $invoice): Response
-//     {
-//     	$c = new UpdateIncomingInvoiceCommand();
-//     	$invoice->mapTo($c);    	
-    	    	
-//     	$form = $this->createForm(IncomingInvoiceType::class, $c);
-//     	$form->handleRequest($request);
-    	
-//     	if ($form->isSubmitted() && $form->isValid()) {
-//     		$invoice->update($c, $this->getUser());
-//     		$em = $this->getDoctrine()->getManager();
-    		    		
-//     		$em->persist($invoice);
-//     		$em->flush();
-    		
-//     		return $this->redirectToRoute('incomingInvoice_show', array('id'=> $invoice->getId()));
-//     	}
-    	
-//     	return $this->render('dashboard/incomingInvoice/edit.html.twig', [
-//     			'invoice' => $invoice,
-//     			'form' => $form->createView(),
-//     	]);
-//     }
-    
-    
     
     /**
      * Clones the IncomingInvoice and displays a form to edit an existing incomingInvoice entity.
