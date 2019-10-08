@@ -30,7 +30,7 @@ Encore
     .addEntry('js/invoice/list', './assets/js/invoice/list.js')
     .addEntry('js/invoice/view', './assets/js/invoice/view.js')
 
-    //IncimingInvoice
+    //IncomingInvoice
     .addEntry('js/incomingInvoice/new', './assets/js/incomingInvoice/new.js')
     .addEntry('js/incomingInvoice/list', './assets/js/incomingInvoice/list.js')
     
@@ -45,6 +45,9 @@ Encore
     .addStyleEntry('css/admin', ['./assets/scss/admin.scss'])
     .addStyleEntry('css/dashboard', ['./assets/scss/dashboard.scss'])
     .addStyleEntry('css/invoice', ['./assets/scss/invoice.scss'])
+
+    //Geography
+    .addEntry('js/geography/country/show', './assets/js/geography/country/show.js')
 
     //plugins
 

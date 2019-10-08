@@ -23,7 +23,7 @@ class AddressType extends AbstractType
             ])
             ->add('post', EntityType::class, array(
             		'class' => Post::class,
-            		'choice_label' => 'name',
+            		'choice_label' => 'nameAndCode',
             		'expanded'=>false,
             		'multiple'=>false,
             		'label' => 'label.post',
