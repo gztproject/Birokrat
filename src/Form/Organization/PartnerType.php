@@ -25,11 +25,6 @@ class PartnerType extends AbstractType
             ])
             ->add('taxNumber', TextType::class,[
             		'label' => 'label.taxNumber'
-            ])            
-            ->add('address', EntityType::class, [
-            		'class' => Address::class,
-            		'choice_label' => 'fullAddress',            		
-            		'label' => 'label.address',
             ])
             ->add('isClient', CheckboxType::class, array(
             		'label' => 'label.isClient',

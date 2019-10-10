@@ -2,6 +2,7 @@
 namespace App\Form\Geography;
 
 use App\Entity\Geography\Post;
+use App\Entity\Geography\UpdateAddressCommand;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -36,5 +37,15 @@ class AddressType extends AbstractType
         $resolver->setDefaults(array(
         		'data_class' => CreateAddressCommand::class,
         ));
+    }
+    
+    public function transform($value)
+    {
+    	return;
+    }
+    
+    public function reverseTransform($address): UpdateAddressCommand
+    {
+    	return $address->mapTo(new UpdateAddressCommand());
     }
 }

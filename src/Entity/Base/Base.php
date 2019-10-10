@@ -33,8 +33,7 @@ abstract class Base
     
     /**
      * Sets the creating user and datetime for the new entity. 
-     * @param User $user User that is creating the entity. (@see methods in User->create...)
-     * @return Uuid Returns the Uuid of created entity.
+     * @param User $user User that is creating the entity. (@see methods in User->create...) 
      */
     public function __construct(User $user)
     {    	

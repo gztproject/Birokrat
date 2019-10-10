@@ -7,15 +7,9 @@
 
     {{ include('dashboard/partner/_form.html.twig', {
         form: form,        
-        addressForm: addressForm,
         button_label: 'action.save'|trans,
         include_back_to_home_link: true,        
-    }, with_context = false) }}
-    <button type='button' id='addAddressBtn' class='btn btn-sm btn-success'><i class="fa fa-plus" aria-hidden="true"></i></button>
-        
-        {{ include('dashboard/organization/addAddressModal.html.twig', {    
-        form: addressForm
-       }) }}
+    }, with_context = false) }}    
     
 {% endblock %}
 

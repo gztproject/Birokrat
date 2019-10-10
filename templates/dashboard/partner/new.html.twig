@@ -8,7 +8,6 @@
     
     {{ include('dashboard/partner/_form.html.twig', {
         form: form,
-        addressForm: addressForm,
         button_label: 'action.create'|trans,
         include_back_to_home_link: true,   
     }, with_context = false) }}
@@ -21,5 +20,4 @@
 
 {% block javascripts %}
     {{ parent() }}
-    {{ encore_entry_script_tags('js/organization/new') }}
 {% endblock %}    

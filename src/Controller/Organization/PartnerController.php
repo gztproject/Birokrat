@@ -12,9 +12,12 @@ use App\Entity\Organization\Partner;
 use App\Repository\Organization\PartnerRepository;
 use App\Entity\Organization\OrganizationCodeFactory;
 use App\Entity\Organization\CreatePartnerCommand;
+use App\Entity\Geography\Address;
 use App\Entity\Geography\CreateAddressCommand;
 use App\Entity\Geography\UpdateAddressCommand;
 use App\Entity\Organization\UpdatePartnerCommand;
+use Doctrine\Common\Collections\ArrayCollection;
+use App\Entity\Organization\Organization;
 
 class PartnerController extends AbstractController
 {
@@ -36,26 +39,49 @@ class PartnerController extends AbstractController
     {
     	$c = new CreatePartnerCommand();                
         $c->code = OrganizationCodeFactory::factory('App\Entity\Organization\Partner', $this->getDoctrine())->generate();        
-        $form = $this->createForm(PartnerType::class, $c);
+        $form = $this->createForm(PartnerType::class, $c)
+        		->add('address', AddressType::class);
                 
         $form->handleRequest($request);        
-        if ($form->isSubmitted() && $form->isValid()) {  
+        if ($form->isSubmitted() && $form->isValid()) {
+        	
+        	$adr = $this->getDoctrine()->getRepository(Address::class)->findBy(['line1'=>$c->address->line1]);
+        	
+        	$address = null;
+        	foreach($adr as $a)
+        	{
+        		if($a != null && $a->getLine2() == $c->address->line2 && $a->getPost() == $c->address->post)
+        		{
+        			$address = $a;
+        		}
+        	}
+        	$entityManager = $this->getDoctrine()->getManager();
+        	if($address === null)
+        	{
+        		$post = $c->address->post;
+        		$cmd = new CreateAddressCommand();
+        		$cmd->line1 = $c->address->line1;
+        		$cmd->line2 = $c->address->line2;
+        		$cmd->post = $post;
+        		$address = $post->createAddress($cmd, $this->getUser());
+        		$entityManager->persist($address);
+        	}
+        	
+        	$c->address = $address;
         	
         	$partner = $this->getUser()->createPartner($c);
-        	$entityManager = $this->getDoctrine()->getManager();
+        	
         	
         	$entityManager->persist($partner);
         	$entityManager->flush();
             return $this->redirectToRoute('partner_index');
-        }
-       
-        $addressForm = $this->createForm(AddressType::class, new CreateAddressCommand());  
+        }      
+        
         
         return $this->render(
             '/dashboard/partner/new.html.twig',
             array(
-            		'form' => $form->createView(),
-            		'addressForm' => $addressForm->createView()
+            		'form' => $form->createView()
             )
         );
     }
@@ -79,30 +105,54 @@ class PartnerController extends AbstractController
     {
     	$updateCommand = new UpdatePartnerCommand();
     	$partner->mapTo($updateCommand);
-    	$form = $this->createForm(PartnerType::class, $updateCommand);
+    	$addressCommand = new UpdateAddressCommand();
+    	$partner->getAddress()->mapTo($addressCommand);
+    	$updateCommand->address = $addressCommand;
+    	$form = $this->createForm(PartnerType::class, $updateCommand)
+    	->add('address', AddressType::class, ['data' => $addressCommand]);
     	
-    	$addressDTO = new UpdateAddressCommand();
-    	$addressDTO->line1 = $partner->getAddress()->getLine1();
-    	$addressDTO->line2 = $partner->getAddress()->getLine2();
-    	$addressDTO->post = $partner->getAddress()->getPost();
     	
-    	$addressForm = $this->createForm(AddressType::class, $addressDTO);
         $form->handleRequest($request);
         
         if ($form->isSubmitted() && $form->isValid()) 
         {            
         	$updateCommand = $form->getData();
+        	
+        	$adr = $this->getDoctrine()->getRepository(Address::class)->findBy(['line1'=>$updateCommand->address->line1]);
+        	        	
+        	$address = null;
+        	foreach($adr as $a)
+        	{
+        		if($a != null && $a->getLine2() == $updateCommand->address->line2 && $a->getPost() == $updateCommand->address->post)
+        		{
+	        		$address = $a;
+        		}        		
+        	}
+        	$entityManager = $this->getDoctrine()->getManager();
+        	if($address === null)
+        	{
+        		$post = $updateCommand->address->post;
+        		$cmd = new CreateAddressCommand();
+        		$cmd->line1 = $updateCommand->address->line1;
+        		$cmd->line2 = $updateCommand->address->line2;
+        		$cmd->post = $post;
+        		$address = $post->createAddress($cmd, $this->getUser());
+        		$entityManager->persist($address);
+        	}
+        	
+        	$updateCommand->address = $address;
             $partner->update($updateCommand, $this->getUser());
-            $this->getDoctrine()->getManager()->persist($partner);            
-            $this->getDoctrine()->getManager()->flush();            
+            $entityManager->persist($partner);            
+            $entityManager->flush();            
             $this->addFlash('success', 'partner.updated_successfully');            
-            return $this->redirectToRoute('partner_edit', ['id' => $partner->getId()]);
+            return $this->redirectToRoute('partner_show', ['id' => $partner->getId()]);
         }
+        
+        //ToDo: What do we do with the drunken sailor? (well seriously, orphan addreses)
         
         return $this->render('dashboard/partner/edit.html.twig', [
             'partner' => $partner,
             'form' => $form->createView(),
-        	'addressForm' => $addressForm->createView(),
         ]);
     }    
    
