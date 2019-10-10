@@ -3,20 +3,13 @@
 {% block body_id 'organization_edit' %}
 
 {% block main %}
-    <h1>{{ 'title.'~entity~'_edit'|trans({'%organization%': organization.name}) }}</h1>
+    <h1>{{ 'title.organization_edit'|trans({'%organization%': organization.name}) }}</h1>
 
     {{ include('dashboard/organization/_form.html.twig', {
         form: form,
-        entity: entity,
-        addressForm: addressForm,
         button_label: 'action.save'|trans,
         include_back_to_home_link: true,        
-    }, with_context = false) }}
-    <button type='button' id='addAddressBtn' class='btn btn-sm btn-success'><i class="fa fa-plus" aria-hidden="true"></i></button>
-        
-        {{ include('dashboard/organization/addAddressModal.html.twig', {    
-        form: addressForm
-       }) }}
+    }, with_context = false) }}    
     
 {% endblock %}
 

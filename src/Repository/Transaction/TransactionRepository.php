@@ -4,6 +4,7 @@ namespace App\Repository\Transaction;
 
 use App\Entity\Transaction\Transaction;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 /**
@@ -17,6 +18,13 @@ class TransactionRepository extends ServiceEntityRepository
     public function __construct(RegistryInterface $registry)
     {
         parent::__construct($registry, Transaction::class);
+    }
+    
+    public function getQuery(): QueryBuilder
+    {
+    	return $this->createQueryBuilder('t')
+    	->addSelect('t')
+    	->orderBy('t.date', 'DESC');
     }
 
     // /**

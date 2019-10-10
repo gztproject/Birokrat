@@ -42,23 +42,30 @@
                 </div>
             </div>
             <div class='row'> 
-                <div class="col-sm-9">
+                <div class="col-sm-4">
                     <div class="form-group">           
-                        {{ form_label(form.address, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}
+                        {{ form_label(form.address.line1, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}
                         <div class='input-group'>
-                            {{ form_widget(form.address, {'attr': {'class': 'form-control'}}) }} 
+                            {{ form_widget(form.address.line1, {'attr': {'class': 'form-control'}}) }} 
                         </div>
                     </div>
                 </div>
-                <div class="col-sm-3">
-                    <div class="form-group" >
-                        <label class='col-form-label-lg' for="addAddressBtn">{{ 'label.newAddress'|trans }}</label>
+                <div class="col-sm-4">
+                    <div class="form-group">           
+                        {{ form_label(form.address.line2, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}
                         <div class='input-group'>
-                            <button type='button' id='addAddressBtn' class='btn btn-md btn-success'><i class="fa fa-plus" aria-hidden="true"></i></button>   
-                            
+                            {{ form_widget(form.address.line2, {'attr': {'class': 'form-control'}}) }} 
                         </div>
                     </div>
                 </div> 
+                <div class="col-sm-4">
+                    <div class="form-group">           
+                        {{ form_label(form.address.post, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}
+                        <div class='input-group'>
+                            {{ form_widget(form.address.post, {'attr': {'class': 'form-control'}}) }} 
+                        </div>
+                    </div>
+                </div>
             </div>
             
             
@@ -83,5 +90,3 @@
             </div>        
     </div>        
 {{ form_end(form) }}
-
-{{ include('dashboard/organization/addAddressModal.html.twig', { form: addressForm }) }}

@@ -6,8 +6,9 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use App\Repository\TravelExpenseRepository;
+use App\Repository\TravelExpense\TravelExpenseRepository;
 use App\Entity\TravelExpense\TravelExpense;
+use App\Entity\TravelExpense\TravelExpenseBundle;
 use Knp\Component\Pager\PaginatorInterface;
 
 class TravelExpenseQueryController extends AbstractController
@@ -40,6 +41,16 @@ class TravelExpenseQueryController extends AbstractController
         return $this->render('dashboard/travelExpense/show.html.twig', [
         		'travelExpense' => $travelExpense,
         ]);
-    }   
+    } 
+    
+    /**
+     * @Route("/dashboard/travelExpense/bundle/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}", methods={"GET"}, name="travelExpenseBundle_show")
+     */
+    public function showBundle(TravelExpenseBundle $travelExpenseBundle): Response
+    {
+    	return $this->render('dashboard/travelExpense/index.html.twig', [
+    			'pagination' => $travelExpenseBundle->getTravelExpenses(),
+    	]);
+    } 
     
 }

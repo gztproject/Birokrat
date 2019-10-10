@@ -5,7 +5,9 @@ namespace App\Entity\User;
 use App\Entity\Settings\CreateUserSettingsCommand;
 use App\Entity\Settings\UpdateUserSettingsCommand;
 use App\Entity\Settings\UserSettings;
+use App\Entity\TravelExpense\CreateTravelExpenseBundleCommand;
 use App\Entity\TravelExpense\CreateTravelExpenseCommand;
+use App\Entity\TravelExpense\TravelExpenseBundle;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -13,12 +15,14 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use App\Entity\Base\AggregateBase;
-use App\Entity\Organization\Client;
-use App\Entity\Organization\CreateClientCommand;
+use App\Entity\Organization\Partner;
+use App\Entity\Organization\CreatePartnerCommand;
 use App\Entity\Organization\CreateOrganizationCommand;
 use App\Entity\Organization\Organization;
 use App\Entity\Invoice\CreateInvoiceCommand;
 use App\Entity\Invoice\Invoice;
+use App\Entity\IncomingInvoice\CreateIncomingInvoiceCommand;
+use App\Entity\IncomingInvoice\IncomingInvoice;
 use App\Entity\TravelExpense\TravelExpense;
 use App\Entity\Geography\Country;
 use App\Entity\Geography\CreateCountryCommand;
@@ -63,13 +67,13 @@ class User extends AggregateBase implements UserInterface, \Serializable
     private $email;
     
     /**
-     * @ORM\Column(type="string", length=20)
+     * @ORM\Column(type="string", length=20, nullable=true)
      * @ORM\JoinColumn(nullable=true)
      */
     private $mobile;
     
     /**
-     * @ORM\Column(type="string", length=20)
+     * @ORM\Column(type="string", length=20, nullable=true)
      * @ORM\JoinColumn(nullable=true)
      */
     private $phone;
@@ -282,6 +286,16 @@ class User extends AggregateBase implements UserInterface, \Serializable
     }
     
     /**
+     * Creates a new IncomingInvoice.
+     * @param CreateIncomingInvoiceCommand $c
+     * @return IncomingInvoice
+     */
+    public function createIncomingInvoice(CreateIncomingInvoiceCommand $c): IncomingInvoice
+    {
+    	return new IncomingInvoice($c, $this);
+    }
+    
+    /**
      * Creates a new travelExpense.
      * @param CreateTravelExpenseCommand $c
      * @return TravelExpense
@@ -289,6 +303,16 @@ class User extends AggregateBase implements UserInterface, \Serializable
     public function createTravelExpense(CreateTravelExpenseCommand $c): TravelExpense
     {
     	return new TravelExpense($c, $this);
+    }
+    
+    /**
+     * Creates a new travelExpenseBundle.
+     * @param CreateTravelExpenseBundleCommand $c
+     * @return TravelExpenseBundle
+     */
+    public function createTravelExpenseBundle(CreateTravelExpenseBundleCommand $c): TravelExpenseBundle
+    {
+    	return new TravelExpenseBundle($c, $this);
     }
     
     /**
@@ -313,12 +337,12 @@ class User extends AggregateBase implements UserInterface, \Serializable
     
     /**
      * 
-     * @param CreateClientCommand $c
-     * @return Client
+     * @param CreatePartnerCommand $c
+     * @return Partner
      */
-    public function createClient(CreateClientCommand $c): Client
+    public function createPartner(CreatePartnerCommand $c): Partner
     {
-    	return new Client($c, $this);
+    	return new Partner($c, $this);
     }
     
     

@@ -1,0 +1,130 @@
+{{ form_start(form) }} 
+    <div class="jumbotron" id="IncomingInvoiceFormContainer"> 
+        
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">                    
+                        {{ form_label(form.issuer, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}
+                        <div class='input-group'>
+                        {{ form_widget(form.issuer, {'attr': {'class': 'form-control'}}) }}                
+                    </div>
+                </div>            
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">                    
+                        {{ form_label(form.number, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}
+                        <div class='input-group'>
+                        {{ form_widget(form.number, {'attr': {'class': 'form-control'}}) }}                
+                    </div>
+                </div>
+            </div>     
+        </div> 
+       
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    {{ form_label(form.recepient, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}
+                    <div class='input-group'>
+                        {{ form_widget(form.recepient, {'attr': {'class': 'form-control'}}) }}                
+                    </div>
+                </div>            
+            </div> 
+            <div class="col-sm-3">
+                <div class="form-group">                   
+                        {{ form_label(form.dateOfIssue, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}
+                         <div id="dateOfIssue" class='input-group'>
+                        {{ form_widget(form.dateOfIssue, {'attr': {'class': 'form-control'}}) }}
+                        <div class="input-group-append">
+                            <span class="input-group-text"><i class="fa fa-calendar" aria-hidden="true"></i></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="form-group">                   
+                        {{ form_label(form.reference, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}
+                         <div id="reference" class='input-group'>
+                        {{ form_widget(form.reference, {'attr': {'class': 'form-control'}}) }}                        
+                    </div>
+                </div>
+            </div>                  
+        </div>
+        
+        <div class="row">
+            <div class="col-sm-2">  
+                <div class="form-group">                   
+                    {{ form_label(form.paidOnSpot, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}
+                    <div id="paidOnSpot" class='input-group'>
+                        {{ form_widget(form.paidOnSpot, {'attr': {'class': 'form-control'}}) }}                        
+                    </div>
+                </div>            
+            </div>
+            <div class="col-sm-4">  
+                <div id="paymentMethod" class="form-group">                   
+                    {{ form_label(form.paymentMethod, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}
+                    <div class='input-group'>
+                        {{ form_widget(form.paymentMethod, {'attr': {'class': 'form-control'}}) }}                        
+                    </div>
+                </div>              
+            </div>
+            <div class="col-sm-3">
+                <div id="dueInDays" class="form-group">
+                    <label class='col-form-label-lg' for='invoice_dueInDays'>{{ 'label.dueInDays' | trans }}</label>
+                    <div class='input-group'>
+                        <input id='invoice_dueInDays' class='form-control' type='number'>
+                        <div class="input-group-append">
+                            <span class="input-group-text">{{ 'label.days' | trans }}</span>
+                        </div>                       
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div id="dueDate" class="form-group">                    
+                        {{ form_label(form.dueDate, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}
+                        <div class='input-group'>
+                        {{ form_widget(form.dueDate, {'attr': {'class': 'form-control'}}) }}
+                        <div class="input-group-append">
+                            <span class="input-group-text"><i class="fa fa-calendar" aria-hidden="true"></i></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                
+            </div>
+            
+        </div>         
+       
+        <div class="row">
+            <div class="col-sm-7"> 
+                <div class="form-group">                   
+                        {{ form_label(form.debitKonto, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}
+                         <div id="debitKonto" class='input-group'>
+                        {{ form_widget(form.debitKonto, {'attr': {'class': 'form-control'}}) }}                        
+                    </div>
+                </div>               
+            </div>
+            <div class="col-sm-2">  
+                      
+            </div>            
+            <div class="col-sm-3">
+                <div class="form-group">                    
+                    {{ form_label(form.price, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}
+                    <div id="price" class='input-group'>
+                        {{ form_widget(form.price, {'attr': {'class': 'form-control'}}) }}                     
+                    </div>
+                </div>  
+            </div>
+        </div>
+    
+    {% if include_bottom_buttons|default(true) %}
+        {{ include('dashboard/incomingInvoice/_form_actions.html.twig', {
+        button_label: button_label,
+        include_back_to_home_link: include_back_to_home_link,        
+    }, with_context = false) }}
+    {% endif %}
+
+{{ form_row(form._token) }}
+{{ form_end(form, {'render_rest': false}) }}

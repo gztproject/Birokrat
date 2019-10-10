@@ -74,9 +74,9 @@
                                     <td>{{ ii.name }}</td>
                                     <td>{{ ii.quantity }}</td>
                                     <td>{{ ii.unit }}</td>
-                                    <td>{{ ii.price }} €</td>
+                                    <td>{{ ii.price|number_format(2, ',', ' ') }} €</td>
                                     <td>{{ ii.discount * 100 }} %</td>
-                                    <td>{{ ii.price * (1-ii.discount) * ii.quantity }} €</td>
+                                    <td>{{ (ii.price * (1-ii.discount) * ii.quantity)|number_format(2, ',', ' ') }} €</td>
                                 </tr>
                             {% endfor %}
                         </tbody>
@@ -96,13 +96,13 @@
                 <div class='col-md-3'>
                     <table>
                         <tr>
-                            <td>Skupaj:</td><td>{{ invoice.totalValue }} €</td>                            
+                            <td>Skupaj:</td><td>{{ (invoice.totalValue)|number_format(2, ',', ' ') }} €</td>                            
                         </tr>
                         <tr>
-                            <td>Popust:</td><td>{{ invoice.discount * 100}} %</td>
+                            <td>Popust:</td><td>{{ (invoice.discount * 100)|number_format(2, ',', ' ')}} %</td>
                         </tr>
                         <tr>
-                            <td>Za plačilo:</td><td>{{ invoice.totalPrice }} €</td>
+                            <td>Za plačilo:</td><td>{{ invoice.totalPrice|number_format(2, ',', ' ') }} €</td>
                         </tr>
                     </table>
                 </div>

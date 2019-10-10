@@ -9,8 +9,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use App\Form\Type\DateTimePickerType;
+use App\Repository\Organization\PartnerRepository;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use App\Entity\Organization\Client;
+use App\Entity\Organization\Partner;
 use App\Entity\Organization\Organization;
 use App\Entity\Invoice\CreateInvoiceCommand;
 
@@ -30,7 +31,14 @@ class InvoiceType extends AbstractType
         		'label' => 'label.number'
         	])        	
         	->add('recepient', EntityType::class, array(
-        			'class' => Client::class,
+        			'class' => Partner::class,
+        			'query_builder' => function(PartnerRepository $repository) {
+        				$qb = $repository->createQueryBuilder('p');
+        				return $qb
+        				->where('p.isClient = 1')
+        				->orderBy('p.id', 'ASC')
+        				;
+        			},
         			'choice_label' => 'name',
         			'expanded'=>false,
         			'multiple'=>false,

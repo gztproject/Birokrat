@@ -29,6 +29,10 @@ Encore
     .addEntry('js/invoice/new', './assets/js/invoice/new.js')
     .addEntry('js/invoice/list', './assets/js/invoice/list.js')
     .addEntry('js/invoice/view', './assets/js/invoice/view.js')
+
+    //IncomingInvoice
+    .addEntry('js/incomingInvoice/new', './assets/js/incomingInvoice/new.js')
+    .addEntry('js/incomingInvoice/list', './assets/js/incomingInvoice/list.js')
     
     //Organization
     .addEntry('js/organization/new', './assets/js/organization/new.js')
@@ -42,9 +46,16 @@ Encore
     .addStyleEntry('css/dashboard', ['./assets/scss/dashboard.scss'])
     .addStyleEntry('css/invoice', ['./assets/scss/invoice.scss'])
 
+    //Geography
+    .addEntry('js/geography/country/show', './assets/js/geography/country/show.js')
+
     //plugins
 
     .addPlugin(new Dotenv({path: './.env.local'}))
+
+    .configureBabel(function(babelConfig) {
+    })
+
     .splitEntryChunks()
     .enableSourceMaps(!Encore.isProduction())
     .enableSingleRuntimeChunk()

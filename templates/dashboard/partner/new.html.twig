@@ -1,0 +1,23 @@
+{% extends 'dashboard/layout.html.twig' %}
+
+{% block body_id 'partner_new' %}
+
+{% block main %}
+    <h1>{{ 'title.partner_new'|trans }}</h1>
+    
+    
+    {{ include('dashboard/partner/_form.html.twig', {
+        form: form,
+        button_label: 'action.create'|trans,
+        include_back_to_home_link: true,   
+    }, with_context = false) }}
+    
+{% endblock %}
+
+{% block sidebar %}
+    {{ parent() }}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+{% endblock %}    

@@ -83,8 +83,6 @@ class Post extends AggregateBase
     	return $address;
     }
     
-    
-    
     public function removeAddress(Address $address, User $user): ?Address
     {
     	if ($this->addresses->contains($address)) {

@@ -14,6 +14,7 @@ use App\Entity\Organization\OrganizationCodeFactory;
 use App\Repository\Organization\OrganizationRepository;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Entity\Organization\CreateOrganizationCommand;
+use App\Entity\Geography\Address;
 use App\Entity\Geography\CreateAddressCommand;
 use App\Entity\Geography\UpdateAddressCommand;
 
@@ -72,11 +73,36 @@ class OrganizationController extends AbstractController
         $c = new CreateOrganizationCommand();
         $c->code = OrganizationCodeFactory::factory('App\Entity\Organization\Organization', $this->getDoctrine())->generate();
         
-        $form = $this->createForm(OrganizationType::class, $c);
+        $form = $this->createForm(OrganizationType::class, $c)
+        		->add('address', AddressType::class);
                 
         $form->handleRequest($request);
         
         if ($form->isSubmitted() && $form->isValid()) {  
+        	
+        	$adr = $this->getDoctrine()->getRepository(Address::class)->findBy(['line1'=>$c->address->line1]);
+        	
+        	$address = null;
+        	foreach($adr as $a)
+        	{
+        		if($a != null && $a->getLine2() == $c->address->line2 && $a->getPost() == $c->address->post)
+        		{
+        			$address = $a;
+        		}
+        	}
+        	$entityManager = $this->getDoctrine()->getManager();
+        	if($address === null)
+        	{
+        		$post = $c->address->post;
+        		$cmd = new CreateAddressCommand();
+        		$cmd->line1 = $c->address->line1;
+        		$cmd->line2 = $c->address->line2;
+        		$cmd->post = $post;
+        		$address = $post->createAddress($cmd, $this->getUser());
+        		$entityManager->persist($address);
+        	}
+        	
+        	$c->address = $address;
         	
         	$organization = $this->getUser()->createOrganization($c);
         	
@@ -85,15 +111,12 @@ class OrganizationController extends AbstractController
         	$entityManager->persist($organization);
         	$entityManager->flush();
             return $this->redirectToRoute('organization_index');
-        }        
-       
-        $addressForm = $this->createForm(AddressType::class, new CreateAddressCommand());  
+        }
         
         return $this->render(
             '/dashboard/organization/new.html.twig',
             array(
             		'form' => $form->createView(), 
-            		'addressForm' => $addressForm->createView(),
             		"entity" => 'organization'
             )
         );
@@ -131,7 +154,31 @@ class OrganizationController extends AbstractController
         
         if ($form->isSubmitted() && $form->isValid()) 
         {            
-            $updateCommand = $form->getData();            
+            $updateCommand = $form->getData(); 
+            $adr = $this->getDoctrine()->getRepository(Address::class)->findBy(['line1'=>$updateCommand->address->line1]);
+            
+            $address = null;
+            foreach($adr as $a)
+            {
+            	if($a != null && $a->getLine2() == $updateCommand->address->line2 && $a->getPost() == $updateCommand->address->post)
+            	{
+            		$address = $a;
+            	}
+            }
+            $entityManager = $this->getDoctrine()->getManager();
+            if($address === null)
+            {
+            	$post = $updateCommand->address->post;
+            	$cmd = new CreateAddressCommand();
+            	$cmd->line1 = $updateCommand->address->line1;
+            	$cmd->line2 = $updateCommand->address->line2;
+            	$cmd->post = $post;
+            	$address = $post->createAddress($cmd, $this->getUser());
+            	$entityManager->persist($address);
+            }
+            
+            $updateCommand->address = $address;
+            
             $organization->update($updateCommand, $this->getUser());                                   
             $this->getDoctrine()->getManager()->persist($organization);            
             $this->getDoctrine()->getManager()->flush();            

@@ -1,11 +1,13 @@
 <?php 
 namespace App\Form\TravelExpense;
 
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use App\Form\Type\DateTimePickerType;
+use App\Entity\Organization\Organization;
 use App\Entity\TravelExpense\CreateTravelExpenseCommand;
 
 class TravelExpenseType extends AbstractType
@@ -13,6 +15,13 @@ class TravelExpenseType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
+        	->add('organization', EntityType::class, array(
+        		'class' => Organization::class,
+        		'choice_label' => 'name',
+        		'expanded'=>false,
+        		'multiple'=>false,
+        		'label' => 'label.organization',
+        	))
             ->add('date', DateTimePickerType::class,[
             		'label' => 'label.date',
             		'widget' => 'single_text',

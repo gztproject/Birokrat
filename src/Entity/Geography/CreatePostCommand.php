@@ -8,6 +8,7 @@ class CreatePostCommand
     public $code;
     public $codeInternational;
     public $name;
+    public $country;
 	
     public function __get($name) {
     	return $this->$name;

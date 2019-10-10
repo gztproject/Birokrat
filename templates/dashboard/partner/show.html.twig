@@ -1,0 +1,50 @@
+{% extends 'dashboard/layout.html.twig' %}
+
+{% block body_id 'partner_show' %}
+
+{% block main %}
+    <h1>{{ partner.name }}</h1>
+    
+    <div class="card text-white bg-primary mb-3"> 
+    <div class="card-header">
+            <strong>{{ ('label.partnerData')|trans }}</strong>
+        </div>    
+        <div class="card-body">                    
+            <strong>{{ 'label.name'|trans }}</strong>: {{ partner.name }}            
+        </div>
+    </div>
+    
+    <div class="card text-white bg-primary mb-3">   
+        <div class="card-header">
+            <strong>{{ 'label.address'|trans }}</strong>
+        </div> 
+        <div class="card-body">            
+            <div class="card border-primary mb-3" style="max-width: 15rem;">               
+                <div class="card-body">                            
+                    {% for line in partner.address.getFullFormattedAddress %}
+                        {{ line }}</br>
+                    {% endfor %}
+                </div>  
+            </div>  
+        </div>
+    </div>
+{% endblock %}
+
+{% block sidebar %}
+    <div class="section">
+        <a href="{{ path('partner_edit', {id: partner.id}) }}" class="btn btn-sm btn-block btn-success">
+            <i class="fa fa-edit" aria-hidden="true"></i> {{ 'action.edit_contents'|trans }}
+        </a>
+    </div>
+
+    <div class="section">
+        {{ include('dashboard/partner/_delete_form.html.twig', {partner: partner}, with_context = false) }}
+    </div>
+
+    {{ parent() }}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('js/organization/show') }}
+{% endblock %}  

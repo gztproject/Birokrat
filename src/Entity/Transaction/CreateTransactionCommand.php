@@ -4,7 +4,9 @@ namespace App\Entity\Transaction;
 
 class CreateTransactionCommand
 {
-	public $konto;
+	public $organization;
+	public $creditKonto;
+	public $debitKonto;
 	public $sum;
 	public $date;
 	

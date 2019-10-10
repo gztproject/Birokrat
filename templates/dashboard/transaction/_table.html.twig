@@ -2,28 +2,34 @@
         <thead>
             <tr>
                 <th scope="col"><i class="fa fa-calendar" aria-hidden="true"></i>{{ 'label.date'|trans }}</th>
-                <th scope="col"><i class="fa fa-euro-sign" aria-hidden="true"></i> {{ 'label.sum'|trans }}</th>
                 <th scope="col"><i class="fa fa-file" aria-hidden="true"></i> {{ 'label.document'|trans }}</th>
-                <th scope="col"><i class="fa fa-list-alt " aria-hidden="true"></i> {{ 'label.konto'|trans }}</th>
+                <th scope="col"><i class="fa fa-euro-sign" aria-hidden="true"></i> {{ 'label.sum'|trans }}</th>                
+                <th scope="col"><i class="fa fa-list-alt " aria-hidden="true"></i> {{ 'label.debit'|trans }}</th>
+                <th scope="col"><i class="fa fa-list-alt " aria-hidden="true"></i> {{ 'label.credit'|trans }}</th>
             </tr>
         </thead>
         <tbody>
     {% for transaction in transactions %}
-        {% if transaction.sum > 0 %}
+        {% if transaction.debitKonto.category.class.number != 4 %}
             <tr class="table-success">
         {% else %}
             <tr class="table-danger">
         {% endif %}
                 <td>{{ transaction.dateString }}</td>
-                <td>{{ transaction.sum }}€</td>
                 <td>
                 {% if transaction.invoice != null %}
-                    <a href="{{ path('invoice_show', {'id': transaction.invoice.id}) }}">{{'label.invoice'|trans }}: {{ transaction.invoice.number }}</a>
+                    <a href="{{ path('invoice_show', {'id': transaction.invoice.id}) }}">{{'label.invoice'|trans }}: {{ transaction.invoice.number }} ({{ transaction.invoice.recepient.shortName }})</a>
                 {% elseif transaction.travelExpense != null %}
                     <a href="{{ path('travelExpense_show', {'id': transaction.travelExpense.id}) }}">{{'label.travelExpense'|trans }}: {{ transaction.travelExpense.TravelDescription }}</a>
+                {% elseif transaction.travelExpenseBundle != null %}
+                    <a href="{{ path('travelExpenseBundle_show', {'id': transaction.travelExpenseBundle.id}) }}">{{'label.travelExpenseBundle'|trans }}: {{ transaction.travelExpenseBundle.DateRange }}</a>
+                    {% elseif transaction.incomingInvoice != null %}
+                    <a href="{{ path('incomingInvoice_show', {'id': transaction.incomingInvoice.id}) }}">{{'label.incomingInvoice'|trans }}: {{ transaction.incomingInvoice.issuer.shortName }} ({{ transaction.incomingInvoice.number }})</a>
                 {% endif %}
                 </td>
-                <td>{{ transaction.konto.name }}</td>
+                <td>{{ transaction.sum }} €</td>                      
+                <td>{{ transaction.debitKonto.number }}</td>          
+                <td>{{ transaction.creditKonto.number }}</td>
             </tr>
         {% else %}
             <tr class="table-warning">

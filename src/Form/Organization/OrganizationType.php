@@ -26,12 +26,7 @@ class OrganizationType extends AbstractType
             ])
             ->add('taxNumber', TextType::class,[
             		'label' => 'label.taxNumber'
-            ])            
-            ->add('address', EntityType::class, [
-            		'class' => Address::class,
-            		'choice_label' => 'fullAddress',            		
-            		'label' => 'label.address',
-            ])
+            ])    
             ->add('taxable', CheckboxType::class,[
             		'label' => 'label.taxable', 'required' => false
             ])
