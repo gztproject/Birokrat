@@ -20,7 +20,10 @@
         </a>
         <ul class="dropdown-menu" role="menu" aria-labelledby="user">
             <a class="nav-link" href="{{ path('invoice_index') }}">
-                <i class="fa fa-receipt" aria-hidden="true"></i> {{ 'menu.outgoing'|trans }}
+                <i class="fa fa-sign-out-alt" aria-hidden="true"></i> {{ 'menu.outgoing'|trans }}
+            </a>
+            <a class="nav-link" href="{{ path('incomingInvoice_index') }}">
+                <i class="fa fa-sign-in-alt" aria-hidden="true"></i> {{ 'menu.incoming'|trans }}
             </a>
         </ul>
     </li>  
@@ -46,7 +49,7 @@
                 </a>
             </li>
             <li>
-                <a class="nav-link" href="{{ path('client_index')}}">
+                <a class="nav-link" href="{{ path('partner_index')}}">
                     <i class="fa fa-tasks" aria-hidden="true"></i> {{ 'menu.clients'|trans }}
                 </a>
             </li>            

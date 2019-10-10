@@ -11,7 +11,7 @@ use App\Entity\Organization\Organization;
 use App\Entity\User\User;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Symfony\Component\Config\Definition\Exception\Exception;
-use App\Entity\Organization\Client;
+use App\Entity\Organization\Partner;
 use App\Entity\Transaction\Transaction;
 use App\Entity\Transaction\iTransactionDocument;
 use App\Entity\Transaction\CreateTransactionCommand;
@@ -33,7 +33,7 @@ class Invoice extends AggregateBase implements iTransactionDocument
     private $issuer;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Organization\Client")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Organization\Partner")
      * @ORM\JoinColumn(nullable=false)
      */
     private $recepient;
@@ -227,13 +227,12 @@ class Invoice extends AggregateBase implements iTransactionDocument
     
     /**
      * Sets the invoice issued and creates the transaction.
-     * @param Konto $konto Konto for the transaction
      * @param \DateTime $date 
      * @param string $number Invoice number (in case of other new invoices being issued later)
-     * @param Issuing user
+     * @param User $user Issuing user
      * @return Transaction
      */
-    public function setIssued(Konto $konto, \DateTime $date, string $number, User $user): Transaction
+    public function setIssued(\DateTime $date, string $number, User $user): Transaction
     {
     	$this->setState(20);
     	parent::updateBase($user);
@@ -245,7 +244,12 @@ class Invoice extends AggregateBase implements iTransactionDocument
     	
     	$c = new CreateTransactionCommand();
     	$c->date = $this->dateOfIssue;
-    	$c->konto = $konto;
+    	$cc = $this->issuer->getOrganizationSettings()->getIssueInvoiceCredit();
+    	$dc = $this->issuer->getOrganizationSettings()->getIssueInvoiceDebit();
+    	if($cc == null || $dc == null)
+    		throw new \Exception("Please set konto preferences for this organization before issuing invoices.");
+    	$c->creditKonto = $cc;
+    	$c->debitKonto = $dc;
     	$c->sum = $this->totalPrice;
     	
     	$transaction = new Transaction($c, $user, $this);
@@ -253,11 +257,25 @@ class Invoice extends AggregateBase implements iTransactionDocument
     	return $transaction;
     }
     
-    public function setPaid(\DateTime $date, User $user)
+    public function setPaid(\DateTime $date, User $user): Transaction
     {    	
     	$this->setState(30);
     	parent::updateBase($user);
     	$this->datePaid = $date;
+    	
+    	$c = new CreateTransactionCommand();
+    	$c->date = $this->datePaid;
+    	$cc = $this->issuer->getOrganizationSettings()->getInvoicePaidCredit();
+    	$dc = $this->issuer->getOrganizationSettings()->getInvoicePaidDebit();
+    	if($cc == null || $dc == null)
+    		throw new \Exception("Please set konto preferences for this organization before issuing invoices.");
+    	$c->creditKonto = $cc;
+    	$c->debitKonto = $dc;
+    	$c->sum = $this->totalPrice;
+    		
+    	$transaction = new Transaction($c, $user, $this);
+    		
+    	return $transaction;
     }
     
     /**
@@ -454,7 +472,7 @@ class Invoice extends AggregateBase implements iTransactionDocument
     	return $this->issuer;
     }
     
-    public function getRecepient(): Client
+    public function getRecepient(): Partner
     {
     	return $this->recepient;
     }

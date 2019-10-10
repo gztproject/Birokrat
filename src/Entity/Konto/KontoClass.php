@@ -46,6 +46,18 @@ class KontoClass extends KontoBase
     	return $this;
     }
     
+    public function updateDebit(float $sum, User $user)
+    {
+    	parent::updateBase($user);
+    	$this->debit += $sum;
+    }
+    
+    public function updateCredit(float $sum, User $user)
+    {
+    	parent::updateBase($user);
+    	$this->credit += $sum;
+    }
+    
     /**
      * 
      * @param UpdateKontoCategoryCommand $c

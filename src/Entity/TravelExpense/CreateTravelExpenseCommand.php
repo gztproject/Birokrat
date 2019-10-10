@@ -11,6 +11,7 @@ class CreateTravelExpenseCommand
 	public $travelStopCommands;
     public $date;    
     public $employee;
+    public $organization;
     public $rate;
     
     public function __construct()

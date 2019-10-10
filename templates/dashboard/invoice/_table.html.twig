@@ -11,22 +11,23 @@
             </tr>
         </thead>
         <tbody>
-        {% for invoice in invoices %}
+        {% for invoice in invoices %}             
             {% if invoice.State == 00 or invoice.State == 10%}
-                <tr class="table-secondary">
+                {% set rowClass = "table-secondary" %}
             {% elseif invoice.State == 20 %}
                 {% if date() > invoice.dueDate|date_modify("+1 day") %}   <!-- date(invoice.dueDate) -->             
-                    <tr class="table-warning">
+                    {% set rowClass = "table-warning" %}
                 {% else %}
-                    <tr class="table-info">
+                   {% set rowClass = "table-info" %}
                 {% endif %}
             {% elseif invoice.State == 30 %}
-                <tr class="table-success">
+               {% set rowClass = "table-success" %}
             {% elseif invoice.State == 40 %}
-                <tr class="table-danger">
+                {% set rowClass = "table-danger" %}
             {% else %}
-                <tr class="table-primary">
+                {% set rowClass = "table-primary" %}
             {% endif %}
+            <tr data-id={{ invoice.id }} class="invoiceRow {{ rowClass }}">
                 <td>{% if invoice.state == 10 %} {{ 'label.draft'|trans }} {% elseif invoice.state == 40 %} {{ 'label.cancelled'|trans }} {% else %} {{ invoice.number }} {%  endif %}</td>
                 <td>{{ invoice.dateOfIssueString }}</td>
                 <td>{{ invoice.Recepient.ShortName }}</td>

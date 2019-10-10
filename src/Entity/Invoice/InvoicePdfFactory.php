@@ -45,7 +45,6 @@ class InvoicePdfFactory
    			$title .= $this->__path;
    		$title .= $this->__translator->trans('title.invoice').' '.$this->__invoice->getNumber();
    		
-   		//ToDo: Move this to Invoice
    		$pdf = $this->__tcpdf->create(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'utf-8', false);
    		
    		// set document information

@@ -1,0 +1,70 @@
+{% extends 'dashboard/layout.html.twig' %}
+
+{% block body_id 'incomingInvoice_view' %}
+
+{% block main %}
+        <div class="container-fluid">
+            <div class="jumbotron">
+            <div class='row' id='head'>
+                <div class='col-md-7'>
+                    <div class="row">                        
+                        <div class='col-sm-9'>                    
+                            <h4>{{ invoice.issuer.name }}</h4>
+                            {% for line in invoice.issuer.address.getFullFormattedAddress %}
+                                {{ line }}</br>
+                            {% endfor %}              
+                        </div>  
+                    </div>              
+                </div>
+                <div class='col-md-5'>
+                    WWW:        {{ invoice.issuer.getWww }} </br>      
+                    E-mail:     {{ invoice.issuer.getEmail }} </br>    
+                    GSM:        {{ invoice.issuer.getMobile }} </br>
+                    Davčna št.:  {{ invoice.issuer.getFullTaxNumber }}        </br>
+                    TRR:        {{ invoice.issuer.getAccountNumber }}  </br>
+                    BIC:        {{ invoice.issuer.getBic }}      </br>                    
+                </div>
+            </div>
+            </br></br>
+            
+            <div class='row' id='invoiceData'>            
+                <div class='col-md-7'>
+                    Naročnik:</br></br>
+                    <h4>{{ invoice.recepient.shortName }}</h4>
+                    {% for line in invoice.recepient.address.getFullFormattedAddress %}
+                    {{ line }}</br>
+                    {% endfor %}
+                    </br></br>
+                    Davčna št.: {{ invoice.recepient.getFullTaxNumber }}
+                    
+                    
+                </div>
+                <div class='col-md-5'>
+                    <h4>RAČUN št.: {{ invoice.number }}</h4>
+                    {{ invoice.issuer.address.post.name }}, {{ invoice.dateOfIssueString }}</br></br>
+                    Rok plačila: {{ invoice.dueInDays }} dni</br>
+                    Zapade: {{ invoice.dueDateString }}</br>
+                    Sklic/referenca: {{ invoice.referenceNumber }}</br>
+                    
+                </div>
+            </div>
+            </br>            
+            <div class="row">
+                <div class="col"></br></br></br></br></div>
+            </div>
+            
+              </div>
+        </div>    
+{% endblock %}
+
+{% block sidebar %}
+    
+    {{ parent() }}
+
+    
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+{% endblock %}

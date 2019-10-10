@@ -156,12 +156,11 @@ class InvoiceCommandController extends AbstractController
     	$invoice = $this->getDoctrine()->getRepository(Invoice::class)->findOneBy(['id'=>$id]);
     	if($invoice == null)
     		throw new \Exception("Can't find an invoice with id ".$id);
-    	$konto = $this->getDoctrine()->getRepository(Konto::class)->findOneBy(['number'=>760]); //760 for services or 762 for goods
     	$date = new \DateTime($request->request->get('date', null));
     	$entityManager = $this->getDoctrine()->getManager();
     	
     	$number = InvoiceNumberFactory::factory($invoice->getIssuer(), 10, $this->getDoctrine())->generate();
-    	$transaction = $invoice->setIssued($konto, $date, $number, $this->getUser());
+    	$transaction = $invoice->setIssued($date, $number, $this->getUser());
     	
     	$entityManager->persist($invoice);
     	$entityManager->persist($transaction);
@@ -181,9 +180,10 @@ class InvoiceCommandController extends AbstractController
     	$date = new \DateTime($request->request->get('date', null));    	
     	$entityManager = $this->getDoctrine()->getManager();
     	    	
-    	$invoice->setPaid($date, $this->getUser());
+    	$transaction = $invoice->setPaid($date, $this->getUser());
     	    	
-    	$entityManager->persist($invoice);
+    	$entityManager->persist($invoice);  
+    	$entityManager->persist($transaction);
     	$entityManager->flush();
     	
     	return $this->redirectToRoute('invoice_index');

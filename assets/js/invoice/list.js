@@ -12,8 +12,9 @@ $(function() {
         format: 'dd. mm. yyyy',
     });   
 }); 
-jQuery(document).ready(function() {
-    $('.set-issued').on('click', function(){         
+jQuery(document).ready(function() {    
+    $('.set-issued').on('click', function(e){ 
+        e.stopPropagation();        
         $("#dateId").val($(this).val());
         $('#modalDate').data("DateTimePicker").date(moment(new Date(), 'dd. mm. yyyy'));
         $('#dateModal').modal('show');        
@@ -32,7 +33,8 @@ jQuery(document).ready(function() {
         })
     });
 
-    $('.set-paid').on('click', function(){
+    $('.set-paid').on('click', function(e){
+        e.stopPropagation();
         $("#dateId").val($(this).val());
         $('#modalDate').data("DateTimePicker").date(moment(new Date(), 'dd. mm. yyyy'));
         $('#dateModal').modal('show');        
@@ -51,7 +53,8 @@ jQuery(document).ready(function() {
         })
     });
 
-    $('.cancel').on('click', function(){          
+    $('.cancel').on('click', function(e){ 
+        e.stopPropagation();         
         $("#cancelId").val($(this).val());
         $('#cancelReasonModal').modal('show');
         $('#submitCancel').on('click', function(){
@@ -70,4 +73,14 @@ jQuery(document).ready(function() {
             });
         });
     });
+
+    $(".invoiceRow").on('click', function () {
+
+        var id = $(this).data('id');
+        var url = "";
+        if (window.location.pathname.endsWith("dashboard"))
+            url += "dashboard/";
+        url += "invoice/" + id + "/show";
+        window.location = url;
+});
 });

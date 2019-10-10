@@ -21,7 +21,17 @@ abstract class KontoBase extends AggregateBase
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     protected $description;
-
+    
+    /**
+     * @ORM\Column(type="float")
+     */
+    protected $debit;
+    
+    /**
+     * @ORM\Column(type="float")
+     */
+    protected $credit;
+        
     public function getNumber(): ?int
     {
         return $this->number;
@@ -61,5 +71,29 @@ abstract class KontoBase extends AggregateBase
     public function getNumberAndName(): string
     {
         return (string)$this->number." - ".$this->name;
+    }
+    
+    public function getDebit(): ?float
+    {
+    	return $this->debit;
+    }
+    
+    public function setDebit(int $debit): self
+    {
+    	$this->debit = $debit;
+    	
+    	return $this;
+    }
+    
+    public function getCredit(): ?float
+    {
+    	return $this->credit;
+    }
+    
+    public function setCredit(int $credit): self
+    {
+    	$this->credit = $credit;
+    	
+    	return $this;
     }
 }

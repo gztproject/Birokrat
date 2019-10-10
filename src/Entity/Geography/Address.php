@@ -57,6 +57,33 @@ class Address extends AggregateBase
     	$this->post = null;
     	return $this;
     }
+    
+    /**
+     *
+     * @param object $to
+     * @return object
+     */
+    public function mapTo(object $to): object
+    {
+    	if ($to instanceof UpdateAddressCommand || $to instanceof CreateAddressCommand)
+    	{
+    		$reflect = new \ReflectionClass($to);
+    		$props  = $reflect->getProperties();
+    		foreach($props as $prop)
+    		{    			
+    			$name = $prop->getName();
+    			if(property_exists($this, $name))
+    			{
+    				$to->$name = $this->$name;
+    			}
+    		}
+    	}
+    	else
+    	{
+    		throw(new \Exception('cant map ' . get_class($this) . ' to ' . get_class($to)));
+    	}
+    	return $to;
+    }
 
     public function getLine1(): ?string
     {

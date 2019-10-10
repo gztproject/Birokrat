@@ -9,7 +9,6 @@
     {{ include('dashboard/organization/_form.html.twig', {
         form: form,
         entity: entity,
-        addressForm: addressForm,
         button_label: 'action.create'|trans,
         include_back_to_home_link: true,        
     }, with_context = false) }}
@@ -21,6 +20,5 @@
 {% endblock %}
 
 {% block javascripts %}
-    {{ parent() }}
-    {{ encore_entry_script_tags('js/organization/new') }}
+    {{ parent() }}    
 {% endblock %}    

@@ -7,12 +7,14 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use App\Entity\Base\AggregateBase;
 use App\Entity\Konto\Konto;
+use App\Entity\Organization\Organization;
 use App\Entity\User\User;
 use App\Entity\Transaction\Transaction;
+use App\Entity\Transaction\CreateTransactionCommand;
 use App\Entity\Transaction\iTransactionDocument;
 
 /**
- * @ORM\Entity(repositoryClass="App\Repository\TravelExpenseRepository")
+ * @ORM\Entity(repositoryClass="App\Repository\TravelExpense\TravelExpenseRepository")
  */
 class TravelExpense extends AggregateBase implements iTransactionDocument
 {
@@ -26,6 +28,12 @@ class TravelExpense extends AggregateBase implements iTransactionDocument
      * @ORM\JoinColumn(nullable=false)
      */
     private $employee;
+    
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Organization\Organization")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $organization;
 
     /**
      * @ORM\Column(type="decimal", precision=10, scale=2)
@@ -59,11 +67,33 @@ class TravelExpense extends AggregateBase implements iTransactionDocument
         $this->travelStops = new ArrayCollection();
         
         $this->date = $c->date;
+        $this->organization = $c->organization;
         $this->employee = $c->employee;
-        $this->rate = $c->rate;
-        $this->setState(10);
-        
+        $rate = $this->organization->getOrganizationSettings()->getTravelExpenseRate();
+        if($rate == null)
+        	throw new \Exception("Please set default travel expense rate for your organization.");
+        $this->rate = $c->rate ?: $rate;
     }    
+    
+    
+    public function setNew(User $user): Transaction
+    {
+    	$this->setState(10);
+    	
+    	parent::updateBase($user);
+    	
+    	$c = new CreateTransactionCommand();
+    	$c->date = $this->date;
+    	$cc = $this->organization->getOrganizationSettings()->getIncurredTravelExpenseCredit();
+    	$dc = $this->organization->getOrganizationSettings()->getIncurredTravelExpenseDebit();
+    	if($cc == null || $dc == null)
+    		throw new \Exception("Please set konto preferences for this organization before issuing invoices.");
+    	$c->creditKonto = $cc;
+    	$c->debitKonto = $dc;
+    	$c->organization = $this->organization;
+    	$c->sum = $this->totalDistance * $this->rate;
+    	return new Transaction($c, $user, $this);
+    }
     
     /**
      * Updates the TravelExpense.
@@ -119,6 +149,38 @@ class TravelExpense extends AggregateBase implements iTransactionDocument
     	return $this;
     }
     
+    public function setTravelExpenseBundle(TravelExpenseBundle $teb, User $user): TravelExpense
+    {
+    	if($user == null)
+    		throw new \Exception("Updating user must be set.");
+    		
+    	if($this->state != 10)
+    		throw new \Exception("I can only bundle new expenses.");
+    	
+    	if ($this->travelExpenseBundle != null)
+    		throw new \Exception("This TravelExpense is already bundled.");
+    	
+    	parent::updateBase($user);
+    	$this->travelExpenseBundle = $teb;
+    	
+    	return $this;
+    }
+    
+    public function setBooked(\DateTime $date, User $user): TravelExpense
+    {
+    	if($user == null)
+    		throw new \Exception("Updating user must be set.");
+    		
+    	if($this->state != 10)
+    		throw new \Exception("I can only book new expenses.");
+    			
+    	parent::updateBase($user);
+    	$this->setState(20);
+    	
+    	return $this;
+    	
+    }
+    
     
     /**
      * Createss a new TravelStop.
@@ -149,6 +211,8 @@ class TravelExpense extends AggregateBase implements iTransactionDocument
      */
     private function updateTravelStop(UpdateTravelStopCommand $c, TravelStop $ts, User $user): TravelStop
     {
+    	if($this->state > 10)
+    		throw new \Exception("Can't update booked or cancelled TravelExpenses.");
     	if($user == null)
     		throw new \Exception("Updating user must be set.");
     	if(!$this->travelStops->contains($ts))
@@ -301,9 +365,14 @@ class TravelExpense extends AggregateBase implements iTransactionDocument
     	return $this->date->format('d. m. Y');
     }    
     
-    public function getEmployee(): ?User
+    public function getEmployee(): User
     {
     	return $this->employee;
+    }
+    
+    public function getOrganization(): Organization
+    {
+    	return $this->organization;
     }
     
     public function getTotalDistance()

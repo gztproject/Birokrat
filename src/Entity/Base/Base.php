@@ -21,21 +21,19 @@ abstract class Base
     protected $createdBy;
     
     /**
-     * @ORM\Column(type="datetime")
-     * @ORM\JoinColumn(nullable=true)
+     * @ORM\Column(type="datetime", nullable=true)
      */
     protected $updatedOn;
     
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\User\User")
-     * @ORM\JoinColumn(nullable=true)
+     * @ORM\JoinColumn(name="updated_by_id", referencedColumnName="id", nullable=true)
      */
     protected $updatedBy;
     
     /**
      * Sets the creating user and datetime for the new entity. 
-     * @param User $user User that is creating the entity. (@see methods in User->create...)
-     * @return Uuid Returns the Uuid of created entity.
+     * @param User $user User that is creating the entity. (@see methods in User->create...) 
      */
     public function __construct(User $user)
     {    	

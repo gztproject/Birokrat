@@ -1,0 +1,46 @@
+{% extends 'dashboard/layout.html.twig' %}
+
+{% block body_id 'country_show' %}
+
+{% block main %}
+    <h1 id='country_name'>{{ country.name }}</h1>
+    <div class='row'>
+        <div class='col-sm-2'>
+            {{ 'label.nameInt'|trans }}: <b>{{ country.nameInt }}</b>
+        </div>
+        <div class='col-sm-2'>
+            {{ 'label.codeA2'|trans }}: <b>{{ country.A2 }}</b>
+        </div>
+        <div class='col-sm-2'>
+            {{ 'label.codeA3'|trans }}: <b>{{ country.A3 }}</b>
+        </div>
+        <div class='col-sm-2'>
+            {{ 'label.codeN3'|trans }}: <b>{{ country.N3 }}</b>
+        </div>
+        <div class='col-sm-2'>
+        </div>
+        <div class='col-sm-2'>
+        </div>
+    </div>
+    
+    <div class="bs-component">
+        {{ include('dashboard/codesheets/post/_table.html.twig', {
+                posts: country.posts                
+            }, with_context = false) }}        
+    </div> 
+    
+    {{ include('dashboard/codesheets/country/addPostModal.html.twig', { form: postForm }) }}   
+    
+{% endblock %}
+
+{% block sidebar %}
+    <div class='input-group'>
+        <button type='button' id='addPostBtn' class='btn btn-sm btn-block btn-success'><i class="fa fa-plus" aria-hidden="true"></i> {{ 'label.addPost'|trans }}</button>
+    </div>   
+    {{ parent() }}    
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('js/geography/country/show') }}
+{% endblock %}

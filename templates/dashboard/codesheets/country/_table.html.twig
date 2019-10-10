@@ -19,8 +19,8 @@
             <td>{{ country.n3 }}</td>
             <td class="text-right">
                 <div class="item-actions">
-                    <a href="#{#{{ path('admin_user_edit', {'id': country.id}) }}#}" class="btn btn-sm btn-primary">
-                        <i class="fa fa-edit" aria-hidden="true"></i> {{ 'action.edit'|trans }}
+                    <a href="{{ path('country_show', {'id': country.id}) }}" class="btn btn-sm btn-primary">
+                        <i class="fa fa-eye" aria-hidden="true"></i> {{ 'action.show'|trans }}
                     </a>
                 </div>
             </td>
