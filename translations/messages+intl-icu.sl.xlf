@@ -862,6 +862,134 @@
         <target>Prejeti</target>
       </trans-unit>
 
+      <trans-unit id="menu.clients" resname="menu.clients">
+        <source>menu.clients</source>
+        <target>Stranke</target>
+      </trans-unit>
+      <trans-unit id="label.draft" resname="label.draft">
+        <source>label.draft</source>
+        <target>Osnutek</target>
+      </trans-unit>
+      <trans-unit id="label.debit" resname="label.debit">
+        <source>label.debit</source>
+        <target>Debit</target>
+      </trans-unit>
+      <trans-unit id="label.credit" resname="label.credit">
+        <source>label.credit</source>
+        <target>Kredit</target>
+      </trans-unit>
+      <trans-unit id="label.incomingInvoice" resname="label.incomingInvoice">
+        <source>label.incomingInvoice</source>
+        <target>Prejeti račun</target>
+      </trans-unit>
+      <trans-unit id="label.selectAll" resname="label.selectAll">
+        <source>label.selectAll</source>
+        <target>Označi vse</target>
+      </trans-unit>
+      <trans-unit id="action.bookVisibleTravelExpenses" resname="action.bookVisibleTravelExpenses">
+        <source>action.bookVisibleTravelExpenses</source>
+        <target>Knjiži vidne potne stroške</target>
+      </trans-unit>
+      <trans-unit id="label.cancelled" resname="label.cancelled">
+        <source>label.cancelled</source>
+        <target>Preklican</target>
+      </trans-unit>
+      <trans-unit id="label.reject_reason" resname="label.reject_reason">
+        <source>label.reject_reason</source>
+        <target>Razlog zavrnitve</target>
+      </trans-unit>
+      <trans-unit id="label.paymentMethod" resname="label.paymentMethod">
+        <source>label.paymentMethod</source>
+        <target>Način plačila</target>
+      </trans-unit>
+      <trans-unit id="label.cash" resname="label.cash">
+        <source>label.cash</source>
+        <target>Gotovina</target>
+      </trans-unit>
+      <trans-unit id="label.transfer" resname="label.transfer">
+        <source>label.transfer</source>
+        <target>Nakazilo</target>
+      </trans-unit>
+      <trans-unit id="action.reject" resname="action.reject">
+        <source>action.reject</source>
+        <target>Zavrni</target>
+      </trans-unit>
+      <trans-unit id="label.paidOnSpot" resname="label.paidOnSpot">
+        <source>label.paidOnSpot</source>
+        <target>Plačano</target>
+      </trans-unit>
+      <trans-unit id="label.transaction" resname="label.transaction">
+        <source>label.transaction</source>
+        <target>Nakazilo</target>
+      </trans-unit>
+      <trans-unit id="label.recievedIncomingInvoiceKonto" resname="label.recievedIncomingInvoiceKonto">
+        <source>label.recievedIncomingInvoiceKonto</source>
+        <target>Konto</target>
+      </trans-unit>
+      <trans-unit id="title.travelExpense_edit" resname="title.travelExpense_edit">
+        <source>title.travelExpense_edit</source>
+        <target>Urejanje potnega stroška</target>
+      </trans-unit>
+      <trans-unit id="label.update_travelExpense" resname="label.update_travelExpense">
+        <source>label.update_travelExpense</source>
+        <target>Shrani</target>
+      </trans-unit>
+      <trans-unit id="label.organization" resname="label.organization">
+        <source>label.organization</source>
+        <target>Organizacija</target>
+      </trans-unit>
+      <trans-unit id="title.partner_list" resname="title.partner_list">
+        <source>title.partner_list</source>
+        <target>Nov partner</target>
+      </trans-unit>
+      <trans-unit id="label.isClient" resname="label.isClient">
+        <source>label.isClient</source>
+        <target>Stranka</target>
+      </trans-unit>
+      <trans-unit id="label.isSupplier" resname="label.isSupplier">
+        <source>label.isSupplier</source>
+        <target>Dobavitelj</target>
+      </trans-unit>
+      <trans-unit id="action.create_partner" resname="action.create_partner">
+        <source>action.create_partner</source>
+        <target>Nov partner</target>
+      </trans-unit>
+      <trans-unit id="title.partner_new" resname="title.partner_new">
+        <source>title.partner_new</source>
+        <target>Nov partner</target>
+      </trans-unit>
+      <trans-unit id="label.save_partner" resname="label.save_partner">
+        <source>label.save_partner</source>
+        <target>Shrani</target>
+      </trans-unit>
+      <trans-unit id="label.addPost" resname="label.addPost">
+        <source>label.addPost</source>
+        <target>Dodaj pošto</target>
+      </trans-unit>
+      <trans-unit id="label.nameInt" resname="label.nameInt">
+        <source>label.nameInt</source>
+        <target>Medn. ime</target>
+      </trans-unit>
+      <trans-unit id="label.codeA2" resname="label.codeA2">
+        <source>label.codeA2</source>
+        <target>A2</target>
+      </trans-unit>
+      <trans-unit id="label.codeA3" resname="label.codeA3">
+        <source>label.codeA3</source>
+        <target>A3</target>
+      </trans-unit>
+      <trans-unit id="label.codeN3" resname="label.codeN3">
+        <source>label.codeN3</source>
+        <target>N3</target>
+      </trans-unit>
+      <trans-unit id="label.codeInternational" resname="label.codeInternational">
+        <source>label.codeInternational</source>
+        <target>Medn. poštna št.</target>
+      </trans-unit>
+      <trans-unit id="label.country" resname="label.country">
+        <source>label.country</source>
+        <target>Država</target>
+      </trans-unit>
       
     </body>
   </file>
