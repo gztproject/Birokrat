@@ -243,6 +243,7 @@ class Invoice extends AggregateBase implements iTransactionDocument
     	$this->calculateTotals();
     	
     	$c = new CreateTransactionCommand();
+    	$c->organization = $this->issuer;
     	$c->date = $this->dateOfIssue;
     	$cc = $this->issuer->getOrganizationSettings()->getIssueInvoiceCredit();
     	$dc = $this->issuer->getOrganizationSettings()->getIssueInvoiceDebit();
@@ -264,6 +265,7 @@ class Invoice extends AggregateBase implements iTransactionDocument
     	$this->datePaid = $date;
     	
     	$c = new CreateTransactionCommand();
+    	$c->organization = $this->issuer;
     	$c->date = $this->datePaid;
     	$cc = $this->issuer->getOrganizationSettings()->getInvoicePaidCredit();
     	$dc = $this->issuer->getOrganizationSettings()->getInvoicePaidDebit();
