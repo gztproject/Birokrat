@@ -225,7 +225,7 @@ class OrganizationSettings extends Base
     
     public function getInvoicePaidDebit(): ?Konto
     {
-    	return $this->IvnoicePaidDebit;
+    	return $this->InvoicePaidDebit;
     }
     
     public function getInvoicePaidCredit(): ?Konto
