@@ -14,7 +14,7 @@ final class Version20190903195320 extends AbstractMigration
 {
     public function getDescription() : string
     {
-        return '';
+        return 'Add organizationId to TravelExpenseBundle';
     }
 
     public function up(Schema $schema) : void

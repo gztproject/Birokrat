@@ -35,6 +35,15 @@ class OrganizationSettings extends Base
     private $travelExpenseRate;
     
     /**
+	 * @ORM\Column(type="boolean")
+	 */
+    private $autoCreatePerDiem;
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $autoCreateLunch;
+    
+    /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Konto\Konto")
      */
     private $IssueInvoiceDebit;
@@ -110,6 +119,7 @@ class OrganizationSettings extends Base
      * @ORM\ManyToOne(targetEntity="App\Entity\Konto\Konto")
      */
     private $RejectedIncomingInvoiceDebit;
+    
     
     
     /**

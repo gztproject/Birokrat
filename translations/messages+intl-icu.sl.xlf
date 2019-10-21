@@ -920,7 +920,7 @@
       </trans-unit>
       <trans-unit id="label.transaction" resname="label.transaction">
         <source>label.transaction</source>
-        <target>Nakazilo</target>
+        <target>Transakcija</target>
       </trans-unit>
       <trans-unit id="label.recievedIncomingInvoiceKonto" resname="label.recievedIncomingInvoiceKonto">
         <source>label.recievedIncomingInvoiceKonto</source>

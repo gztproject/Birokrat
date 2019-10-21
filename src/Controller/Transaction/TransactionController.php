@@ -7,6 +7,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use App\Entity\Transaction\Transaction;
 use App\Repository\Transaction\TransactionRepository;
 
 class TransactionController extends AbstractController
@@ -24,6 +25,16 @@ class TransactionController extends AbstractController
     			'pagination' => $pagination,
     	]);
     } 
+    
+    /**
+     * @Route("/dashboard/transaction/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/show", methods={"GET"}, name="transaction_show")
+     */
+    public function show(Transaction $transaction): Response
+    {
+    	return $this->render('dashboard/transaction/index.html.twig', [
+    			'pagination' => [$transaction],
+    	]);    	    	
+    }
     
     /**
      * @Route("/dashboard/transaction/new", methods={"GET"}, name="transaction_new")
