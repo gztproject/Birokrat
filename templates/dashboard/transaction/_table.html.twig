@@ -10,7 +10,7 @@
         </thead>
         <tbody>
     {% for transaction in transactions %}
-        {% if transaction.debitKonto.category.class.number != 4 %}
+        {% if (transaction.debitKonto.category.class.number != 4 and transaction.debitKonto.category.class.number != 2) %}
             <tr class="table-success">
         {% else %}
             <tr class="table-danger">
@@ -18,7 +18,13 @@
                 <td>{{ transaction.dateString }}</td>
                 <td>
                 {% if transaction.invoice != null %}
-                    <a href="{{ path('invoice_show', {'id': transaction.invoice.id}) }}">{{'label.invoice'|trans }}: {{ transaction.invoice.number }} ({{ transaction.invoice.recepient.shortName }})</a>
+                    <a href="{{ path('invoice_show', {'id': transaction.invoice.id}) }}">
+                    {% if transaction.creditKonto == transaction.organization.organizationSettings.issueInvoiceCredit %}
+                        {{'label.invoice_issued'|trans }}
+                    {% elseif transaction.creditKonto == transaction.organization.organizationSettings.invoicePaidCredit %}
+                        {{'label.invoice_paid'|trans }}
+                    {% endif %}
+                    : {{ transaction.invoice.number }} ({{ transaction.invoice.recepient.shortName }})</a>
                 {% elseif transaction.travelExpense != null %}
                     <a href="{{ path('travelExpense_show', {'id': transaction.travelExpense.id}) }}">{{'label.travelExpense'|trans }}: {{ transaction.travelExpense.TravelDescription }}</a>
                 {% elseif transaction.travelExpenseBundle != null %}

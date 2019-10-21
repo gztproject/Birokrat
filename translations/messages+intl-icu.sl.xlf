@@ -735,7 +735,7 @@
       </trans-unit>
       <trans-unit id="3Lwaonq" resname="action.create_transaction">
         <source>action.create_transaction</source>
-        <target>__action.create_transaction</target>
+        <target>Dodaj transakcijo</target>
       </trans-unit>
       <trans-unit id="begs3Zm" resname="label.no_posts_found">
         <source>label.no_posts_found</source>
@@ -989,6 +989,14 @@
       <trans-unit id="label.country" resname="label.country">
         <source>label.country</source>
         <target>Država</target>
+      </trans-unit>
+       <trans-unit id="label.invoice_issued" resname="label.invoice_issued">
+        <source>label.invoice_issued</source>
+        <target>Izdan račun</target>
+      </trans-unit>
+       <trans-unit id="label.invoice_paid" resname="label.invoice_paid">
+        <source>label.invoice_paid</source>
+        <target>Plačan račun</target>
       </trans-unit>
       
     </body>
