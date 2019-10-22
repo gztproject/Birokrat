@@ -98,19 +98,15 @@ class Transaction extends AggregateBase
 		{
 			switch (get_class($document)) { 			
 				case Invoice::class:
-					parent::__construct($user);
 					$this->initWithInvoice($c, $document);
 					break;
 				case IncomingInvoice::class:
-					parent::__construct($user);
 					$this->initWithIncomingInvoice($c, $document);
 				break;
 				case TravelExpense::class:
-					parent::__construct($user);
 					$this->initWithTravelExpense($c, $document);
 					break;
 				case TravelExpenseBundle::class:
-					parent::__construct($user);
 					$this->initWithTravelExpenseBundle($c, $document);
 					break;
 				default:
@@ -123,7 +119,7 @@ class Transaction extends AggregateBase
 			if(!isset($c->description) || trim($c->description) === '')
 				throw new \InvalidArgumentException("If creating a transaction with no document, a description must be provided.");
 		}
-				
+		parent::__construct($user);
 		$this->organization = $c->organization;
 		$this->date = $c->date;
 		$this->sum = $c->sum;
@@ -302,5 +298,10 @@ class Transaction extends AggregateBase
 	public function getDescription(): ?string
 	{
 		return $this->description;
+	}
+	
+	public function __toString(): string
+	{
+		return "Transaction: ".$this->getDateString()." ".$this->getSum();
 	}
 }

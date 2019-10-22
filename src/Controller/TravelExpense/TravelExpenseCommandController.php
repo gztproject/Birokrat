@@ -25,7 +25,7 @@ class TravelExpenseCommandController extends AbstractController
 	/**
      * @Route("/dashboard/travelExpense/new", methods={"GET", "POST"}, name="travelExpense_new")
      */
-    public function new(Request $request): Response
+	public function new(Request $request, TravelExpenseRepository $travelExpenses, LoggerInterface $logger): Response
     {
     	$c = new CreateTravelExpenseCommand();    	
     	    	
@@ -49,8 +49,23 @@ class TravelExpenseCommandController extends AbstractController
     		}
     		
     		$transaction = $te->setNew($this->getUser());
+    		
+    		//If this is the first travelExpense of the day:
+    		$query = $travelExpenses->getFilteredQuery($c->date->getTimestamp(), $c->date->getTimestamp(), true, true)->getQuery();
+    		$query->execute();
+    		$logger->debug("Found ".count($query->getArrayResult())." existing TravelExpenses on ".date("r",$c->date->getTimestamp()));
+    		if(count($query->getArrayResult()) == 0)
+    		{
+    			$lunchTransaction = $te->generateLunchTransaction($this->getUser(), $logger);
+    			if(isset($lunchTransaction))
+    				$logger->debug("Created lunch transaction ".$lunchTransaction.". ");
+    				else
+    					$logger->debug("Lunch transaction not created.");
+    		}
     		$em->persist($te);
     		$em->persist($transaction);
+    		if(isset($lunchTransaction))
+    			$em->persist($lunchTransaction);
     		
     		$em->flush();
     		    		
@@ -112,7 +127,7 @@ class TravelExpenseCommandController extends AbstractController
      *
      * @Route("/dashboard/travelExpense/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/clone",methods={"GET", "POST"}, name="travelExpense_clone")
      */
-    public function clone(Request $request, TravelExpense $te, LoggerInterface $logger): Response
+    public function clone(Request $request, TravelExpense $te, TravelExpenseRepository $travelExpenses, LoggerInterface $logger): Response
     {
     	$clone = $te->clone($this->getUser());
     	
@@ -140,11 +155,25 @@ class TravelExpenseCommandController extends AbstractController
     			$logger->debug("Persisting Cloned TravelStop ".$ts.". ");
     			$em->persist($ts);
     		}
-    		
-    		$logger->debug("Persisting Cloned TravelExpense ".$clone.". ");
+    		    		
     		$transaction = $clone->setNew($this->getUser());
+    		//If this is the first travelExpense of the day:
+    		$query = $travelExpenses->getFilteredQuery($updateTECommand->date->getTimestamp(), $updateTECommand->date->getTimestamp(), true, true)->getQuery();
+    		$query->execute();
+    		$logger->debug("Found ".count($query->getArrayResult())." existing TravelExpenses on ".date("r",$updateTECommand->date->getTimestamp()));
+    		if(count($query->getArrayResult()) == 0)
+    		{
+    			$lunchTransaction = $te->generateLunchTransaction($this->getUser(), $logger);
+    			if(isset($lunchTransaction))
+    				$logger->debug("Created lunch transaction ".$lunchTransaction.". ");
+    				else
+    					$logger->debug("Lunch transaction not created.");
+    		}
     		$em->persist($clone);
+    		$logger->debug("Persisting Cloned TravelExpense ".$clone.". ");
     		$em->persist($transaction);
+    		if(isset($lunchTransaction))
+    			$em->persist($lunchTransaction);
     		$em->flush();
     		
     		return $this->redirectToRoute('travelExpense_show', array('id'=> $clone->getId()));

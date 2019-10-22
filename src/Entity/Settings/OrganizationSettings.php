@@ -38,10 +38,21 @@ class OrganizationSettings extends Base
 	 * @ORM\Column(type="boolean")
 	 */
     private $autoCreatePerDiem;
+    
+    /**
+     * @ORM\Column(type="float", nullable=true)
+     */
+    private $perDiemValue;
+    
     /**
      * @ORM\Column(type="boolean")
      */
     private $autoCreateLunch;
+    
+    /**
+     * @ORM\Column(type="float", nullable=true)
+     */
+    private $lunchValue;
     
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Konto\Konto")
@@ -221,6 +232,26 @@ class OrganizationSettings extends Base
     public function getTravelExpenseRate(): ?float
     {
     	return $this->travelExpenseRate;
+    }
+    
+    public function getAutoCreatePerDiem(): ?bool
+    {
+    	return $this->autoCreatePerDiem;
+    }
+   
+    public function getPerDiemValue(): ?float
+    {
+    	return $this->perDiemValue;
+    }
+    
+    public function getAutoCreateLunch(): ?bool
+    {
+    	return $this->autoCreateLunch;
+    }
+    
+    public function getLunchValue(): ?float
+    {
+    	return $this->lunchValue;
     }
     
     public function getIssueInvoiceDebit(): ?Konto
