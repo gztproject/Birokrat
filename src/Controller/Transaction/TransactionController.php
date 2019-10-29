@@ -29,10 +29,10 @@ class TransactionController extends AbstractController
     /**
      * @Route("/dashboard/transaction/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/show", methods={"GET"}, name="transaction_show")
      */
-    public function show(Transaction $transaction): Response
+    public function show(Transaction $transaction, PaginatorInterface $paginator): Response
     {
     	return $this->render('dashboard/transaction/index.html.twig', [
-    			'pagination' => [$transaction],
+    			'pagination' => $paginator->paginate([$transaction]),
     	]);    	    	
     }
     
