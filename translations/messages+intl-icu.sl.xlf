@@ -998,6 +998,10 @@
         <source>label.invoice_paid</source>
         <target>Plačan račun</target>
       </trans-unit>
+      <trans-unit id="label.lunchExpense" resname="label.lunchExpense">
+        <source>label.lunchExpense</source>
+        <target>Prehrana</target>
+      </trans-unit>
       
     </body>
   </file>

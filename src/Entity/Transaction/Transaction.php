@@ -11,6 +11,8 @@ use App\Entity\Invoice\Invoice;
 use App\Entity\TravelExpense\TravelExpense;
 use App\Entity\TravelExpense\TravelExpenseBundle;
 use App\Entity\User\User;
+use App\Entity\LunchExpense\LunchExpense;
+use App\Entity\TravelExpense\UpdateLunchExpenseCommand;
 
 /**
  * izdan račun fizični ali pravni osebi osebi (plačilo na TRR):  120/760.
@@ -86,6 +88,11 @@ class Transaction extends AggregateBase
 	private $travelExpenseBundle;
 	
 	/**
+	 * @ORM\OneToOne(targetEntity="App\Entity\LunchExpense\LunchExpense", cascade={"persist", "remove"})
+	 */
+	private $lunchExpense;
+	
+	/**
 	 * Creates a new transaction
 	 * @param CreateTransactionCommand $c
 	 * @param User $user
@@ -108,6 +115,9 @@ class Transaction extends AggregateBase
 					break;
 				case TravelExpenseBundle::class:
 					$this->initWithTravelExpenseBundle($c, $document);
+					break;
+				case LunchExpense::class:
+					$this->initWithLunchExpense($c, $document);
 					break;
 				default:
 					throw new \Exception('Not implemented yet.');
@@ -160,6 +170,10 @@ class Transaction extends AggregateBase
 					parent::updateBase($user);
 					$this->updateWithTravelExpenseBundle($c, $document);
 					break;
+				case LunchExpense::class:
+					parent::updateBase($user);
+					$this->updateWithLunchExpense($c, $document);
+					break;
 				default:
 					throw new \Exception('Not implemented yet.');
 					break;				
@@ -192,6 +206,11 @@ class Transaction extends AggregateBase
 	private function initWithTravelExpense(CreateTransactionCommand $c, TravelExpense $travelExpense)
 	{
 		$this->travelExpense = $travelExpense;
+	}
+	
+	private function initWithLunchExpense(CreateTransactionCommand $c, LunchExpense $le)
+	{
+		$this->lunchExpense = $le;
 	}
 	
 	private function updateCommon(UpdateTransactionCommand $c)
@@ -237,6 +256,12 @@ class Transaction extends AggregateBase
 	{
 		$this->updateCommon($c);
 		$this->travelExpenseBundle = $bundle;
+	}
+	
+	private function updateWithLunchExpense(UpdateLunchExpenseCommand $c, LunchExpense $le)
+	{
+		$this->updateCommon($c);
+		$this->lunchExpense = $le;
 	}
 	
 	/*
@@ -293,6 +318,11 @@ class Transaction extends AggregateBase
 	public function getTravelExpenseBundle(): ?TravelExpenseBundle
 	{
 		return $this->travelExpenseBundle;
+	}
+	
+	public function getLunchExpense(): ?LunchExpense
+	{
+		return $this->lunchExpense;
 	}
 	
 	public function getDescription(): ?string
