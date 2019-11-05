@@ -203,7 +203,7 @@ class InvoicePdfFactory
    				
    				$pdf->Ln(14);
    				//ToDo: Move this to organizaion settings
-   				$pdf->Cell( 120, 0, 'V skladu s 1. točko 94. člena ZDDV-1 DDV ni obračunan.', 0, 1, '', 0, '', 0, false, 'T', 'B' );
+   				$pdf->Cell( 120, 0, 'V skladu s prvim odstavkom 94. člena ZDDV-1, DDV ni obračunan.', 0, 1, '', 0, '', 0, false, 'T', 'B' );
    				$pdf->Ln(7);
    				$pdf->Cell( 120, 0, $this->__translator->trans('label.preparedBy').':', 0, 1, '', 0, '', 0, false, 'T', 'B' );
    				$pdf->Cell( 120, 0, $this->__invoice->getCreatedBy()->getFullname(), 0, 0, '', 0, '', 0, false, 'T', 'B' );
