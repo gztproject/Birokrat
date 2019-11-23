@@ -14,7 +14,7 @@
 
 {% block header_navigation_links %}
     <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-expanded="false" id="codesheets">
+        <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-expanded="false" id="invoices">
             <i class="fa fa-receipt" aria-hidden="true"></i>
             {{ 'menu.invoices'|trans }}
         </a>
@@ -32,10 +32,19 @@
             <i class="fa fa-map-marked-alt" aria-hidden="true"></i> {{ 'menu.travelExpenses'|trans }}
         </a>        
     </li>  
-    <li class="nav-item">
-        <a class="nav-link" href="{{ path('transaction_index') }}">
-            <i class="fa fa-file" aria-hidden="true"></i> {{ 'menu.transactions'|trans }}
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-expanded="false" id="invoices">
+            <i class="fa fa-file" aria-hidden="true"></i>
+            {{ 'menu.reports'|trans }}
         </a>        
+        <ul class="dropdown-menu" role="menu" aria-labelledby="user">
+            <a class="nav-link" href="{{ path('report_index') }}">
+                <i class="fa fa-file" aria-hidden="true"></i> {{ 'menu.reports'|trans }}
+            </a>
+            <a class="nav-link" href="{{ path('transaction_index') }}">
+                <i class="fa fa-file" aria-hidden="true"></i> {{ 'menu.transactions'|trans }}
+            </a>
+        </ul>    
     </li>  
     <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-expanded="false" id="codesheets">

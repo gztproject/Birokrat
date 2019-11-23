@@ -90,7 +90,7 @@ class PartnerController extends AbstractController
      * @Route("/dashboard/partner/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}", methods={"GET"}, name="partner_show")
      */
     public function show(Partner $partner): Response
-    {           
+    {       	
         return $this->render('dashboard/partner/show.html.twig', [
         		'partner' => $partner,
         ]);

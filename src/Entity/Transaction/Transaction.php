@@ -12,7 +12,7 @@ use App\Entity\TravelExpense\TravelExpense;
 use App\Entity\TravelExpense\TravelExpenseBundle;
 use App\Entity\User\User;
 use App\Entity\LunchExpense\LunchExpense;
-use App\Entity\TravelExpense\UpdateLunchExpenseCommand;
+use App\Entity\LunchExpense\UpdateLunchExpenseCommand;
 
 /**
  * izdan račun fizični ali pravni osebi osebi (plačilo na TRR):  120/760.
@@ -135,9 +135,7 @@ class Transaction extends AggregateBase
 		$this->sum = $c->sum;
 		$this->creditKonto = $c->creditKonto;
 		$this->debitKonto = $c->debitKonto;
-		$this->description = $c->description;
-		$this->creditKonto->updateCredit($this->sum, $user);
-		$this->debitKonto->updateDebit($this->sum, $user);			
+		$this->description = $c->description;		
 		
 	}
 	

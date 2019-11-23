@@ -1002,6 +1002,50 @@
         <source>label.lunchExpense</source>
         <target>Prehrana</target>
       </trans-unit>
+      <trans-unit id="menu.reports" resname="menu.reports">
+        <source>menu.reports</source>
+        <target>Poročila</target>
+      </trans-unit>
+      <trans-unit id="title.reports" resname="title.reports">
+        <source>title.reports</source>
+        <target>Poročila</target>
+      </trans-unit>
+      <trans-unit id="title.overview" resname="title.overview">
+        <source>title.overview</source>
+        <target>Pregled</target>
+      </trans-unit>
+      <trans-unit id="title.kontos" resname="title.kontos">
+        <source>title.kontos</source>
+        <target>Pregled po kontih</target>
+      </trans-unit>
+      <trans-unit id="title.months" resname="title.months">
+        <source>title.months</source>
+        <target>Pregled po mesecih</target>
+      </trans-unit>
+      <trans-unit id="title.clients" resname="title.clients">
+        <source>title.clients</source>
+        <target>Pregled po strankah</target>
+      </trans-unit>
+      <trans-unit id="label.client" resname="label.client">
+        <source>label.client</source>
+        <target>Stranka</target>
+      </trans-unit>
+      <trans-unit id="label.invoices" resname="label.invoices">
+        <source>label.invoices</source>
+        <target>Računi</target>
+      </trans-unit>
+      <trans-unit id="label.incomingInvoices" resname="label.incomingInvoices">
+        <source>label.incomingInvoices</source>
+        <target>Računi</target>
+      </trans-unit>
+      <trans-unit id="label.unpaid" resname="label.unpaid">
+        <source>label.unpaid</source>
+        <target>Neplačano</target>
+      </trans-unit>
+      <trans-unit id="label.percent" resname="label.percent">
+        <source>label.percent</source>
+        <target>Odstotek</target>
+      </trans-unit>
       
     </body>
   </file>
