@@ -20,14 +20,124 @@ class ReportController extends AbstractController
      */
 	public function index(EntityManagerInterface $em): Response
     {   
+    	$organization = $this->getUser()->getOrganizations()[0];
 		    	
     	return $this->render('dashboard/report/index.html.twig', [
-    			'clientReport' => $this->getClientReport($this->getUser()->getOrganizations()[0], $em),
+    			'overviewReport' =>$this->getOverviewReport($organization, $em),
+    			'kontoReport' => $this->getKontoReport($organization, $em),
+    			'clientReport' => $this->getClientReport($organization, $em),
     			
     	]);
-    }     
+    } 
     
-    private function getClientReport(Organization $organization, EntityManagerInterface $em)
+    private function getOverviewReport(Organization $organization, EntityManagerInterface $em): array
+    {
+    	$invoices = 0;
+    	$incomingInvoices = 0;
+    	$dailyExpenses = 0;
+    	$socialSecurity = 0;
+    	$otherExpenses = 0;
+    	$bank = 0;
+    	$debts = 0;
+    	$cash = 0;
+    	
+    	$qb = $em->createQueryBuilder();
+    	$qb->select(['k.id',
+    			'kc.number AS categoryNumber',
+    			'k.name',
+    			'k.number AS kontoNumber',
+    			'SUM(CASE WHEN t.debitKonto = k.id THEN t.sum ELSE 0 END) AS debit',
+    			'SUM(CASE WHEN t.creditKonto = k.id THEN t.sum ELSE 0 END) AS credit'])
+    			->from('App\Entity\Konto\Konto','k', 'k.id')
+    			->leftJoin('App\Entity\Konto\KontoCategory', 'kc', 'WITH', 'k.category = kc.id')
+    			->leftJoin('App\Entity\Transaction\Transaction', 't', 'WITH', 't.debitKonto = k.id OR t.creditKonto = k.id')   
+    			->where('kc.number IN (76, 40, 41, 48, 11, 12, 91, 28)')
+    			->andWhere('t.organization = :orgId')    
+    			->groupBy('k.id')			
+    			->setParameter('orgId', $organization->getId());
+    	$query = $qb->getQuery();
+    	$result = $query->getArrayResult();
+    	
+    	foreach($result as $res)
+    	{
+    		switch ($res['categoryNumber'])
+    		{
+    			case 76:
+    				$invoices += $res['credit'] - $res['debit'];
+    				break;
+    			case 40:
+    				$incomingInvoices += $res['debit'] - $res['credit'];
+    				break;
+    			case 41:
+    				$incomingInvoices += $res['debit'] - $res['credit'];
+    				break;
+    			case 48:
+    				if($res['kontoNumber'] == 486)
+    					$dailyExpenses += $res['debit'] - $res['credit'];
+    				elseif($res['kontoNumber'] == 484)
+    					$socialSecurity += $res['debit'] - $res['credit'];
+    				else 
+    					$otherExpenses += $res['debit'] - $res['credit'];
+    				break;
+    			case 11:
+    				$bank += $res['debit'] - $res['credit'];
+    				break;
+    			case 12:
+    				$debts += $res['debit'] - $res['credit'];
+    				break;
+    			case 28:
+    				$debts += $res['debit'] - $res['credit'];
+    				break;
+    			case 91:
+    				$cash += $res['debit'] - $res['credit'];
+    				break;
+    			default:
+    				break;
+    		}
+    	}
+    	return [    			
+    			'invoices'=> $invoices,
+    			'income' => $invoices,
+    		
+    			'incomingInvoices' => $incomingInvoices,
+    			'socialSecurity' => $socialSecurity,
+    			'dailyExpenses' => $dailyExpenses,
+    			'other' => $otherExpenses,
+    			'expenses' => $incomingInvoices+$socialSecurity+$dailyExpenses+$otherExpenses,
+    			
+    			'bank' => $bank,
+    			'debts' => $debts,
+    			'cash' => $cash,
+    			'outcome' => $bank+$cash+$debts
+    	];
+    }
+    
+    private function getKontoReport(Organization $organization, EntityManagerInterface $em): array
+    {
+    	$qb = $em->createQueryBuilder();
+    	$qb->select(['k.id', 
+    				'k.number', 
+    				'k.name', 
+    				'SUM(CASE WHEN t.debitKonto = k.id THEN t.sum ELSE 0 END) AS debit', 
+    				'SUM(CASE WHEN t.creditKonto = k.id THEN t.sum ELSE 0 END) AS credit'])
+    		->from('App\Entity\Konto\Konto','k', 'k.id')
+    		->leftJoin('App\Entity\Transaction\Transaction', 't', 'WITH', 't.debitKonto = k.id OR t.creditKonto = k.id')
+    		->where('t.id IS NOT NULL')
+    		->andWhere('t.organization = :orgId')
+    		->addGroupBy('k.id')
+    		->setParameter('orgId', $organization->getId());
+    	$query = $qb->getQuery();
+    	$result = $query->getArrayResult();
+    	$report = ['kontos' => []];
+    	foreach($result as $konto)
+    	{
+    		$konto['sum'] = $konto['debit']-$konto['credit'];
+    		array_push($report['kontos'], $konto);
+    	}
+    	return $report;
+    }
+    
+    private function getClientReport(Organization $organization, EntityManagerInterface $em): array
     {
 //     	$sql = 'SELECT c.id, c.name, COUNT(i.id), SUM(i.total_price) AS total, SUM(CASE WHEN i.state=30 THEN i.total_price ELSE 0 END) AS paid, 
 // 					SUM(CASE WHEN i.state=20 THEN i.total_price ELSE 0 END) AS open 

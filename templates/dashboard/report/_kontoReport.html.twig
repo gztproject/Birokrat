@@ -1,0 +1,21 @@
+<table class="table table-hover">
+    <thead>
+        <tr class='table-primary'>
+            <th scope="col"><i aria-hidden="true"></i> {{ 'label.name'|trans }}</th>
+            <th scope="col"><i aria-hidden="true"></i> {{ 'label.number'|trans }}</th>
+            <th scope="col"><i aria-hidden="true"></i> {{ 'label.debit'|trans }}</th>
+            <th scope="col"><i aria-hidden="true"></i> {{ 'label.credit'|trans }}</th>
+            <th scope="col"><i aria-hidden="true"></i> {{ 'label.sum'|trans }}</th>
+    </thead>
+    <tbody>        
+        {% for konto in report.kontos %}
+            <tr class='table-default'>
+                <td>{{ konto.name }}</td>
+                <td>{{ konto.number }}</td>
+                <td>{{ konto.debit|number_format(2, ',', ' ') }} €</td>
+                <td>{{ konto.credit|number_format(2, ',', ' ') }} €</td>
+                <td>{{ konto.sum|number_format(2, ',', ' ') }} €</td>
+            </tr>
+        {% endfor %}    
+    </tbody>
+</table>
