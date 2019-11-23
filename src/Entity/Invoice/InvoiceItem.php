@@ -62,17 +62,17 @@ class InvoiceItem extends AggregateBase
     public function update(UpdateInvoiceItemCommand $c, Invoice $invoice) : InvoiceItem
     {
     	parent::updateBase($invoice->getUpdatedBy());
-    	if($c->code != null && $c->code != $this->code)
+    	if($c->code !== null && $c->code !== $this->code)
     		$this->code = $c->code;
-    	if($c->discount != null && $c->discount/100 != $this->discount)
+    	if($c->discount !== null && $c->discount/100 !== $this->discount)
     		$this->discount = $c->discount/100;
-    	if($c->name != null && $c->name != $this->name)
+    	if($c->name !== null && $c->name !== $this->name)
     		$this->name = $c->name;
-    	if($c->price != null && $c->price != $this->price)
+    	if($c->price !== null && $c->price !== $this->price)
     		$this->price = $c->price;
-    	if($c->quantity != null && $c->quantity != $this->quantity)
+    	if($c->quantity !== null && $c->quantity !== $this->quantity)
     		$this->quantity = $c->quantity;
-    	if($c->unit != null && $c->unit != $this->unit)
+    	if($c->unit !== null && $c->unit !== $this->unit)
     		$this->unit = $c->unit;
     	
     	return $this;

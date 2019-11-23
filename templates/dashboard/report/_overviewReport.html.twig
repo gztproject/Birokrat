@@ -1,0 +1,49 @@
+<table class="table table-hover">
+    <thead>
+        <tr class='table-primary'>
+            <th scope="col"><i aria-hidden="true"></i> {{ 'label.name'|trans }}</th>
+            <th scope="col"><i aria-hidden="true"></i> {{ 'label.sum'|trans }}</th>
+            <th scope="col"><i aria-hidden="true"></i> {{ 'label.name'|trans }}</th>
+            <th scope="col"><i aria-hidden="true"></i> {{ 'label.sum'|trans }}</th>
+    </thead>
+    <tbody>        
+         <tr class="table-default">
+            <td rowspan="1">Prihodki</td>
+            <td>{{ report.income|number_format(2, ',', ' ') }} €</td>
+            <td>Izdani računi</td>
+            <td>{{ report.invoices|number_format(2, ',', ' ') }} €</td>
+         </tr>
+         <tr class="table-default">
+            <td rowspan = "4">Odhodki</td>
+            <td rowspan = "4">{{ report.expenses|number_format(2, ',', ' ') }} €</td>
+            <td>Prejeti računi</td>
+            <td>{{ report.incomingInvoices|number_format(2, ',', ' ') }} €</td>
+         </tr>
+         <tr class="table-default">
+            <td>Prispevki</td>
+            <td>{{ report.socialSecurity|number_format(2, ',', ' ') }} €</td>
+         </tr>
+         <tr class="table-default">
+            <td>Potni stroški, prehrana</td>
+            <td>{{ report.dailyExpenses|number_format(2, ',', ' ') }} €</td>
+         </tr>         
+         <tr class="table-default">
+            <td>Drugi stroški</td>
+            <td>{{ report.other|number_format(2, ',', ' ') }} €</td>
+         </tr>
+         <tr class="table-default">
+            <td rowspan="3">Stanje</td>
+            <td rowspan = "3">{{ report.outcome|number_format(2, ',', ' ') }} €</td>
+            <td>TRR</td>
+            <td>{{ report.bank|number_format(2, ',', ' ') }} €</td>
+         </tr>
+         <tr class="table-default">
+            <td>Dolgovi</td>
+            <td>{{ report.debts|number_format(2, ',', ' ') }} €</td>
+         </tr>
+         <tr class="table-default">
+            <td>Gotovina</td>
+            <td>{{ report.cash|number_format(2, ',', ' ') }} €</td>
+         </tr>
+    </tbody>
+</table>

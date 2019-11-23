@@ -5,6 +5,9 @@ namespace App\Entity\Organization;
 use App\Entity\User\User;
 use Doctrine\ORM\Mapping as ORM;
 use App\Entity\Base\AggregateBase;
+use App\Entity\IncomingInvoice\IncomingInvoice;
+use App\Entity\Invoice\Invoice;
+use Doctrine\Common\Collections\Collection;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\Organization\PartnerRepository")
@@ -20,6 +23,16 @@ class Partner extends LegalEntityBase
 	 * @ORM\Column(type="boolean")
 	 */
 	private $isClient;
+	
+	/**
+	 * @ORM\OneToMany(targetEntity="App\Entity\Invoice\Invoice", mappedBy="recepient", orphanRemoval=false)
+	 */
+	private $invoices;
+	
+	/**
+	 * @ORM\OneToMany(targetEntity="App\Entity\IncomingInvoice\IncomingInvoice", mappedBy="issuer", orphanRemoval=false)
+	 */
+	private $incomingInvoices;
 	
 	public function __construct(CreatePartnerCommand $c, User $user)
 	{
@@ -116,6 +129,22 @@ class Partner extends LegalEntityBase
 	public function isSupplier(): bool
 	{
 		return $this->isSupplier;
+	}
+	
+	/**
+	 * @return Collection|Invoice[]
+	 */
+	public function getInvoices(): Collection
+	{
+		return $this->invoices;
+	}
+	
+	/**
+	 * @return Collection|IncomingInvoice[]
+	 */
+	public function getIncomingInvoices(): Collection
+	{
+		return $this->incomingInvoices;
 	}
     
 }

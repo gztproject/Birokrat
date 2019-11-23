@@ -4,6 +4,7 @@ namespace App\Entity\TravelExpense;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Psr\Log\LoggerInterface;
 use Doctrine\ORM\Mapping as ORM;
 use App\Entity\Base\AggregateBase;
 use App\Entity\Konto\Konto;
@@ -180,7 +181,6 @@ class TravelExpense extends AggregateBase implements iTransactionDocument
     	return $this;
     	
     }
-    
     
     /**
      * Createss a new TravelStop.

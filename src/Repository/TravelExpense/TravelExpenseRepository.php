@@ -30,14 +30,14 @@ class TravelExpenseRepository extends ServiceEntityRepository
     	{
     	  	$qb
     	  	->where('te.date >= :from')
-    	  	->setParameter('from', date('Y-m-d G:i:s', $from));
+    	  	->setParameter('from', date('Y-m-d G:i:s', $from-60*60*24));
     	}
     	
     	if($to)
     	{
     		$qb    		
     		->andWhere('te.date <= :to')
-    		->setParameter('to', date('Y-m-d G:i:s', $to+60*60*24));
+    		->setParameter('to', date('Y-m-d G:i:s', $to));
     	}
     	
     	if($booked && $unbooked)

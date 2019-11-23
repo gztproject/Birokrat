@@ -9,6 +9,7 @@ class CreateTransactionCommand
 	public $debitKonto;
 	public $sum;
 	public $date;
+	public $description;
 	
 	public function __get($name) {
 		return $this->$name;

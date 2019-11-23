@@ -1,0 +1,50 @@
+{% extends 'dashboard/layout.html.twig' %}
+
+{% block body_id 'lunchExpense_index' %}
+
+{% block main %}
+    <h1>{{ 'title.lunchExpenses'|trans }} ({{ pagination.getTotalItemCount }})</h1>
+    <div class="bs-component">
+    {{ include('dashboard/lunchExpense/_table.html.twig', {
+            lunchExpenses: pagination,
+            ShowCBs: true                
+        }, with_context = false) }}
+    </div>
+    {{ knp_pagination_render(pagination) }}
+{% endblock %}
+
+{% block sidebar %}
+    
+    {{ parent() }}
+    <div class="bs-component">
+        <div class="list-group">
+            <div class="list-group-item list-group-item-action flex-column align-items-start">
+                <div class="d-flex w-100 justify-content-between">
+                    <h5 class="mb-1">{{ "label.actions" | trans }}</h5>
+                </div>
+                <div id="actions" class="row">
+                    <a href="{{ path('lunchExpense_new') }}" class="btn btn-block btn-success">
+                        <i class="fa fa-plus" aria-hidden="true"></i> {{ 'action.create_lunchExpense'|trans }}
+                    </a>
+                    <button type="button" id="bookCheckedTEs" class="btn btn-info btn-block">{{ 'action.bookSelectedLunchExpenses' | trans }}</button>
+                    <button type="button" id="bookVisibleTEs" class="btn btn-info btn-block">{{ 'action.bookVisibleLunchExpenses' | trans }}</button>
+                </div>
+            </div>
+            </br>
+            <div class="list-group-item list-group-item-action flex-column align-items-start">
+                <div class="d-flex w-100 justify-content-between">
+                    <h5 class="mb-1">{{ "label.filter" | trans }}</h5>
+                </div>
+                <div id="filter" class="row">
+                    {{ include('dashboard/lunchExpense/_filter.html.twig') }}
+                </div>
+            </div>   
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('js/lunchExpense/index') }}
+    {{ encore_entry_script_tags('js/lunchExpense/filter') }}
+{% endblock %}

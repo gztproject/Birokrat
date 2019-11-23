@@ -139,21 +139,21 @@ class Invoice extends AggregateBase implements iTransactionDocument
     	if($this->state != 10)
     		throw new \Exception("Only new invoices can be updated.");
     	parent::updateBase($user);
-    	if($c->dateOfIssue != null && $c->dateOfIssue != $this->dateOfIssue)
+    	if($c->dateOfIssue !== null && $c->dateOfIssue !== $this->dateOfIssue)
     		$this->dateOfIssue = $c->dateOfIssue;
-    	if($c->dateServiceRenderedFrom != null && $c->dateServiceRenderedFrom != $this->dateServiceRenderedFrom)
+    	if($c->dateServiceRenderedFrom !== null && $c->dateServiceRenderedFrom !== $this->dateServiceRenderedFrom)
     		$this->dateServiceRenderedFrom = $c->dateServiceRenderedFrom;
-    	if($c->dateServiceRenderedTo != null && $c->dateServiceRenderedTo != $this->dateServiceRenderedTo)
+    	if($c->dateServiceRenderedTo !== null && $c->dateServiceRenderedTo !== $this->dateServiceRenderedTo)
     		$this->dateServiceRenderedTo = $c->dateServiceRenderedTo;
-    	if($c->discount != null && $c->discount/100 != $this->discount)
+    	if($c->discount !== null && $c->discount/100 !== $this->discount)
     		$this->discount = $c->discount/100;
-    	if($c->dueDate != null && $c->dueDate != $this->dueDate)
+    	if($c->dueDate !== null && $c->dueDate !== $this->dueDate)
     		$this->dueDate = $c->dueDate;
-    	if($c->issuer != null && $c->issuer != $this->issuer)
+    	if($c->issuer !== null && $c->issuer !== $this->issuer)
     		$this->issuer = $c->issuer;
-    	if($c->number != null && $c->number != $this->number)
+    	if($c->number !== null && $c->number !== $this->number)
     		$this->number = $c->number;
-    	if($c->recepient != null && $c->recepient != $this->recepient)
+    	if($c->recepient !== null && $c->recepient !== $this->recepient)
     		$this->recepient = $c->recepient;
     	
     	    

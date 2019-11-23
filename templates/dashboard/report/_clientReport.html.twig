@@ -1,0 +1,32 @@
+<table class="table table-hover">
+    <thead>
+        <tr class='table-primary'>
+            <th scope="col"><i aria-hidden="true"></i> {{ 'label.client'|trans }}</th>
+            <th scope="col"><i aria-hidden="true"></i> {{ 'label.invoices'|trans }}</th>
+            <th scope="col"><i aria-hidden="true"></i> {{ 'label.sum'|trans }}</th>
+            <th scope="col"><i aria-hidden="true"></i> {{ 'label.paid'|trans }}</th>
+            <th scope="col"><i aria-hidden="true"></i> {{ 'label.unpaid'|trans }}</th>  
+            <th scope="col"><i aria-hidden="true"></i> {{ 'label.percent'|trans }}</th>   
+        </tr>
+    </thead>
+    <tbody>
+        <tr class='table-secondary'>
+            <td>{{ 'label.total'|trans }}</td>
+            <td>{{ report.sum.number }}</td>
+            <td>{{ report.sum.total|number_format(2, ',', ' ') }} €</td>
+            <td>{{ report.sum.paid|number_format(2, ',', ' ') }} €</td>
+            <td>{{ report.sum.open|number_format(2, ',', ' ') }} €</td>
+            <td>{{ (report.sum.percent * 100)|number_format(2, ',', ' ')}} %</td>
+        </tr>
+        {% for client in report.clients %}
+            <tr class='table-default'>
+                <td><a href="{{ path('partner_show', {'id': client.id}) }}">{{ client.name }}</a></td>
+                <td>{{ client.number }}</td>
+                <td>{{ client.total|number_format(2, ',', ' ') }} €</td>
+                <td>{{ client.paid|number_format(2, ',', ' ') }} €</td>
+                <td>{{ client.open|number_format(2, ',', ' ') }} €</td>
+                <td>{{ (client.percent * 100)|number_format(2, ',', ' ')}} %</td>
+            </tr>
+        {% endfor %}    
+    </tbody>
+</table>

@@ -15,6 +15,10 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use App\Entity\Base\AggregateBase;
+use App\Entity\LunchExpense\CreateLunchExpenseBundleCommand;
+use App\Entity\LunchExpense\CreateLunchExpenseCommand;
+use App\Entity\LunchExpense\LunchExpense;
+use App\Entity\LunchExpense\LunchExpenseBundle;
 use App\Entity\Organization\Partner;
 use App\Entity\Organization\CreatePartnerCommand;
 use App\Entity\Organization\CreateOrganizationCommand;
@@ -343,6 +347,26 @@ class User extends AggregateBase implements UserInterface, \Serializable
     public function createPartner(CreatePartnerCommand $c): Partner
     {
     	return new Partner($c, $this);
+    }
+    
+    /**
+     * Creates a new lunchExpense.
+     * @param CreateLunchExpenseCommand $c
+     * @return LunchExpense
+     */
+    public function createLunchExpense(CreateLunchExpenseCommand $c): LunchExpense
+    {
+    	return new LunchExpense($c, $this);
+    }
+    
+    /**
+     * Creates a new lunchExpenseBundle.
+     * @param CreateLunchExpenseBundleCommand $c
+     * @return LunchExpenseBundle
+     */
+    public function createLunchExpenseBundle(CreateLunchExpenseBundleCommand $c): LunchExpenseBundle
+    {
+    	return new LunchExpenseBundle($c, $this);
     }
     
     
