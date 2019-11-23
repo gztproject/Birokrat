@@ -29,8 +29,12 @@
                     <a href="{{ path('travelExpense_show', {'id': transaction.travelExpense.id}) }}">{{'label.travelExpense'|trans }}: {{ transaction.travelExpense.TravelDescription }}</a>
                 {% elseif transaction.travelExpenseBundle != null %}
                     <a href="{{ path('travelExpenseBundle_show', {'id': transaction.travelExpenseBundle.id}) }}">{{'label.travelExpenseBundle'|trans }}: {{ transaction.travelExpenseBundle.DateRange }}</a>
-                    {% elseif transaction.incomingInvoice != null %}
+                {% elseif transaction.incomingInvoice != null %}
                     <a href="{{ path('incomingInvoice_show', {'id': transaction.incomingInvoice.id}) }}">{{'label.incomingInvoice'|trans }}: {{ transaction.incomingInvoice.issuer.shortName }} ({{ transaction.incomingInvoice.number }})</a>
+                {% elseif transaction.lunchExpense != null %}
+                    <a href="{{ path('transaction_show', {'id': transaction.id}) }}">{{'label.lunchExpense'|trans }}: {{ transaction.lunchExpense.__toString }}</a>
+                {% else %}
+                    <a href="{{ path('transaction_show', {'id': transaction.id}) }}">{{'label.transaction'|trans }}: {{ transaction.description }}</a>
                 {% endif %}
                 </td>
                 <td>{{ transaction.sum }} €</td>                      

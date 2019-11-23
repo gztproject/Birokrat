@@ -1,0 +1,34 @@
+{% extends 'dashboard/layout.html.twig' %}
+
+{% block body_id 'report_index' %}
+
+{% block main %}
+<h1>{{ 'title.reports'|trans }}</h1>
+
+<h2>{{ 'title.overview'|trans }}</h2>
+    <div class="bs-component">
+        {{ include('dashboard/report/_overviewReport.html.twig', {
+                report: overviewReport                
+            }, with_context = false) }}
+    </div>
+
+<h2>{{ 'title.kontos'|trans }}</h2>
+    <div class="bs-component">
+        {{ include('dashboard/report/_kontoReport.html.twig', {
+                report: kontoReport                
+            }, with_context = false) }}
+    </div>
+
+<h2>{{ 'title.clients'|trans }}</h2>
+    <div class="bs-component">
+        {{ include('dashboard/report/_clientReport.html.twig', {
+                report: clientReport                
+            }, with_context = false) }}
+    </div>
+{% endblock %}
+
+{% block sidebar %}
+    
+    {{ parent() }}
+    
+{% endblock %}

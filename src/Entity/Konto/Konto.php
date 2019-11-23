@@ -82,20 +82,6 @@ class Konto extends KontoBase
     	$this->isActive = false;
     }
     
-    public function updateDebit(float $sum, User $user)
-    {
-    	parent::updateBase($user);
-    	$this->debit += $sum;
-    	$this->category->updateDebit($sum, $user);
-    }
-    
-    public function updateCredit(float $sum, User $user)
-    {
-    	parent::updateBase($user);
-    	$this->credit += $sum;
-    	$this->category->updateCredit($sum, $user);
-    }
-    
     /**
      * 
      * @param KontoCategory $category

@@ -396,7 +396,7 @@ class IncomingInvoice extends AggregateBase implements iTransactionDocument
     	return $this->number;
     }
 
-    public function getprice()
+    public function getprice(): float
     {
     	return $this->price;
     }
