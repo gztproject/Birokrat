@@ -12,6 +12,7 @@ use App\Entity\TravelExpense\TravelExpense;
 use App\Entity\TravelExpense\TravelExpenseBundle;
 use App\Entity\User\User;
 use App\Entity\LunchExpense\LunchExpense;
+use App\Entity\LunchExpense\LunchExpenseBundle;
 use App\Entity\LunchExpense\UpdateLunchExpenseCommand;
 
 /**
@@ -93,6 +94,11 @@ class Transaction extends AggregateBase
 	private $lunchExpense;
 	
 	/**
+	 * @ORM\OneToOne(targetEntity="App\Entity\LunchExpense\LunchExpenseBundle", cascade={"persist", "remove"})
+	 */
+	private $lunchExpenseBundle;
+	
+	/**
 	 * Creates a new transaction
 	 * @param CreateTransactionCommand $c
 	 * @param User $user
@@ -118,6 +124,9 @@ class Transaction extends AggregateBase
 					break;
 				case LunchExpense::class:
 					$this->initWithLunchExpense($c, $document);
+					break;
+				case LunchExpenseBundle::class:
+					$this->initWithLunchExpenseBundle($c, $document);
 					break;
 				default:
 					throw new \Exception('Not implemented yet.');
@@ -209,6 +218,11 @@ class Transaction extends AggregateBase
 	private function initWithLunchExpense(CreateTransactionCommand $c, LunchExpense $le)
 	{
 		$this->lunchExpense = $le;
+	}
+	
+	private function initWithLunchExpenseBundle(CreateTransactionCommand $c, LunchExpenseBundle $bundle)
+	{
+		$this->lunchExpenseBundle = $bundle;
 	}
 	
 	private function updateCommon(UpdateTransactionCommand $c)

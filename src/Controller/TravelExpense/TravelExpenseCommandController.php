@@ -65,7 +65,7 @@ class TravelExpenseCommandController extends AbstractController
     					$clec->date = $c->date;
     					$clec->organization = $c->organization;
     					$clec->sum = $c->organization->getOrganizationSettings()->getLunchValue();
-    					$lunchExpense = new LunchExpense($clec, $this->getUser());
+    					$lunchExpense = $this->getUser()->createLunchExpense($clec);
     					
     					$lunchTransaction =  $lunchExpense->setNew($this->getUser());
     				}
@@ -188,7 +188,7 @@ class TravelExpenseCommandController extends AbstractController
     				$clec->date = $updateTECommand->date;
     				$clec->organization = $updateTECommand->organization;
     				$clec->sum = $updateTECommand->organization->getOrganizationSettings()->getLunchValue();
-    				$lunchExpense = new LunchExpense($clec, $this->getUser());
+    				$lunchExpense = $this->getUser()->createLunchExpense($clec);
     				
     				$lunchTransaction =  $lunchExpense->setNew($this->getUser());
     			}

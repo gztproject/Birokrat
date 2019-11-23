@@ -3,6 +3,7 @@
 namespace App\Repository\LunchExpense;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 use App\Entity\LunchExpense\LunchExpense;
 
@@ -17,6 +18,47 @@ class LunchExpenseRepository extends ServiceEntityRepository
     public function __construct(RegistryInterface $registry)
     {
         parent::__construct($registry, LunchExpense::class);
+    }
+    
+    public function getFilteredQuery($from, $to, bool $unbooked, bool $booked): QueryBuilder
+    {
+    	$qb = $this
+    	->createQueryBuilder('te')
+    	->addSelect('te');
+    	if($from)
+    	{
+    		$qb
+    		->where('te.date >= :from')
+    		->setParameter('from', date('Y-m-d G:i:s', $from-60*60*24));
+    	}
+    	
+    	if($to)
+    	{
+    		$qb
+    		->andWhere('te.date <= :to')
+    		->setParameter('to', date('Y-m-d G:i:s', $to));
+    	}
+    	
+    	if($booked && $unbooked)
+    	{
+    		
+    	}
+    	elseif($unbooked)
+    	{
+    		$qb->andWhere('te.state <= 10');
+    	}
+    	elseif($booked)
+    	{
+    		$qb->andWhere('te.state > 10');
+    	}
+    	else
+    	{
+    		$qb
+    		->andWhere('te.state <= 10')
+    		->andWhere('te.state > 10');
+    	}
+    	
+    	return $qb->orderBy('te.date', 'DESC');
     }
 
     // /**

@@ -1046,6 +1046,30 @@
         <source>label.percent</source>
         <target>Odstotek</target>
       </trans-unit>
+      <trans-unit id="menu.expenses" resname="menu.expenses">
+        <source>menu.expenses</source>
+        <target>Stroški</target>
+      </trans-unit>
+      <trans-unit id="menu.lunchExpenses" resname="menu.lunchExpenses">
+        <source>menu.lunchExpenses</source>
+        <target>Prehrana</target>
+      </trans-unit>
+      <trans-unit id="title.lunchExpenses" resname="title.lunchExpenses">
+        <source>title.lunchExpenses</source>
+        <target>Prehrana</target>
+      </trans-unit>
+      <trans-unit id="action.create_lunchExpense" resname="action.create_lunchExpense">
+        <source>action.create_lunchExpense</source>
+        <target>Ustvari strošek prehrane</target>
+      </trans-unit>
+      <trans-unit id="action.bookSelectedLunchExpenses" resname="action.bookSelectedLunchExpenses">
+        <source>action.bookSelectedLunchExpenses</source>
+        <target>Knjiži izbrane</target>
+      </trans-unit>
+      <trans-unit id="action.bookVisibleLunchExpenses" resname="action.bookVisibleLunchExpenses">
+        <source>action.bookVisibleLunchExpenses</source>
+        <target>Knjiži vidne</target>
+      </trans-unit>
       
     </body>
   </file>

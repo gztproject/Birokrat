@@ -38,6 +38,11 @@ class LunchExpense extends AggregateBase implements iTransactionDocument
      */
     private $organization;
     
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\LunchExpense\LunchExpenseBundle", inversedBy="LunchExpenses")
+     */
+    private $lunchExpenseBundle;
+    
 
     public function __construct(CreateLunchExpenseCommand $c, User $user)
     {
@@ -72,22 +77,40 @@ class LunchExpense extends AggregateBase implements iTransactionDocument
     	return $transaction;    	
     }
     
+    public function setLunchExpenseBundle(LunchExpenseBundle $leb, User $user): LunchExpense
+    {
+    	if($user == null)
+    		throw new \Exception("Updating user must be set.");
+    		
+    		if($this->state != 10)
+    			throw new \Exception("I can only bundle new expenses.");
+    			
+    			if ($this->lunchExpenseBundle != null)
+    				throw new \Exception("This LunchExpense is already bundled.");
+    				
+    				parent::updateBase($user);
+    				$this->lunchExpenseBundle = $leb;
+    				
+    				return $this;
+    }
+    
     public function setBooked(\DateTime $date, User $user): Transaction
     {    	    	
-    	
+    	parent::updateBase($user);
+    	$this->setState(States::booked);
     	$c = new CreateTransactionCommand();
     	$c->date = $date;
     	$cc = $this->organization->getOrganizationSettings()->getPaidTravelExpenseCredit();
     	$dc = $this->organization->getOrganizationSettings()->getPaidTravelExpenseDebit();
     	if($cc == null || $dc == null)
-    		throw new \Exception("Please set konto preferences for this organization before issuing invoices.");
+    		throw new \Exception("Please set konto preferences for this organization before booking expenses.");
     	$c->creditKonto = $cc;
     	$c->debitKonto = $dc;
     	$c->organization = $this->organization;
     	
     	$c->sum = $this->sum;
     	
-    	$transaction = new Transaction($c, $user, $this);
+    	$transaction = new Transaction($c, $user, $this);    	
     	
     	return $transaction;
     }

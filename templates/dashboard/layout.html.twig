@@ -27,13 +27,24 @@
             </a>
         </ul>
     </li>  
-    <li class="nav-item">
-        <a class="nav-link" href="{{ path('travelExpense_index') }}">
-            <i class="fa fa-map-marked-alt" aria-hidden="true"></i> {{ 'menu.travelExpenses'|trans }}
-        </a>        
-    </li>  
+    
     <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-expanded="false" id="invoices">
+        <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-expanded="false" id="expenses">
+            <i class="fas fa-funnel-dollar"></i>
+            {{ 'menu.expenses'|trans }}
+        </a>        
+        <ul class="dropdown-menu" role="menu" aria-labelledby="user">
+            <a class="nav-link" href="{{ path('travelExpense_index') }}">
+                <i class="fa fa-map-marked-alt" aria-hidden="true"></i> {{ 'menu.travelExpenses'|trans }}
+            </a>
+            <a class="nav-link" href="{{ path('lunchExpense_index') }}">
+                <i class="fa fa-utensils" aria-hidden="true"></i> {{ 'menu.lunchExpenses'|trans }}
+            </a>
+        </ul>
+    </li>  
+    
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-expanded="false" id="reports">
             <i class="fa fa-file" aria-hidden="true"></i>
             {{ 'menu.reports'|trans }}
         </a>        

@@ -25,6 +25,10 @@ Encore
     .addEntry('js/travelExpense/new', './assets/js/travelExpense/new.js')
     .addEntry('js/travelExpense/filter', './assets/js/travelExpense/filter.js')
 
+    //LunchExpense
+    .addEntry('js/lunchExpense/index', './assets/js/lunchExpense/index.js')
+    .addEntry('js/lunchExpense/filter', './assets/js/lunchExpense/filter.js')
+
     //Invoice
     .addEntry('js/invoice/new', './assets/js/invoice/new.js')
     .addEntry('js/invoice/list', './assets/js/invoice/list.js')

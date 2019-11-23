@@ -1,0 +1,28 @@
+<table id="lunchExpensesTable" class="table table-hover">
+        <thead>
+            <tr>
+                <th scope="col"><i class="fa fa-calendar" aria-hidden="true"></i>{{ 'label.date'|trans }}</th>
+                <th scope="col"><i class="fa fa-coins" aria-hidden="true"></i> {{ 'label.cost'|trans }}</th> 
+                {% if ShowCBs is defined and ShowCBs == true%}  
+                    <th scope="col" class="text-center"><i class="fa fa-check" aria-hidden="true"></i></th>  
+                {% endif %}
+            </tr>
+        </thead>
+        <tbody>
+    {% for lunchExpense in lunchExpenses %}
+            <tr class="table-primary">
+                <td>{{ lunchExpense.dateString }}</td>                
+                <td>{{ lunchExpense.sum }}</td> 
+                {% if ShowCBs is defined and ShowCBs == true%}             
+                <td> 
+                    <input class="form-check-input TECheckBox" type="checkbox" value={{ lunchExpense.id }}>                                    
+                </td>
+                {% endif %}
+            </tr>
+        {% else %}
+            <tr class="table-warning">
+                <td colspan="4" align="center">{{ 'lunchExpense.no_lunchExpenses_found'|trans }}</td>
+           </tr>
+        {% endfor %}    
+    </tbody>
+    </table>
