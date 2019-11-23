@@ -65,8 +65,8 @@ final class Version20191029162237 extends AbstractMigration implements Container
         $this->addSql('ALTER TABLE transaction ADD CONSTRAINT FK_723705D1667B9D1D FOREIGN KEY (lunch_expense_id) REFERENCES lunch_expense (id)');
         $this->addSql('CREATE UNIQUE INDEX UNIQ_723705D1667B9D1D ON transaction (lunch_expense_id)');
         $this->addSql('ALTER TABLE organization_settings ADD auto_create_per_diem TINYINT(1) NOT NULL, ADD per_diem_value DOUBLE PRECISION DEFAULT NULL, ADD auto_create_lunch TINYINT(1) NOT NULL, ADD lunch_value DOUBLE PRECISION DEFAULT NULL');
-        $this->addSql('ALTER TABLE organization_settings RENAME INDEX idx_a5d6267ac174c0e TO IDX_A5D62679F31953D');
-        $this->addSql('ALTER TABLE organization_settings RENAME INDEX idx_a5d6267cb76466a TO IDX_A5D62678FEC03C6');
+        $this->addSql('ALTER TABLE organization_settings DROP INDEX idx_a5d6267ac174c0e, ADD INDEX IDX_A5D62679F31953D (paid_cash_incoming_invoice_credit_id)');
+        $this->addSql('ALTER TABLE organization_settings DROP INDEX idx_a5d6267cb76466a, ADD INDEX IDX_A5D62678FEC03C6 (paid_transaction_incoming_invoice_credit_id)');
         $this->addSql('ALTER TABLE partner DROP INDEX idx_c7440455f5b7af75, ADD INDEX IDX_312B3E16F5B7AF75 (address_id)');
         $this->addSql('ALTER TABLE partner DROP INDEX idx_c7440455b03a8386, ADD INDEX IDX_312B3E16B03A8386 (created_by_id)');
         $this->addSql('ALTER TABLE partner DROP INDEX idx_c7440455896dbbde, ADD INDEX IDX_312B3E16896DBBDE (updated_by_id)');
@@ -131,8 +131,8 @@ final class Version20191029162237 extends AbstractMigration implements Container
         $this->addSql('ALTER TABLE transaction DROP FOREIGN KEY FK_723705D1667B9D1D');
         $this->addSql('DROP TABLE lunch_expense');
         $this->addSql('ALTER TABLE organization_settings DROP auto_create_per_diem, DROP per_diem_value, DROP auto_create_lunch, DROP lunch_value');
-        $this->addSql('ALTER TABLE organization_settings RENAME INDEX idx_a5d62678fec03c6 TO IDX_A5D6267CB76466A');
-        $this->addSql('ALTER TABLE organization_settings RENAME INDEX idx_a5d62679f31953d TO IDX_A5D6267AC174C0E');
+        $this->addSql('ALTER TABLE organization_settings DROP INDEX idx_a5d62678fec03c6, ADD INDEX IDX_A5D6267CB76466A (paid_transaction_incoming_invoice_credit_id)');
+        $this->addSql('ALTER TABLE organization_settings DROP INDEX idx_a5d62679f31953d, ADD INDEX IDX_A5D6267AC174C0E (paid_cash_incoming_invoice_credit_id)');
         $this->addSql('ALTER TABLE partner DROP INDEX idx_312b3e16b03a8386, ADD INDEX IDX_C7440455B03A8386 (created_by_id)');
         $this->addSql('ALTER TABLE partner DROP INDEX idx_312b3e16896dbbde, ADD INDEX IDX_C7440455896DBBDE (updated_by_id)');
         $this->addSql('ALTER TABLE partner DROP INDEX idx_312b3e16f5b7af75, ADD INDEX IDX_C7440455F5B7AF75 (address_id)');
