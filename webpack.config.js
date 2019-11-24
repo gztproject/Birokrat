@@ -42,6 +42,9 @@ Encore
     .addEntry('js/organization/new', './assets/js/organization/new.js')
     .addEntry('js/organization/show', './assets/js/organization/show.js')
 
+    //Transaction
+    .addEntry('js/transaction/new', './assets/js/transaction/new.js')
+
     .addEntry('js/poc.typeahead', './assets/js/poc.typeahead.js')
 
     .addStyleEntry('css/app', ['./assets/scss/app.scss'])

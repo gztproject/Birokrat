@@ -1,0 +1,24 @@
+{% extends 'dashboard/layout.html.twig' %}
+
+{% block body_id 'transaction_new' %}
+
+{% block main %}
+    <h1>{{ 'title.transaction_new'|trans }}</h1>
+
+    {{ include('dashboard/transaction/_form.html.twig', {
+        form: form,
+        button_label: 'label.update_transaction'|trans,
+        include_back_to_home_link: true,        
+    }, with_context = false) }}
+
+{% endblock %}
+
+{% block sidebar %}
+    {{ parent() }}
+
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('js/transaction/new') }}  
+{% endblock %}

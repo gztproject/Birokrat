@@ -5,6 +5,8 @@ namespace App\Entity\User;
 use App\Entity\Settings\CreateUserSettingsCommand;
 use App\Entity\Settings\UpdateUserSettingsCommand;
 use App\Entity\Settings\UserSettings;
+use App\Entity\Transaction\CreateTransactionCommand;
+use App\Entity\Transaction\Transaction;
 use App\Entity\TravelExpense\CreateTravelExpenseBundleCommand;
 use App\Entity\TravelExpense\CreateTravelExpenseCommand;
 use App\Entity\TravelExpense\TravelExpenseBundle;
@@ -367,6 +369,16 @@ class User extends AggregateBase implements UserInterface, \Serializable
     public function createLunchExpenseBundle(CreateLunchExpenseBundleCommand $c): LunchExpenseBundle
     {
     	return new LunchExpenseBundle($c, $this);
+    }
+    
+    /**
+     * Creates a new transaction without a document (only description).
+     * @param CreateTransactionCommand $c
+     * @return Transaction
+     */
+    public function createTransactionWithDescription(CreateTransactionCommand $c): Transaction
+    {
+    	return new Transaction($c, $this, null);
     }
     
     
