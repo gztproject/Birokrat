@@ -45,16 +45,22 @@ Encore
     //Transaction
     .addEntry('js/transaction/new', './assets/js/transaction/new.js')
 
+    //Geography
+    .addEntry('js/geography/country/show', './assets/js/geography/country/show.js')
+
+    //Report
+    .addEntry('js/report/filter', './assets/js/report/filter.js')
+
+    //POC
     .addEntry('js/poc.typeahead', './assets/js/poc.typeahead.js')
 
+    
+    //Styles
     .addStyleEntry('css/app', ['./assets/scss/app.scss'])
     .addStyleEntry('css/copyleft', ['./assets/css/copyleft.css'])
     .addStyleEntry('css/admin', ['./assets/scss/admin.scss'])
     .addStyleEntry('css/dashboard', ['./assets/scss/dashboard.scss'])
-    .addStyleEntry('css/invoice', ['./assets/scss/invoice.scss'])
-
-    //Geography
-    .addEntry('js/geography/country/show', './assets/js/geography/country/show.js')
+    .addStyleEntry('css/invoice', ['./assets/scss/invoice.scss'])    
 
     //plugins
 
