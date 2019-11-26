@@ -1,0 +1,12 @@
+{% extends 'dashboard/layout.html.twig' %}
+
+{% block body_id 'travelExpense_show' %}
+
+{% block main %}
+    <h1>{{ travelExpense.TravelDescription }}</h1>
+    
+    {% endblock %}
+
+{% block sidebar %}
+        {{ parent() }}
+{% endblock %}

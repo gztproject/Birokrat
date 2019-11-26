@@ -6,29 +6,47 @@
 <h1>{{ 'title.reports'|trans }}</h1>
 
 <h2>{{ 'title.overview'|trans }}</h2>
-    <div class="bs-component">
+<div class="row">
+    <div class="col-sm-12">
+        <div class="bs-component">
         {{ include('dashboard/report/_overviewReport.html.twig', {
                 report: overviewReport                
             }, with_context = false) }}
+        </div>
     </div>
+</div>
 
 <h2>{{ 'title.kontos'|trans }}</h2>
-    <div class="bs-component">
+<div class="row">
+    <div class="col-sm-12">
+        <div class="bs-component">
         {{ include('dashboard/report/_kontoReport.html.twig', {
                 report: kontoReport                
             }, with_context = false) }}
+        </div>
     </div>
+</div>
 
 <h2>{{ 'title.clients'|trans }}</h2>
-    <div class="bs-component">
+<div class="row">
+    <div class="col-sm-12">
+        <div class="bs-component">
         {{ include('dashboard/report/_clientReport.html.twig', {
                 report: clientReport                
             }, with_context = false) }}
+        </div>
     </div>
+</div>
 {% endblock %}
 
 {% block sidebar %}
     
     {{ parent() }}
+    {{ include('dashboard/report/_filter.html.twig') }}
     
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('js/report/filter') }}  
 {% endblock %}

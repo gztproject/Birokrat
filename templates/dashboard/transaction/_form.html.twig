@@ -1,0 +1,97 @@
+{{ form_start(form, {'attr': {'class': 'bs-component'}}) }}
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="form-group">                    
+                    {{ form_label(form.organization, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}
+                    <div class='input-group'>
+                    {{ form_widget(form.organization, {'attr': {'class': 'form-control'}}) }}                
+                </div>
+            </div>            
+        </div>
+        <div class="col-sm-6">
+            <div class="form-group">
+             {{ form_label(form.date, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}
+                <div class='input-group date' id='TransactionDatePicker'>                   
+                    {{ form_widget(form.date, {'attr': {'class': 'form-control'}}) }}
+                    <div class="input-group-append">
+                        <span class="input-group-text"><i class="fa fa-calendar" aria-hidden="true"></i></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+             <div class="form-group"> 
+                <label class='col-form-label-lg' for='transaction_presets' >{{ 'label.presets'|trans }}</label> 
+                <div class='input-group'>
+                    <select id="transaction_presets" class="form-control" name="transaction[preset]">
+                    {#ToDo: Create an entity for this kind of favourites and a system to manage them. #}
+                        <option value="0" data-debit="" data-credit="" data-description=""></option>
+                        <option value="1" data-debit="919" data-credit="110" data-description="Prenos na osebni račun">Prenos na osebni račun / izplačilo gotovine</option>
+                        <option value="2" data-debit="489" data-credit="919" data-description="Drugi stroški">Drugi stroški</option>
+                        <option value="6" data-debit="415" data-credit="110" data-description="Stroški bančnih storitev">Stroški banke</option>
+                        <option value="3" data-debit="486" data-credit="919" data-description="Povračilo stroškov SP">Povračilo stroškov SP in posameznikom</option>
+                        <!-- <option value="4" data-debit="484" data-credit="252" data-description="Obveznost za plačilo prispevkov za socialno varnost"> Obveznost za plačilo prispevkov za socialno varnost</option> -->
+                        <option value="5" data-debit="484" data-credit="110" data-description="Plačilo prispevkov za socialno varnost">Plačilo prispevkov za socialno varnost</option>
+                        <option value="6" data-debit="415" data-credit="110" data-description="Stroški bančnih storitev">Stroški banke</option>
+                        <!-- <option value="7" data-debit="810" data-credit="264" data-description="Obveznost za akontacijo dohodnine">Akontacija dohodnine (nastala obveznost)</option>-->
+                        <option value="8" data-debit="810" data-credit="110" data-description="Plačilo akontacije dohodnine">Plačilo akontacije dohodnine</option>
+                        <option value="9" data-debit="810" data-credit="110" data-description="Plačilo dohodnine (poračun)">Plačilo dohodnine (letni poračun)</option>
+                        <!-- <option value="10" data-debit="160" data-credit="810" data-description="Preplačana akontacija dohodnine">Preplačana akontacija dohodnine</option> -->
+                        <option value="11" data-debit="110" data-credit="810" data-description="Vračilo preplačane akontacije dohodnine">Vračilo preplačane akontacije dohodnine</option>
+                        <option value="12" data-debit="703" data-credit="491" data-description="Prenos stroškov v odhodke">Prenos stroškov v odhodke</option>
+                        <option value="13" data-debit="801" data-credit="703" data-description="Ugotavljanje izida - odhodki">Ugotavljanje izida - odhodki</option>
+                        <option value="13" data-debit="760" data-credit="801" data-description="Ugotavljanje izida - prihodki">Ugotavljanje izida - prihodki</option>
+                    </select> 
+                </div>
+             </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="form-group">                    
+                {{ form_label(form.debitKonto, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}
+                    <div class='input-group'>
+                        {{ form_widget(form.debitKonto, {'attr': {'class': 'form-control'}}) }}                
+                    </div>
+            </div>            
+        </div>
+        <div class="col-sm-6">
+            <div class="form-group">                    
+                {{ form_label(form.creditKonto, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}
+                    <div class='input-group'>
+                        {{ form_widget(form.creditKonto, {'attr': {'class': 'form-control'}}) }}                
+                    </div>
+            </div>            
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="form-group">                    
+                {{ form_label(form.sum, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}
+                    <div class='input-group'>
+                        {{ form_widget(form.sum, {'attr': {'class': 'form-control'}}) }}                
+                    </div>
+            </div>            
+        </div>
+        <div class="col-sm-6">
+            <div class="form-group">                    
+                {{ form_label(form.description, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}
+                    <div class='input-group'>
+                        {{ form_widget(form.description, {'attr': {'class': 'form-control'}}) }}                
+                    </div>
+            </div>            
+        </div>
+    </div>
+    <div class="form-group">
+            <button type="submit" class="btn btn-primary">
+                <i class="fa fa-save" aria-hidden="true"></i> {{ 'label.create_transaction'|trans }}
+            </button>            
+            <a href="{{ path('transaction_index') }}" class="btn btn-link">
+                <i class="fa fa-list-alt" aria-hidden="true"></i> {{ 'action.back_to_list'|trans }}
+            </a>
+       </div>
+           
+{{ form_row(form._token) }}
+{{ form_end(form, {'render_rest': false}) }}

@@ -9,6 +9,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\Transaction\Transaction;
 use App\Repository\Transaction\TransactionRepository;
+use App\Entity\Transaction\CreateTransactionCommand;
+use App\Form\Transaction\TransactionType;
 
 class TransactionController extends AbstractController
 {    
@@ -37,16 +39,30 @@ class TransactionController extends AbstractController
     }
     
     /**
-     * @Route("/dashboard/transaction/new", methods={"GET"}, name="transaction_new")
+     * @Route("/dashboard/transaction/new", methods={"GET", "POST"}, name="transaction_new")
      */
     public function new(TransactionRepository $transactions, Request $request, PaginatorInterface $paginator): Response
     {
-    	$queryBuilder = $transactions->getQuery();
+    	$createTransactionCommand = new CreateTransactionCommand();
     	
-    	$pagination = $paginator->paginate($queryBuilder, $request->query->getInt('page', 1), 10);
+    	$form = $this->createForm(TransactionType::class, $createTransactionCommand);
     	
-    	return $this->render('dashboard/transaction/index.html.twig', [
-    			'pagination' => $pagination,
+    	$form->handleRequest($request);
+    	
+    	if ($form->isSubmitted() && $form->isValid()) {
+    		
+    		$transaction = $this->getUser()->createTransactionWithDescription($createTransactionCommand);
+    		
+    		$em = $this->getDoctrine()->getManager();    		
+    		
+    		$em->persist($transaction);
+    		$em->flush();
+    		
+    		return $this->redirectToRoute('transaction_show', array('id'=> $transaction->getId()));
+    	}
+    	
+    	return $this->render('dashboard/transaction/new.html.twig', [
+    			'form' => $form->createView(),
     	]);
     }
     

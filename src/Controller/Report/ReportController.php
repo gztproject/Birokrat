@@ -12,25 +12,29 @@ use App\Entity\Transaction\Transaction;
 use App\Repository\Transaction\TransactionRepository;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Ramsey\Uuid\Uuid;
 
 class ReportController extends AbstractController
 {    
 	/**     
      * @Route("/dashboard/report", methods={"GET"}, name="report_index")
      */
-	public function index(EntityManagerInterface $em): Response
+	public function index(Request $request, EntityManagerInterface $em): Response
     {   
-    	$organization = $this->getUser()->getOrganizations()[0];
-		    	
+    	$dateFrom = $request->query->get('dateFrom', null);
+    	$dateTo = $request->query->get('dateTo', null);
+    	$orgId = $request->query->get('organization', null);
+    	$orgId = $orgId==="" ? null: $orgId;
+    	    	
     	return $this->render('dashboard/report/index.html.twig', [
-    			'overviewReport' =>$this->getOverviewReport($organization, $em),
-    			'kontoReport' => $this->getKontoReport($organization, $em),
-    			'clientReport' => $this->getClientReport($organization, $em),
+    			'overviewReport' =>$this->getOverviewReport($orgId, $dateFrom, $dateTo, $em),
+    			'kontoReport' => $this->getKontoReport($orgId, $dateFrom, $dateTo, $em),
+    			'clientReport' => $this->getClientReport($orgId, $dateFrom, $dateTo, $em),
     			
     	]);
     } 
     
-    private function getOverviewReport(Organization $organization, EntityManagerInterface $em): array
+    private function getOverviewReport(?String $organizationId, ?String $dateFrom, ?String $dateTo, EntityManagerInterface $em): array
     {
     	$invoices = 0;
     	$incomingInvoices = 0;
@@ -51,10 +55,20 @@ class ReportController extends AbstractController
     			->from('App\Entity\Konto\Konto','k', 'k.id')
     			->leftJoin('App\Entity\Konto\KontoCategory', 'kc', 'WITH', 'k.category = kc.id')
     			->leftJoin('App\Entity\Transaction\Transaction', 't', 'WITH', 't.debitKonto = k.id OR t.creditKonto = k.id')   
-    			->where('kc.number IN (76, 40, 41, 48, 11, 12, 91, 28)')
-    			->andWhere('t.organization = :orgId')    
-    			->groupBy('k.id')			
-    			->setParameter('orgId', $organization->getId());
+    			->where('kc.number IN (76, 40, 41, 48, 11, 12, 91, 28)');
+    			if($organizationId !== null)
+    				$qb->andWhere('t.organization = :orgId');  
+    			if($dateFrom !== null)
+    				$qb->andWhere('t.date >= :dateFrom');    
+    			if($dateTo !== null)
+    				$qb->andWhere('t.date <= :dateTo');    
+    			$qb->groupBy('k.id');
+    			if($organizationId !== null)
+    				$qb->setParameter('orgId', $organizationId);
+    			if($dateFrom !== null)
+    				$qb->setParameter('dateFrom', date('Y-m-d G:i:s', $dateFrom));
+    			if($dateTo !== null)
+    				$qb->setParameter('dateTo', date('Y-m-d G:i:s', $dateTo));
     	$query = $qb->getQuery();
     	$result = $query->getArrayResult();
     	
@@ -112,7 +126,7 @@ class ReportController extends AbstractController
     	];
     }
     
-    private function getKontoReport(Organization $organization, EntityManagerInterface $em): array
+    private function getKontoReport(?String $organizationId, ?String $dateFrom, ?String $dateTo, EntityManagerInterface $em): array
     {
     	$qb = $em->createQueryBuilder();
     	$qb->select(['k.id', 
@@ -122,10 +136,20 @@ class ReportController extends AbstractController
     				'SUM(CASE WHEN t.creditKonto = k.id THEN t.sum ELSE 0 END) AS credit'])
     		->from('App\Entity\Konto\Konto','k', 'k.id')
     		->leftJoin('App\Entity\Transaction\Transaction', 't', 'WITH', 't.debitKonto = k.id OR t.creditKonto = k.id')
-    		->where('t.id IS NOT NULL')
-    		->andWhere('t.organization = :orgId')
-    		->addGroupBy('k.id')
-    		->setParameter('orgId', $organization->getId());
+    		->where('t.id IS NOT NULL');
+    		if($organizationId !== null)
+    			$qb->andWhere('t.organization = :orgId');
+    		if($dateFrom !== null)
+    			$qb->andWhere('t.date >= :dateFrom');
+    		if($dateTo !== null)
+    			$qb->andWhere('t.date <= :dateTo');
+    		$qb->addGroupBy('k.id');;
+    		if($organizationId !== null)
+    			$qb->setParameter('orgId', $organizationId);
+    		if($dateFrom !== null)
+    			$qb->setParameter('dateFrom', date('Y-m-d G:i:s', $dateFrom));
+    		if($dateTo !== null)
+    			$qb->setParameter('dateTo', date('Y-m-d G:i:s', $dateTo));
     	$query = $qb->getQuery();
     	$result = $query->getArrayResult();
     	$report = ['kontos' => []];
@@ -137,7 +161,7 @@ class ReportController extends AbstractController
     	return $report;
     }
     
-    private function getClientReport(Organization $organization, EntityManagerInterface $em): array
+    private function getClientReport(?String $organizationId, ?String $dateFrom, ?String $dateTo, EntityManagerInterface $em): array
     {
 //     	$sql = 'SELECT c.id, c.name, COUNT(i.id), SUM(i.total_price) AS total, SUM(CASE WHEN i.state=30 THEN i.total_price ELSE 0 END) AS paid, 
 // 					SUM(CASE WHEN i.state=20 THEN i.total_price ELSE 0 END) AS open 
@@ -157,11 +181,21 @@ class ReportController extends AbstractController
     				'SUM(CASE WHEN i.state = 20 THEN i.totalPrice ELSE 0 END) AS open'])
     		->from('App\Entity\Organization\Partner', 'c', 'c.id')
     		->leftJoin('App\Entity\Invoice\Invoice', 'i', 'WITH', 'i.recepient = c.id AND i.state IN (20, 30)')
-    		->where('c.isClient = 1')
-    		->andWhere('i.issuer = :orgId')
-    		->addGroupBy('c.id')
-    		->addOrderBy('total','DESC')
-    		->setParameter('orgId', $organization->getId());
+    		->where('c.isClient = 1');
+    		if($organizationId !== null)
+    			$qb->andWhere('i.issuer = :orgId');
+    		if($dateFrom !== null)
+    			$qb->andWhere('i.dateOfIssue >= :dateFrom');
+    		if($dateTo !== null)
+    			$qb->andWhere('i.dateOfIssue <= :dateTo');
+    		$qb->addGroupBy('c.id')
+    			->addOrderBy('total','DESC');
+    		if($organizationId !== null)
+    			$qb->setParameter('orgId', $organizationId);
+    		if($dateFrom !== null)
+    			$qb->setParameter('dateFrom', date('Y-m-d G:i:s', $dateFrom));
+    		if($dateTo !== null)
+    			$qb->setParameter('dateTo', date('Y-m-d G:i:s', $dateTo));
     		
     		$query = $qb->getQuery();
     		$result = $query->getArrayResult();
