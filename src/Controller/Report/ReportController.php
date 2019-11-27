@@ -44,6 +44,7 @@ class ReportController extends AbstractController
     	$bank = 0;
     	$debts = 0;
     	$cash = 0;
+    	$expenses = 0;
     	
     	$qb = $em->createQueryBuilder();
     	$qb->select(['k.id',
@@ -55,7 +56,7 @@ class ReportController extends AbstractController
     			->from('App\Entity\Konto\Konto','k', 'k.id')
     			->leftJoin('App\Entity\Konto\KontoCategory', 'kc', 'WITH', 'k.category = kc.id')
     			->leftJoin('App\Entity\Transaction\Transaction', 't', 'WITH', 't.debitKonto = k.id OR t.creditKonto = k.id')   
-    			->where('kc.number IN (76, 40, 41, 48, 11, 12, 91, 28)');
+    			->where('kc.number IN (70, 76, 40, 41, 48, 49, 11, 12, 91, 28)');
     			if($organizationId !== null)
     				$qb->andWhere('t.organization = :orgId');  
     			if($dateFrom !== null)
@@ -78,14 +79,17 @@ class ReportController extends AbstractController
     		{
     			case 76:
     				$invoices += $res['credit'] - $res['debit'];
-    				break;
+    				break;    			
     			case 40:
     				$incomingInvoices += $res['debit'] - $res['credit'];
+    				$expenses += $res['debit'] - $res['credit'];
     				break;
     			case 41:
     				$incomingInvoices += $res['debit'] - $res['credit'];
+    				$expenses += $res['debit'] - $res['credit'];
     				break;
     			case 48:
+    				$expenses += $res['debit'] - $res['credit'];
     				if($res['kontoNumber'] == 486)
     					$dailyExpenses += $res['debit'] - $res['credit'];
     				elseif($res['kontoNumber'] == 484)
@@ -93,14 +97,20 @@ class ReportController extends AbstractController
     				else 
     					$otherExpenses += $res['debit'] - $res['credit'];
     				break;
+    			case 49:
+    				$expenses += $res['debit'] - $res['credit'];
+    				break;
+    			case 70:
+    				$expenses += $res['debit'] - $res['credit'];
+    				break;
     			case 11:
     				$bank += $res['debit'] - $res['credit'];
     				break;
     			case 12:
-    				$debts += $res['debit'] - $res['credit'];
+    				$debts += $res['credit'] - $res['debit'];
     				break;
     			case 28:
-    				$debts += $res['debit'] - $res['credit'];
+    				$debts += $res['credit'] - $res['debit'];
     				break;
     			case 91:
     				$cash += $res['debit'] - $res['credit'];
@@ -117,12 +127,12 @@ class ReportController extends AbstractController
     			'socialSecurity' => $socialSecurity,
     			'dailyExpenses' => $dailyExpenses,
     			'other' => $otherExpenses,
-    			'expenses' => $incomingInvoices+$socialSecurity+$dailyExpenses+$otherExpenses,
+    			'expenses' => $expenses,
     			
     			'bank' => $bank,
     			'debts' => $debts,
     			'cash' => $cash,
-    			'outcome' => $bank+$cash+$debts
+    			'outcome' => $invoices-$expenses
     	];
     }
     
