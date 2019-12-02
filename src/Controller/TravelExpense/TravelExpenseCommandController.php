@@ -7,6 +7,7 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use App\Repository\LunchExpense\LunchExpenseRepository;
 use App\Repository\TravelExpense\TravelExpenseRepository;
 use App\Entity\Konto\Konto;
 use App\Form\TravelExpense\TravelExpenseType;
@@ -27,7 +28,7 @@ class TravelExpenseCommandController extends AbstractController
 	/**
      * @Route("/dashboard/travelExpense/new", methods={"GET", "POST"}, name="travelExpense_new")
      */
-	public function new(Request $request, TravelExpenseRepository $travelExpenses, LoggerInterface $logger): Response
+	public function new(Request $request, TravelExpenseRepository $travelExpenses, LunchExpenseRepository $lunchExpenses, LoggerInterface $logger): Response
     {
     	$c = new CreateTravelExpenseCommand();    	
     	    	
@@ -52,11 +53,11 @@ class TravelExpenseCommandController extends AbstractController
     		
     		$transaction = $te->setNew($this->getUser());
     		
-    		//If this is the first travelExpense of the day:
-    		$query = $travelExpenses->getFilteredQuery($c->date->getTimestamp(), $c->date->getTimestamp(), true, true)->getQuery();
+    		//If this is the first lunchExpense of the day:
+    		$query = $lunchExpenses->getFilteredQuery($c->date->getTimestamp(), $c->date->getTimestamp(), true, true)->getQuery();
     		$query->execute();
-    		$logger->debug("Found ".count($query->getArrayResult())." existing TravelExpenses on ".date("r",$c->date->getTimestamp()));
-    		if(count($query->getArrayResult()) == 0)
+    		$logger->debug("Found ".count($query->getResult())." existing LunchExpenses on ".date("r",$c->date->getTimestamp()));
+    		if(count($query->getResult()) == 0)
     		{
     				$logger->debug("Auto renerating lunch transaction is set to ".$c->organization->getOrganizationSettings()->getAutoCreateLunch());
     				if($c->organization->getOrganizationSettings()->getAutoCreateLunch())
@@ -145,7 +146,7 @@ class TravelExpenseCommandController extends AbstractController
      *
      * @Route("/dashboard/travelExpense/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/clone",methods={"GET", "POST"}, name="travelExpense_clone")
      */
-    public function clone(Request $request, TravelExpense $te, TravelExpenseRepository $travelExpenses, LoggerInterface $logger): Response
+    public function clone(Request $request, TravelExpense $te, TravelExpenseRepository $travelExpenses, LunchExpenseRepository $lunchExpenses, LoggerInterface $logger): Response
     {
     	$clone = $te->clone($this->getUser());
     	
@@ -175,11 +176,11 @@ class TravelExpenseCommandController extends AbstractController
     		}
     		    		
     		$transaction = $clone->setNew($this->getUser());
-    		//If this is the first travelExpense of the day:
-    		$query = $travelExpenses->getFilteredQuery($updateTECommand->date->getTimestamp(), $updateTECommand->date->getTimestamp(), true, true)->getQuery();
+    		//If there's no lunch expense for the day yet:
+    		$query = $lunchExpenses->getFilteredQuery($updateTECommand->date->getTimestamp(), $updateTECommand->date->getTimestamp(), true, true)->getQuery();
     		$query->execute();
-    		$logger->debug("Found ".count($query->getArrayResult())." existing TravelExpenses on ".date("r",$updateTECommand->date->getTimestamp()));
-    		if(count($query->getArrayResult()) == 0)
+    		$logger->debug("Found ".count($query->getResult())." existing LunchExpenses on ".date("r",$updateTECommand->date->getTimestamp()));
+    		if(count($query->getResult()) == 0)
     		{
     			$logger->debug("Auto renerating lunch transaction is set to ".$updateTECommand->organization->getOrganizationSettings()->getAutoCreateLunch());
     			if($updateTECommand->organization->getOrganizationSettings()->getAutoCreateLunch())
@@ -226,9 +227,7 @@ class TravelExpenseCommandController extends AbstractController
     {
     	$dateFrom = $request->request->get('dateFrom', 0);
     	$dateTo = $request->request->get('dateTo', 0);
-    	$booked = $request->request->get('booked', 'false') == 'true';
-    	$unbooked = $request->request->get('unbooked', 'true') == 'true';
-    	$queryBuilder = $repo->getFilteredQuery($dateFrom, $dateTo, $unbooked, $booked);
+    	$queryBuilder = $repo->getFilteredQuery($dateFrom, $dateTo, true, false);
     	
     	$travelExpenses = $queryBuilder->getQuery()->getResult();
     	

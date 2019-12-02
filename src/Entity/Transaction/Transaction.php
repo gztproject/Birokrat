@@ -337,6 +337,12 @@ class Transaction extends AggregateBase
 		return $this->lunchExpense;
 	}
 	
+	public function getLunchExpenseBundle(): ?LunchExpenseBundle
+	{
+		return $this->lunchExpenseBundle;
+	}
+	
+	
 	public function getDescription(): ?string
 	{
 		return $this->description;

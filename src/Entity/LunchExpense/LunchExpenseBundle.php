@@ -62,9 +62,9 @@ class LunchExpenseBundle extends AggregateBase implements iTransactionDocument
     	$totalCost = 0.00;
     	foreach($this->lunchExpenses as $le)
     	{
-    		$totalCost += round($le->getSum(), 2);
+    		$totalCost += $le->getSum();
     	}
-    	return round($totalCost, 2);
+    	return $totalCost;
     }
     
     public function setBooked(\DateTime $date, User $user): Transaction

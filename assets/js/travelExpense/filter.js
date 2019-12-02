@@ -1,5 +1,5 @@
 import 'eonasdan-bootstrap-datetimepicker';
-import moment from 'moment';
+import moment from 'moment-timezone';
 import withQuery from 'with-query';
 import queryString from 'query-string';
 

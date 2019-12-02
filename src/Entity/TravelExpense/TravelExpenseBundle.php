@@ -82,9 +82,9 @@ class TravelExpenseBundle extends AggregateBase implements iTransactionDocument
     	$totalCost = 0.00;
     	foreach($this->travelExpenses as $te)
     	{
-    		$totalCost += round($te->getTotalCost(), 2);
+    		$totalCost += $te->getTotalCost();
     	}
-    	return round($totalCost, 2);
+    	return $totalCost;
     }
     
     public function setBooked(\DateTime $date, User $user): Transaction

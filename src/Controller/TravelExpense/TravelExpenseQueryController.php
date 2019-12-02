@@ -46,10 +46,10 @@ class TravelExpenseQueryController extends AbstractController
     /**
      * @Route("/dashboard/travelExpense/bundle/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}", methods={"GET"}, name="travelExpenseBundle_show")
      */
-    public function showBundle(TravelExpenseBundle $travelExpenseBundle): Response
+    public function showBundle(TravelExpenseBundle $travelExpenseBundle, Request $request, PaginatorInterface $paginator): Response
     {
     	return $this->render('dashboard/travelExpense/index.html.twig', [
-    			'pagination' => $travelExpenseBundle->getTravelExpenses(),
+    			'pagination' => $paginator->paginate($travelExpenseBundle->getTravelExpenses(), $request->query->getInt('page', 1), 10),
     	]);
     } 
     
