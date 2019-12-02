@@ -92,7 +92,7 @@ class TravelExpense extends AggregateBase implements iTransactionDocument
     	$c->creditKonto = $cc;
     	$c->debitKonto = $dc;
     	$c->organization = $this->organization;
-    	$c->sum = $this->totalDistance * $this->rate;
+    	$c->sum = $this->getTotalCost();
     	return new Transaction($c, $user, $this);
     }
     

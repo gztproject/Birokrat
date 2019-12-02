@@ -65,9 +65,7 @@ class LunchExpenseCommandController extends AbstractController
     {
     	$dateFrom = $request->request->get('dateFrom', 0);
     	$dateTo = $request->request->get('dateTo', 0);
-    	$booked = $request->request->get('booked', 'false') == 'true';
-    	$unbooked = $request->request->get('unbooked', 'true') == 'true';
-    	$queryBuilder = $repo->getFilteredQuery($dateFrom, $dateTo, $unbooked, $booked);
+    	$queryBuilder = $repo->getFilteredQuery($dateFrom, $dateTo, true, false);
     	
     	$lunchExpenses = $queryBuilder->getQuery()->getResult();
     	

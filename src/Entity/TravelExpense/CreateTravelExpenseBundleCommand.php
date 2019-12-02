@@ -9,7 +9,6 @@ class CreateTravelExpenseBundleCommand
 	 * @var Array[TravelExpense]
 	 */
 	public $travelExpenses;
-    public $date;    
     public $organization;
     
     public function __get($name) {

@@ -36,10 +36,10 @@ class LunchExpenseQueryController extends AbstractController
     /**
      * @Route("/dashboard/lunchExpense/bundle/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}", methods={"GET"}, name="lunchExpenseBundle_show")
      */
-    public function showBundle(LunchExpenseBundle $lunchExpenseBundle): Response
+    public function showBundle(LunchExpenseBundle $lunchExpenseBundle, Request $request, PaginatorInterface $paginator): Response
     {
     	return $this->render('dashboard/lunchExpense/index.html.twig', [
-    			'pagination' => $lunchExpenseBundle->getLunchExpenses(),
+    			'pagination' => $paginator->paginate($lunchExpenseBundle->getLunchExpenses(), $request->query->getInt('page', 1), 10),
     	]);
     } 
     

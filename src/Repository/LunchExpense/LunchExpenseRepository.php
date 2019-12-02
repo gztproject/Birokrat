@@ -29,7 +29,7 @@ class LunchExpenseRepository extends ServiceEntityRepository
     	{
     		$qb
     		->where('te.date >= :from')
-    		->setParameter('from', date('Y-m-d G:i:s', $from-60*60*24));
+    		->setParameter('from', date('Y-m-d G:i:s', $from));
     	}
     	
     	if($to)

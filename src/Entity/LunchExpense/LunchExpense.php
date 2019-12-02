@@ -70,7 +70,7 @@ class LunchExpense extends AggregateBase implements iTransactionDocument
     	$c->debitKonto = $dc;
     	if($this->sum === null)
     		throw new \InvalidArgumentException("No price is set.");
-    	$c->sum = $this->sum;
+    	$c->sum = $this->getSum();
     			
     	$transaction = new Transaction($c, $user, $this);
     			
