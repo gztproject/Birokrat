@@ -94,6 +94,7 @@ class TravelStop extends AggregateBase
     {
     	parent::updateBase($te->getUpdatedBy());
     	
+    	$this->travelExpense = $te;
     	if($c->organization != null && $c->organization !== $this->organization)
     	{
     		$this->organization = $c->organization;

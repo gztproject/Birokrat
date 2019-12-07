@@ -120,27 +120,27 @@ class TravelExpenseCommandController extends AbstractController
     	$form->handleRequest($request);
     	
     	if ($form->isSubmitted() && $form->isValid()) {
-    		$te->update($updateTECommand, $this->getUser(), $logger);    		
-    		$em = $this->getDoctrine()->getManager();
-    		
-    		foreach($te->getTravelStops() as $ts)
-    		{
-    			$logger->debug("Persisting TravelStop ".$ts.". ");
-    			$em->persist($ts);
-    		}
+    		$te->update($updateTECommand, $this->getUser(), $logger); 
     		
     		$transaction = $transactions->findOneByTravelExpense($te);
     		$utc = new UpdateTransactionCommand();
     		
     		$utc->date = $te->getDate();
     		$utc->organization = $te->getOrganization();
-    		$utc->sum = $te->getTotalCost();  
+    		$utc->sum = $te->getTotalCost();
     		
     		$transaction->update($utc, $this->getUser(), $te, $logger);
     		
-    		$logger->debug("Persisting TravelExpense ".$te.". ");
-    	
+    		$em = $this->getDoctrine()->getManager();
+    		
+    		foreach($te->getTravelStops() as $ts)
+    		{
+    			$logger->debug("Persisting TravelStop ".$ts.". ");
+    			$em->persist($ts);
+    		}  
+    		$logger->debug("Persisting TravelExpense ".$te.". ");    	
     		$em->persist($te);
+    		
     		$logger->debug("Persisting Transaction ".$transaction.". ");
     		$em->persist($transaction);
     		$em->flush();
