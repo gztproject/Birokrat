@@ -14,6 +14,7 @@ use App\Entity\User\User;
 use App\Entity\LunchExpense\LunchExpense;
 use App\Entity\LunchExpense\LunchExpenseBundle;
 use App\Entity\LunchExpense\UpdateLunchExpenseCommand;
+use Psr\Log\LoggerInterface;
 
 /**
  * izdan račun fizični ali pravni osebi osebi (plačilo na TRR):  120/760.
@@ -156,8 +157,9 @@ class Transaction extends AggregateBase
 	 * @throws \Exception
 	 * @return Transaction
 	 */
-	public function update(UpdateTransactionCommand $c, User $user, ?iTransactionDocument $document): Transaction
+	public function update(UpdateTransactionCommand $c, User $user, ?iTransactionDocument $document, LoggerInterface $logger): Transaction
 	{
+		$logger->debug("Updating transaction ". $this ." with ". $c);
 		if(isset($document))
 		{
 			switch (get_class($document)) {
@@ -188,10 +190,7 @@ class Transaction extends AggregateBase
 		}
 		else
 			$this->updateWithDescription();
-		
-		//ToDo: Check theese methods, we should probably amend old data... 
-		$this->creditKonto->updateCredit($this->sum, $user);
-		$this->debitKonto->updateDebit($this->sum, $user);
+				
 		return $this;
 	}
 	
@@ -350,6 +349,13 @@ class Transaction extends AggregateBase
 	
 	public function __toString(): string
 	{
-		return "Transaction: ".$this->getDateString()." ".$this->getSum();
+		$sb = "Transaction: ";
+		$sb .= $this->date->format('d. m. Y').": ";
+		$sb .= "Organization: ". $this->organization->getName()."; ";
+		$sb .= "Kontos: ".$this->debitKonto->getNumber();
+		$sb .= " <- ".$this->creditKonto->getNumber()."; ";
+		$sb .= "SUM: ". $this->sum."; ";
+		if($this->description !== null) $sb .= $this->description."; ";	
+		return $sb;
 	}
 }

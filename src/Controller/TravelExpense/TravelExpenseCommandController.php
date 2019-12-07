@@ -22,6 +22,8 @@ use App\Entity\TravelExpense\CreateTravelExpenseBundleCommand;
 use Doctrine\Common\Collections\ArrayCollection;
 use App\Entity\LunchExpense\LunchExpense;
 use App\Entity\LunchExpense\CreateLunchExpenseCommand;
+use App\Repository\Transaction\TransactionRepository;
+use App\Entity\Transaction\UpdateTransactionCommand;
 
 class TravelExpenseCommandController extends AbstractController
 {    
@@ -101,7 +103,7 @@ class TravelExpenseCommandController extends AbstractController
      *
      * @Route("/dashboard/travelExpense/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/edit",methods={"GET", "POST"}, name="travelExpense_edit")
      */
-    public function edit(Request $request, TravelExpense $te, LoggerInterface $logger): Response
+    public function edit(Request $request, TravelExpense $te, LoggerInterface $logger, TransactionRepository $transactions): Response
     {
     	$updateTECommand = new UpdateTravelExpenseCommand();
     	$te->mapTo($updateTECommand);
@@ -110,7 +112,7 @@ class TravelExpenseCommandController extends AbstractController
     	{
     		$utsc = new UpdateTravelStopCommand();
     		$ts->mapTo($utsc);
-    		array_push($updateTECommand->travelStopCommands, $utsc);
+    		$updateTECommand->travelStopCommands->add($utsc);
     	}
     	
     	$form = $this->createForm(TravelExpenseType::class, $updateTECommand)
@@ -118,7 +120,7 @@ class TravelExpenseCommandController extends AbstractController
     	$form->handleRequest($request);
     	
     	if ($form->isSubmitted() && $form->isValid()) {
-    		$te->update($updateTECommand, $this->getUser());    		
+    		$te->update($updateTECommand, $this->getUser(), $logger);    		
     		$em = $this->getDoctrine()->getManager();
     		
     		foreach($te->getTravelStops() as $ts)
@@ -127,9 +129,20 @@ class TravelExpenseCommandController extends AbstractController
     			$em->persist($ts);
     		}
     		
+    		$transaction = $transactions->findOneByTravelExpense($te);
+    		$utc = new UpdateTransactionCommand();
+    		
+    		$utc->date = $te->getDate();
+    		$utc->organization = $te->getOrganization();
+    		$utc->sum = $te->getTotalCost();  
+    		
+    		$transaction->update($utc, $this->getUser(), $te, $logger);
+    		
     		$logger->debug("Persisting TravelExpense ".$te.". ");
-    		//ToDo: Update Transaction
+    	
     		$em->persist($te);
+    		$logger->debug("Persisting Transaction ".$transaction.". ");
+    		$em->persist($transaction);
     		$em->flush();
     		
     		return $this->redirectToRoute('travelExpense_show', array('id'=> $te->getId()));

@@ -3,6 +3,7 @@
 namespace App\Repository\Transaction;
 
 use App\Entity\Transaction\Transaction;
+use App\Entity\TravelExpense\TravelExpense;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Bridge\Doctrine\RegistryInterface;
@@ -44,15 +45,19 @@ class TransactionRepository extends ServiceEntityRepository
     }
     */
 
-    /*
-    public function findOneBySomeField($value): ?Transaction
+    /**
+     * Finds a transaction of a TravelExpense
+     * @param TravelExpense $te
+     * @return Transaction[] Returns a Transaction object
+     */
+    public function findOneByTravelExpense(TravelExpense $te): ?Transaction
     {
-        return $this->createQueryBuilder('i')
-            ->andWhere('i.exampleField = :val')
-            ->setParameter('val', $value)
+        return $this->createQueryBuilder('t')
+            ->andWhere('t.travelExpense = :val')
+            ->setParameter('val', $te)
             ->getQuery()
             ->getOneOrNullResult()
         ;
     }
-    */
+ 
 }

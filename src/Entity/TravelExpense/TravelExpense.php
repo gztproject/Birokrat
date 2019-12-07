@@ -103,8 +103,11 @@ class TravelExpense extends AggregateBase implements iTransactionDocument
      * @throws \Exception TravelExpense is not editable or the updating user is not set.
      * @return TravelExpense Updated TravelExpense.
      */
-    public function update(UpdateTravelExpenseCommand $c, User $user): TravelExpense
+    public function update(UpdateTravelExpenseCommand $c, User $user, LoggerInterface $logger): TravelExpense
     {
+    	$logger->debug("************************************************************************************************************************");
+		$logger->debug("*                                          Updating TravelExpense                                                      *");
+		$logger->debug("************************************************************************************************************************");
     	if($user == null)
     		throw new \Exception("Updating user must be set.");
     	
@@ -113,40 +116,68 @@ class TravelExpense extends AggregateBase implements iTransactionDocument
     	
     	parent::updateBase($user);
     	
-    	if($c->date != null && $c->date != $this->date)
+    	if($c->date != null && $c->date !== $this->date)
     		$this->date = $c->date;
     	
-    	if($c->employee != null && $c->employee != $this->employee)
+    	if($c->employee != null && $c->employee !== $this->employee)
     		$this->employee = $c->employee;
     	
-    	if($c->rate != null && $c->rate != $this->rate)
+    	if($c->rate != null && $c->rate !== $this->rate)
     		$this->rate = $c->rate;
     	
-    	$stopsToKeep = new ArrayCollection();
-    	foreach($c->travelStopCommands as $utsc)
+    	//First reorder UTSCs by their stopOrder:
+    	$iterator = $c->travelStopCommands->getIterator();
+    	$iterator->uasort(function ($first, $second) {
+    		return (int) $first->stopOrder > (int) $second->stopOrder ? 1 : -1;
+    	});    			
+    	$newStops = new ArrayCollection(iterator_to_array($iterator));
+    	
+    	foreach($newStops as $stop)
     	{
-    		$ts = array_filter($this->travelStops->toArray(), function ($v) use ($utsc) {return $v->getId() == $utsc->id;})[0]??null;
-    		echo("UTSC: ".$utsc->id.";       ");
-    		if($ts == null)
+    		$logger->debug("Looking for stopOrder #".$stop->stopOrder." in travelStops");
+    		$oldStop = $this->travelStops->filter(function(TravelStop $ts) use ($stop){
+    			return $ts->getStopOrder() === (int) $stop->stopOrder;
+    		});
+    		
+    		if($oldStop->isEmpty())
     		{
-    			echo("New TS: ".$utsc->id.";       ");
-    			$stopsToKeep->add($this->createTravelStop($utsc));
-    		}
+    			$logger->debug("Didn't find a matching travelStop, creating a new one.");
+    			$this->createTravelStop($stop);
+    		}    		
     		else
     		{
-    			echo("Update TS: ".$ts.";       ");
-    			$stopsToKeep->add($ts->update($utsc, $this));
-    		}
-    	}
+    			$logger->debug("Found travelStop ". $oldStop->first()->__toString());
+    			$logger->debug("Updating travelStop...");
+    			$this->updateTravelStop($stop, $oldStop->first());
+    		}    		
+    	} //end foreach
     	
-    	foreach($this->travelStops as $ts)
+    	//Checking if we must remove some old TSs.
+    	if($this->travelStops->count() > $newStops->count())
     	{
-    		if(!$stopsToKeep->contains($ts))
+    		foreach($this->travelStops as $oldStop)
     		{
-    			$this->removeTravelStop($ts);
+    			$logger->debug("Looking for stopOrder #".$stop->stopOrder." in travelStops");
+    			$newStop = $newStops->filter(function(UpdateTravelStopCommand $utsc) use ($oldStop){
+	    			return (int) $utsc->getStopOrder() === $oldStop->stopOrder;
+    			})->first();
+    			if ($newStop)
+    			{
+    				$logger->debug("Removing old travelStop ". $oldStop->__toString());
+    				$this->removeTravelStop($oldStop);
+    			}
     		}
     	}
-    	
+
+// 		$this->removeAllTravelStops();
+// 		foreach($c->travelStopCommands as $utsc)
+//     	{    		
+//     		$this->createTravelStop($utsc);    		
+//     	}
+    	    
+		$logger->debug("************************************************************************************************************************");
+		$logger->debug("*                                          /Updating TravelExpense                                                     *");
+		$logger->debug("************************************************************************************************************************");
     	return $this;
     }
     
@@ -207,17 +238,14 @@ class TravelExpense extends AggregateBase implements iTransactionDocument
      * @param User $user Updating user.
      * @throws \Exception If the TravelStop is not in this TravelExpense or the updating user is not set.
      * @return TravelStop Updated TravelStop.
-     * @deprecated
      */
-    private function updateTravelStop(UpdateTravelStopCommand $c, TravelStop $ts, User $user): TravelStop
+    private function updateTravelStop(UpdateTravelStopCommand $c, TravelStop $ts): TravelStop
     {
     	if($this->state > 10)
-    		throw new \Exception("Can't update booked or cancelled TravelExpenses.");
-    	if($user == null)
-    		throw new \Exception("Updating user must be set.");
+    		throw new \Exception("Can't update booked or cancelled TravelExpenses.");    	
     	if(!$this->travelStops->contains($ts))
     		throw new \Exception("Can't update a travelStop that's not in this TravelExpense.");
-    	$ts->update($c, $user);
+    	$ts->update($c, $this);
     	return $ts;
     }
         
@@ -240,9 +268,26 @@ class TravelExpense extends AggregateBase implements iTransactionDocument
     	$index = $ts->getStopOrder();
     	foreach($this->getTravelStops() as $stop)
     	{
-    		if($stop->getStopOrder()>=$index)
+    		if($stop->getStopOrder() >= $index)
     			$stop->setStopOrder($stop->getStopOrder());
     	}
+    	$this->calculateTotalDistance();
+    	return $this;
+    }
+    
+    private function removeAllTravelStops(): TravelExpense
+    {
+    	if($this->state > 10)
+    		throw new \Exception("Can't update booked or cancelled TravelExpenses.");
+    	
+    	foreach($this->travelStops as $ts)
+    	{
+    		$this->travelStops->removeElement($ts);
+    		if ($ts->getTravelExpense() === $this) {
+    			$ts->remove();
+    		}
+    	}
+    	
     	$this->calculateTotalDistance();
     	return $this;
     }
@@ -405,11 +450,13 @@ class TravelExpense extends AggregateBase implements iTransactionDocument
     
     public function getTravelDescription(): ?string
     {
-    	$desc = null;
+    	$desc = "";
+    	
     	foreach($this->travelStops as $ts)
-    	{
-    		if($ts->getStopOrder() > 1)
+    	{    		
+    		if($ts->getStopOrder() !== 1)
     			$desc .= " - ";
+    		$desc .= $ts->getStopOrder().". ";
     		$desc .= $ts->getPost()->getName();
     	}
     	return $desc;

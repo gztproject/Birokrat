@@ -2,6 +2,8 @@
 
 namespace App\Entity\TravelExpense;
 
+use Doctrine\Common\Collections\ArrayCollection;
+
 class CreateTravelExpenseCommand 
 {    
 	/**
@@ -16,7 +18,7 @@ class CreateTravelExpenseCommand
     
     public function __construct()
     {
-    	$this->travelStopCommands = array();
+    	$this->travelStopCommands = new ArrayCollection();
     }
 
     public function __get($name) {
