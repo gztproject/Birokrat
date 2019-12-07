@@ -2,7 +2,7 @@
 
 namespace App\Entity\TravelExpense;
 
-class CreateTravelStopCommand
+class CreateTravelStopCommand  implements iTravelStopCommand
 {    
 	public $id;
     public $post;

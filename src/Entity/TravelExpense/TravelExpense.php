@@ -133,7 +133,7 @@ class TravelExpense extends AggregateBase implements iTransactionDocument
     	$newStops = new ArrayCollection(iterator_to_array($iterator));
     	
     	foreach($newStops as $stop)
-    	{
+    	{    		
     		$logger->debug("Looking for stopOrder #".$stop->stopOrder." in travelStops");
     		$oldStop = $this->travelStops->filter(function(TravelStop $ts) use ($stop){
     			return $ts->getStopOrder() === (int) $stop->stopOrder;
@@ -146,11 +146,10 @@ class TravelExpense extends AggregateBase implements iTransactionDocument
     		}    		
     		else
     		{
-    			$logger->debug("Found travelStop ". $oldStop->first()->__toString());
-    			$logger->debug("Updating travelStop...");
+    			$logger->debug("Updating travelStop ". $oldStop->first()->__toString());
     			$this->updateTravelStop($stop, $oldStop->first());
     		}    		
-    	} //end foreach
+    	}
     	
     	//Checking if we must remove some old TSs.
     	if($this->travelStops->count() > $newStops->count())
@@ -239,7 +238,7 @@ class TravelExpense extends AggregateBase implements iTransactionDocument
      * @throws \Exception If the TravelStop is not in this TravelExpense or the updating user is not set.
      * @return TravelStop Updated TravelStop.
      */
-    private function updateTravelStop(UpdateTravelStopCommand $c, TravelStop $ts): TravelStop
+    private function updateTravelStop(ITravelStopCommand $c, TravelStop $ts): TravelStop
     {
     	if($this->state > 10)
     		throw new \Exception("Can't update booked or cancelled TravelExpenses.");    	
