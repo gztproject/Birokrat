@@ -167,12 +167,13 @@ class TravelExpense extends AggregateBase implements iTransactionDocument
     			}
     		}
     	}
-
-// 		$this->removeAllTravelStops();
-// 		foreach($c->travelStopCommands as $utsc)
-//     	{    		
-//     		$this->createTravelStop($utsc);    		
-//     	}
+    	
+    	//Lastly reorder travelStops by their stopOrder:
+    	$iterator = $this->travelStops->getIterator();
+    	$iterator->uasort(function ($first, $second) {
+    		return $first->getStopOrder() > $second->getStopOrder() ? 1 : -1;
+    	});
+    	$this->travelStops = new ArrayCollection(iterator_to_array($iterator));
     	    
 		$logger->debug("************************************************************************************************************************");
 		$logger->debug("*                                          /Updating TravelExpense                                                     *");
@@ -274,6 +275,11 @@ class TravelExpense extends AggregateBase implements iTransactionDocument
     	return $this;
     }
     
+    /**
+     * @deprecated
+     * @throws \Exception
+     * @return TravelExpense
+     */
     private function removeAllTravelStops(): TravelExpense
     {
     	if($this->state > 10)
