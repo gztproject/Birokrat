@@ -170,7 +170,7 @@ class TravelExpenseCommandController extends AbstractController
     	{
     		$utsc = new UpdateTravelStopCommand();
     		$ts->mapTo($utsc);
-    		array_push($updateTECommand->travelStopCommands, $utsc);
+    		$updateTECommand->travelStopCommands->add($utsc);
     	}
     	
     	$form = $this->createForm(TravelExpenseType::class, $updateTECommand)

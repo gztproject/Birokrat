@@ -88,10 +88,15 @@
     <div class="form-group">
             <button type="submit" class="btn btn-primary">
                 <i class="fa fa-save" aria-hidden="true"></i> {{ 'label.create_transaction'|trans }}
-            </button>            
-            <a href="{{ path('transaction_index') }}" class="btn btn-link">
-                <i class="fa fa-list-alt" aria-hidden="true"></i> {{ 'action.back_to_list'|trans }}
-            </a>
+            </button>  
+            {% if include_save_and_create_new %}
+                {{ form_widget(form.saveAndCreateNew, {label: 'label.save_and_create_new', attr: {class: 'btn btn-primary'}}) }}
+            {% endif %}  
+            {% if include_back_to_home_link %}        
+                <a href="{{ path('transaction_index') }}" class="btn btn-link">
+                    <i class="fa fa-list-alt" aria-hidden="true"></i> {{ 'action.back_to_list'|trans }}
+                </a>
+            {% endif %} 
        </div>
            
 {{ form_row(form._token) }}

@@ -4,6 +4,7 @@ namespace App\Controller\Transaction;
 
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -45,7 +46,8 @@ class TransactionController extends AbstractController
     {
     	$createTransactionCommand = new CreateTransactionCommand();
     	
-    	$form = $this->createForm(TransactionType::class, $createTransactionCommand);
+    	$form = $this->createForm(TransactionType::class, $createTransactionCommand)
+    		->add('saveAndCreateNew', SubmitType::class);
     	
     	$form->handleRequest($request);
     	
