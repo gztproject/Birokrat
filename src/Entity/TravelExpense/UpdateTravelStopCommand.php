@@ -2,7 +2,7 @@
 
 namespace App\Entity\TravelExpense;
 
-class UpdateTravelStopCommand extends CreateTravelStopCommand
+class UpdateTravelStopCommand extends CreateTravelStopCommand implements iTravelStopCommand
 {
 	
 }
