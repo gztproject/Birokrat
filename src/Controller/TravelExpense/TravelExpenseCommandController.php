@@ -179,7 +179,7 @@ class TravelExpenseCommandController extends AbstractController
     	$form->handleRequest($request);
     	
     	if ($form->isSubmitted() && $form->isValid()) {
-    		$clone->update($updateTECommand, $this->getUser());
+    		$clone->update($updateTECommand, $this->getUser(), $logger);
     		$em = $this->getDoctrine()->getManager();
     		
     		foreach($clone->getTravelStops() as $ts)
