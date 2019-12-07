@@ -70,7 +70,7 @@ class TravelStop extends AggregateBase
     	}
     	
     	$this->distanceFromPrevious = $c->distanceFromPrevious;
-    	$this->stopOrder = $c->stopOrder;
+    	$this->stopOrder = (int) $c->stopOrder;
     }  
     
     /**
@@ -94,30 +94,30 @@ class TravelStop extends AggregateBase
     {
     	parent::updateBase($te->getUpdatedBy());
     	
-    	if($c->organization != null && $c->organization != $this->organization)
+    	if($c->organization != null && $c->organization !== $this->organization)
     	{
     		$this->organization = $c->organization;
     		$this->address = $this->organization->getAddress();
     		$this->post = $this->address->getPost();
     	}
-    	elseif ($c->address != null && $c->address != $this->address)
+    	elseif ($c->address != null && $c->address !== $this->address)
     	{
     		$this->organization = null;
     		$this->address = $c->address;
     		$this->post = $this->address->getPost();
     	}
-    	elseif($c->post != null && $c->post != $this->post)
+    	elseif($c->post != null && $c->post !== $this->post)
     	{
     		$this->organization = null;
     		$this->address = null;
     		$this->post = $c->post;
     	}
     	
-    	if($c->distanceFromPrevious != null && $c->distanceFromPrevious != $this->distanceFromPrevious)
+    	if($c->distanceFromPrevious != null && $c->distanceFromPrevious !== $this->distanceFromPrevious)
     		$this->distanceFromPrevious = $c->distanceFromPrevious;
     	
-    	if($c->stopOrder != null && $c->stopOrder != $this->stopOrder)
-    		$this->stopOrder = $c->stopOrder;
+    	if($c->stopOrder != null && (int) $c->stopOrder !== $this->stopOrder)
+    		$this->stopOrder = (int) $c->stopOrder;
     	
     	return $this;
     }
