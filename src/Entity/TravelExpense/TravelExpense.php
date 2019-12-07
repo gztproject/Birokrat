@@ -48,6 +48,7 @@ class TravelExpense extends AggregateBase implements iTransactionDocument
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\TravelExpense\TravelStop", mappedBy="travelExpense", orphanRemoval=true)
+     * @ORM\OrderBy({"stopOrder" = "ASC"})
      */
     private $travelStops;
 
@@ -123,16 +124,9 @@ class TravelExpense extends AggregateBase implements iTransactionDocument
     		$this->employee = $c->employee;
     	
     	if($c->rate != null && $c->rate !== $this->rate)
-    		$this->rate = $c->rate;
+    		$this->rate = $c->rate;   	
     	
-    	//First reorder UTSCs by their stopOrder:
-    	$iterator = $c->travelStopCommands->getIterator();
-    	$iterator->uasort(function ($first, $second) {
-    		return (int) $first->stopOrder > (int) $second->stopOrder ? 1 : -1;
-    	});    			
-    	$newStops = new ArrayCollection(iterator_to_array($iterator));
-    	
-    	foreach($newStops as $stop)
+    	foreach($c->travelStopCommands as $stop)
     	{    		
     		$logger->debug("Looking for stopOrder #".$stop->stopOrder." in travelStops");
     		$oldStop = $this->travelStops->filter(function(TravelStop $ts) use ($stop){
@@ -152,28 +146,21 @@ class TravelExpense extends AggregateBase implements iTransactionDocument
     	}
     	
     	//Checking if we must remove some old TSs.
-    	if($this->travelStops->count() > $newStops->count())
+    	if($this->travelStops->count() > $c->travelStopCommands->count())
     	{
     		foreach($this->travelStops as $oldStop)
     		{
-    			$logger->debug("Looking for stopOrder #".$stop->stopOrder." in travelStops");
-    			$newStop = $newStops->filter(function(UpdateTravelStopCommand $utsc) use ($oldStop){
-	    			return (int) $utsc->getStopOrder() === $oldStop->stopOrder;
-    			})->first();
-    			if ($newStop)
+    			$logger->debug("Looking for stopOrder #".$oldStop->getStopOrder()." in travelStopCommands");
+    			$newStop = $c->travelStopCommands->filter(function(UpdateTravelStopCommand $utsc) use ($oldStop){
+	    			return (int) $utsc->stopOrder === $oldStop->getStopOrder();
+    			});
+    			if ($newStop->isEmpty())
     			{
     				$logger->debug("Removing old travelStop ". $oldStop->__toString());
     				$this->removeTravelStop($oldStop);
     			}
     		}
     	}
-    	
-    	//Lastly reorder travelStops by their stopOrder:
-    	$iterator = $this->travelStops->getIterator();
-    	$iterator->uasort(function ($first, $second) {
-    		return $first->getStopOrder() > $second->getStopOrder() ? 1 : -1;
-    	});
-    	$this->travelStops = new ArrayCollection(iterator_to_array($iterator));
     	    
 		$logger->debug("************************************************************************************************************************");
 		$logger->debug("*                                          /Updating TravelExpense                                                     *");
@@ -245,7 +232,9 @@ class TravelExpense extends AggregateBase implements iTransactionDocument
     		throw new \Exception("Can't update booked or cancelled TravelExpenses.");    	
     	if(!$this->travelStops->contains($ts))
     		throw new \Exception("Can't update a travelStop that's not in this TravelExpense.");
+    	
     	$ts->update($c, $this);
+    	$this->calculateTotalDistance();
     	return $ts;
     }
         
@@ -263,14 +252,8 @@ class TravelExpense extends AggregateBase implements iTransactionDocument
     	$this->travelStops->removeElement($ts);    		
     	if ($ts->getTravelExpense() === $this) {
     		$ts->remove();
-    	}
+    	}    	
     	
-    	$index = $ts->getStopOrder();
-    	foreach($this->getTravelStops() as $stop)
-    	{
-    		if($stop->getStopOrder() >= $index)
-    			$stop->setStopOrder($stop->getStopOrder());
-    	}
     	$this->calculateTotalDistance();
     	return $this;
     }
