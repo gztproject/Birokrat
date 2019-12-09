@@ -11,12 +11,7 @@
 			<attribute name="composer" value="source"/>
 		</attributes>
 	</buildpathentry>
-	<buildpathentry excluding="ca-bundle/" kind="src" path="vendor/composer">
-		<attributes>
-			<attribute name="composer" value="vendor"/>
-		</attributes>
-	</buildpathentry>
-	<buildpathentry kind="src" path="vendor/composer/ca-bundle/src">
+	<buildpathentry kind="src" path="vendor/composer">
 		<attributes>
 			<attribute name="composer" value="vendor"/>
 		</attributes>
@@ -126,11 +121,6 @@
 			<attribute name="composer" value="vendor"/>
 		</attributes>
 	</buildpathentry>
-	<buildpathentry kind="src" path="vendor/fig/link-util/src">
-		<attributes>
-			<attribute name="composer" value="vendor"/>
-		</attributes>
-	</buildpathentry>
 	<buildpathentry kind="src" path="vendor/friendsofsymfony/jsrouting-bundle">
 		<attributes>
 			<attribute name="composer" value="vendor"/>
@@ -141,12 +131,7 @@
 			<attribute name="composer" value="vendor"/>
 		</attributes>
 	</buildpathentry>
-	<buildpathentry kind="src" path="vendor/knplabs/knp-components/src">
-		<attributes>
-			<attribute name="composer" value="vendor"/>
-		</attributes>
-	</buildpathentry>
-	<buildpathentry kind="src" path="vendor/knplabs/knp-paginator-bundle">
+	<buildpathentry kind="src" path="vendor/knplabs/knp-components/src/Knp/Component">
 		<attributes>
 			<attribute name="composer" value="vendor"/>
 		</attributes>
@@ -172,11 +157,6 @@
 		</attributes>
 	</buildpathentry>
 	<buildpathentry kind="src" path="vendor/ocramius/proxy-manager/src/ProxyManager">
-		<attributes>
-			<attribute name="composer" value="vendor"/>
-		</attributes>
-	</buildpathentry>
-	<buildpathentry kind="src" path="vendor/pagerfanta/pagerfanta/src/Pagerfanta">
 		<attributes>
 			<attribute name="composer" value="vendor"/>
 		</attributes>
@@ -267,11 +247,6 @@
 		</attributes>
 	</buildpathentry>
 	<buildpathentry kind="src" path="vendor/symfony/css-selector">
-		<attributes>
-			<attribute name="composer" value="vendor"/>
-		</attributes>
-	</buildpathentry>
-	<buildpathentry kind="src" path="vendor/symfony/debug">
 		<attributes>
 			<attribute name="composer" value="vendor"/>
 		</attributes>
@@ -612,11 +587,6 @@
 		</attributes>
 	</buildpathentry>
 	<buildpathentry kind="src" path="vendor/webmozart/assert/src">
-		<attributes>
-			<attribute name="composer" value="vendor"/>
-		</attributes>
-	</buildpathentry>
-	<buildpathentry kind="src" path="vendor/white-october/pagerfanta-bundle">
 		<attributes>
 			<attribute name="composer" value="vendor"/>
 		</attributes>

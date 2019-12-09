@@ -23,7 +23,7 @@ class IncomingInvoice extends AggregateBase implements iTransactionDocument
     private $dateOfIssue;
     
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Organization\Partner")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Organization\Partner", inversedBy="incomingInvoices")
      * @ORM\JoinColumn(nullable=false)
      */
     private $issuer;
