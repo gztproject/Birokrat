@@ -56,11 +56,6 @@
 			<attribute name="composer" value="vendor"/>
 		</attributes>
 	</buildpathentry>
-	<buildpathentry kind="src" path="vendor/doctrine/doctrine-cache-bundle">
-		<attributes>
-			<attribute name="composer" value="vendor"/>
-		</attributes>
-	</buildpathentry>
 	<buildpathentry kind="src" path="vendor/doctrine/doctrine-fixtures-bundle">
 		<attributes>
 			<attribute name="composer" value="vendor"/>
@@ -131,11 +126,6 @@
 			<attribute name="composer" value="vendor"/>
 		</attributes>
 	</buildpathentry>
-	<buildpathentry kind="src" path="vendor/facebook/webdriver/lib">
-		<attributes>
-			<attribute name="composer" value="vendor"/>
-		</attributes>
-	</buildpathentry>
 	<buildpathentry kind="src" path="vendor/fig/link-util/src">
 		<attributes>
 			<attribute name="composer" value="vendor"/>
@@ -181,7 +171,7 @@
 			<attribute name="composer" value="vendor"/>
 		</attributes>
 	</buildpathentry>
-	<buildpathentry kind="src" path="vendor/ocramius/proxy-manager/src">
+	<buildpathentry kind="src" path="vendor/ocramius/proxy-manager/src/ProxyManager">
 		<attributes>
 			<attribute name="composer" value="vendor"/>
 		</attributes>
@@ -236,7 +226,7 @@
 			<attribute name="composer" value="vendor"/>
 		</attributes>
 	</buildpathentry>
-	<buildpathentry kind="src" path="vendor/sensio/framework-extra-bundle">
+	<buildpathentry kind="src" path="vendor/sensio/framework-extra-bundle/src">
 		<attributes>
 			<attribute name="composer" value="vendor"/>
 		</attributes>
@@ -272,11 +262,6 @@
 		</attributes>
 	</buildpathentry>
 	<buildpathentry kind="src" path="vendor/symfony/console">
-		<attributes>
-			<attribute name="composer" value="vendor"/>
-		</attributes>
-	</buildpathentry>
-	<buildpathentry kind="src" path="vendor/symfony/contracts">
 		<attributes>
 			<attribute name="composer" value="vendor"/>
 		</attributes>
@@ -422,11 +407,6 @@
 		</attributes>
 	</buildpathentry>
 	<buildpathentry kind="src" path="vendor/symfony/options-resolver">
-		<attributes>
-			<attribute name="composer" value="vendor"/>
-		</attributes>
-	</buildpathentry>
-	<buildpathentry kind="src" path="vendor/symfony/panther/src">
 		<attributes>
 			<attribute name="composer" value="vendor"/>
 		</attributes>
