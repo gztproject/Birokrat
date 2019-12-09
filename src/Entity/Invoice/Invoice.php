@@ -33,7 +33,7 @@ class Invoice extends AggregateBase implements iTransactionDocument
     private $issuer;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Organization\Partner")
+     * @ORM\ManyToOne(targetEntity="App\Entity\Organization\Partner", inversedBy="invoices")
      * @ORM\JoinColumn(nullable=false)
      */
     private $recepient;

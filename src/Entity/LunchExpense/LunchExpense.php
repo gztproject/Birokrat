@@ -39,7 +39,7 @@ class LunchExpense extends AggregateBase implements iTransactionDocument
     private $organization;
     
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\LunchExpense\LunchExpenseBundle", inversedBy="LunchExpenses")
+     * @ORM\ManyToOne(targetEntity="App\Entity\LunchExpense\LunchExpenseBundle", inversedBy="lunchExpenses")
      */
     private $lunchExpenseBundle;
     

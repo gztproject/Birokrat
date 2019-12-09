@@ -58,7 +58,7 @@ class TravelExpense extends AggregateBase implements iTransactionDocument
     private $state;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\TravelExpense\TravelExpenseBundle", inversedBy="TravelExpenses")
+     * @ORM\ManyToOne(targetEntity="App\Entity\TravelExpense\TravelExpenseBundle", inversedBy="travelExpenses")
      */
     private $travelExpenseBundle;
     
