@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "66cf1d851845a8563b3eeeb5c628f101",
+    "content-hash": "ca7cc2597a9f65cb95f99bf24a43f7dd",
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -2243,6 +2243,49 @@
                 "psr-3"
             ],
             "time": "2019-11-01T11:05:21+00:00"
+        },
+        {
+            "name": "qipsius/tcpdf-bundle",
+            "version": "2.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Qipsius/QipsiusTCPDFBundle.git",
+                "reference": "1b1816f5e133dbc3860b3aab4420cc486eed2300"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Qipsius/QipsiusTCPDFBundle/zipball/1b1816f5e133dbc3860b3aab4420cc486eed2300",
+                "reference": "1b1816f5e133dbc3860b3aab4420cc486eed2300",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.1",
+                "symfony/framework-bundle": ">=3.4",
+                "tecnickcom/tcpdf": "*"
+            },
+            "type": "symfony-bundle",
+            "autoload": {
+                "psr-4": {
+                    "Qipsius\\TCPDFBundle\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Rich Sage",
+                    "email": "rich.sage@gmail.com"
+                }
+            ],
+            "description": "A bundle to easily integrate TCPDF into Symfony",
+            "homepage": "https://github.com/qipsius/QipsiusTCPDFBundle",
+            "keywords": [
+                "TCPDF",
+                "pdf"
+            ],
+            "time": "2019-12-06T11:11:25+00:00"
         },
         {
             "name": "ramsey/uuid",
@@ -6632,49 +6675,6 @@
             "time": "2019-11-24T13:36:37+00:00"
         },
         {
-            "name": "whiteoctober/tcpdf-bundle",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/whiteoctober/WhiteOctoberTCPDFBundle.git",
-                "reference": "38df0208d48629fa07351c7a07308fbd2d443acc"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/whiteoctober/WhiteOctoberTCPDFBundle/zipball/38df0208d48629fa07351c7a07308fbd2d443acc",
-                "reference": "38df0208d48629fa07351c7a07308fbd2d443acc",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.2",
-                "symfony/framework-bundle": ">=2.0",
-                "tecnickcom/tcpdf": "*"
-            },
-            "type": "symfony-bundle",
-            "autoload": {
-                "psr-4": {
-                    "WhiteOctober\\TCPDFBundle\\": ""
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Rich Sage",
-                    "email": "rich.sage@gmail.com"
-                }
-            ],
-            "description": "A bundle to easily integrate TCPDF into Symfony2",
-            "homepage": "https://github.com/whiteoctober/WhiteOctoberTCPDFBundle",
-            "keywords": [
-                "TCPDF",
-                "pdf"
-            ],
-            "time": "2019-12-09T10:03:50+00:00"
-        },
-        {
             "name": "willdurand/jsonp-callback-validator",
             "version": "v1.1.0",
             "source": {
@@ -7460,9 +7460,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "whiteoctober/tcpdf-bundle": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {

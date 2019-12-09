@@ -16,7 +16,7 @@ use App\Entity\Invoice\CreateInvoiceCommand;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
 use App\Entity\Invoice\InvoicePdfFactory;
-use WhiteOctober\TCPDFBundle\Controller\TCPDFController;
+use Qipsius\TCPDFBundle\Controller\TCPDFController;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use App\Entity\Invoice\UpdateInvoiceCommand;
 use App\Entity\Invoice\UpdateInvoiceItemCommand;
