@@ -9,7 +9,7 @@ use App\Entity\Invoice\Invoice;
 use App\Repository\Invoice\InvoiceRepository;
 use App\Entity\Invoice\InvoiceNumberFactory;
 use App\Entity\Organization\Organization;
-use WhiteOctober\TCPDFBundle\Controller\TCPDFController;
+use Qipsius\TCPDFBundle\Controller\TCPDFController;
 use Exception;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Contracts\Translation\TranslatorInterface;
