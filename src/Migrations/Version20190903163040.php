@@ -89,8 +89,8 @@ final class Version20190903163040 extends AbstractMigration implements Container
         $this->addSql('ALTER TABLE transaction ADD debit_konto_id CHAR(36) COMMENT \'(DC2Type:uuid)\' DEFAULT NULL');
         $this->addSql('ALTER TABLE transaction ADD CONSTRAINT FK_723705D11D53F7D8 FOREIGN KEY (debit_konto_id) REFERENCES konto (id)');
         $this->addSql('CREATE INDEX IDX_723705D1DE39B264 ON transaction (debit_konto_id)');
-        $this->addSql('ALTER TABLE transaction CHANGE konto_id credit_konto_id CHAR(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT \'(DC2Type:uuid)\';');
-        $this->addSql('ALTER TABLE transaction RENAME INDEX IDX_723705D151B48CDA TO IDX_723705D1FA5F35E4');
+        $this->addSql('ALTER TABLE transaction CHANGE konto_id credit_konto_id CHAR(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT \'(DC2Type:uuid)\';');  
+        $this->addSql('ALTER TABLE `Birokrat`.`transaction` DROP INDEX `IDX_723705D151B48CDA`, ADD INDEX `IDX_723705D1FA5F35E4` (`credit_konto_id`) USING BTREE;');
         
         $this->addSql('ALTER TABLE konto_category ADD debit DOUBLE PRECISION NOT NULL, ADD credit DOUBLE PRECISION NOT NULL');
         $this->addSql('ALTER TABLE konto ADD debit DOUBLE PRECISION NOT NULL, ADD credit DOUBLE PRECISION NOT NULL');
@@ -301,6 +301,6 @@ final class Version20190903163040 extends AbstractMigration implements Container
         $this->addSql('ALTER TABLE transaction DROP INDEX IDX_723705D1AA203AA8, ADD UNIQUE INDEX UNIQ_723705D1AA203AA8 (travel_expense_id)');
         $this->addSql('ALTER TABLE transaction DROP INDEX IDX_723705D12989F1FD, ADD UNIQUE INDEX UNIQ_723705D12989F1FD (invoice_id)');
         $this->addSql('ALTER TABLE transaction CHANGE credit_konto_id konto_id CHAR(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT \'(DC2Type:uuid)\';');
-        $this->addSql('ALTER TABLE transaction RENAME INDEX IDX_723705D1FA5F35E4 TO IDX_723705D151B48CDA');
+        $this->addSql('ALTER TABLE `Birokrat`.`transaction` DROP INDEX `IDX_723705D1FA5F35E4`, ADD INDEX `IDX_723705D151B48CDA` (`credit_konto_id`) USING BTREE;');
     }
 }

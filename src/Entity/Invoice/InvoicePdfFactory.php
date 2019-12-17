@@ -3,7 +3,7 @@
 namespace App\Entity\Invoice;
 
 use Symfony\Contracts\Translation\TranslatorInterface;
-use WhiteOctober\TCPDFBundle\Controller\TCPDFController;
+use Qipsius\TCPDFBundle\Controller\TCPDFController;
 use phpDocumentor\Reflection\Types\Mixed_;
 class InvoicePdfFactory
 {
