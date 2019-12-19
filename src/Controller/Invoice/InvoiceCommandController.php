@@ -244,11 +244,13 @@ class InvoiceCommandController extends AbstractController
     		
     		unlink($path.$title);
     		
+    		//$this->addFlash('success', 'invoice.sent');
     		$data = "Invoice sent to ".$email;
     		$status = "ok";
     	}
     	catch (Exception $e)
     	{
+    		//$this->addFlash('danger', 'invoice.not_sent');
     		$status = "error";
     		$data = $e->getMessage();
     	}

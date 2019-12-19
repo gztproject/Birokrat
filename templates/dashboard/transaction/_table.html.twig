@@ -1,7 +1,8 @@
 <table class="table table-hover">
         <thead>
-            <tr>
+            <tr>                
                 <th scope="col"><i class="fa fa-calendar" aria-hidden="true"></i>{{ 'label.date'|trans }}</th>
+                <th scope="col"><i class="fa fa-user" aria-hidden="true"></i>{{ 'label.organization'|trans }}</th>
                 <th scope="col"><i class="fa fa-file" aria-hidden="true"></i> {{ 'label.document'|trans }}</th>
                 <th scope="col"><i class="fa fa-euro-sign" aria-hidden="true"></i> {{ 'label.sum'|trans }}</th>                
                 <th scope="col"><i class="fa fa-list-alt " aria-hidden="true"></i> {{ 'label.debit'|trans }}</th>
@@ -16,6 +17,7 @@
             <tr class="table-danger">
         {% endif %}
                 <td>{{ transaction.dateString }}</td>
+                <td>{{ transaction.organization.shortName }}</td>
                 <td>
                 {% if transaction.invoice != null %}
                     <a href="{{ path('invoice_show', {'id': transaction.invoice.id}) }}">
