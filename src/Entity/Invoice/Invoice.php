@@ -65,6 +65,7 @@ class Invoice extends AggregateBase implements iTransactionDocument
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\Invoice\InvoiceItem", mappedBy="invoice", orphanRemoval=true)
+     * @ORM\OrderBy({"code" = "ASC"})
      */
     private $invoiceItems;
 
