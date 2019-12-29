@@ -158,26 +158,33 @@ class InvoicePdfFactory
    			$fill = true;
    			//print a Cell( $w, $h = 0, $txt = '', $border = 0, $ln = 0, $align = '', $fill = false, $link = '', $stretch = 0, $ignore_min_height = false, $calign = 'T', $valign = 'M' )
    			$pdf->Cell( $tableWidths[0], 0, $this->__translator->trans('label.code'), 1, 0, '', $fill, '', 0, false, 'T', 'M' );
-   			$pdf->Cell( $tableWidths[1], 0, $this->__translator->trans('label.name'), 1, 0, '', $fill, '', 0, false, 'T', 'M' );
+   			$pdf->Cell( $tableWidths[1], 0, $this->__translator->trans('label.name'), 1, 0, '', $fill, '', 0, false, 'T', 'M' );   			
    			$pdf->Cell( $tableWidths[2], 0, $this->__translator->trans('label.quantity'), 1, 0, '', $fill, '', 0, false, 'T', 'M' );
    			$pdf->Cell( $tableWidths[3], 0, $this->__translator->trans('label.unit'), 1, 0, 'C', $fill, '', 0, false, 'T', 'M' );
    			$pdf->Cell( $tableWidths[4], 0, $this->__translator->trans('label.price'), 1, 0, '', $fill, '', 0, false, 'T', 'M' );
    			if($discount)
    				$pdf->Cell( $tableWidths[5], 0, $this->__translator->trans('label.discount'), 1, 0, '', $fill, '', 0, false, 'T', 'M' );
-   				$pdf->Cell( $tableWidths[6], 0, $this->__translator->trans('label.value'), 1, 0, '', $fill, '', 0, false, 'T', 'M' );
+   			$pdf->Cell( $tableWidths[6], 0, $this->__translator->trans('label.value'), 1, 0, '', $fill, '', 0, false, 'T', 'M' );
    				
-   				$pdf->Ln(7);
-   				$pdf->SetFillColor(220, 220, 220);
-   				foreach ($this->__invoice->getInvoiceItems() as $ii){
-   					$fill = !$fill;
-   					$pdf->Cell( $tableWidths[0], 0, $ii->getCode(), 0, 0, '', $fill, '', 0, false, 'T', 'M' );
-   					$pdf->Cell( $tableWidths[1], 0, $ii->getName(), 0, 0, '', $fill, '', 0, false, 'T', 'M' );
-   					$pdf->Cell( $tableWidths[2], 0, number_format($ii->getQuantity(), 2, ',', '.'), 0, 0, 'R', $fill, '', 0, false, 'T', 'M' );
-   					$pdf->Cell( $tableWidths[3], 0, $ii->getUnit(), 0, 0, '', $fill, 'C', 0, false, 'T', 'M' );
-   					$pdf->Cell( $tableWidths[4], 0, number_format($ii->getPrice(), 2, ',', '.').' €', 0, 0, 'R', $fill, '', 0, false, 'T', 'M' );
-   					if($discount)
-   						$pdf->Cell( $tableWidths[5], 0, number_format($ii->getDiscount()*100, 2, ',', '.').' %', 0, 0, '', $fill, '', 0, false, 'T', 'M' );
-   						$pdf->Cell( $tableWidths[6], 0, number_format($ii->getPrice()*$ii->getQuantity()*(1-$ii->getDiscount()), 2, ',', '.').' €', 0, 1, 'R', $fill, '', 0, false, 'T', 'M' );
+   			$pdf->Ln(7);
+   			$pdf->SetFillColor(220, 220, 220);
+   			foreach ($this->__invoice->getInvoiceItems() as $ii){
+   				$fill = !$fill;
+   				//$pdf->Cell( $tableWidths[0], 0, $ii->getCode(), 0, 0, '', $fill, '', 0, false, 'T', 'M' );
+   				$pdf->MultiCell($tableWidths[0], 0, $ii->getCode(), 0, '', $fill, 0, '', '', true, 0, false, true, 0);
+   				//$pdf->Cell( $tableWidths[1], 0, $ii->getName(), 0, 0, '', $fill, '', 0, false, 'T', 'M' );
+   				$pdf->MultiCell($tableWidths[1], 0, $ii->getName(), 0, '', $fill, 0, '', '', false, 0, false, true, 0);
+   				//$pdf->Cell( $tableWidths[2], 0, number_format($ii->getQuantity(), 2, ',', '.'), 0, 0, 'R', $fill, '', 0, false, 'T', 'M' );
+   				$pdf->MultiCell($tableWidths[2], 0, number_format($ii->getQuantity(), 2, ',', '.'), 0, '', $fill, 0, '', '', false, 0, false, true, 0);
+   				//$pdf->Cell( $tableWidths[3], 0, $ii->getUnit(), 0, 0, '', $fill, 'C', 0, false, 'T', 'M' );
+   				$pdf->MultiCell($tableWidths[3], 0, $ii->getUnit(), 0, '', $fill, 0, '', '', false, 0, false, true, 0);
+   				//$pdf->Cell( $tableWidths[4], 0, number_format($ii->getPrice(), 2, ',', '.').' €', 0, 0, 'R', $fill, '', 0, false, 'T', 'M' );
+   				$pdf->MultiCell($tableWidths[4], 0, number_format($ii->getPrice(), 2, ',', '.').' €', 0, '', $fill, 0, '', '', false, 0, false, true, 0);
+   				if($discount)   						
+   					//$pdf->Cell( $tableWidths[5], 0, number_format($ii->getDiscount()*100, 2, ',', '.').' %', 0, 0, '', $fill, '', 0, false, 'T', 'M' );
+   					$pdf->MultiCell($tableWidths[5], 0, number_format($ii->getDiscount()*100, 2, ',', '.').' %', 0, '', $fill, 0, '', '', false, 0, false, true, 0);
+   				//$pdf->Cell( $tableWidths[6], 0, number_format($ii->getPrice()*$ii->getQuantity()*(1-$ii->getDiscount()), 2, ',', '.').' €', 0, 1, 'R', $fill, '', 0, false, 'T', 'M' );
+   					$pdf->MultiCell($tableWidths[6], 0, number_format($ii->getPrice()*$ii->getQuantity()*(1-$ii->getDiscount()), 2, ',', '.').' €', 0, '', $fill, 1, '', '', false, 0, false, true, 0);
    				}
    				
    				//--------- End Items
