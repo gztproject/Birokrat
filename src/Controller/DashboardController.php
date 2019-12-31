@@ -16,7 +16,7 @@ class DashboardController extends AbstractController
      */
 	public function index(InvoiceRepository $invoices, TravelExpenseRepository $travelExpenses, TransactionRepository $transactions): Response
     {     
-    	$myInvoices = $invoices->findBy(['state' => [10,20,30]], ['dateOfIssue' => 'DESC'], 5);
+    	$myInvoices = $invoices->findBy(['state' => [10,20,30]], ['dateOfIssue' => 'DESC', 'number' => 'DESC'], 5);
     	$myTEs = $travelExpenses->findBy([], ['date' => 'DESC'], 5);
     	$myTransactions = $transactions->findBy([], ['date' => 'DESC'], 5);
     	return $this->render('dashboard/index.html.twig', ['invoices' => $myInvoices, 'travelExpenses' => $myTEs, 'transactions'=>$myTransactions]);
