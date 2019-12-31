@@ -27,7 +27,6 @@ class InvoiceQueryController extends AbstractController
     	
     	$pagination = $paginator->paginate($queryBuilder, $request->query->getInt('page', 1), 10);
     	
-    	//$myInvoices = $invoices->findBy([], ['number' => 'DESC']);
     	return $this->render('dashboard/invoice/index.html.twig', [
     			'pagination' => $pagination,    			
     	]);
