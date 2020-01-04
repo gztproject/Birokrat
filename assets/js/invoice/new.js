@@ -149,8 +149,8 @@ jQuery(document).ready(function() {
         
         var days = $('#invoice_dueInDays').val();    
         var date = issueDate.add(days, 'days').format('L');  
-        $('#invoice_dueDate').data("DateTimePicker").date(date);
-        
+        $('#invoice_dueDate').data("DateTimePicker").date(date);   
+        //refreshInvNumber();     
     });
 
     $('#invoice_dueInDays').on('change', function(){
@@ -169,13 +169,14 @@ jQuery(document).ready(function() {
             setTotalPrice(calculateTotal());
         });
     });
-    
 });
 
 function refreshInvNumber(){
     $.post("/dashboard/invoice/getNewNumber",
         {           
-            issuerId: $('#invoice_issuer option:selected').val()
+            issuerId: $('#invoice_issuer option:selected').val(),
+            //state: ,
+            dateOfIssue: $('#invoice_dateOfIssue').data("DateTimePicker").date(),
         },
         function(data, status){  
             if(data[0]['status']=="ok")          
@@ -184,7 +185,8 @@ function refreshInvNumber(){
                 $('#notificationBody').html("<li>Error getting invoice number: " + data[0]['data'][0] + "</li>");
                 $('#notificationModal').modal('show');
             }
-        }); 
+        }
+    ); 
 }
 
 function refreshDefaultDueInDays(){
@@ -201,7 +203,8 @@ function refreshDefaultDueInDays(){
                 $('#notificationBody').html("<li>Error getting invoice number: " + data[0]['data'][0] + "</li>");
                 $('#notificationModal').modal('show');
             }
-        }); 
+        }
+    ); 
 }
 
 function calculateValue(index){

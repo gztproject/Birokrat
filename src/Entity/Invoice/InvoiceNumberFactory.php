@@ -10,33 +10,35 @@ class InvoiceNumberFactory
    	private $__issuer = null;
    	private $__em = null;
    	private $__state = null;
+   	private $__dateOfIssue = null;
 	
-   	public function __construct(Organization $issuer, int $state, ManagerRegistry $em)
+   	public function __construct(Organization $issuer, int $state, \DateTimeInterface $dateOfIssue, ManagerRegistry $em)
    	{
    		$this->__issuer = $issuer;
    		$this->__em = $em;
    		$this->__state = $state;
+   		$this->__dateOfIssue = $dateOfIssue;
    	}
 	
-   	public static function factory(Organization $issuer, int $state, ManagerRegistry $em)
+   	public static function factory(Organization $issuer, int $state, \DateTimeInterface $dateOfIssue, ManagerRegistry $em)
    	{
-   		return new InvoiceNumberFactory($issuer, $state, $em);
+   		return new InvoiceNumberFactory($issuer, $state, $dateOfIssue, $em);
    	}
 	
    	public function generate(): String
    	{   	
-   		$sql = "SELECT i.* FROM invoice AS i WHERE i.issuer_id = '".$this->__issuer->getId()."' AND YEAR(i.date_of_issue) = YEAR(CURDATE())";   		
+   		$sql = "SELECT i.* FROM invoice AS i WHERE i.issuer_id = '".$this->__issuer->getId()."' AND YEAR(i.date_of_issue) = ".$this->__dateOfIssue->format("Y");   		
    		if($this->__state == 00)
    		{
-   			$sql .= "AND i.state IN(10,20,30,50)";
+   			$sql .= " AND i.state IN(10,20,30,50)";
    		}
    		if($this->__state == 10)
    		{
-   			$sql .= "AND i.state IN(20,30,50)";
+   			$sql .= " AND i.state IN(20,30,50)";
    		}
    		else if ($this->__state > 10)
    			throw new \Exception("Invoice numbers can only be assigned to draft and new invoices.");
-   		$sql .= 'ORDER BY i.date_of_issue DESC, i.number DESC LIMIT 1';
+   		$sql .= ' ORDER BY i.date_of_issue DESC, i.number DESC LIMIT 1';
    		$stmt = $this->__em->getConnection()->prepare($sql);
    		$stmt->execute();   	 
    		

@@ -94,6 +94,13 @@ class Address extends AggregateBase
     {
         return $this->line2;
     }
+    
+    public function getStreetAddress(): ?string
+    {
+    	$street = $this->line1;
+    	$street .= $this->line2 ? ", ".$this->line2:"";
+    	return $street;
+    }
 
     public function getPost(): ?Post
     {

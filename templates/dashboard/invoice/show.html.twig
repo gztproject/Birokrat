@@ -143,18 +143,34 @@
                 </div>
             </div>
         </div>
+        
+{{ include('dashboard/invoice/_dateModal.html.twig')}}
 {% endblock %}
 
 {% block sidebar %}
     
     {{ parent() }}
+    {% if invoice.State == 10 %}
+        <a href="{{ path('invoice_edit', {'id': invoice.id}) }}" class="btn btn-sm btn-block btn-primary">
+            <i class="fa fa-edit" aria-hidden="true"></i> {{ 'action.edit'|trans }}
+        </a> 
+        <button class="set-issued btn btn-sm btn-block btn-success" type="submit" name="id" value={{ invoice.id }}><i class="fa fa-share-square" aria-hidden="true"></i> 
+            {{ 'action.setIssued'|trans }}
+        </button>                                                      
+    {% endif %}
+    {% if invoice.State == 20 %}
+        <button class="set-paid btn btn-sm btn-block btn-success" type="submit" name="id" value={{ invoice.id }}><i class="fa fa-euro-sign" aria-hidden="true"></i> 
+            {{ 'action.setPaid'|trans }}
+        </button>                        
+    {% endif %}
     <a href="{{ path('invoice_pdf', {'id': invoice.id}) }}" target="_blank" class="btn btn-sm btn-block btn-success">
         <i class="fa fa-file-pdf" aria-hidden="true"></i> {{ 'action.pdf'|trans }}
     </a>
-    
-    <button id="{{ invoice.id }}" class="sendInvoice btn btn-sm btn-block btn-success{% if invoice.state < 20 %} disabled{% endif %}">
+    {% if (invoice.State == 20  or invoice.State == 30) %}
+    <button id="{{ invoice.id }}" class="sendInvoice btn btn-sm btn-block btn-success">
         <i class="fa fa-envelope" aria-hidden="true"></i> {{ 'action.send'|trans }}
     </button>
+    {% endif %}
     
 
 {% endblock %}

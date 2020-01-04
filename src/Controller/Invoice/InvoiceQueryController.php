@@ -39,8 +39,10 @@ class InvoiceQueryController extends AbstractController
     {    	
     	$doctrine = $this->getDoctrine();
     	$issuer = $doctrine->getRepository(Organization::class)->findOneBy(['id'=>$request->request->get('issuerId', null)]);
+    	$dateOfIssue = new \Datetime($request->request->get('dateOfIssue', 'now'));
+    	$state = $request->request->get('state', 10);
     	try {
-    		$data = InvoiceNumberFactory::factory($issuer, 10, $doctrine)->generate();
+    		$data = InvoiceNumberFactory::factory($issuer, $state, $dateOfIssue, $doctrine)->generate();
     		$status = "ok";
     	} 
     	catch (Exception $e) 
