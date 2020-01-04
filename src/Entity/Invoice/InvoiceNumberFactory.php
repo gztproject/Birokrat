@@ -25,7 +25,7 @@ class InvoiceNumberFactory
 	
    	public function generate(): String
    	{   	
-   		$sql = "SELECT i.* FROM invoice AS i WHERE i.issuer_id = '".$this->__issuer->getId()."' ";   		
+   		$sql = "SELECT i.* FROM invoice AS i WHERE i.issuer_id = '".$this->__issuer->getId()."' AND YEAR(i.date_of_issue) = YEAR(CURDATE())";   		
    		if($this->__state == 00)
    		{
    			$sql .= "AND i.state IN(10,20,30,50)";
@@ -56,7 +56,8 @@ class InvoiceNumberFactory
    		$parts = explode('-', $lastNumber);
    		if(count($parts) == 3)
    			$parts[array_key_first($parts)] = $prefix;
-   		$parts[array_key_last ($parts)] = sprintf('%04d', $parts[array_key_last ($parts)]+1);
+   		$parts[array_key_last($parts)-1] = sprintf('%04d', date("Y"));
+   		$parts[array_key_last($parts)] = sprintf('%04d', $parts[array_key_last ($parts)]+1);
    		
    		return implode('-', $parts);
    	}
