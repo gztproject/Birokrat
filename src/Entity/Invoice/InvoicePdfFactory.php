@@ -228,7 +228,8 @@ class InvoicePdfFactory
    						'fgcolor' => array(0,0,0),
    						'bgcolor' => false,
    				);
-   				//ToDo: Move this somewhere else, it shouldn't really be here.
+   				//ToDo: Move this somewhere else, it shouldn't really be here. 
+   				//https://www.upn-qr.si/uploads/files/NavodilaZaProgramerjeUPNQR.pdf
    				$qrString = "";
    				$qrString .= "UPNQR\n"; //1
    				$qrString .= "\n";		//2
