@@ -12,6 +12,7 @@ $(function() {
         format: 'dd. mm. yyyy',
     });   
 }); 
+
 jQuery(document).ready(function() {    
     $('.set-issued').on('click', function(e){ 
         e.stopPropagation();        

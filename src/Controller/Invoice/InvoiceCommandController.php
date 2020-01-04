@@ -158,8 +158,10 @@ class InvoiceCommandController extends AbstractController
     		throw new \Exception("Can't find an invoice with id ".$id);
     	$date = new \DateTime($request->request->get('date', null));
     	$entityManager = $this->getDoctrine()->getManager();
+    	$dateOfIssue = new \Datetime($request->request->get('dateOfIssue', 'now'));
+    	$state = $request->request->get('state', 10);
+    	$number = InvoiceNumberFactory::factory($invoice->getIssuer(), $state, $dateOfIssue, $this->getDoctrine())->generate();
     	
-    	$number = InvoiceNumberFactory::factory($invoice->getIssuer(), 10, $this->getDoctrine())->generate();
     	$transaction = $invoice->setIssued($date, $number, $this->getUser());
     	
     	$entityManager->persist($invoice);

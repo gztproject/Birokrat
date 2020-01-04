@@ -4,7 +4,7 @@ namespace App\Entity\Invoice;
 
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Qipsius\TCPDFBundle\Controller\TCPDFController;
-use phpDocumentor\Reflection\Types\Mixed_;
+
 class InvoicePdfFactory
 {
 	private $__invoice = null;
@@ -139,7 +139,7 @@ class InvoicePdfFactory
    		$invData .= $this->__invoice->getDateServiceRenderedString();
    		$pdf->MultiCell(60, '', $invData, 0, 'L', 0, 1);
    		$pdf->Ln(7);
-   		$pdf->Cell( 80, 0, $this->__translator->trans('label.taxNumber').": ".$this->__invoice->getRecepient()->getFullTaxNumber(), 0, 0, '', 0, '', 0, false, 'T', 'M' );
+   		$pdf->Cell( 80, 0, $this->__translator->trans('label.taxNumber').": ".$this->__invoice->getRecepient()->getFullTaxNumber(), 0, 0, '', 0, '', 0, false, 'T', 'M' );   		
    		$pdf->Ln(7);
    		
    		// ---------ITEMS
@@ -191,7 +191,7 @@ class InvoicePdfFactory
    				$pdf->SetFillColor(200, 200, 200);
    				$pdf->SetXY(5, -75);
    				$pdf->Ln();
-   				if($this->__invoice->getDiscount()>0)
+   				if($this->__invoice->getDiscount()>0 || true)
    				{
    					$pdf->Cell( 120, 0, '', 0, 0, '', 0, '', 0, false, 'T', 'B' );
    					$pdf->Cell( 30, 0, $this->__translator->trans('label.value').":", 0, 0, '', 0, '', 0, false, 'T', 'B' );
@@ -210,7 +210,7 @@ class InvoicePdfFactory
    				
    				$pdf->Ln(14);
    				//ToDo: Move this to organizaion settings
-   				$pdf->Cell( 120, 0, 'V skladu s prvim odstavkom 94. člena ZDDV-1 DDV ni obračunan.', 0, 1, '', 0, '', 0, false, 'T', 'B' );
+   				$pdf->Cell( 120, 0, 'V skladu s prvim odstavkom 94. člena ZDDV-1 DDV ni obračunan.', 0, 1, '', 0, '', 0, false, 'T', 'B' );   				
    				$pdf->Ln(7);
    				$pdf->Cell( 120, 0, $this->__translator->trans('label.preparedBy').':', 0, 1, '', 0, '', 0, false, 'T', 'B' );
    				$pdf->Cell( 120, 0, $this->__invoice->getCreatedBy()->getFullname(), 0, 0, '', 0, '', 0, false, 'T', 'B' );
@@ -221,6 +221,42 @@ class InvoicePdfFactory
    					elseif(substr($this->__invoice->getCreatedBy()->getSignatureFilename(), -3) === "png")
    						$pdf->Image('uploads/signatures/'.$this->__invoice->getCreatedBy()->getSignatureFilename(), 40, 250, 0, 22, 'PNG', 'signature', '', true, 150, '', false, false, 0, false, false, false);
    				}
+   				// set style for barcode
+   				$style = array(
+   						'border' => false,
+   						'padding' => 0,
+   						'fgcolor' => array(0,0,0),
+   						'bgcolor' => false,
+   				);
+   				//ToDo: Move this somewhere else, it shouldn't really be here.
+   				$qrString = "";
+   				$qrString .= "UPNQR\n"; //1
+   				$qrString .= "\n";		//2
+   				$qrString .= "\n";		//3
+   				$qrString .= "\n";		//4
+   				$qrString .= "\n";		//5
+   				$qrString .= $this->__invoice->getRecepient()->getName()."\n";		//6 - recip. name
+   				$qrString .= $this->__invoice->getRecepient()->getAddress()->getStreetAddress()."\n";		//7 - recip. address
+   				$qrString .= $this->__invoice->getRecepient()->getAddress()->getPost()->getNameAndCode()."\n";		//8 - recip. ZIP + post
+   				$qrString .= sprintf("%011d\n", $this->__invoice->getTotalPrice()*100);			//9 - price*100; 11 chars, front zero padded
+   				$qrString .= "\n";		//10
+   				$qrString .= "\n";		//11
+   				$qrString .= "IVPT\n";															//12 - purpouse code (IVPT - invoice payment)
+   				$qrString .= sprintf("Plačilo računa %s\n", $this->__invoice->getNumber());		//13 - Description
+   				$qrString .= sprintf("%s\n",$this->__invoice->getDueDate()->format('d.m.Y'));		//14 - DueDate (DD.MM.YYYY)
+   				$qrString .= str_replace(' ', '',$this->__invoice->getIssuer()->getAccountNumber())."\n";		//15 - IBAN - no spaces
+   				$qrString .= str_replace([' '],'',$this->__invoice->getReferenceNumber())."\n";		//16 - reference
+   				$qrString .= $this->__invoice->getIssuer()->getName()."\n";		//17 - issuer name
+   				$qrString .= $this->__invoice->getIssuer()->getAddress()->getStreetAddress()."\n";		//18 - address
+   				$qrString .= $this->__invoice->getIssuer()->getAddress()->getPost()->getNameAndCode()."\n";		//19 - ZIP + post
+   				$qrString = str_replace(['Š', 'š', 'Č', 'č', 'Ž', 'ž'], ['S', 's', 'C', 'c', 'Z', 'z'], $qrString);
+   				$qrString .= sprintf("%03d\n",strlen($qrString));		//20 - checksum (num of characters without this field)
+   				while(strlen($qrString)<411)
+   				{
+   					$qrString.=" ";
+   				}   				
+
+				$pdf->write2DBarcode(utf8_encode($qrString), 'QRCODE,M', 135, 242, 30, 30, $style, 'N');
    				// ---------------------------------------------------------
    				
    				//Close and output PDF document
