@@ -27,7 +27,7 @@ class LegalEntityBase extends AggregateBase
     protected $shortName;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="string")
      */
     protected $taxNumber;
 
