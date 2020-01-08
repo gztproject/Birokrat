@@ -101,6 +101,14 @@ class InvoiceQueryController extends AbstractController
     }
     
     /**
+     * @Route("/dashboard/invoice/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/print", methods={"GET"}, name="invoice_print")
+     */
+    public function print(Invoice $invoice, TCPDFController $tcpdf, TranslatorInterface $translator): Response
+    {
+    	return InvoicePdfFactory::factory($invoice, $translator, $tcpdf, 'I', null, true)->generate();
+    }
+    
+    /**
      * @Route("/dashboard/invoice/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/show", methods={"GET"}, name="invoice_show")
      */
     public function show(Invoice $invoice): Response
