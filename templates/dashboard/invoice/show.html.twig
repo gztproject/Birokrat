@@ -163,13 +163,13 @@
             {{ 'action.setPaid'|trans }}
         </button>                        
     {% endif %}
+    {% if (invoice.State == 20  or invoice.State == 30) %}
     <a href="{{ path('invoice_pdf', {'id': invoice.id}) }}" target="_blank" class="btn btn-sm btn-block btn-success">
         <i class="fa fa-file-pdf" aria-hidden="true"></i> {{ 'action.pdf'|trans }}
     </a>
-    <a href="{{ path('invoice_print', {'id': invoice.id}) }}" class="btn btn-sm btn-block btn-success">
+    <a href="{{ path('invoice_print', {'id': invoice.id}) }}" target="_blank" class="btn btn-sm btn-block btn-success">
         <i class="fa fa-print" aria-hidden="true"></i> {{ 'action.print'|trans }}
-    </a> 
-    {% if (invoice.State == 20  or invoice.State == 30) %}
+    </a>     
     <button id="{{ invoice.id }}" class="sendInvoice btn btn-sm btn-block btn-success">
         <i class="fa fa-envelope" aria-hidden="true"></i> {{ 'action.send'|trans }}
     </button>
