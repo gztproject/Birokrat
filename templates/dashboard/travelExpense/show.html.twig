@@ -9,4 +9,7 @@
 
 {% block sidebar %}
         {{ parent() }}
+        <a href="{{ path('travelExpense_pdf', {'id': travelExpense.id}) }}" target="_blank" class="btn btn-sm btn-block btn-success">
+            <i class="fa fa-file-pdf" aria-hidden="true"></i> {{ 'action.pdf'|trans }}
+        </a>
 {% endblock %}
