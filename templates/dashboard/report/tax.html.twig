@@ -1,0 +1,19 @@
+{% extends 'dashboard/layout.html.twig' %}
+
+{% block body_id 'report_index' %}
+
+{% block main %}
+{{ dump(dddReport) }}
+{% endblock %}
+
+{% block sidebar %}
+    
+    {{ parent() }}
+    {{ include('dashboard/report/_filter.html.twig') }}
+    
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {{ encore_entry_script_tags('js/report/filter') }}  
+{% endblock %}

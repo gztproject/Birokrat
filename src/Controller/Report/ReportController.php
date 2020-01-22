@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\Organization\Organization;
 use App\Entity\Transaction\Transaction;
+use App\Entity\Report\Report;
 use App\Repository\Transaction\TransactionRepository;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -33,6 +34,71 @@ class ReportController extends AbstractController
     			
     	]);
     } 
+    
+    /**
+     * @Route("/dashboard/report/tax", methods={"GET"}, name="report_tax")
+     */
+    public function taxReport(Request $request, EntityManagerInterface $em): Response
+    {
+    	$dateFrom = $request->query->get('dateFrom', null);
+    	$dateTo = $request->query->get('dateTo', null);
+    	$orgId = $request->query->get('organization', null);
+    	$orgId = $orgId==="" ? null: $orgId;
+    	
+    	return $this->render('dashboard/report/tax.html.twig', [
+    			'dddReport' =>$this->getDDDReport($orgId, $dateFrom, $dateTo, $em),
+    	]);
+    } 
+    
+    private function getDDDReport(?String $organizationId, ?String $dateFrom, ?String $dateTo, EntityManagerInterface $em): Report
+    {    	
+    	$report = new Report;
+    	$qb = $em->createQueryBuilder();
+    	$qb->select(['k.id',
+    			'kc.number AS categoryNumber',
+    			'k.name',
+    			'k.number AS kontoNumber',
+    			'SUM(CASE WHEN t.debitKonto = k.id THEN t.sum ELSE 0 END) AS debit',
+    			'SUM(CASE WHEN t.creditKonto = k.id THEN t.sum ELSE 0 END) AS credit'])
+    			->from('App\Entity\Konto\Konto','k', 'k.id')
+    			->leftJoin('App\Entity\Konto\KontoCategory', 'kc', 'WITH', 'k.category = kc.id')
+    			->leftJoin('App\Entity\Transaction\Transaction', 't', 'WITH', 't.debitKonto = k.id OR t.creditKonto = k.id')
+    			->where('kc.number IN (70, 76, 40, 41, 48, 49, 11, 12, 91, 28)');
+    	if($organizationId !== null)
+    		$qb->andWhere('t.organization = :orgId');
+    	if($dateFrom !== null)
+    		$qb->andWhere('t.date >= :dateFrom');
+    	if($dateTo !== null)
+    		$qb->andWhere('t.date <= :dateTo');
+    		$qb->groupBy('k.id');
+    	if($organizationId !== null)
+    		$qb->setParameter('orgId', $organizationId);
+    	if($dateFrom !== null)
+    		$qb->setParameter('dateFrom', date('Y-m-d G:i:s', $dateFrom));
+    	if($dateTo !== null)
+    		$qb->setParameter('dateTo', date('Y-m-d G:i:s', $dateTo));
+    		$query = $qb->getQuery();
+    		$result = $query->getArrayResult();
+    						
+    	foreach($result as $res)
+    	{
+    		switch ($res['categoryNumber'])
+    		{
+    		case 76:
+    			$report->a1 += $res['credit'];
+    			break;
+    		case 40:
+    		case 41:
+    		case 45:
+    		case 48:
+    			$report->e += $res['debit'];
+    			break;
+    		}
+    	}  	
+    	$report->a = $report->a1;
+    	$report->recalculate();
+    	return $report;
+    }
     
     private function getOverviewReport(?String $organizationId, ?String $dateFrom, ?String $dateTo, EntityManagerInterface $em): array
     {
