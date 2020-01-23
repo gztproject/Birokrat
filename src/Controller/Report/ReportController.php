@@ -63,7 +63,7 @@ class ReportController extends AbstractController
     			->from('App\Entity\Konto\Konto','k', 'k.id')
     			->leftJoin('App\Entity\Konto\KontoCategory', 'kc', 'WITH', 'k.category = kc.id')
     			->leftJoin('App\Entity\Transaction\Transaction', 't', 'WITH', 't.debitKonto = k.id OR t.creditKonto = k.id')
-    			->where('kc.number IN (70, 76, 40, 41, 48, 49, 11, 12, 91, 28)');
+    			->where('kc.number IN (76, 40, 41, 45, 48, 81)');
     	if($organizationId !== null)
     		$qb->andWhere('t.organization = :orgId');
     	if($dateFrom !== null)
@@ -92,7 +92,14 @@ class ReportController extends AbstractController
     		case 45:
     		case 48:
     			$report->e += $res['debit'];
-    			break;
+    			break;    		
+    		}
+    		
+    		switch ($res['kontoNumber'])
+    		{
+    			case 810:
+    				$report->y += $res['debit'];
+    				break;
     		}
     	}  	
     	$report->a = $report->a1;

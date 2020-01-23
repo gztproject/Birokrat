@@ -51,15 +51,43 @@ class Report
     
     //16
     public $p;
+    /**
+     * Splošna davčna olajšava
+     */
+    public $q1;
+    public $q2;
+    public $q3;
+    
+    //17
     public $q;
+    
+    //18
     public $r;
+    
+    //19
     public $s;
+    
+    //20
     public $t;
+    
+    //21
     public $u;
+    
+    //22
     public $v;
+    
+    //23
     public $w;
+    
+    //24
     public $x;
+    
+    /**
+     * Obračunana predhodna akontacija
+     */
     public $y;
+    
+    //26
     public $z;
     
     public function recalculate()
@@ -82,6 +110,13 @@ class Report
     	$this->m = $this->i>0?($this->i + $this->k + $this->l):($this->k + $this->l - $this->j);
     	
     	//OSNOVA ZA DOHODNINO (izračun dohodnine na letni ravni) (13-15)
-    	$this->p = $this->m - $this->o;    	
+    	$this->p = $this->m - $this->o;   
+    	
+    	// 	Olajšave, ki zmanjšujejo osnovo za dohodnino (17.1+17.2+17.3)
+    	$this->q = $this->q1 + $this->q2 +$this->q3;
+    	
+    	// 	OSNOVA ZA AKONTACIJO DOHODNINE (16-17); če je > 0
+    	$this->s = $this->p - $this->q > 0 ? $this->p - $this->q : 0;    	    	
+    	
     }
 }
