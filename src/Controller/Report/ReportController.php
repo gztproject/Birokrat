@@ -85,15 +85,21 @@ class ReportController extends AbstractController
     		switch ($res['categoryNumber'])
     		{
     		case 76:
-    			$report->a1 += $res['credit'];
+    			$report->a += $res['credit'];
     			break;
     		case 40:
-    		case 41:
-    		case 45:
+    		case 41:    		
     		case 48:
     			$report->e += $res['debit'];
-    			break;    		
+    			break;
+    		case 45:
+    			$report->e += $res['debit'];
+    			$report->f13 += $res['debit'];
+    			break;
+    			
     		}
+    		
+    		
     		
     		switch ($res['kontoNumber'])
     		{
@@ -101,8 +107,15 @@ class ReportController extends AbstractController
     				$report->y += $res['debit'];
     				break;
     		}
-    	}  	
-    	$report->a = $report->a1;
+    	}
+    	
+    	//The constants should be updated yearly...
+    	$report->q1 = $report->a <= 11166.37 ? 6519.82 : $report->a <= 13316.83 ? 3302.7 + (19922.15-(1.49601*$report->a)) : 3302.7;
+    	
+    	$report->u = 0;
+    	$report->v = 0;
+    	
+    	
     	$report->recalculate();
     	return $report;
     }

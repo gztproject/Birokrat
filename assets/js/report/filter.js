@@ -91,7 +91,7 @@ $( document ).ready(function(){
     $('#dateFieldFrom').on('dp.change', function(e){
         if(e.oldDate){
             var url = withQuery(document.location.href,{
-                dateFrom: e.date.isValid?moment(e.date).format('X'):undefined,
+                dateFrom: e.date.isValid?moment(e.date).startOf('day').format('X'):undefined,
                 page: undefined
             });        
             document.location = url;
@@ -102,7 +102,7 @@ $( document ).ready(function(){
     $('#dateFieldTo').on('dp.change', function(e){
         if(e.oldDate){
             var url = withQuery(document.location.href,{
-                dateTo: e.date.isValid?moment(e.date).format('X'):undefined,
+                dateTo: e.date.isValid?moment(e.date).endOf('day').format('X'):undefined,
                 page: undefined
             });        
             document.location = url;
