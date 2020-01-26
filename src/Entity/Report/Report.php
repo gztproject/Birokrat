@@ -5,10 +5,15 @@ namespace App\Entity\Report;
 
 class Report
 {
+	/**
+	 * 1
+	 */
 	public $a;
     public $a1 = 0;
     
-    //2
+    /**
+     * 2
+     */
     public $b;
     public $b1 = 0;
     public $b2 = 0;
@@ -18,7 +23,9 @@ class Report
     public $b6 = 0;
     public $b7 = 0;
     
-    //3
+    /**
+     * 3
+     */
     public $c;
     public $c1 = 0;
     public $c2 = 0;
@@ -27,13 +34,19 @@ class Report
     public $c5 = 0;
     public $c6 = 0;
     
-    //4
+    /**
+     * 4
+     */
     public $d;
     
-    //5
+    /**
+     * 5
+     */
     public $e;
     
-    //6
+    /**
+     * 6
+     */
     public $f;
     public $f1 = 0;
     public $f2 = 0;
@@ -65,7 +78,9 @@ class Report
     public $f28 = 0;
     public $f29 = 0;
 
-    //7
+    /**
+     * 7
+     */
     public $g;
     public $g1 = 0;
     public $g2 = 0;
@@ -76,35 +91,51 @@ class Report
     public $g7 = 0;
     public $g8 = 0;
     
-    //8
+    /**
+     * 8
+     */
     public $h;
     
-    //9
+    /**
+     * 9
+     */
     public $i;
     
-    //10
+    /**
+     * 10
+     */
     public $j;
     
-    //11
+    /**
+     * 11
+     */
     public $k;
     public $k1 = 0;
     public $k2 = 0;
     public $k3 = 0;
     public $k4 = 0;
     
-    //12
+    /**
+     * 12
+     */
     public $l;
     public $l1 = 0;
     public $l2 = 0;
     public $l3 = 0;
     
-    //13
+    /**
+     * 13
+     */
     public $m;
     
-    //14
+    /**
+     * 14
+     */
     public $n;
     
-    //15
+    /**
+     * 15
+     */
     public $o;
     public $o1 = 0;
     public $o2 = 0;
@@ -123,10 +154,14 @@ class Report
     public $o15 = 0;
     public $o16 = 0;
     
-    //16
+    /**
+     * 16
+     */
     public $p;
     
-    //17
+    /**
+     * 17
+     */
     public $q;
     /**
      * Splošna davčna olajšava
@@ -135,27 +170,47 @@ class Report
     public $q2 = 0;
     public $q3 = 0;       
     
-    //18
+    /**
+     * 18
+     */
     public $r;
     
-    //19
+    /**
+     * 19
+     */
     public $s;
     
-    //20 AKONTACIJA DOHODNINE 
+    /**
+     * 20 AKONTACIJA DOHODNINE
+     */ 
     public $t;
     public $t1;
+    public $t1low;
+    public $t1high;
+    public $t1percent;
     public $t2;
+    public $t2low;
+    public $t2high;
+    public $t2percent;
     
-    //21 Odbitek tujega davka
+    /**
+     * 21 Odbitek tujega davka
+     */
     public $u;
     
-    //22 Povečanje davka zaradi spremembe odbitka tujega davka
+    /**
+     * 22 Povečanje davka zaradi spremembe odbitka tujega davka
+     */
     public $v;
     
-    //23
+    /**
+     * 23
+     */
     public $w;
     
-    //24
+    /**
+     * 24
+     */
     public $x;
     
     /**
@@ -163,22 +218,34 @@ class Report
      */
     public $y;
     
-    //26
+    /**
+     * 26
+     */
     public $z;
     
-    //27
+    /**
+     * 27
+     */
     public $aa;
     
-    //28
+    /**
+     * 28
+     */
     public $ab;
     
-    //29
+    /**
+     * 29
+     */
     public $ac;
     
-    //30
+    /**
+     * 30
+     */
     public $ad;
     
-    //31
+    /**
+     * 31
+     */
     public $ae;
     
     public function recalculate()
@@ -205,7 +272,7 @@ class Report
     	//RAZLIKA med davčno priznanimi odhodki in prihodki (8 – 4)
     	$this->j = $this->h - $this->d > 0 ? $this->h - $this->d : 0;
     	
-    	$this->k = $this->k1 + $this->k2 + $this->k3 + $this->k4;
+    	$this->k = $this->k1 - $this->k2 + $this->k3 - $this->k4;
     	
     	$this->l = $this->l1 + $this->l2 + $this->l3;
     	
@@ -228,7 +295,7 @@ class Report
     	
     	//19. 	OSNOVA ZA AKONTACIJO DOHODNINE (16-17); če je > 0
     	$this->s = $this->p - $this->q > 0 ? $this->p - $this->q : 0;  
-    	
+    	    	
     	//This should be revised every year.
     	$taxLevels = [8021.34, 20400, 48000, 70907.2]; 
     	$fixedTaxes = [1238.41, 4625.65, 14009.65, 22943.46];
@@ -236,7 +303,13 @@ class Report
     	    	
     	$incomeTax = $this->CalculateIncomeTax($this->s, $taxPercentages, $taxLevels, $fixedTaxes);
     	$this->t1 = $incomeTax[0];
-    	$this->t2 = $incomeTax[1];
+    	$this->t1low = $incomeTax[1];
+    	$this->t1high = $incomeTax[2];
+    	$this->t1percent = $incomeTax[3];
+    	$this->t2 = $incomeTax[4];
+    	$this->t2low = $incomeTax[5];
+    	$this->t2high = $incomeTax[6];
+    	$this->t2percent = $incomeTax[7];
     	$this->t = $this->t1 + $this->t2;
     	
     	//DAVČNA OBVEZNOST (20-21+22) 
@@ -253,7 +326,7 @@ class Report
     	$this->ab = $this->s;
     	
     	$nxtYearIncomeTax = $this->CalculateIncomeTax($this->ab, $taxPercentages, $taxLevels, $fixedTaxes);
-    	$this->ac = $nxtYearIncomeTax[0] + $nxtYearIncomeTax[1];
+    	$this->ac = $nxtYearIncomeTax[0] + $nxtYearIncomeTax[4];
     	
     	$this->ad = $this->ac > 400 ? $this->ac / 12 : 0;
     	
@@ -263,28 +336,46 @@ class Report
     	
     private function CalculateIncomeTax(float $baseIncome, array $taxPercentages, array $taxLevels, array $fixedTaxes):array
     {
-    	$incomeTax = [0, 0];
+    	$incomeTax = [0, 0, 0, 0, 0, 0, 0, 0];
     	$incomeTax[0] = 0;
-    	$incomeTax[1] = $baseIncome*$taxPercentages[0];
+    	$incomeTax[4] = $baseIncome*$taxPercentages[0];    	
+    	$incomeTax[6] = $baseIncome;
+    	$incomeTax[7] = $taxPercentages[0];
     	if ($baseIncome > $taxLevels[0])
     	{
     		$incomeTax[0] = $fixedTaxes[0];
-    		$incomeTax[1] = ($baseIncome-$taxLevels[0])*$taxPercentages[1];
+    		$incomeTax[2] = $taxLevels[0];
+    		$incomeTax[4] = ($baseIncome-$taxLevels[0])*$taxPercentages[1];
+    		$incomeTax[5] = $taxLevels[0];
+    		$incomeTax[6] = $baseIncome;
+    		$incomeTax[7] = $taxPercentages[1];
     	}
     	if ($baseIncome > $taxLevels[1])
     	{
     		$incomeTax[0] = $fixedTaxes[1];
-    		$incomeTax[1] = ($baseIncome-$taxLevels[1])*$taxPercentages[2];
+    		$incomeTax[2] = $taxLevels[1];
+    		$incomeTax[4] = ($baseIncome-$taxLevels[1])*$taxPercentages[2];
+    		$incomeTax[5] = $taxLevels[1];
+    		$incomeTax[6] = $baseIncome;
+    		$incomeTax[7] = $taxPercentages[2];
     	}
     	if ($baseIncome > $taxLevels[2])
     	{
     		$incomeTax[0] = $fixedTaxes[2];
-    		$incomeTax[1] = ($baseIncome-$taxLevels[2])*$taxPercentages[3];
+    		$incomeTax[2] = $taxLevels[2];
+    		$incomeTax[4] = ($baseIncome-$taxLevels[2])*$taxPercentages[3];
+    		$incomeTax[5] = $taxLevels[2];
+    		$incomeTax[6] = $baseIncome;
+    		$incomeTax[7] = $taxPercentages[3];
     	}
     	if ($baseIncome > $taxLevels[3])
     	{
     		$incomeTax[0] = $fixedTaxes[3];
-    		$incomeTax[1] = ($baseIncome-$taxLevels[3])*$taxPercentages[4];
+    		$incomeTax[2] = $taxLevels[3];
+    		$incomeTax[4] = ($baseIncome-$taxLevels[3])*$taxPercentages[4];
+    		$incomeTax[5] = $taxLevels[3];
+    		$incomeTax[6] = $baseIncome;
+    		$incomeTax[7] = $taxPercentages[4];
     	}
     	return $incomeTax;
     }

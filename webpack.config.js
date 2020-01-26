@@ -60,7 +60,8 @@ Encore
     .addStyleEntry('css/copyleft', ['./assets/css/copyleft.css'])
     .addStyleEntry('css/admin', ['./assets/scss/admin.scss'])
     .addStyleEntry('css/dashboard', ['./assets/scss/dashboard.scss'])
-    .addStyleEntry('css/invoice', ['./assets/scss/invoice.scss'])    
+    .addStyleEntry('css/invoice', ['./assets/scss/invoice.scss'])
+    .addStyleEntry('css/report', ['./assets/scss/report.scss'])    
 
     //plugins
 
