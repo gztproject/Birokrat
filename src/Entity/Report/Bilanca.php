@@ -219,5 +219,13 @@ class Bilanca
 		$this->p002 = $this->p003 + $this->p010 + $this->p018 + $this->p019 + $this->p027;
 		
 		$this->p001 = $this->p002 + $this->p032 + $this->p053;
+		
+		$interm = $this->p001 - $this->p055;
+		$this->p070 = $interm > 0 ? $interm : 0;
+		$this->p071 = $interm < 0 ? -$interm : 0;
+		
+		$this->p056 = $this->p058 + $this->p060a + $this->p060b + $this->p067 + $this->p301 + $this->p070 - $this->p071;
+		
+		$this->p055 = $this->p056 + $this->p072 + $this->p075 + $this->p085 + $this->p095;
 	}
 }

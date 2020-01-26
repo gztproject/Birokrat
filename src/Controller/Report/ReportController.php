@@ -308,22 +308,32 @@ class ReportController extends AbstractController {
 		foreach ( $result as $res ) {
 			switch ($res ['categoryNumber']) {
 				case 76 :
-					$report->a += $res ['credit'];
+				case 77 :				
+					$report->a += $res ['credit'] - $res ['debit'];
+					break;
+				case 78 :
+					$report->a += $res ['credit'] - $res ['debit'];
+					$report->b3 += $res ['credit'] - $res ['debit'];
+					$report->f26 += $res ['credit'] - $res ['debit'];
 					break;
 				case 40 :
 				case 41 :
+				case 43 :
+				case 44 :
+				case 47 :
 				case 48 :
-					$report->e += $res ['debit'];
+				case 49 :
+					$report->e += $res ['debit'] - $res ['credit'];
 					break;
 				case 45 :
-					$report->e += $res ['debit'];
-					$report->f13 += $res ['debit'];
+					$report->e += $res ['debit'] - $res ['credit'];
+					$report->f13 += $res ['debit'] - $res ['credit'];
 					break;
 			}
 
 			switch ($res ['kontoNumber']) {
 				case 810 :
-					$report->y += $res ['debit'];
+					$report->y += $res ['debit'] - $res ['credit'];
 					break;
 			}
 		}
@@ -513,13 +523,8 @@ class ReportController extends AbstractController {
 					$report->p096 += -$res ['debit'] + $res ['credit'];
 					break;
 			}
+			
 		}
-
-		// The constants should be updated yearly...
-		// $report->q1 = $report->a <= 11166.37 ? 6519.82 : $report->a <= 13316.83 ? 3302.7 + (19922.15 - (1.49601 * $report->a)) : 3302.7;
-
-		// $report->u = 0;
-		// $report->v = 0;
 
 		$report->calculate ();
 		return $report;
