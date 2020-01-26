@@ -3,7 +3,7 @@
 namespace App\Entity\Report;
 
 
-class Report
+class DDDDDD
 {
 	/**
 	 * 1

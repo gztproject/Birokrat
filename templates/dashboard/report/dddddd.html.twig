@@ -960,11 +960,6 @@
 						</table>
 					</td>
 				</tr>
-				<tr>
-					<td>&nbsp;</td>
-					<td>&nbsp;</td>
-					<td colspan="2"></td>
-				</tr>
 			</tbody>
 		</table>
 	</div>
@@ -974,7 +969,13 @@
 {% block sidebar %}
 
 {{ parent() }}
-{{ include('dashboard/report/_filter.html.twig') }}
+{{ include('dashboard/report/_filterYear.html.twig') }}
+<a href="{{ path('report_bilanca') }}" class="btn btn-sm btn-primary">
+        <i class="fa fa-eye" aria-hidden="true"></i> Bilanca
+    </a>
+    <a href="{{ path('report_turnout') }}" class="btn btn-sm btn-primary">
+        <i class="fa fa-eye" aria-hidden="true"></i> Izkaz poslovnega izida
+    </a>
 
 {% endblock %}
 
