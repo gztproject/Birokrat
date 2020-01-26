@@ -1,0 +1,752 @@
+{% extends 'dashboard/layout.html.twig' %}
+
+{% block body_id 'report_index' %}
+
+{% block stylesheets %}
+{{ parent() }}
+{{ encore_entry_link_tags('css/report') }}
+{% endblock %}
+
+{% block main %}
+
+
+<h2>Priloga 4</h2>
+<h3>Podatki iz izkaza poslovnega izida</h3>
+
+<div class="row">
+	<div class="col-sm-12">
+		<table width="100%">
+			<tbody>
+				<tr>
+					<td style="text-align: right">
+						<p>Zneski v eurih s centi</p>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<table class="tablebullet" width="100%">
+			<thead>
+				<tr class="lblheader" style="text-align: center">
+					<td>Zaporedna številka</td>
+					<td>Oznaka za AOP</td>
+					<td>Postavka</td>
+					<td>Znesek tekočega leta</td>
+					<td>Znesek preteklega leta</td>
+				</tr>
+			</thead>
+			<tbody>
+				<!-- ngRepeat: rw in data.Data.Att04 -->
+				<tr ng-repeat="rw in data.Data.Att04"
+					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
+					class="ng-scope bold">
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">1</span></td>
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						class="ng-binding">110</span></td>
+					<td class="lbl"><span class="ng-binding">A. ČISTI
+							PRIHODKI OD PRODAJE (2+3+4)</span></td>
+					<td class="input oddcolor">{{ turnoutReportThisYear.p110|number_format(2, ',', ' ') }}
+						€</td>
+					<td class="input evencolor">{{ turnoutReportLastYear.p110|number_format(2, ',', ' ') }}
+						€</td>
+				</tr>
+				<!-- end ngRepeat: rw in data.Data.Att04 -->
+				<tr ng-repeat="rw in data.Data.Att04"
+					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
+					class="ng-scope bold">
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">2</span></td>
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						class="ng-binding">111</span></td>
+					<td class="lbl"><span class="ng-binding">I. Čisti
+							prihodki od prodaje na domačem trgu</span></td>
+					<td class="input oddcolor">{{ turnoutReportThisYear.p111|number_format(2, ',', ' ') }}
+						€</td>
+					<td class="input evencolor">{{ turnoutReportLastYear.p111|number_format(2, ',', ' ') }}
+						€</td>
+				</tr>
+				<!-- end ngRepeat: rw in data.Data.Att04 -->
+				<tr ng-repeat="rw in data.Data.Att04"
+					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
+					class="ng-scope bold">
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">3</span></td>
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						class="ng-binding">115</span></td>
+					<td class="lbl"><span class="ng-binding">II. Čisti
+							prihodki od prodaje na trgu EU</span></td>
+					<td class="input oddcolor">{{ turnoutReportThisYear.p115|number_format(2, ',', ' ') }}
+						€</td>
+					<td class="input evencolor">{{ turnoutReportLastYear.p115|number_format(2, ',', ' ') }}
+						€</td>
+				</tr>
+				<!-- end ngRepeat: rw in data.Data.Att04 -->
+				<tr ng-repeat="rw in data.Data.Att04"
+					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
+					class="ng-scope bold">
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">4</span></td>
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						class="ng-binding">118</span></td>
+					<td class="lbl"><span class="ng-binding">III. Čisti
+							prihodki od prodaje na trgu izven EU</span></td>
+					<td class="input oddcolor">{{ turnoutReportThisYear.p118|number_format(2, ',', ' ') }}
+						€</td>
+					<td class="input evencolor">{{ turnoutReportLastYear.p118|number_format(2, ',', ' ') }}
+						€</td>
+				</tr>
+				<!-- end ngRepeat: rw in data.Data.Att04 -->
+				<tr ng-repeat="rw in data.Data.Att04"
+					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
+					class="ng-scope bold">
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">5</span></td>
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						class="ng-binding">121</span></td>
+					<td class="lbl"><span class="ng-binding">B. POVEČANJE
+							VREDNOSTI ZALOG PROIZVODOV IN NEDOKONČANE PROIZVODNJE</span></td>
+					<td class="input oddcolor">{{ turnoutReportThisYear.p121|number_format(2, ',', ' ') }}
+						€</td>
+					<td class="input evencolor">{{ turnoutReportLastYear.p121|number_format(2, ',', ' ') }}
+						€</td>
+				</tr>
+				<!-- end ngRepeat: rw in data.Data.Att04 -->
+				<tr ng-repeat="rw in data.Data.Att04"
+					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
+					class="ng-scope bold">
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">6</span></td>
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						class="ng-binding">122</span></td>
+					<td class="lbl"><span class="ng-binding">C. ZMANJŠANJE
+							VREDNOSTI ZALOG PROIZVODOV IN NEDOKONČANE PROIZVODNJE</span></td>
+					<td class="input oddcolor">{{ turnoutReportThisYear.p122|number_format(2, ',', ' ') }}
+						€</td>
+					<td class="input evencolor">{{ turnoutReportLastYear.p122|number_format(2, ',', ' ') }}
+						€</td>
+				</tr>
+				<!-- end ngRepeat: rw in data.Data.Att04 -->
+				<tr ng-repeat="rw in data.Data.Att04"
+					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
+					class="ng-scope bold">
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">7</span></td>
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						class="ng-binding">123</span></td>
+					<td class="lbl"><span class="ng-binding">Č. USREDSTVENI
+							LASTNI PROIZVODI IN LASTNE STORITVE</span></td>
+					<td class="input oddcolor">{{ turnoutReportThisYear.p123|number_format(2, ',', ' ') }}
+						€</td>
+					<td class="input evencolor">{{ turnoutReportLastYear.p123|number_format(2, ',', ' ') }}
+						€</td>
+				</tr>
+				<!-- end ngRepeat: rw in data.Data.Att04 -->
+				<tr ng-repeat="rw in data.Data.Att04"
+					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
+					class="ng-scope bold">
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">8</span></td>
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						class="ng-binding">124</span></td>
+					<td class="lbl"><span class="ng-binding">D. SUBVENCIJE,
+							DOTACIJE, REGRESI, KOMPENZACIJE IN DRUGI PRIHODKI, KI SO POVEZANI
+							S POSLOVNIMI UČINKI</span></td>
+					<td class="input oddcolor">{{ turnoutReportThisYear.p124|number_format(2, ',', ' ') }}
+						€</td>
+					<td class="input evencolor">{{ turnoutReportLastYear.p124|number_format(2, ',', ' ') }}
+						€</td>
+				</tr>
+				<!-- end ngRepeat: rw in data.Data.Att04 -->
+				<tr ng-repeat="rw in data.Data.Att04"
+					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
+					class="ng-scope bold">
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">9</span></td>
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						class="ng-binding">125</span></td>
+					<td class="lbl"><span class="ng-binding">E. DRUGI
+							POSLOVNI PRIHODKI</span></td>
+					<td class="input oddcolor">{{ turnoutReportThisYear.p125|number_format(2, ',', ' ') }}
+						€</td>
+					<td class="input evencolor">{{ turnoutReportLastYear.p125|number_format(2, ',', ' ') }}
+						€</td>
+				</tr>
+				<!-- end ngRepeat: rw in data.Data.Att04 -->
+				<tr ng-repeat="rw in data.Data.Att04"
+					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
+					class="ng-scope bold">
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">10</span></td>
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						class="ng-binding">126</span></td>
+					<td class="lbl"><span class="ng-binding">F. KOSMATI
+							DONOS OD POSLOVANJA (1+5-6+7+8+9)</span></td>
+					<td class="input oddcolor">{{ turnoutReportThisYear.p126|number_format(2, ',', ' ') }}
+						€</td>
+					<td class="input evencolor">{{ turnoutReportLastYear.p126|number_format(2, ',', ' ') }}
+						€</td>
+				</tr>
+				<!-- end ngRepeat: rw in data.Data.Att04 -->
+				<tr ng-repeat="rw in data.Data.Att04"
+					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
+					class="ng-scope bold">
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">11</span></td>
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						class="ng-binding">127</span></td>
+					<td class="lbl"><span class="ng-binding">G. POSLOVNI
+							ODHODKI (12+16+21+25)</span></td>
+					<td class="input oddcolor">{{ turnoutReportThisYear.p127|number_format(2, ',', ' ') }}
+						€</td>
+					<td class="input evencolor">{{ turnoutReportLastYear.p127|number_format(2, ',', ' ') }}
+						€</td>
+				</tr>
+				<!-- end ngRepeat: rw in data.Data.Att04 -->
+				<tr ng-repeat="rw in data.Data.Att04"
+					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
+					class="ng-scope bold">
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">12</span></td>
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						class="ng-binding">128</span></td>
+					<td class="lbl"><span class="ng-binding">I. Stroški
+							blaga, materiala in storitev (13+14+15)</span></td>
+					<td class="input oddcolor">{{ turnoutReportThisYear.p128|number_format(2, ',', ' ') }}
+						€</td>
+					<td class="input evencolor">{{ turnoutReportLastYear.p128|number_format(2, ',', ' ') }}
+						€</td>
+				</tr>
+				<!-- end ngRepeat: rw in data.Data.Att04 -->
+				<tr ng-repeat="rw in data.Data.Att04"
+					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
+					class="ng-scope">
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">13</span></td>
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						class="ng-binding">129</span></td>
+					<td class="lbl"><span class="ng-binding">1. Nabavna
+							vrednost prodanega blaga in materiala</span></td>
+					<td class="input oddcolor">{{ turnoutReportThisYear.p129|number_format(2, ',', ' ') }}
+						€</td>
+					<td class="input evencolor">{{ turnoutReportLastYear.p129|number_format(2, ',', ' ') }}
+						€</td>
+				</tr>
+				<!-- end ngRepeat: rw in data.Data.Att04 -->
+				<tr ng-repeat="rw in data.Data.Att04"
+					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
+					class="ng-scope">
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">14</span></td>
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						class="ng-binding">130</span></td>
+					<td class="lbl"><span class="ng-binding">2. Stroški
+							porabljenega materiala</span></td>
+					<td class="input oddcolor">{{ turnoutReportThisYear.p130|number_format(2, ',', ' ') }}
+						€</td>
+					<td class="input evencolor">{{ turnoutReportLastYear.p130|number_format(2, ',', ' ') }}
+						€</td>
+				</tr>
+				<!-- end ngRepeat: rw in data.Data.Att04 -->
+				<tr ng-repeat="rw in data.Data.Att04"
+					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
+					class="ng-scope">
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">15</span></td>
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						class="ng-binding">134</span></td>
+					<td class="lbl"><span class="ng-binding">3. Stroški
+							storitev</span></td>
+					<td class="input oddcolor">{{ turnoutReportThisYear.p134|number_format(2, ',', ' ') }}
+						€</td>
+					<td class="input evencolor">{{ turnoutReportLastYear.p134|number_format(2, ',', ' ') }}
+						€</td>
+				</tr>
+				<!-- end ngRepeat: rw in data.Data.Att04 -->
+				<tr ng-repeat="rw in data.Data.Att04"
+					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
+					class="ng-scope bold">
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">16</span></td>
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						class="ng-binding">139</span></td>
+					<td class="lbl"><span class="ng-binding">II. Stroški
+							dela (17+18+19+20)</span></td>
+					<td class="input oddcolor">{{ turnoutReportThisYear.p139|number_format(2, ',', ' ') }}
+						€</td>
+					<td class="input evencolor">{{ turnoutReportLastYear.p139|number_format(2, ',', ' ') }}
+						€</td>
+				</tr>
+				<!-- end ngRepeat: rw in data.Data.Att04 -->
+				<tr ng-repeat="rw in data.Data.Att04"
+					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
+					class="ng-scope">
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">17</span></td>
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						class="ng-binding">140</span></td>
+					<td class="lbl"><span class="ng-binding">1. Stroški
+							plač</span></td>
+					<td class="input oddcolor">{{ turnoutReportThisYear.p140|number_format(2, ',', ' ') }}
+						€</td>
+					<td class="input evencolor">{{ turnoutReportLastYear.p140|number_format(2, ',', ' ') }}
+						€</td>
+				</tr>
+				<!-- end ngRepeat: rw in data.Data.Att04 -->
+				<tr ng-repeat="rw in data.Data.Att04"
+					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
+					class="ng-scope">
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">18</span></td>
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						class="ng-binding">141</span></td>
+					<td class="lbl"><span class="ng-binding">2. Stroški
+							pokojninskih zavarovanj</span></td>
+					<td class="input oddcolor">{{ turnoutReportThisYear.p141|number_format(2, ',', ' ') }}
+						€</td>
+					<td class="input evencolor">{{ turnoutReportLastYear.p141|number_format(2, ',', ' ') }}
+						€</td>
+				</tr>
+				<!-- end ngRepeat: rw in data.Data.Att04 -->
+				<tr ng-repeat="rw in data.Data.Att04"
+					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
+					class="ng-scope">
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">19</span></td>
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						class="ng-binding">142</span></td>
+					<td class="lbl"><span class="ng-binding">3. Stroški
+							drugih socialnih zavarovanj</span></td>
+					<td class="input oddcolor">{{ turnoutReportThisYear.p142|number_format(2, ',', ' ') }}
+						€</td>
+					<td class="input evencolor">{{ turnoutReportLastYear.p142|number_format(2, ',', ' ') }}
+						€</td>
+				</tr>
+				<!-- end ngRepeat: rw in data.Data.Att04 -->
+				<tr ng-repeat="rw in data.Data.Att04"
+					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
+					class="ng-scope">
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">20</span></td>
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						class="ng-binding">143</span></td>
+					<td class="lbl"><span class="ng-binding">4. Drugi
+							stroški dela</span></td>
+					<td class="input oddcolor">{{ turnoutReportThisYear.p143|number_format(2, ',', ' ') }}
+						€</td>
+					<td class="input evencolor">{{ turnoutReportLastYear.p143|number_format(2, ',', ' ') }}
+						€</td>
+				</tr>
+				<!-- end ngRepeat: rw in data.Data.Att04 -->
+				<tr ng-repeat="rw in data.Data.Att04"
+					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
+					class="ng-scope bold">
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">21</span></td>
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						class="ng-binding">144</span></td>
+					<td class="lbl"><span class="ng-binding">III. Odpisi
+							vrednosti (22+23+24)</span></td>
+					<td class="input oddcolor">{{ turnoutReportThisYear.p144|number_format(2, ',', ' ') }}
+						€</td>
+					<td class="input evencolor">{{ turnoutReportLastYear.p144|number_format(2, ',', ' ') }}
+						€</td>
+				</tr>
+				<!-- end ngRepeat: rw in data.Data.Att04 -->
+				<tr ng-repeat="rw in data.Data.Att04"
+					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
+					class="ng-scope">
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">22</span></td>
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						class="ng-binding">145</span></td>
+					<td class="lbl"><span class="ng-binding">1.
+							Amortizacija</span></td>
+					<td class="input oddcolor">{{ turnoutReportThisYear.p145|number_format(2, ',', ' ') }}
+						€</td>
+					<td class="input evencolor">{{ turnoutReportLastYear.p145|number_format(2, ',', ' ') }}
+						€</td>
+				</tr>
+				<!-- end ngRepeat: rw in data.Data.Att04 -->
+				<tr ng-repeat="rw in data.Data.Att04"
+					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
+					class="ng-scope">
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">23</span></td>
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						class="ng-binding">146</span></td>
+					<td class="lbl"><span class="ng-binding">2.
+							Prevrednotovalni poslovni odhodki pri neopredmetenih sredstvih in
+							opredmetenih osnovnih sredstvih</span></td>
+					<td class="input oddcolor">{{ turnoutReportThisYear.p146|number_format(2, ',', ' ') }}
+						€</td>
+					<td class="input evencolor">{{ turnoutReportLastYear.p146|number_format(2, ',', ' ') }}
+						€</td>
+				</tr>
+				<!-- end ngRepeat: rw in data.Data.Att04 -->
+				<tr ng-repeat="rw in data.Data.Att04"
+					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
+					class="ng-scope">
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">24</span></td>
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						class="ng-binding">147</span></td>
+					<td class="lbl"><span class="ng-binding">3.
+							Prevrednotovalni poslovni odhodki pri obratnih sredstvih</span></td>
+					<td class="input oddcolor">{{ turnoutReportThisYear.p147|number_format(2, ',', ' ') }}
+						€</td>
+					<td class="input evencolor">{{ turnoutReportLastYear.p147|number_format(2, ',', ' ') }}
+						€</td>
+				</tr>
+				<!-- end ngRepeat: rw in data.Data.Att04 -->
+				<tr ng-repeat="rw in data.Data.Att04"
+					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
+					class="ng-scope bold">
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">25</span></td>
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						class="ng-binding">148</span></td>
+					<td class="lbl"><span class="ng-binding">IV. Drugi
+							poslovni odhodki (26+27)</span></td>
+					<td class="input oddcolor">{{ turnoutReportThisYear.p148|number_format(2, ',', ' ') }}
+						€</td>
+					<td class="input evencolor">{{ turnoutReportLastYear.p148|number_format(2, ',', ' ') }}
+						€</td>
+				</tr>
+				<!-- end ngRepeat: rw in data.Data.Att04 -->
+				<tr ng-repeat="rw in data.Data.Att04"
+					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
+					class="ng-scope">
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">26</span></td>
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						class="ng-binding">148a</span></td>
+					<td class="lbl"><span class="ng-binding">1. Prispevki
+							za socialno varnost podjetnika</span></td>
+					<td class="input oddcolor">{{ turnoutReportThisYear.p148a|number_format(2, ',', ' ') }}
+						€</td>
+					<td class="input evencolor">{{ turnoutReportLastYear.p148a|number_format(2, ',', ' ') }}
+						€</td>
+				</tr>
+				<!-- end ngRepeat: rw in data.Data.Att04 -->
+				<tr ng-repeat="rw in data.Data.Att04"
+					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
+					class="ng-scope">
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">27</span></td>
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						class="ng-binding">148b</span></td>
+					<td class="lbl"><span class="ng-binding">2. Ostali
+							stroški</span></td>
+					<td class="input oddcolor">{{ turnoutReportThisYear.p148b|number_format(2, ',', ' ') }}
+						€</td>
+					<td class="input evencolor">{{ turnoutReportLastYear.p148b|number_format(2, ',', ' ') }}
+						€</td>
+				</tr>
+				<!-- end ngRepeat: rw in data.Data.Att04 -->
+				<tr ng-repeat="rw in data.Data.Att04"
+					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
+					class="ng-scope bold">
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">28</span></td>
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						class="ng-binding">151</span></td>
+					<td class="lbl"><span class="ng-binding">H. DOBIČEK IZ
+							POSLOVANJA (10-11)</span></td>
+					<td class="input oddcolor">{{ turnoutReportThisYear.p151|number_format(2, ',', ' ') }}
+						€</td>
+					<td class="input evencolor">{{ turnoutReportLastYear.p151|number_format(2, ',', ' ') }}
+						€</td>
+				</tr>
+				<!-- end ngRepeat: rw in data.Data.Att04 -->
+				<tr ng-repeat="rw in data.Data.Att04"
+					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
+					class="ng-scope bold">
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">29</span></td>
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						class="ng-binding">152</span></td>
+					<td class="lbl"><span class="ng-binding">I. IZGUBA IZ
+							POSLOVANJA (11-10)</span></td>
+					<td class="input oddcolor">{{ turnoutReportThisYear.p152|number_format(2, ',', ' ') }}
+						€</td>
+					<td class="input evencolor">{{ turnoutReportLastYear.p152|number_format(2, ',', ' ') }}
+						€</td>
+				</tr>
+				<!-- end ngRepeat: rw in data.Data.Att04 -->
+				<tr ng-repeat="rw in data.Data.Att04"
+					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
+					class="ng-scope bold">
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">30</span></td>
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						class="ng-binding">153</span></td>
+					<td class="lbl"><span class="ng-binding">J. FINANČNI
+							PRIHODKI (31+32+33)</span></td>
+					<td class="input oddcolor">{{ turnoutReportThisYear.p153|number_format(2, ',', ' ') }}
+						€</td>
+					<td class="input evencolor">{{ turnoutReportLastYear.p153|number_format(2, ',', ' ') }}
+						€</td>
+				</tr>
+				<!-- end ngRepeat: rw in data.Data.Att04 -->
+				<tr ng-repeat="rw in data.Data.Att04"
+					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
+					class="ng-scope bold">
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">31</span></td>
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						class="ng-binding">155</span></td>
+					<td class="lbl"><span class="ng-binding">I. Finančni
+							prihodki iz deležev</span></td>
+					<td class="input oddcolor">{{ turnoutReportThisYear.p155|number_format(2, ',', ' ') }}
+						€</td>
+					<td class="input evencolor">{{ turnoutReportLastYear.p155|number_format(2, ',', ' ') }}
+						€</td>
+				</tr>
+				<!-- end ngRepeat: rw in data.Data.Att04 -->
+				<tr ng-repeat="rw in data.Data.Att04"
+					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
+					class="ng-scope bold">
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">32</span></td>
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						class="ng-binding">160</span></td>
+					<td class="lbl"><span class="ng-binding">II. Finančni
+							prihodki iz danih posojil</span></td>
+					<td class="input oddcolor">{{ turnoutReportThisYear.p160|number_format(2, ',', ' ') }}
+						€</td>
+					<td class="input evencolor">{{ turnoutReportLastYear.p160|number_format(2, ',', ' ') }}
+						€</td>
+				</tr>
+				<!-- end ngRepeat: rw in data.Data.Att04 -->
+				<tr ng-repeat="rw in data.Data.Att04"
+					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
+					class="ng-scope bold">
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">33</span></td>
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						class="ng-binding">163</span></td>
+					<td class="lbl"><span class="ng-binding">III. Finančni
+							prihodki iz poslovnih terjatev</span></td>
+					<td class="input oddcolor">{{ turnoutReportThisYear.p163|number_format(2, ',', ' ') }}
+						€</td>
+					<td class="input evencolor">{{ turnoutReportLastYear.p163|number_format(2, ',', ' ') }}
+						€</td>
+				</tr>
+				<!-- end ngRepeat: rw in data.Data.Att04 -->
+				<tr ng-repeat="rw in data.Data.Att04"
+					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
+					class="ng-scope bold">
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">34</span></td>
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						class="ng-binding">166</span></td>
+					<td class="lbl"><span class="ng-binding">K. FINANČNI
+							ODHODKI (36+37+38)</span></td>
+					<td class="input oddcolor">{{ turnoutReportThisYear.p166|number_format(2, ',', ' ') }}
+						€</td>
+					<td class="input evencolor">{{ turnoutReportLastYear.p166|number_format(2, ',', ' ') }}
+						€</td>
+				</tr>
+				<!-- end ngRepeat: rw in data.Data.Att04 -->
+				<tr ng-repeat="rw in data.Data.Att04"
+					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
+					class="ng-scope">
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">35</span></td>
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						class="ng-binding">167</span></td>
+					<td class="lbl"><span class="ng-binding">Finančni
+							odhodki za obresti (upoštevano že v II. in III.)</span></td>
+					<td class="input oddcolor">{{ turnoutReportThisYear.p167|number_format(2, ',', ' ') }}
+						€</td>
+					<td class="input evencolor">{{ turnoutReportLastYear.p167|number_format(2, ',', ' ') }}
+						€</td>
+				</tr>
+				<!-- end ngRepeat: rw in data.Data.Att04 -->
+				<tr ng-repeat="rw in data.Data.Att04"
+					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
+					class="ng-scope bold">
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">36</span></td>
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						class="ng-binding">168</span></td>
+					<td class="lbl"><span class="ng-binding">I. Finančni
+							odhodki iz oslabitve in odpisov finančnih naložb</span></td>
+					<td class="input oddcolor">{{ turnoutReportThisYear.p168|number_format(2, ',', ' ') }}
+						€</td>
+					<td class="input evencolor">{{ turnoutReportLastYear.p168|number_format(2, ',', ' ') }}
+						€</td>
+				</tr>
+				<!-- end ngRepeat: rw in data.Data.Att04 -->
+				<tr ng-repeat="rw in data.Data.Att04"
+					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
+					class="ng-scope bold">
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">37</span></td>
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						class="ng-binding">169</span></td>
+					<td class="lbl"><span class="ng-binding">II. Finančni
+							odhodki iz finančnih obveznosti</span></td>
+					<td class="input oddcolor">{{ turnoutReportThisYear.p169|number_format(2, ',', ' ') }}
+						€</td>
+					<td class="input evencolor">{{ turnoutReportLastYear.p169|number_format(2, ',', ' ') }}
+						€</td>
+				</tr>
+				<!-- end ngRepeat: rw in data.Data.Att04 -->
+				<tr ng-repeat="rw in data.Data.Att04"
+					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
+					class="ng-scope bold">
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">38</span></td>
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						class="ng-binding">174</span></td>
+					<td class="lbl"><span class="ng-binding">III. Finančni
+							odhodki iz poslovnih obveznosti</span></td>
+					<td class="input oddcolor">{{ turnoutReportThisYear.p174|number_format(2, ',', ' ') }}
+						€</td>
+					<td class="input evencolor">{{ turnoutReportLastYear.p174|number_format(2, ',', ' ') }}
+						€</td>
+				</tr>
+				<!-- end ngRepeat: rw in data.Data.Att04 -->
+				<tr ng-repeat="rw in data.Data.Att04"
+					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
+					class="ng-scope bold">
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">39</span></td>
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						class="ng-binding">178</span></td>
+					<td class="lbl"><span class="ng-binding">L. DRUGI
+							PRIHODKI (40+41)</span></td>
+					<td class="input oddcolor">{{ turnoutReportThisYear.p178|number_format(2, ',', ' ') }}
+						€</td>
+					<td class="input evencolor">{{ turnoutReportLastYear.p178|number_format(2, ',', ' ') }}
+						€</td>
+				</tr>
+				<!-- end ngRepeat: rw in data.Data.Att04 -->
+				<tr ng-repeat="rw in data.Data.Att04"
+					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
+					class="ng-scope">
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">40</span></td>
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						class="ng-binding">179</span></td>
+					<td class="lbl"><span class="ng-binding">I. Subvencije,
+							dotacije in podobni prihodki, ki niso povezani s poslovnimi
+							učinki</span></td>
+					<td class="input oddcolor">{{ turnoutReportThisYear.p179|number_format(2, ',', ' ') }}
+						€</td>
+					<td class="input evencolor">{{ turnoutReportLastYear.p179|number_format(2, ',', ' ') }}
+						€</td>
+				</tr>
+				<!-- end ngRepeat: rw in data.Data.Att04 -->
+				<tr ng-repeat="rw in data.Data.Att04"
+					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
+					class="ng-scope">
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">41</span></td>
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						class="ng-binding">180</span></td>
+					<td class="lbl"><span class="ng-binding">II. Drugi
+							finančni prihodki in ostali prihodki</span></td>
+					<td class="input oddcolor">{{ turnoutReportThisYear.p180|number_format(2, ',', ' ') }}
+						€</td>
+					<td class="input evencolor">{{ turnoutReportLastYear.p180|number_format(2, ',', ' ') }}
+						€</td>
+				</tr>
+				<!-- end ngRepeat: rw in data.Data.Att04 -->
+				<tr ng-repeat="rw in data.Data.Att04"
+					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
+					class="ng-scope bold">
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">42</span></td>
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						class="ng-binding">181</span></td>
+					<td class="lbl"><span class="ng-binding">M. DRUGI
+							ODHODKI</span></td>
+					<td class="input oddcolor">{{ turnoutReportThisYear.p181|number_format(2, ',', ' ') }}
+						€</td>
+					<td class="input evencolor">{{ turnoutReportLastYear.p181|number_format(2, ',', ' ') }}
+						€</td>
+				</tr>
+				<!-- end ngRepeat: rw in data.Data.Att04 -->
+				<tr ng-repeat="rw in data.Data.Att04"
+					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
+					class="ng-scope bold">
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">43</span></td>
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						class="ng-binding">182</span></td>
+					<td class="lbl"><span class="ng-binding">N. Podjetnikov
+							dohodek (28-29+30-34+39-42)</span></td>
+					<td class="input oddcolor">{{ turnoutReportThisYear.p182|number_format(2, ',', ' ') }}
+						€</td>
+					<td class="input evencolor">{{ turnoutReportLastYear.p182|number_format(2, ',', ' ') }}
+						€</td>
+				</tr>
+				<!-- end ngRepeat: rw in data.Data.Att04 -->
+				<tr ng-repeat="rw in data.Data.Att04"
+					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
+					class="ng-scope bold">
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">44</span></td>
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						class="ng-binding">183</span></td>
+					<td class="lbl"><span class="ng-binding">O. Negativni
+							poslovni izid (29-28-30+34-39+42)</span></td>
+					<td class="input oddcolor">{{ turnoutReportThisYear.p183|number_format(2, ',', ' ') }}
+						€</td>
+					<td class="input evencolor">{{ turnoutReportLastYear.p183|number_format(2, ',', ' ') }}
+						€</td>
+				</tr>
+				<!-- end ngRepeat: rw in data.Data.Att04 -->
+				<tr ng-repeat="rw in data.Data.Att04"
+					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
+					class="ng-scope bold">
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">45</span></td>
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						class="ng-binding">188</span></td>
+					<td class="lbl"><span class="ng-binding">*POVPREČNO
+							ŠTEVILO ZAPOSLENIH NA PODLAGI DELOVNIH UR V OBRAČUNSKEM OBDOBJU
+							(na dve decimalki)</span></td>
+					<td class="input oddcolor">{{ turnoutReportThisYear.p188|number_format(2, ',', ' ') }}</td>
+					<td class="input evencolor">{{ turnoutReportLastYear.p188|number_format(2, ',', ' ') }}</td>
+				</tr>
+				<!-- end ngRepeat: rw in data.Data.Att04 -->
+				<tr ng-repeat="rw in data.Data.Att04"
+					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
+					class="ng-scope bold">
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">46</span></td>
+					<td class="lbl" style="width: 10%; text-align: center;"><span
+						class="ng-binding">189</span></td>
+					<td class="lbl"><span class="ng-binding">ŠTEVILO
+							MESECEV POSLOVANJA</span></td>
+					<td class="input oddcolor">{{ turnoutReportThisYear.p189|number_format(0, ',', ' ') }}</td>
+					<td class="input evencolor">{{ turnoutReportLastYear.p189|number_format(0, ',', ' ') }}</td>
+				</tr>
+				<!-- end ngRepeat: rw in data.Data.Att04 -->
+			</tbody>
+		</table>
+	</div>
+</div>
+
+{% endblock %}
+
+{% block sidebar %}
+
+{{ parent() }}
+{{ include('dashboard/report/_filterYear.html.twig') }}
+<a href="{{ path('report_bilanca') }}" class="btn btn-sm btn-primary">
+	<i class="fa fa-eye" aria-hidden="true"></i> Bilanca
+</a>
+<a href="{{ path('report_turnout') }}" class="btn btn-sm btn-primary">
+	<i class="fa fa-eye" aria-hidden="true"></i> Izkaz poslovnega izida
+</a>
+
+{% endblock %}
+
+{% block javascripts %}
+{{ parent() }}
+{{ encore_entry_script_tags('js/report/filter') }}
+{% endblock %}

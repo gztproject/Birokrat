@@ -15,6 +15,7 @@ use App\Repository\Transaction\TransactionRepository;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Ramsey\Uuid\Uuid;
+use App\Entity\Report\Turnout;
 
 class ReportController extends AbstractController {
 	/**
@@ -73,12 +74,15 @@ class ReportController extends AbstractController {
 	 */
 	public function izkazIzidaReport(Request $request, EntityManagerInterface $em): Response {
 		$dateFrom = $request->query->get ( 'dateFrom', null );
+		$dateFromLY = strtotime ( date ( "c", $dateFrom ) . "-1 year" );
 		$dateTo = $request->query->get ( 'dateTo', null );
+		$dateToLY = strtotime ( date ( "c", $dateTo ) . "-1 year" );
 		$orgId = $request->query->get ( 'organization', null );
 		$orgId = $orgId === "" ? null : $orgId;
 
 		return $this->render ( 'dashboard/report/turnout.html.twig', [ 
-				'turnoutReport' => $this->getTurnoutReport ( $orgId, $dateFrom, $dateTo, $em )
+				'turnoutReportThisYear' => $this->getTurnoutReport ( $orgId, $dateFrom, $dateTo, $em ),
+				'turnoutReportLastYear' => $this->getTurnoutReport ( $orgId, $dateFromLY, $dateToLY, $em )
 		] );
 	}
 	private function getOverviewReport(?String $organizationId, ?String $dateFrom, ?String $dateTo, EntityManagerInterface $em): array {
@@ -308,7 +312,7 @@ class ReportController extends AbstractController {
 		foreach ( $result as $res ) {
 			switch ($res ['categoryNumber']) {
 				case 76 :
-				case 77 :				
+				case 77 :
 					$report->a += $res ['credit'] - $res ['debit'];
 					break;
 				case 78 :
@@ -385,7 +389,7 @@ class ReportController extends AbstractController {
 					$report->p018 += $res ['debit'] - $res ['credit'];
 					break;
 				case 4 :
-				case 5 :	
+				case 5 :
 					$report->p010 += $res ['debit'] - $res ['credit'];
 					break;
 				case 6 :
@@ -397,7 +401,7 @@ class ReportController extends AbstractController {
 				case 8 :
 					$report->p027 += $res ['debit'] - $res ['credit'];
 					break;
-				
+
 				case 67 :
 					$report->p033 += $res ['debit'] - $res ['credit'];
 					break;
@@ -414,9 +418,9 @@ class ReportController extends AbstractController {
 					$report->p038 += $res ['debit'] - $res ['credit'];
 					break;
 				case 23 :
-					$report->p039 += +$res ['debit'] - $res ['credit'];
+					$report->p039 += + $res ['debit'] - $res ['credit'];
 					break;
-					
+
 				case 17 :
 					$report->p041 += $res ['debit'] - $res ['credit'];
 					break;
@@ -436,30 +440,30 @@ class ReportController extends AbstractController {
 				case 19 :
 					$report->p053 += $res ['debit'] - $res ['credit'];
 					break;
-				
+
 				case 90 :
 				case 93 :
-					$report->p058 += -$res ['debit'] + $res ['credit'];
+					$report->p058 += - $res ['debit'] + $res ['credit'];
 					break;
 				case 94 :
-					$report->p067 += -$res ['debit'] + $res ['credit'];
+					$report->p067 += - $res ['debit'] + $res ['credit'];
 					break;
 				case 95 :
-					$report->p301 += -$res ['debit'] + $res ['credit'];
+					$report->p301 += - $res ['debit'] + $res ['credit'];
 					break;
-				
+
 				case 97 :
-					$report->p076 += -$res ['debit'] + $res ['credit'];
+					$report->p076 += - $res ['debit'] + $res ['credit'];
 					break;
 				case 98 :
-					$report->p080 += -$res ['debit'] + $res ['credit'];
+					$report->p080 += - $res ['debit'] + $res ['credit'];
 					break;
-				
+
 				case 21 :
-					$report->p086 += -$res ['debit'] + $res ['credit'];
+					$report->p086 += - $res ['debit'] + $res ['credit'];
 					break;
 				case 27 :
-					$report->p087 += -$res ['debit'] + $res ['credit'];
+					$report->p087 += - $res ['debit'] + $res ['credit'];
 					break;
 				case 22 :
 				case 23 :
@@ -467,29 +471,26 @@ class ReportController extends AbstractController {
 				case 25 :
 				case 26 :
 				case 28 :
-					$report->p091 += -$res ['debit'] + $res ['credit'];
+					$report->p091 += - $res ['debit'] + $res ['credit'];
 					break;
 				case 29 :
-					$report->p095 += -$res ['debit'] + $res ['credit'];
+					$report->p095 += - $res ['debit'] + $res ['credit'];
 					break;
-				
-				
-				
 			}
 
-			switch ($res ['kontoNumber']) {			
+			switch ($res ['kontoNumber']) {
 				case 7 :
 					$report->p009 += $res ['debit'] - $res ['credit'];
 					$report->p004 -= $res ['debit'] - $res ['credit'];
 					break;
 				case 918 :
-					$report->p060a += -$res ['debit'] + $res ['credit'];
+					$report->p060a += - $res ['debit'] + $res ['credit'];
 					break;
 				case 919 :
-					$report->p060b += -$res ['debit'] + $res ['credit'];
+					$report->p060b += - $res ['debit'] + $res ['credit'];
 					break;
 				case 801 :
-					$report->p070 += -$res ['debit'] + $res ['credit'];
+					$report->p070 += - $res ['debit'] + $res ['credit'];
 					break;
 				case 803 :
 					$report->p071 += $res ['debit'] - $res ['credit'];
@@ -499,31 +500,160 @@ class ReportController extends AbstractController {
 				case 962 :
 				case 963 :
 				case 964 :
-				case 965 :					
+				case 965 :
 				case 969 :
-					$report->p073 += -$res ['debit'] + $res ['credit'];
+					$report->p073 += - $res ['debit'] + $res ['credit'];
 					break;
 				case 966 :
 				case 967 :
 				case 968 :
-					$report->p074 += -$res ['debit'] + $res ['credit'];
+					$report->p074 += - $res ['debit'] + $res ['credit'];
 					break;
 				case 990 :
 				case 991 :
 				case 992 :
 				case 993 :
 				case 994 :
-					$report->p054 += -$res ['debit'] + $res ['credit'];
+					$report->p054 += - $res ['debit'] + $res ['credit'];
 					break;
 				case 995 :
 				case 996 :
 				case 997 :
 				case 998 :
 				case 999 :
-					$report->p096 += -$res ['debit'] + $res ['credit'];
+					$report->p096 += - $res ['debit'] + $res ['credit'];
 					break;
 			}
-			
+		}
+
+		$report->calculate ();
+		return $report;
+	}
+	private function getTurnoutReport(?String $organizationId, ?String $dateFrom, ?String $dateTo, EntityManagerInterface $em): Turnout {
+		$report = new Turnout ();
+		$qb = $em->createQueryBuilder ();
+		$qb->select ( [ 
+				'k.id',
+				'kc.number AS categoryNumber',
+				'k.name',
+				'k.number AS kontoNumber',
+				'SUM(CASE WHEN t.debitKonto = k.id THEN t.sum ELSE 0 END) AS debit',
+				'SUM(CASE WHEN t.creditKonto = k.id THEN t.sum ELSE 0 END) AS credit'
+		] )->from ( 'App\Entity\Konto\Konto', 'k', 'k.id' )->leftJoin ( 'App\Entity\Konto\KontoCategory', 'kc', 'WITH', 'k.category = kc.id' )->leftJoin ( 'App\Entity\Transaction\Transaction', 't', 'WITH', 't.debitKonto = k.id OR t.creditKonto = k.id' );
+		if ($organizationId !== null)
+			$qb->andWhere ( 't.organization = :orgId' );
+		if ($dateFrom !== null)
+			$qb->andWhere ( 't.date >= :dateFrom' );
+		if ($dateTo !== null)
+			$qb->andWhere ( 't.date <= :dateTo' );
+		$qb->groupBy ( 'k.id' );
+		if ($organizationId !== null)
+			$qb->setParameter ( 'orgId', $organizationId );
+		if ($dateFrom !== null)
+			$qb->setParameter ( 'dateFrom', date ( 'Y-m-d G:i:s', $dateFrom ) );
+		if ($dateTo !== null)
+			$qb->setParameter ( 'dateTo', date ( 'Y-m-d G:i:s', $dateTo ) );
+		$query = $qb->getQuery ();
+		$result = $query->getArrayResult ();
+
+		foreach ( $result as $res ) {
+			switch ($res ['categoryNumber']) {
+				case 40 :
+					$report->p130 += $res ['debit'] - $res ['credit'];
+					break;
+				case 41 :
+					$report->p134 += $res ['debit'] - $res ['credit'];
+					break;
+				case 43 :
+					$report->p145 += $res ['debit'] - $res ['credit'];
+					break;
+			}
+
+			switch ($res ['kontoNumber']) {
+				case 760 :
+				case 762 :
+					$report->p111 += - $res ['debit'] + $res ['credit'];
+					break;
+				case 761 :
+				case 763 :
+					$report->p115 += - $res ['debit'] + $res ['credit'];
+					break;
+				case 701 :
+					$report->p123 += - $res ['debit'] + $res ['credit'];
+					break;
+				case 768 :
+					$report->p124 += - $res ['debit'] + $res ['credit'];
+					break;
+				case 764 :
+				case 765 :
+				case 766 :
+				case 767 :
+				case 769 :
+					$report->p125 += - $res ['debit'] + $res ['credit'];
+					break;
+				case 470 :
+				case 471 :
+				case 473 :
+				case 475 :
+				case 476 :
+				case 477 :
+					$report->p140 += $res ['debit'] - $res ['credit'];
+					break;
+				case 472 :
+					$report->p141 += $res ['debit'] - $res ['credit'];
+					break;
+				case 474 :
+					$report->p142 += $res ['debit'] - $res ['credit'];
+					break;
+				case 478 :
+					$report->p143 += $res ['debit'] - $res ['credit'];
+					break;
+				case 720 :
+					$report->p146 += - $res ['debit'] + $res ['credit'];
+					break;
+				case 721 :
+					$report->p147 += - $res ['debit'] + $res ['credit'];
+					break;
+				case 484 :
+					$report->p148a += $res ['debit'] - $res ['credit'];
+					break;
+				case 489 :
+				case 486 :
+					$report->p148b += $res ['debit'] - $res ['credit'];
+					break;
+				case 770 :
+				case 771 :
+				case 772 :
+				case 773 :
+					$report->p155 += - $res ['debit'] + $res ['credit'];
+					break;
+				case 774 :
+				case 775 :
+					$report->p160 += - $res ['debit'] + $res ['credit'];
+					break;
+				case 776 :
+				case 777 :
+					$report->p163 += - $res ['debit'] + $res ['credit'];
+					break;
+				case 450 :
+					$report->p169 += $res ['debit'] - $res ['credit'];
+					break;
+				case 748 :
+					$report->p168 += - $res ['debit'] + $res ['credit'];
+					break;
+				case 743 :
+					$report->p169 += - $res ['debit'] + $res ['credit'];
+					break;
+				case 746 :
+					$report->p174 += - $res ['debit'] + $res ['credit'];
+					break;
+				case 785 :
+					$report->p179 += - $res ['debit'] + $res ['credit'];
+					break;
+				case 789 :
+					$report->p180 += - $res ['debit'] + $res ['credit'];
+					break;
+			}
 		}
 
 		$report->calculate ();
