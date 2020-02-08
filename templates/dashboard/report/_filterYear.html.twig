@@ -1,0 +1,43 @@
+<form class="bs-component">
+            
+    <fieldset class="form-group">
+         <div class="form-group"> 
+            <label class='col-form-label-lg' for='transaction_presets' >{{ 'label.organization'|trans }}</label> 
+            <div class='input-group'>
+                <select id="organizationPicker" class="form-control" name="organization">                    
+                </select> 
+            </div>
+         </div>
+    </fieldset>
+    
+    <fieldset class="form-group">  
+         
+         <label class="col-form-label-lg" for="dateFieldYear">{{ 'label.year'|trans }}</label>
+        <div class="input-group date" id="filterDateYear">
+            <input type="text" id="dateFieldYear" class="form-control">
+            <div class="input-group-append">
+                <span class="input-group-text"><i class="fa fa-calendar" aria-hidden="true"></i></span>
+            </div>
+        </div>
+         
+        <label class="col-form-label-lg" for="dateFieldFrom">{{ 'label.dateFrom'|trans }}</label>
+        <div class="input-group date" id="filterDateFrom">
+            <input type="text" id="dateFieldFrom" class="form-control">
+            <div class="input-group-append">
+                <span class="input-group-text"><i class="fa fa-calendar" aria-hidden="true"></i></span>
+            </div>
+        </div>
+      
+        <label class="col-form-label-lg" for="dateFieldTo">{{ 'label.dateTo'|trans }}</label>
+        <div class="input-group date" id="filterDateTo">
+            <input type="text" id="dateFieldTo" class="form-control">
+            <div class="input-group-append">
+                <span class="input-group-text"><i class="fa fa-calendar" aria-hidden="true"></i></span>
+            </div>
+        </div>
+    </fieldset>
+    
+    <fieldset class="form-group">
+        <button type="button" id="clearFilterBtn" class="btn btn-danger">{{ 'label.clear' | trans }}</button>  
+    </fieldset>
+</form>

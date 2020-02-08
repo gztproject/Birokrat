@@ -96,6 +96,11 @@
 			<attribute name="composer" value="vendor"/>
 		</attributes>
 	</buildpathentry>
+	<buildpathentry kind="src" path="vendor/doctrine/persistence/lib/Doctrine/Persistence">
+		<attributes>
+			<attribute name="composer" value="vendor"/>
+		</attributes>
+	</buildpathentry>
 	<buildpathentry kind="src" path="vendor/doctrine/reflection/lib/Doctrine/Common">
 		<attributes>
 			<attribute name="composer" value="vendor"/>
