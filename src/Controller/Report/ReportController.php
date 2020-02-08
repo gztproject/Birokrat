@@ -343,7 +343,7 @@ class ReportController extends AbstractController {
 		}
 
 		// The constants should be updated yearly...
-		$report->q1 = $report->a <= 11166.37 ? 6519.82 : $report->a <= 13316.83 ? 3302.7 + (19922.15 - (1.49601 * $report->a)) : 3302.7;
+		$report->q1 = ($report->a <= 11166.37) ? 6519.82 : (($report->a <= 13316.83) ? (3302.7 + (19922.15 - (1.49601 * $report->a))) : 3302.7);
 
 		$report->u = 0;
 		$report->v = 0;
