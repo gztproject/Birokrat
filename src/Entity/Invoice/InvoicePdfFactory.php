@@ -207,9 +207,8 @@ class InvoicePdfFactory
    				$pdf->Cell( 120, 0, '', 0, 0, '', 0, '', 0, false, 'T', 'B' );
    				$pdf->Cell( 30, 0, $this->__translator->trans('label.toPay').":", 0, 0, '', 1, '', 0, false, 'T', 'B' );
    				$pdf->Cell( 30, 0, number_format($this->__invoice->getTotalPrice(), 2, ',', '.')." €", 0, 1, 'R', 1, '', 0, false, 'T', 'B' );
-   				
-   				$pdf->Ln(14);
-   				//ToDo: Move this to organizaion settings
+   				   				
+   				//ToDo: Get this from organizaion settings
    				$pdf->Cell( 120, 0, 'V skladu s prvim odstavkom 94. člena ZDDV-1 DDV ni obračunan.', 0, 1, '', 0, '', 0, false, 'T', 'B' );   				
    				$pdf->Ln(7);
    				$pdf->Cell( 120, 0, $this->__translator->trans('label.preparedBy').':', 0, 1, '', 0, '', 0, false, 'T', 'B' );
