@@ -551,14 +551,14 @@ class Invoice extends AggregateBase implements iTransactionDocument
     {
     	//ToDo: Must be a better way to do this...
     	$date = \DateTime::createFromFormat("U", $this->getDateOfIssue()->format('U'));
-    	$this->dueDate= $date->modify('+'.$days.' day');;
+    	$this->dueDate = $date->modify('+'.$days.' day');;
     	
     	return $this;
     }
     
     public function getDueInDays(): int
     {	
-    	return date_diff($this->dueDate, $this->dateOfIssue, true)->format("%d");
+    	return date_diff($this->dueDate, $this->dateOfIssue, true)->days;
     }
     
     public function getDatePaid(): ?\DateTimeInterface
