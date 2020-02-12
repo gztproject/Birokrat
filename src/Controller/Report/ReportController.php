@@ -316,9 +316,7 @@ class ReportController extends AbstractController {
 					$report->a += $res ['credit'] - $res ['debit'];
 					break;
 				case 78 :
-					$report->a += $res ['credit'] - $res ['debit'];
-					$report->b3 += $res ['credit'] - $res ['debit'];
-					$report->f26 += $res ['credit'] - $res ['debit'];
+					$report->e -= $res ['credit'] + $res ['debit'];
 					break;
 				case 40 :
 				case 41 :
