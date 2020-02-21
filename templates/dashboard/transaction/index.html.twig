@@ -16,6 +16,13 @@
     
     {{ parent() }}
     <a href="{{ path('transaction_new') }}" class="btn btn-sm btn-block btn-success">
-            <i class="fa fa-plus" aria-hidden="true"></i> {{ 'action.create_transaction'|trans }}
-        </a>
+        <i class="fa fa-plus" aria-hidden="true"></i> {{ 'action.create_transaction'|trans }}
+    </a>
+    
+    {{ include('common/filters/_dateOrgYearFilter.html.twig') }}
+    
+    <a href="{{ path('transaction_export', {'dateFrom': app.request.query.get('dateFrom'), 'dateTo': app.request.query.get('dateTo'), 'year': app.request.query.get('year'), 'orgId': app.request.query.get('organization')}) }}" class="btn btn-sm btn-block btn-success">
+        <i class="fa fa-file-excel" aria-hidden="true"></i> {{ 'action.exportXlsx'|trans }}
+    </a>
+            
 {% endblock %}

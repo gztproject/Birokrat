@@ -432,6 +432,11 @@ class User extends AggregateBase implements UserInterface, \Serializable
     {
         return $this->phone;
     }
+    
+    public function getPosition(): ?string
+    {
+    	return "Not implemented yet.";
+    }
 
     public function getIsActive(): ?bool
     {

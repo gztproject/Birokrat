@@ -455,7 +455,22 @@ class TravelExpense extends AggregateBase implements iTransactionDocument
         return $this->travelExpenseBundle;
     }
     
+    public function getNumber(): string
+    {
+    	return "Not implemented yet";
+    }
+    
+    public function getReason(): ?string
+    {
+    	return "Not implemented yet";
+    }
+    
     public function __toString(): string
+    {
+    	return "TravelExpense ".$this->getDateString();
+    }
+    
+    public function toStringDebug(): string
     {
     	$ret = $this->getDateString().", ";    	
     	$ret .= $this->employee.", stops:";
