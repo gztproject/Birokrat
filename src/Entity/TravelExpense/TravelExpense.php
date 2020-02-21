@@ -467,6 +467,11 @@ class TravelExpense extends AggregateBase implements iTransactionDocument
     
     public function __toString(): string
     {
+    	return "TravelExpense ".$this->getDateString();
+    }
+    
+    public function toStringDebug(): string
+    {
     	$ret = $this->getDateString().", ";    	
     	$ret .= $this->employee.", stops:";
     	foreach($this->travelStops as $ts)

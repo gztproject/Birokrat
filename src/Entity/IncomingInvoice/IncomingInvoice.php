@@ -435,6 +435,11 @@ class IncomingInvoice extends AggregateBase implements iTransactionDocument
     {
     	return $this->datePaid->format('j. n. Y');
     }
+    
+    public function __toString()
+    {
+    	return "Incoming invoice ".$this->issuer->getName().": ".$this->number;
+    }
 }
 
 /**

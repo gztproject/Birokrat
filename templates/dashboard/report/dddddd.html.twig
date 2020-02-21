@@ -969,7 +969,7 @@
 {% block sidebar %}
 
 {{ parent() }}
-{{ include('dashboard/report/_filterYear.html.twig') }}
+{{ include('common/filters/_dateOrgYearFilter.html.twig') }}
 <a href="{{ path('report_bilanca') }}" class="btn btn-sm btn-primary">
         <i class="fa fa-eye" aria-hidden="true"></i> Bilanca
     </a>
@@ -981,5 +981,4 @@
 
 {% block javascripts %}
 {{ parent() }}
-{{ encore_entry_script_tags('js/report/filter') }}
 {% endblock %}

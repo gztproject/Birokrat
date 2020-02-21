@@ -344,7 +344,14 @@ class Transaction extends AggregateBase
 	
 	public function getDescription(): ?string
 	{
-		return $this->description;
+		$sb = $this->description;
+		$sb .= $this->invoice;
+		$sb .= $this->incomingInvoice;
+		$sb .= $this->travelExpense;
+		$sb .= $this->travelExpenseBundle;
+		$sb .= $this->lunchExpense;
+		$sb .= $this->lunchExpenseBundle;
+		return $sb;
 	}
 	
 	public function __toString(): string
