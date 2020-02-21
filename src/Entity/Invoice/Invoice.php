@@ -595,4 +595,9 @@ class Invoice extends AggregateBase implements iTransactionDocument
     {
     	return $this->createdBy;
     }
+    
+    public function __toString()
+    {
+    	return "Invoice: ".$this->number;
+    }
 }

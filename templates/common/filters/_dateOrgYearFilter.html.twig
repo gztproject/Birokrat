@@ -41,3 +41,7 @@
         <button type="button" id="clearFilterBtn" class="btn btn-danger">{{ 'label.clear' | trans }}</button>  
     </fieldset>
 </form>
+
+{% block javascripts %}
+{{ encore_entry_script_tags('js/common/filters/dateOrgFilter') }}
+{% endblock %}

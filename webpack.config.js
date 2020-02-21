@@ -48,8 +48,9 @@ Encore
     //Geography
     .addEntry('js/geography/country/show', './assets/js/geography/country/show.js')
 
-    //Report
-    .addEntry('js/report/filter', './assets/js/report/filter.js')
+    //Common
+    //  ->filters
+    .addEntry('js/common/filters/dateOrgFilter', './assets/js/common/filters/dateOrgFilter.js')
 
     //POC
     .addEntry('js/poc.typeahead', './assets/js/poc.typeahead.js')

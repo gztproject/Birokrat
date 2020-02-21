@@ -27,6 +27,34 @@ class TransactionRepository extends ServiceEntityRepository
     	->addSelect('t')
     	->orderBy('t.date', 'DESC');
     }
+    
+    public function getFilteredQuery($from, $to, $orgId, $order = "DESC"): QueryBuilder
+    {
+    	$qb = $this
+    	->createQueryBuilder('t')
+    	->addSelect('t');
+    	if($from)
+    	{
+    		$qb
+    		->where('t.date >= :from')
+    		->setParameter('from', date('Y-m-d G:i:s', $from));
+    	}
+    	
+    	if($to)
+    	{
+    		$qb
+    		->andWhere('t.date <= :to')
+    		->setParameter('to', date('Y-m-d G:i:s', $to));
+    	}
+    	
+    	if($orgId)
+    	{
+    		
+    		$qb->andWhere('t.organization = :orgid')->setParameter('orgid', $orgId);
+    	}
+    	
+    	return $qb->orderBy('t.date', $order);
+    }
 
     // /**
     //  * @return Transaction[] Returns an array of Transaction objects
