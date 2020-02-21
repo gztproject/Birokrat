@@ -12,14 +12,16 @@ class InvoicePdfFactory
 	private $__tcpdf = null;
 	private $__dest = null;
 	private $__path = null;
+	private $__print = false;
 
-	public function __construct(Invoice $invoice, TranslatorInterface $translator, TCPDFController $tcpdf, string $dest, ?string $path)
+	public function __construct(Invoice $invoice, TranslatorInterface $translator, TCPDFController $tcpdf, string $dest, ?string $path, bool $print = false)
    	{
    		$this->__invoice = $invoice;
    		$this->__translator = $translator;
    		$this->__tcpdf = $tcpdf;
    		$this->__dest = $dest;
    		$this->__path = $path;
+   		$this->__print = $print;
    	}
 
    	/**
@@ -30,12 +32,12 @@ class InvoicePdfFactory
    	 * @param string $dest (Inline, Download, File, String, F + I, F + D, Email)
    	 * @return InvoicePdfFactory
    	 */
-   	public static function factory(Invoice $invoice, TranslatorInterface $translator, TCPDFController $tcpdf, string $dest = "I", ?string $path = null): InvoicePdfFactory
+   	public static function factory(Invoice $invoice, TranslatorInterface $translator, TCPDFController $tcpdf, string $dest = "I", ?string $path = null, bool $print = false): InvoicePdfFactory
    	{
    		$validDests = array('I', 'D', 'F', 'S', 'FI', 'FD', 'E');  
    		if($dest == 'F' && $path == null)
    			throw new \Exception('No path provided for the file.');
-   		return new InvoicePdfFactory($invoice, $translator, $tcpdf, in_array($dest, $validDests) ? $dest : 'I', $dest == 'F' ? $path : null);
+   		return new InvoicePdfFactory($invoice, $translator, $tcpdf, in_array($dest, $validDests) ? $dest : 'I', $dest == 'F' ? $path : null, $print);
    	}
 
    	public function generate()
@@ -207,9 +209,8 @@ class InvoicePdfFactory
    				$pdf->Cell( 120, 0, '', 0, 0, '', 0, '', 0, false, 'T', 'B' );
    				$pdf->Cell( 30, 0, $this->__translator->trans('label.toPay').":", 0, 0, '', 1, '', 0, false, 'T', 'B' );
    				$pdf->Cell( 30, 0, number_format($this->__invoice->getTotalPrice(), 2, ',', '.')." €", 0, 1, 'R', 1, '', 0, false, 'T', 'B' );
-   				
-   				$pdf->Ln(14);
-   				//ToDo: Move this to organizaion settings
+   				   				
+   				//ToDo: Get this from organizaion settings
    				$pdf->Cell( 120, 0, 'V skladu s prvim odstavkom 94. člena ZDDV-1 DDV ni obračunan.', 0, 1, '', 0, '', 0, false, 'T', 'B' );   				
    				$pdf->Ln(7);
    				$pdf->Cell( 120, 0, $this->__translator->trans('label.preparedBy').':', 0, 1, '', 0, '', 0, false, 'T', 'B' );
@@ -261,7 +262,7 @@ class InvoicePdfFactory
    				// ---------------------------------------------------------
    				
    				//Close and output PDF document
-   				
+				if($this->__print) $pdf->IncludeJS("print();");
    				$pdf->Output($title.'.pdf', $this->__dest);
    				
    				//============================================================+
