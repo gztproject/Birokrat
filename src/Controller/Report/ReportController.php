@@ -104,7 +104,9 @@ class ReportController extends AbstractController {
 				'k.number AS kontoNumber',
 				'SUM(CASE WHEN t.debitKonto = k.id THEN t.sum ELSE 0 END) AS debit',
 				'SUM(CASE WHEN t.creditKonto = k.id THEN t.sum ELSE 0 END) AS credit'
-		] )->from ( 'App\Entity\Konto\Konto', 'k', 'k.id' )->leftJoin ( 'App\Entity\Konto\KontoCategory', 'kc', 'WITH', 'k.category = kc.id' )->leftJoin ( 'App\Entity\Transaction\Transaction', 't', 'WITH', 't.debitKonto = k.id OR t.creditKonto = k.id' );
+		] )->from ( 'App\Entity\Konto\Konto', 'k', 'k.id' )
+		->leftJoin ( 'App\Entity\Konto\KontoCategory', 'kc', 'WITH', 'k.category = kc.id' )
+		->leftJoin ( 'App\Entity\Transaction\Transaction', 't', 'WITH', 't.sum > 0 AND(t.debitKonto = k.id OR t.creditKonto = k.id)' );
 		if ($organizationId !== null)
 			$qb->andWhere ( 't.organization = :orgId' );
 		if ($dateFrom !== null)
@@ -124,7 +126,7 @@ class ReportController extends AbstractController {
 		foreach ( $result as $res ) {
 			switch ($res ['categoryNumber']) {
 				case 76 :
-					$invoices += $res ['credit'] - $res ['debit'];
+					$invoices += $res ['credit'];// - $res ['debit'];
 					break;
 
 				case 40 :
@@ -149,16 +151,13 @@ class ReportController extends AbstractController {
 					else
 						$otherExpenses += $res ['debit'] - $res ['credit'];
 					break;
-				// case 78 :
-				// if ($res ['kontoNumber'] == 785)
-				// {
-				// $expenses += $res ['debit'] - $res ['credit'];
-				// $socialSecurity += $res ['debit'] - $res ['credit'];
-				// }
-
-				// case 70 :
-				// $expenses += $res ['debit'] - $res ['credit'];
-				// break;
+				case 78 :
+				if ($res ['kontoNumber'] == 785)
+				{
+					$expenses += $res ['debit'] - $res ['credit'];
+					$socialSecurity += $res ['debit'] - $res ['credit'];
+				}
+				
 				case 11 :
 					$bank += $res ['debit'] - $res ['credit'];
 					break;
