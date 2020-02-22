@@ -302,7 +302,9 @@ class ReportController extends AbstractController {
 				'k.number AS kontoNumber',
 				'SUM(CASE WHEN t.debitKonto = k.id THEN t.sum ELSE 0 END) AS debit',
 				'SUM(CASE WHEN t.creditKonto = k.id THEN t.sum ELSE 0 END) AS credit'
-		] )->from ( 'App\Entity\Konto\Konto', 'k', 'k.id' )->leftJoin ( 'App\Entity\Konto\KontoCategory', 'kc', 'WITH', 'k.category = kc.id' )->leftJoin ( 'App\Entity\Transaction\Transaction', 't', 'WITH', 't.debitKonto = k.id OR t.creditKonto = k.id' );
+		] )->from ( 'App\Entity\Konto\Konto', 'k', 'k.id' )
+		->leftJoin ( 'App\Entity\Konto\KontoCategory', 'kc', 'WITH', 'k.category = kc.id' )
+		->leftJoin ( 'App\Entity\Transaction\Transaction', 't', 'WITH', 't.sum >= 0 AND (t.debitKonto = k.id OR t.creditKonto = k.id)' );
 		if ($organizationId !== null)
 			$qb->andWhere ( 't.organization = :orgId' );
 		if ($dateFrom !== null)
@@ -323,7 +325,7 @@ class ReportController extends AbstractController {
 			switch ($res ['categoryNumber']) {
 				case 76 :
 				case 77 :
-					$report->a += $res ['credit'] - $res ['debit'];
+					$report->a += $res ['credit'];
 					break;
 				case 78 :
 					$report->e -= $res ['credit'] + $res ['debit'];
@@ -578,7 +580,9 @@ class ReportController extends AbstractController {
 				'k.number AS kontoNumber',
 				'SUM(CASE WHEN t.debitKonto = k.id THEN t.sum ELSE 0 END) AS debit',
 				'SUM(CASE WHEN t.creditKonto = k.id THEN t.sum ELSE 0 END) AS credit'
-		] )->from ( 'App\Entity\Konto\Konto', 'k', 'k.id' )->leftJoin ( 'App\Entity\Konto\KontoCategory', 'kc', 'WITH', 'k.category = kc.id' )->leftJoin ( 'App\Entity\Transaction\Transaction', 't', 'WITH', 't.sum >= 0 AND (t.debitKonto = k.id OR t.creditKonto = k.id)' );
+		] )->from ( 'App\Entity\Konto\Konto', 'k', 'k.id' )
+		->leftJoin ( 'App\Entity\Konto\KontoCategory', 'kc', 'WITH', 'k.category = kc.id' )
+		->leftJoin ( 'App\Entity\Transaction\Transaction', 't', 'WITH', 't.sum >= 0 AND (t.debitKonto = k.id OR t.creditKonto = k.id)' );
 		if ($organizationId !== null)
 			$qb->andWhere ( 't.organization = :orgId' );
 		if ($dateFrom !== null)
