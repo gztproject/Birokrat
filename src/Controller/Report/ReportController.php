@@ -498,7 +498,7 @@ class ReportController extends AbstractController {
 				case 77 :
 				case 78 :
 					$report->p024 -= $res ['debit'] - $res ['credit'];
-					$report->p045 += $res ['debit'] - $res ['credit']; //Not really sure but we don't really use this kontos anyway.
+					$report->p045 += $res ['debit'] - $res ['credit']; // Not really sure but we don't really use this kontos anyway.
 					break;
 				case 131 :
 					$report->p004 += $res ['debit'] - $res ['credit'];
@@ -561,7 +561,7 @@ class ReportController extends AbstractController {
 				case 998 :
 				case 999 :
 					$report->p096 += - $res ['debit'] + $res ['credit'];
-					break;				
+					break;
 			}
 		}
 
@@ -578,7 +578,7 @@ class ReportController extends AbstractController {
 				'k.number AS kontoNumber',
 				'SUM(CASE WHEN t.debitKonto = k.id THEN t.sum ELSE 0 END) AS debit',
 				'SUM(CASE WHEN t.creditKonto = k.id THEN t.sum ELSE 0 END) AS credit'
-		] )->from ( 'App\Entity\Konto\Konto', 'k', 'k.id' )->leftJoin ( 'App\Entity\Konto\KontoCategory', 'kc', 'WITH', 'k.category = kc.id' )->leftJoin ( 'App\Entity\Transaction\Transaction', 't', 'WITH', 't.debitKonto = k.id OR t.creditKonto = k.id' );
+		] )->from ( 'App\Entity\Konto\Konto', 'k', 'k.id' )->leftJoin ( 'App\Entity\Konto\KontoCategory', 'kc', 'WITH', 'k.category = kc.id' )->leftJoin ( 'App\Entity\Transaction\Transaction', 't', 'WITH', 't.sum >= 0 AND (t.debitKonto = k.id OR t.creditKonto = k.id)' );
 		if ($organizationId !== null)
 			$qb->andWhere ( 't.organization = :orgId' );
 		if ($dateFrom !== null)
@@ -597,6 +597,15 @@ class ReportController extends AbstractController {
 
 		foreach ( $result as $res ) {
 			switch ($res ['categoryNumber']) {
+				case 60 :
+				case 63 :
+					$sum = $res ['debit'] - $res ['credit'];
+					$report->p121 += $sum > 0 ? $sum : 0;
+					$report->p122 += $sum < 0 ? $sum : 0;
+					break;
+				case 79 :
+					$report->p123 += - $res ['debit'] + $res ['credit'];
+					break;
 				case 40 :
 					$report->p130 += $res ['debit'] - $res ['credit'];
 					break;
@@ -606,19 +615,24 @@ class ReportController extends AbstractController {
 				case 43 :
 					$report->p145 += $res ['debit'] - $res ['credit'];
 					break;
+				case 44 :
+					$report->p148b += $res ['debit'] - $res ['credit'];
+					break;
 			}
 
 			switch ($res ['kontoNumber']) {
 				case 760 :
 				case 762 :
-					$report->p111 += - $res ['debit'] + $res ['credit'];
+					$report->p111 += $res ['credit'];
 					break;
 				case 761 :
 				case 763 :
-					$report->p115 += - $res ['debit'] + $res ['credit'];
+					$report->p115 += $res ['credit'];
 					break;
-				case 701 :
-					$report->p123 += - $res ['debit'] + $res ['credit'];
+				case 619 :
+					$sum = $res ['debit'] - $res ['credit'];
+					$report->p121 += $sum > 0 ? $sum : 0;
+					$report->p122 += $sum < 0 ? $sum : 0;
 					break;
 				case 768 :
 					$report->p124 += - $res ['debit'] + $res ['credit'];
@@ -629,6 +643,9 @@ class ReportController extends AbstractController {
 				case 767 :
 				case 769 :
 					$report->p125 += - $res ['debit'] + $res ['credit'];
+					break;
+				case 702 :
+					$report->p129 += - $res ['debit'] + $res ['credit'];
 					break;
 				case 470 :
 				case 471 :
@@ -656,6 +673,10 @@ class ReportController extends AbstractController {
 				case 484 :
 					$report->p148a += $res ['debit'] - $res ['credit'];
 					break;
+				case 785 :
+					$report->p148a -= $res ['debit'] + $res ['credit'];
+					// $report->p179 += - $res ['debit'] + $res ['credit']; //This is rightly here but commented out as we're not supposed to account for this.
+					break;
 				case 489 :
 				case 486 :
 					$report->p148b += $res ['debit'] - $res ['credit'];
@@ -674,21 +695,17 @@ class ReportController extends AbstractController {
 				case 777 :
 					$report->p163 += - $res ['debit'] + $res ['credit'];
 					break;
-				case 450 :
-					$report->p169 += $res ['debit'] - $res ['credit'];
-					break;
 				case 748 :
 					$report->p168 += - $res ['debit'] + $res ['credit'];
+					break;
+				case 450 :
+					$report->p169 += $res ['debit'] - $res ['credit']; // Not sure if this should be here but we need to account for it somewhere...
 					break;
 				case 743 :
 					$report->p169 += - $res ['debit'] + $res ['credit'];
 					break;
 				case 746 :
 					$report->p174 += - $res ['debit'] + $res ['credit'];
-					break;
-				case 785 :
-					$report->p148a -= $res ['debit'] + $res ['credit'];
-					// $report->p179 += - $res ['debit'] + $res ['credit'];
 					break;
 				case 789 :
 					$report->p180 += - $res ['debit'] + $res ['credit'];
