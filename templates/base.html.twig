@@ -22,8 +22,8 @@
     <body id="{% block body_id %}{% endblock %}">
 
         {% block header %}
-            <header>
-                <nav class="navbar navbar-expand-md fixed-top navbar-dark bg-primary" role="navigation">
+            <header class="{{ app.environment }}"> 
+                <nav class="navbar navbar-expand-md fixed-top navbar-dark bg-primary {{ app.environment }}" role="navigation">
                     <div class="container-fluid">
                         <div class="navbar-header">
                             <a href="{{ path('dashboard_index') }}" class="navbar-brand">Birokrat</a>                       
@@ -122,10 +122,10 @@
                         </div>
                     </div>
                 </nav>
-            </header>
+            </header>            
         {% endblock %}
 
-        <div id="main_container" class="container-fluid">
+        <div id="main_container" class="container-fluid">            
             {% block body %}
                 <div class="row">                    
                     <div id="main" class="col-sm-9">  
