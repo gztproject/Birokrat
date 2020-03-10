@@ -126,7 +126,7 @@ class ReportController extends AbstractController {
 		foreach ( $result as $res ) {
 			switch ($res ['categoryNumber']) {
 				case 76 :
-					$invoices += $res ['credit'];// - $res ['debit'];
+					$invoices += $res ['credit'] - $res ['debit'];
 					break;
 
 				case 40 :
