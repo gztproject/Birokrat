@@ -18,7 +18,7 @@
         "build": "encore production --progress"
     },
     "dependencies": {
-        "acorn": "^7.1.1",
+        "acorn": "^6.4.1",
         "bloodhound-js": "^1.2.3",
         "bootstrap-sass": "^3.4.1",
         "bootstrap-tagsinput": "^0.7.1",
