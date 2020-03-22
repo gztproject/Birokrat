@@ -15,6 +15,8 @@ use App\Entity\Organization\Partner;
 use App\Entity\Transaction\Transaction;
 use App\Entity\Transaction\iTransactionDocument;
 use App\Entity\Transaction\CreateTransactionCommand;
+use Doctrine\Bundle\DoctrineBundle\Dbal\SchemaAssetsFilterManager;
+use phpDocumentor\Reflection\Types\String_;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\Invoice\InvoiceRepository")
@@ -103,6 +105,48 @@ class Invoice extends AggregateBase implements iTransactionDocument
      * @ORM\Column(type="string", length=100, nullable=true)
      */
     private $cancelReason;
+    
+    /*
+     * We're saving some denormalized issuer and client data in case of changes (eg. address, name, etc.)
+     */
+    
+    /**
+    * @ORM\Column(type="string", length=255)
+    */
+    private $issuerName;
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $issuerAddress;
+    /**
+     * @ORM\Column(type="string", length=100)
+     */
+    private $issuerPostName;
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $issuerTaxNumber;
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $issuerAccountNumber;    
+    /**
+     * @ORM\Column(type="string", length=10)
+     */
+    private $issuerBic;
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $recepientName;
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $recepientAddress;
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $recepientTaxNumber;   
+    
     
     /**
      * Creates new invoice
@@ -432,6 +476,19 @@ class Invoice extends AggregateBase implements iTransactionDocument
     	$this->referenceNumber = $result;    			
     }   
     
+    private function setRedundantData()
+    {
+    	$this->issuerName = $this->issuer->getName();
+    	$this->issuerAddress = $this->issuer->getAddress()->getFullAddress();
+    	$this->issuerPostName = $this->issuer->getAddress()->getPost()->getName();
+    	$this->issuerTaxNumber = $this->issuer->getFullTaxNumber();
+    	$this->issuerAccountNumber = $this->issuer->getAccountNumber();
+    	$this->issuerBic = $this->issuer->getBic();
+    	$this->recepientName = $this->recepient->getName();
+    	$this->recepientAddress = $this->recepient->getAddress()->getFullAddress();
+    	$this->recepientTaxNumber = $this->recepient->getFullTaxNumber();
+    }
+    
     public function getDateServiceRenderedFrom(): \DateTimeInterface
     {
     	return $this->dateServiceRenderedFrom;
@@ -472,13 +529,61 @@ class Invoice extends AggregateBase implements iTransactionDocument
     
     public function getIssuer(): Organization
     {
-    	return $this->issuer;
+    	$issuer = $this->issuer;
+    	return $issuer;
+    }
+    
+    public function getIssuerName(): String
+    {
+    	return $this->issuerName;
+    }
+    public function getIssuerAddress(): String
+    {
+    	return $this->issuerAddress;
+    }
+    public function getIssuerPostName(): String
+    {
+    	return $this->issuerPostName;
+    }
+    public function getIssuerFormattedAddress(): array
+    {    	
+    	return explode(", ", $this->issuerAddress);
+    }
+    public function getIssuerTaxNumber(): String
+    {
+    	return $this->issuerTaxNumber;
+    }
+    public function getIssuerAccountNumber(): String
+    {
+    	return $this->issuerAccountNumber;
+    }
+    public function getIssuerBic(): String
+    {
+    	return $this->issuerBic;
     }
     
     public function getRecepient(): Partner
     {
-    	return $this->recepient;
+    	$recepient = $this->recepient;
+    	return $recepient;
     }
+    
+    public function getRecepientName(): String
+    {
+    	return $this->recepientName;
+    }
+    public function getRecepientAddress(): String
+    {
+    	return $this->recepientAddress;
+    }
+    public function getRecepientFormattedAddress(): array
+    {
+    	return explode(", ", $this->recepientAddress);
+    }
+    public function getRecepientTaxNumber(): String
+    {
+    	return $this->recepientTaxNumber;
+    }    
     
     public function getNumber(): string
     {
