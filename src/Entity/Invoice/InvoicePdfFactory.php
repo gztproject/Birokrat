@@ -86,12 +86,12 @@ class InvoicePdfFactory
    		//$border = 0, $fitbox = false, $hidden = false, $fitonpage = false, $alt = false, $altimgs = array() )
    		$pdf->Image('@'.$imgdata, '', '', 20, 20, 'png', '', 'T');
    		
-   		$name = $this->__invoice->getIssuer()->getShortName();
+   		$name = $this->__invoice->getIssuerName();
    		$address = "";
-   		for($i = 0; $i<count($this->__invoice->getIssuer()->getAddress()->getFullFormattedAddress())-1; $i++)
+   		for($i = 0; $i<count($this->__invoice->getIssuerFormattedAddress())-1; $i++)
    		{
    			if($address != "")	$address.= '<br>';
-   			$address .= $this->__invoice->getIssuer()->getAddress()->getFullFormattedAddress()[$i];
+   			$address .= $this->__invoice->getIssuerFormattedAddress()[$i];
    		}
    		$html = "<h2>$name</h2></br><b>$address</b>";
    		$pdf->writeHTMLCell(80,'','','',$html, 0);
@@ -103,9 +103,9 @@ class InvoicePdfFactory
    		$orgData = $this->__invoice->getIssuer()->getWww() . "\n";
    		$orgData .= $this->__invoice->getIssuer()->getEmail(). "\n";
    		$orgData .= $this->__invoice->getIssuer()->getMobile(). "\n";
-   		$orgData .= $this->__invoice->getIssuer()->getFullTaxNumber(). "\n";
-   		$orgData .= $this->__invoice->getIssuer()->getAccountNumber(). "\n";
-   		$orgData .= $this->__invoice->getIssuer()->getBic(). "\n";
+   		$orgData .= $this->__invoice->getIssuerTaxNumber(). "\n";
+   		$orgData .= $this->__invoice->getIssuerAccountNumber(). "\n";
+   		$orgData .= $this->__invoice->getIssuerBic(). "\n";
    		$pdf->MultiCell(60, '', $orgData, 0, 'L', 0, 1);
    		
    		$pdf->Ln(15);
@@ -119,16 +119,16 @@ class InvoicePdfFactory
    		$pdf->Ln(10);
    		
    		$pdf->SetFontSize(10);
-   		$name = $this->__invoice->getRecepient()->getShortName();
+   		$name = $this->__invoice->getRecepientName();
    		$address = "";
-   		for($i = 0; $i<count($this->__invoice->getRecepient()->getAddress()->getFullFormattedAddress())-1; $i++)
+   		for($i = 0; $i<count($this->__invoice->getRecepientFormattedAddress())-1; $i++)
    		{
    			if($address != "")	$address.= "\n";
-   			$address .= $this->__invoice->getRecepient()->getAddress()->getFullFormattedAddress()[$i];
+   			$address .= $this->__invoice->getRecepientFormattedAddress()[$i];
    		}
    		$pdf->MultiCell(80, '', $name."\n \n".$address, 0, 'L', 0, 0);
    		$pdf->SetFont('dejavusans', '', 8);
-   		$pdf->MultiCell(40, '', $this->__invoice->getIssuer()->getAddress()->getPost()->getName().
+   		$pdf->MultiCell(40, '', $this->__invoice->getIssuerPostName().
    				",\n\n".$this->__translator->trans('label.dueInDays').
    				":\n".$this->__translator->trans('label.dueDate').
    				":\n".$this->__translator->trans('label.reference').
@@ -141,7 +141,7 @@ class InvoicePdfFactory
    		$invData .= $this->__invoice->getDateServiceRenderedString();
    		$pdf->MultiCell(60, '', $invData, 0, 'L', 0, 1);
    		$pdf->Ln(7);
-   		$pdf->Cell( 80, 0, $this->__translator->trans('label.taxNumber').": ".$this->__invoice->getRecepient()->getFullTaxNumber(), 0, 0, '', 0, '', 0, false, 'T', 'M' );   		
+   		$pdf->Cell( 80, 0, $this->__translator->trans('label.taxNumber').": ".$this->__invoice->getRecepientTaxNumber(), 0, 0, '', 0, '', 0, false, 'T', 'M' );   		
    		$pdf->Ln(7);
    		
    		// ---------ITEMS
