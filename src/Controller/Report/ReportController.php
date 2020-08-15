@@ -106,7 +106,7 @@ class ReportController extends AbstractController {
 				'SUM(CASE WHEN t.creditKonto = k.id THEN t.sum ELSE 0 END) AS credit'
 		] )->from ( 'App\Entity\Konto\Konto', 'k', 'k.id' )
 		->leftJoin ( 'App\Entity\Konto\KontoCategory', 'kc', 'WITH', 'k.category = kc.id' )
-		->leftJoin ( 'App\Entity\Transaction\Transaction', 't', 'WITH', 't.sum > 0 AND(t.debitKonto = k.id OR t.creditKonto = k.id)' );
+		->leftJoin ( 'App\Entity\Transaction\Transaction', 't', 'WITH', 't.sum > 0 AND (t.debitKonto = k.id OR t.creditKonto = k.id)' );
 		if ($organizationId !== null)
 			$qb->andWhere ( 't.organization = :orgId' );
 		if ($dateFrom !== null)
@@ -152,12 +152,11 @@ class ReportController extends AbstractController {
 						$otherExpenses += $res ['debit'] - $res ['credit'];
 					break;
 				case 78 :
-				if ($res ['kontoNumber'] == 785)
-				{
-					$expenses += $res ['debit'] - $res ['credit'];
-					$socialSecurity += $res ['debit'] - $res ['credit'];
-				}
-				
+					if ($res ['kontoNumber'] == 785) {
+						$expenses += $res ['debit'] - $res ['credit'];
+						$socialSecurity += $res ['debit'] - $res ['credit'];
+					}
+
 				case 11 :
 					$bank += $res ['debit'] - $res ['credit'];
 					break;
@@ -198,7 +197,9 @@ class ReportController extends AbstractController {
 				'k.name',
 				'SUM(CASE WHEN t.debitKonto = k.id THEN t.sum ELSE 0 END) AS debit',
 				'SUM(CASE WHEN t.creditKonto = k.id THEN t.sum ELSE 0 END) AS credit'
-		] )->from ( 'App\Entity\Konto\Konto', 'k', 'k.id' )->leftJoin ( 'App\Entity\Transaction\Transaction', 't', 'WITH', 't.debitKonto = k.id OR t.creditKonto = k.id' )->where ( 't.id IS NOT NULL' );
+		] )
+		->from ( 'App\Entity\Konto\Konto', 'k', 'k.id' )
+		->leftJoin ( 'App\Entity\Transaction\Transaction', 't', 'WITH', 't.sum > 0 AND (t.debitKonto = k.id OR t.creditKonto = k.id)' )->where ( 't.id IS NOT NULL' );
 		if ($organizationId !== null)
 			$qb->andWhere ( 't.organization = :orgId' );
 		if ($dateFrom !== null)
@@ -241,7 +242,9 @@ class ReportController extends AbstractController {
 				'SUM(i.totalPrice) AS total',
 				'SUM(CASE WHEN i.state = 30 THEN i.totalPrice ELSE 0 END) AS paid',
 				'SUM(CASE WHEN i.state = 20 THEN i.totalPrice ELSE 0 END) AS open'
-		] )->from ( 'App\Entity\Organization\Partner', 'c', 'c.id' )->leftJoin ( 'App\Entity\Invoice\Invoice', 'i', 'WITH', 'i.recepient = c.id AND i.state IN (20, 30)' )->where ( 'c.isClient = 1' );
+		] )->from ( 'App\Entity\Organization\Partner', 'c', 'c.id' )
+		->leftJoin ( 'App\Entity\Invoice\Invoice', 'i', 'WITH', 'i.recepient = c.id AND i.state IN (20, 30)' )
+		->where ( 'c.isClient = 1' );
 		if ($organizationId !== null)
 			$qb->andWhere ( 'i.issuer = :orgId' );
 		if ($dateFrom !== null)
@@ -301,9 +304,7 @@ class ReportController extends AbstractController {
 				'k.number AS kontoNumber',
 				'SUM(CASE WHEN t.debitKonto = k.id THEN t.sum ELSE 0 END) AS debit',
 				'SUM(CASE WHEN t.creditKonto = k.id THEN t.sum ELSE 0 END) AS credit'
-		] )->from ( 'App\Entity\Konto\Konto', 'k', 'k.id' )
-		->leftJoin ( 'App\Entity\Konto\KontoCategory', 'kc', 'WITH', 'k.category = kc.id' )
-		->leftJoin ( 'App\Entity\Transaction\Transaction', 't', 'WITH', 't.sum >= 0 AND (t.debitKonto = k.id OR t.creditKonto = k.id)' );
+		] )->from ( 'App\Entity\Konto\Konto', 'k', 'k.id' )->leftJoin ( 'App\Entity\Konto\KontoCategory', 'kc', 'WITH', 'k.category = kc.id' )->leftJoin ( 'App\Entity\Transaction\Transaction', 't', 'WITH', 't.sum >= 0 AND (t.debitKonto = k.id OR t.creditKonto = k.id)' );
 		if ($organizationId !== null)
 			$qb->andWhere ( 't.organization = :orgId' );
 		if ($dateFrom !== null)
@@ -579,9 +580,7 @@ class ReportController extends AbstractController {
 				'k.number AS kontoNumber',
 				'SUM(CASE WHEN t.debitKonto = k.id THEN t.sum ELSE 0 END) AS debit',
 				'SUM(CASE WHEN t.creditKonto = k.id THEN t.sum ELSE 0 END) AS credit'
-		] )->from ( 'App\Entity\Konto\Konto', 'k', 'k.id' )
-		->leftJoin ( 'App\Entity\Konto\KontoCategory', 'kc', 'WITH', 'k.category = kc.id' )
-		->leftJoin ( 'App\Entity\Transaction\Transaction', 't', 'WITH', 't.sum >= 0 AND (t.debitKonto = k.id OR t.creditKonto = k.id)' );
+		] )->from ( 'App\Entity\Konto\Konto', 'k', 'k.id' )->leftJoin ( 'App\Entity\Konto\KontoCategory', 'kc', 'WITH', 'k.category = kc.id' )->leftJoin ( 'App\Entity\Transaction\Transaction', 't', 'WITH', 't.sum >= 0 AND (t.debitKonto = k.id OR t.creditKonto = k.id)' );
 		if ($organizationId !== null)
 			$qb->andWhere ( 't.organization = :orgId' );
 		if ($dateFrom !== null)
