@@ -97,7 +97,11 @@ class OrganizationSettings extends Base
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Konto\Konto")
      */
-    private $ReceivedIncomingInvoiceCredit;
+    private $ReceivedHomeIncomingInvoiceCredit;
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Konto\Konto")
+     */
+    private $ReceivedForeignIncomingInvoiceCredit;
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Konto\Konto")
      */
@@ -160,7 +164,8 @@ class OrganizationSettings extends Base
     	$this->IncurredTravelExpenseDebit = $c->IncurredTravelExpenseDebit;
     	$this->PaidTravelExpenseCredit = $c->PaidTravelExpenseCredit;
     	$this->PaidTravelExpenseDebit = $c->PaidTravelExpenseDebit;
-    	$this->ReceivedIncomingInvoiceCredit = $c->ReceivedIncomingInvoiceCredit;
+    	$this->ReceivedHomeIncomingInvoiceCredit = $c->ReceivedHomeIncomingInvoiceCredit;
+    	$this->ReceivedForeignIncomingInvoiceCredit = $c->ReceivedForeignIncomingInvoiceCredit;
     	$this->ReceivedIncomingInvoiceDebit = $c->ReceivedIncomingInvoiceDebit;
     	$this->PaidIncomingInvoiceCredit = $c->PaidIncomingInvoiceCredit;
     	$this->PaidIncomingInvoiceDebit = $c->PaidIncomingInvoiceDebit;
@@ -195,7 +200,8 @@ class OrganizationSettings extends Base
     	$this->IncurredTravelExpenseDebit = $c->IncurredTravelExpenseDebit;
     	$this->PaidTravelExpenseCredit = $c->PaidTravelExpenseCredit;
     	$this->PaidTravelExpenseDebit = $c->PaidTravelExpenseDebit;
-    	$this->ReceivedIncomingInvoiceCredit = $c->ReceivedIncomingInvoiceCredit;
+    	$this->ReceivedHomeIncomingInvoiceCredit = $c->ReceivedHomeIncomingInvoiceCredit;
+    	$this->ReceivedForeignIncomingInvoiceCredit = $c->ReceivedForeignIncomingInvoiceCredit;
     	$this->ReceivedIncomingInvoiceDebit = $c->ReceivedIncomingInvoiceDebit;
     	$this->PaidIncomingInvoiceCredit = $c->PaidIncomingInvoiceCredit;
     	$this->PaidIncomingInvoiceDebit = $c->PaidIncomingInvoiceDebit;
@@ -294,9 +300,14 @@ class OrganizationSettings extends Base
     	return $this->PaidTravelExpenseCredit;
     }
     
-    public function getReceivedIncomingInvoiceCredit(): ?Konto
+    public function getReceivedHomeIncomingInvoiceCredit(): ?Konto
     {
-    	return $this->ReceivedIncomingInvoiceCredit;
+    	return $this->ReceivedHomeIncomingInvoiceCredit;
+    }
+    
+    public function getReceivedForeignIncomingInvoiceCredit(): ?Konto
+    {
+    	return $this->ReceivedForeignIncomingInvoiceCredit;
     }
     
     public function getReceivedIncomingInvoiceDebit(): ?Konto
