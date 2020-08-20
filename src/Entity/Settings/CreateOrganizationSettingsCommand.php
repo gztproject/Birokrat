@@ -15,7 +15,8 @@ class CreateOrganizationSettingsCommand
     public $IncurredTravelExpenseCredit;
     public $PaidTravelExpenseDebit;
     public $PaidTravelExpenseCredit;
-    public $ReceivedIncomingInvoiceCredit;
+    public $ReceivedHomeIncomingInvoiceCredit;
+    public $ReceivedForeignIncomingInvoiceCredit;
     public $ReceivedIncomingInvoiceDebit;
     public $PaidIncomingInvoiceCredit;
     public $PaidIncomingInvoiceDebit;

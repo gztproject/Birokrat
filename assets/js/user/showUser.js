@@ -1,34 +1,33 @@
-//import modal from 'bootstrap';
-    $('#UserAddOrganization').on('click', function(){ 
-        
-        $.getJSON("/dashboard/organization/list",
-            {},
-            function(data, status){
-                 $("#AddOrganizationList").html();
-                data[0].data.organizations.forEach(function(el){
-                    $("#AddOrganizationList").append($('<option>', {
+$('#UserAddOrganization').on('click', function () {
+
+    $.getJSON("/dashboard/organization/list",
+        {},
+        function (data, status) {
+            $("#AddOrganizationList").html();
+            data[0].data.organizations.forEach(function (el) {
+                $("#AddOrganizationList").append($('<option>', {
                     value: el.id,
                     text: el.name,
                 }));
             });
         });
 
-        $('#addOrganizationModal').modal('show');
-        $('#AddOrganization').on('click', function(){            
-            $.post("/admin/user/addOrganization",
+    $('#addOrganizationModal').modal('show');
+    $('#AddOrganization').on('click', function () {
+        $.post("/admin/user/addOrganization",
             {
                 userId: $('#userId').val(),
                 organizationId: $('#AddOrganizationList').val(),
             },
-            function(data, status){
+            function (data, status) {
                 $('#addOrganizationModal').modal('hide');
                 $('#organizationList').append("<li><a href='/dashboard/organization/" + data[0].data.organization.id + "'> " + data[0].data.organization.fullAddress + "</a></li>");
             });
-        });
     });
+});
 
-    // Handling the modal confirmation message.
-    $(document).on('submit', 'form[data-confirmation]', function (event) {
+// Handling the modal confirmation message.
+$(document).on('submit', 'form[data-confirmation]', function (event) {
     var $form = $(this),
         $confirm = $('#confirmationModal');
 
