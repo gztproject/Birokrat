@@ -15,8 +15,6 @@ use App\Entity\Organization\Partner;
 use App\Entity\Transaction\Transaction;
 use App\Entity\Transaction\iTransactionDocument;
 use App\Entity\Transaction\CreateTransactionCommand;
-use Doctrine\Bundle\DoctrineBundle\Dbal\SchemaAssetsFilterManager;
-use phpDocumentor\Reflection\Types\String_;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\Invoice\InvoiceRepository")
@@ -171,6 +169,7 @@ class Invoice extends AggregateBase implements iTransactionDocument
         $this->issuer = $c->issuer;        
         $this->number = $c->number;
         $this->recepient = $c->recepient;
+        $this->setRedundantData();
                 
         //Do we really need this here or can we set it when we actually issue it?
         $this->calculateReference();
