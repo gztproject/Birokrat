@@ -1,7 +1,7 @@
 #/bin/bash
 
 # Pull master branch
-# git reset --hard ??
+git reset --hard ??
 git pull origin master
 
 #install new dependencies
