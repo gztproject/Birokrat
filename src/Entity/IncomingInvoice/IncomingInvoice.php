@@ -248,7 +248,10 @@ class IncomingInvoice extends AggregateBase implements iTransactionDocument {
 		$c = new CreateTransactionCommand ();
 		$c->date = $this->datePaid;
 		$c->organization = $this->recepient;
-		$dc = $this->recepient->getOrganizationSettings ()->getPaidIncomingInvoiceDebit ();
+		//$dc = $this->recepient->getOrganizationSettings ()->getPaidIncomingInvoiceDebit ();
+		$dc = $this->getIssuer ()->getAddress ()->getPost ()->getCountry () == $this->getRecepient ()->getAddress ()->getPost ()->getCountry () ? 
+			$this->recepient->getOrganizationSettings ()->getReceivedHomeIncomingInvoiceCredit () : 
+			$this->recepient->getOrganizationSettings ()->getReceivedForeignIncomingInvoiceCredit ();
 		$cc = null;
 		switch ($mode) {
 			case PaymentMethods::cash :
