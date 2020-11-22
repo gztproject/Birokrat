@@ -166,13 +166,15 @@ class OrganizationSettings extends Base
     	$this->PaidTravelExpenseDebit = $c->PaidTravelExpenseDebit;
     	$this->ReceivedHomeIncomingInvoiceCredit = $c->ReceivedHomeIncomingInvoiceCredit;
     	$this->ReceivedForeignIncomingInvoiceCredit = $c->ReceivedForeignIncomingInvoiceCredit;
-    	$this->ReceivedIncomingInvoiceDebit = $c->ReceivedIncomingInvoiceDebit;
-    	$this->PaidIncomingInvoiceCredit = $c->PaidIncomingInvoiceCredit;
-    	$this->PaidIncomingInvoiceDebit = $c->PaidIncomingInvoiceDebit;
+    	$this->ReceivedIncomingInvoiceDebit = $c->ReceivedIncomingInvoiceDebit;    	
     	$this->RefundedIncomingInvoiceCredit = $c->RefundedIncomingInvoiceCredit;
     	$this->RefundedIncomingInvoiceDebit = $c->RefundedIncomingInvoiceDebit;
     	$this->RejectedIncomingInvoiceCredit = $c->RejectedIncomingInvoiceCredit;
     	$this->RejectedIncomingInvoiceDebit = $c->RejectedIncomingInvoiceDebit;
+    	
+    	//Obsolete...
+    	$this->PaidIncomingInvoiceDebit = $c->PaidIncomingInvoiceDebit;
+    	$this->PaidIncomingInvoiceCredit = $c->PaidIncomingInvoiceCredit;
     }
     
     /**
@@ -202,13 +204,14 @@ class OrganizationSettings extends Base
     	$this->PaidTravelExpenseDebit = $c->PaidTravelExpenseDebit;
     	$this->ReceivedHomeIncomingInvoiceCredit = $c->ReceivedHomeIncomingInvoiceCredit;
     	$this->ReceivedForeignIncomingInvoiceCredit = $c->ReceivedForeignIncomingInvoiceCredit;
-    	$this->ReceivedIncomingInvoiceDebit = $c->ReceivedIncomingInvoiceDebit;
-    	$this->PaidIncomingInvoiceCredit = $c->PaidIncomingInvoiceCredit;
-    	$this->PaidIncomingInvoiceDebit = $c->PaidIncomingInvoiceDebit;
+    	$this->ReceivedIncomingInvoiceDebit = $c->ReceivedIncomingInvoiceDebit;  
     	$this->RefundedIncomingInvoiceCredit = $c->RefundedIncomingInvoiceCredit;
     	$this->RefundedIncomingInvoiceDebit = $c->RefundedIncomingInvoiceDebit;
     	$this->RejectedIncomingInvoiceCredit = $c->RejectedIncomingInvoiceCredit;
     	$this->RejectedIncomingInvoiceDebit = $c->RejectedIncomingInvoiceDebit;
+    	 //Obsolete
+    	$this->PaidIncomingInvoiceDebit = $c->PaidIncomingInvoiceDebit;
+    	$this->PaidIncomingInvoiceCredit = $c->PaidIncomingInvoiceCredit;
     	
     	return $this;
     }
@@ -325,6 +328,10 @@ class OrganizationSettings extends Base
     	return $this->PaidTransactionIncomingInvoiceCredit;
     }
     
+    /**
+     * @deprecated
+     * @return Konto|NULL
+     */
     public function getPaidIncomingInvoiceDebit(): ?Konto
     {
     	return $this->PaidIncomingInvoiceDebit;
