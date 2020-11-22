@@ -20,6 +20,7 @@ use Qipsius\TCPDFBundle\Controller\TCPDFController;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use App\Entity\Invoice\UpdateInvoiceCommand;
 use App\Entity\Invoice\UpdateInvoiceItemCommand;
+use App\Entity\Invoice\States;
 
 
 class InvoiceCommandController extends AbstractController
@@ -159,7 +160,7 @@ class InvoiceCommandController extends AbstractController
     	$date = new \DateTime($request->request->get('date', null));
     	$entityManager = $this->getDoctrine()->getManager();
     	$dateOfIssue = new \Datetime($request->request->get('dateOfIssue', 'now'));
-    	$state = $request->request->get('state', 10);
+    	$state = $request->request->get('state', States::new);
     	$number = InvoiceNumberFactory::factory($invoice->getIssuer(), $state, $dateOfIssue, $this->getDoctrine())->generate();
     	
     	$transaction = $invoice->setIssued($date, $number, $this->getUser());
