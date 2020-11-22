@@ -104,6 +104,11 @@ class Konto extends KontoBase
     {
         return $this->category;
     }
+    
+    public function getClass(): ?KontoClass
+    {
+    	return $this->category->getClass();
+    }
 
     public function getIsActive(): ?bool
     {
