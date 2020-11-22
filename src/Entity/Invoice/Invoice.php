@@ -159,7 +159,7 @@ class Invoice extends AggregateBase implements iTransactionDocument
         $this->dateCancelled = null;
         $this->datePaid = null;
         //We have to initialize the state (see checkState()).
-        $this->state = 00;         
+        $this->state = States::draft;         
         
         $this->dateOfIssue = $c->dateOfIssue;
         $this->dateServiceRenderedFrom = $c->dateServiceRenderedFrom;
@@ -174,13 +174,13 @@ class Invoice extends AggregateBase implements iTransactionDocument
         //Do we really need this here or can we set it when we actually issue it?
         $this->calculateReference();
         $this->calculateTotals();
-        $this->setState(10);
+        $this->setState(States::new);
     }
     
     public function update(UpdateInvoiceCommand $c, User $user) : Invoice
     {
-    	//We can only update invoices in state 10.
-    	if($this->state != 10)
+    	//We can only update invoices in state new(10).
+    	if($this->state != States::new)
     		throw new \Exception("Only new invoices can be updated.");
     	parent::updateBase($user);
     	if($c->dateOfIssue !== null && $c->dateOfIssue !== $this->dateOfIssue)
@@ -338,10 +338,10 @@ class Invoice extends AggregateBase implements iTransactionDocument
     
     /**
      * Sets invoice state
-     * 
-     * @param integer $state 00-draft, 10-new, 20-issued, 30-paid, 40-cancelled, 50-rejected.
+     * @param States $state
+     * @return self
      */
-    private function setState(?int $state): self
+    private function setState(?States $state): self
     {
     	$this->checkState($this->state, $state);
         $this->state = $state;
@@ -352,31 +352,31 @@ class Invoice extends AggregateBase implements iTransactionDocument
     /**
      * Checks if transition of states is allowed and everything is properly set. 
      * 
-     * @param int $currState Current invoice state
-     * @param int $newState New InvoiceState
+     * @param States $currState Current invoice state
+     * @param States $newState New InvoiceState
      */
-    private function checkState(int $currState, int $newState)
+    private function checkState(States $currState, States $newState)
     {
     	switch ($currState) {
-    		case 00: //new
-    			if ($newState != 10 && $newState != 40)    				 
+    		case States::draft:
+    			if ($newState != States::new && $newState != States::cancelled)    				 
     				throw new \Exception("Can't transition to state $newState from $currState");
     			break;
-    		case 10: //draft
-    			if ($newState != 20 && $newState != 40)
+    		case States::new:
+    			if ($newState != States::issued && $newState != States::cancelled)
     				throw new \Exception("Can't transition to state $newState from $currState");
     			break;
-    		case 20: //issued
-    			if ($newState != 30 && $newState != 50) 
+    		case States::issued:
+    			if ($newState != States::paid && $newState != States::rejected) 
     				throw new \Exception("Can't transition to state $newState from $currState");
     			break;
-    		case 30: //paid
+    		case States::paid:
     			throw new \Exception("Can't transition to state $newState from $currState");
     			break;
-    		case 40: //cancelled
+    		case States::cancelled:
     			throw new \Exception("Can't do anything with cancelled invoice.");
     			break;
-    		case 50: //rejected
+    		case States::rejected:
     			throw new \Exception("Can't do anything with rejected invoice.");
     			break;
     		default:
@@ -586,7 +586,7 @@ class Invoice extends AggregateBase implements iTransactionDocument
     
     public function getNumber(): string
     {
-    	if($this->state === 20 || $this->state === 30)
+    	if($this->state === States::issued || $this->state === States::paid)
     	{
     		return $this->number;
     	}
@@ -613,7 +613,7 @@ class Invoice extends AggregateBase implements iTransactionDocument
     
     public function getReferenceNumber(): string
     {
-    	if($this->state === 20 || $this->state === 30)
+    	if($this->state === States::issued || $this->state === States::paid)
     	{
     		return $this->referenceNumber;
     	}
@@ -704,4 +704,18 @@ class Invoice extends AggregateBase implements iTransactionDocument
     {
     	return "Invoice: ".$this->number;
     }
+}
+
+/**
+ * 00-draft, 10-new, 20-issued, 30-paid, 40-cancelled, 50-rejected.
+ *
+ * @author gapi
+ */
+abstract class States {
+	const draft = 00;
+	const new = 10;
+	const issued = 20;
+	const paid = 30;
+	const cancelled = 40;
+	const rejected = 50;
 }

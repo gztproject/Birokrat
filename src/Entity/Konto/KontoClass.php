@@ -118,5 +118,5 @@ class KontoClass extends KontoBase
     public function getCategories(): Collection
     {
         return $this->categories;
-    }    
+    }   
 }

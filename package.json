@@ -21,6 +21,7 @@
         "acorn": "^6.4.1",
         "bloodhound-js": "^1.2.3",
         "bootstrap-sass": "^3.4.1",
+        "bootstrap-tagsinput": "^0.7.1",
         "bootswatch": "^4.5.2",
         "core-js": "3",
         "dotenv": "^8.1.0",

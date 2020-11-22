@@ -32,7 +32,13 @@
                 {% elseif transaction.travelExpenseBundle != null %}
                     <a href="{{ path('travelExpenseBundle_show', {'id': transaction.travelExpenseBundle.id}) }}">{{'label.travelExpenseBundle'|trans }}: {{ transaction.travelExpenseBundle.DateRange }}</a>
                 {% elseif transaction.incomingInvoice != null %}
-                    <a href="{{ path('incomingInvoice_show', {'id': transaction.incomingInvoice.id}) }}">{{'label.incomingInvoice'|trans }}: {{ transaction.incomingInvoice.issuer.shortName }} ({{ transaction.incomingInvoice.number }})</a>
+                    <a href="{{ path('incomingInvoice_show', {'id': transaction.incomingInvoice.id}) }}">                    
+                    {% if transaction.debitKonto.class.number == 4 %}
+                        {{'label.invoice_received'|trans }}                    
+                    {% elseif transaction.creditKonto.class.number == 1 or transaction.creditKonto.class.number == 9 %}
+                        {{'label.invoice_paid'|trans }}
+                    {% endif %}
+                    : {{ transaction.incomingInvoice.number }} ({{ transaction.incomingInvoice.issuer.shortName }})</a>
                 {% elseif transaction.lunchExpense != null %}
                     <a href="{{ path('transaction_show', {'id': transaction.id}) }}">{{'label.lunchExpense'|trans }}: {{ transaction.lunchExpense.__toString }}</a>
                 {% elseif transaction.lunchExpenseBundle != null %}

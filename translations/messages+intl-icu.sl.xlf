@@ -1042,6 +1042,26 @@
         <source>label.unpaid</source>
         <target>Neplačano</target>
       </trans-unit>
+      <trans-unit id="label.invoice_received" resname="label.invoice_received">
+        <source>label.invoice_received</source>
+        <target>Prejet račun</target>
+      </trans-unit>
+      <trans-unit id="label.travelExpenseBundle" resname="label.travelExpenseBundle">
+        <source>label.travelExpenseBundle</source>
+        <target>Zbirnik - potni stroški</target>
+      </trans-unit>
+      <trans-unit id="label.lunchExpenseBundle" resname="label.lunchExpenseBundle">
+        <source>label.lunchExpenseBundle</source>
+        <target>Zbirnik - stroški prehrane</target>
+      </trans-unit>     
+      <trans-unit id="label.year" resname="label.year">
+        <source>label.year</source>
+        <target>Leto</target>
+      </trans-unit>
+      <trans-unit id="action.exportXlsx" resname="action.exportXlsx">
+        <source>action.exportXlsx</source>
+        <target>Izvozi .xlsx</target>
+      </trans-unit>
       <trans-unit id="label.percent" resname="label.percent">
         <source>label.percent</source>
         <target>Odstotek</target>
