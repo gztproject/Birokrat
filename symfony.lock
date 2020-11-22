@@ -101,6 +101,12 @@
     "knplabs/knp-paginator-bundle": {
         "version": "v3.0.0"
     },
+    "laminas/laminas-code": {
+        "version": "3.5.0"
+    },
+    "laminas/laminas-eventmanager": {
+        "version": "3.3.0"
+    },
     "laminas/laminas-zendframework-bridge": {
         "version": "1.1.0"
     },
@@ -538,15 +544,6 @@
     },
     "tecnickcom/tcpdf": {
         "version": "6.2.26"
-    },
-    "twig/extensions": {
-        "version": "1.0",
-        "recipe": {
-            "repo": "github.com/symfony/recipes",
-            "branch": "master",
-            "version": "1.0",
-            "ref": "ddb2e0a77773b7fd75d8d649545f174e664500ab"
-        }
     },
     "twig/twig": {
         "version": "v2.6.0"

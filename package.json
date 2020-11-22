@@ -2,7 +2,7 @@
     "devDependencies": {
         "@babel/preset-env": "^7.11.5",
         "@fortawesome/fontawesome-free": "^5.14.0",
-        "@symfony/webpack-encore": "^0.31.0",
+        "@symfony/webpack-encore": "^0.30.2",
         "bootstrap": "^4.5.2",
         "copy-webpack-plugin": "^6.1.1",
         "node-sass": "^4.14.1",
@@ -21,7 +21,6 @@
         "acorn": "^6.4.1",
         "bloodhound-js": "^1.2.3",
         "bootstrap-sass": "^3.4.1",
-        "bootstrap-tagsinput": "^0.7.1",
         "bootswatch": "^4.5.2",
         "core-js": "3",
         "dotenv": "^8.1.0",
