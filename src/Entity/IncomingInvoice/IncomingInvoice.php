@@ -133,6 +133,14 @@ class IncomingInvoice extends AggregateBase implements iTransactionDocument {
 		$this->recepient = $c->recepient;
 		$this->price = $c->price;
 	}
+
+	/**
+	 *
+	 * @param UpdateIncomingInvoiceCommand $c
+	 * @param User $user
+	 * @throws \LogicException
+	 * @return IncomingInvoice
+	 */
 	public function update(UpdateIncomingInvoiceCommand $c, User $user): IncomingInvoice {
 		// We can only update invoices in state 10.
 		if ($this->state != States::received)
@@ -248,10 +256,9 @@ class IncomingInvoice extends AggregateBase implements iTransactionDocument {
 		$c = new CreateTransactionCommand ();
 		$c->date = $this->datePaid;
 		$c->organization = $this->recepient;
-		//$dc = $this->recepient->getOrganizationSettings ()->getPaidIncomingInvoiceDebit ();
-		$dc = $this->getIssuer ()->getAddress ()->getPost ()->getCountry () == $this->getRecepient ()->getAddress ()->getPost ()->getCountry () ? 
-			$this->recepient->getOrganizationSettings ()->getReceivedHomeIncomingInvoiceCredit () : 
-			$this->recepient->getOrganizationSettings ()->getReceivedForeignIncomingInvoiceCredit ();
+		// $dc = $this->recepient->getOrganizationSettings ()->getPaidIncomingInvoiceDebit ();
+		$dc = ($this->getIssuer ()->getAddress ()->getPost ()->getCountry () == $this->getRecepient ()->getAddress ()->getPost ()->getCountry ()) ? $this->recepient->getOrganizationSettings ()->getReceivedHomeIncomingInvoiceCredit () : $this->recepient->getOrganizationSettings ()->getReceivedForeignIncomingInvoiceCredit ();
+
 		$cc = null;
 		switch ($mode) {
 			case PaymentMethods::cash :
@@ -381,6 +388,8 @@ class IncomingInvoice extends AggregateBase implements iTransactionDocument {
 			return $to;
 		}
 	}
+	
+	
 	public function getDateOfIssue(): \DateTimeInterface {
 		return $this->dateOfIssue;
 	}
@@ -428,7 +437,6 @@ class IncomingInvoice extends AggregateBase implements iTransactionDocument {
 /**
  * 00-draft, 10-received, 20-paid, 100-refunded, 110-rejected.
  *
- * @author gapi
  */
 abstract class States {
 	const draft = 00;
@@ -437,6 +445,11 @@ abstract class States {
 	const refunded = 100;
 	const rejected = 110;
 }
+
+/**
+ * Payment methods
+ *
+ */
 abstract class PaymentMethods {
 	const cash = 00;
 	const transaction = 10;
