@@ -278,7 +278,7 @@ class Invoice extends AggregateBase implements iTransactionDocument
      */
     public function setIssued(\DateTime $date, string $number, User $user): Transaction
     {
-    	$this->setState(20);
+    	$this->setState(States::issued);
     	parent::updateBase($user);
     	
     	$this->number = $number;
@@ -304,7 +304,7 @@ class Invoice extends AggregateBase implements iTransactionDocument
     
     public function setPaid(\DateTime $date, User $user): Transaction
     {    	
-    	$this->setState(30);
+    	$this->setState(States::paid);
     	parent::updateBase($user);
     	$this->datePaid = $date;
     	
@@ -333,15 +333,15 @@ class Invoice extends AggregateBase implements iTransactionDocument
     {
     	$this->dateCancelled = \DateTime::createFromFormat('U', date("U"));
     	$this->cancelReason = $reason;
-    	$this->setState(40);
+    	$this->setState(States::cancelled);
     }
     
     /**
      * Sets invoice state
-     * @param States $state
+     * @param int $state
      * @return self
      */
-    private function setState(?States $state): self
+    private function setState(?int $state): self
     {
     	$this->checkState($this->state, $state);
         $this->state = $state;
@@ -352,10 +352,10 @@ class Invoice extends AggregateBase implements iTransactionDocument
     /**
      * Checks if transition of states is allowed and everything is properly set. 
      * 
-     * @param States $currState Current invoice state
-     * @param States $newState New InvoiceState
+     * @param int $currState Current invoice state
+     * @param int $newState New InvoiceState
      */
-    private function checkState(States $currState, States $newState)
+    private function checkState(int $currState, int $newState)
     {
     	switch ($currState) {
     		case States::draft:
