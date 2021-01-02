@@ -87,8 +87,8 @@ class IncomingInvoiceType extends AbstractType
             ))
             ->add('paymentMethod', ChoiceType::class, array(
             		'choices' => [
-            				'label.cash' => PaymentMethods::cash,
-            				'label.transfer' => PaymentMethods::transaction
+            				'label.cash' => 00,
+            				'label.transfer' => 10
             		],
             		'label' => 'label.paymentMethod',
             		'required' => false,
