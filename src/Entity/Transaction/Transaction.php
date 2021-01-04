@@ -68,6 +68,12 @@ class Transaction extends AggregateBase {
 	 * @ORM\Column(type="datetime")
 	 */
 	private $date;
+	
+	/**
+	 * Should this transaction be hidden from regular transactions (for example we don't want to show the konto closing at the end of the year among refular transactions)
+	 * @ORM\Column(type="boolean")
+	 */
+	private $hidden;
 
 	/**
 	 *
@@ -155,6 +161,7 @@ class Transaction extends AggregateBase {
 		$this->creditKonto = $c->creditKonto;
 		$this->debitKonto = $c->debitKonto;
 		$this->description = $c->description;
+		$this->hidden = $c->hidden;
 	}
 
 	/**

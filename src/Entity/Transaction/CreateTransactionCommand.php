@@ -10,6 +10,7 @@ class CreateTransactionCommand
 	public $sum;
 	public $date;
 	public $description;
+	public $hidden;
 	
 	public function __get($name) {
 		return $this->$name;
@@ -25,7 +26,8 @@ class CreateTransactionCommand
 		if($this->organization !== null) $sb .= "Organization: ". $this->organization->getName()."; ";
 		if($this->debitKonto !== null) $sb .= "Kontos: ".$this->debitKonto->getNumber();
 		if($this->creditKonto !== null) $sb .= " <- ".$this->creditKonto->getNumber()."; ";
-		if($this->sum !== null) $sb .= "SUM: ". $this->sum."; ";		
+		if($this->sum !== null) $sb .= "SUM: ". $this->sum."; ";	
+		if($this->hidden) $sb .= "HIDDEN!";
 		return $sb;
 	}
 }

@@ -8,29 +8,49 @@
     </thead>
     <tbody>        
          <tr class="table-default">
-            <td rowspan="1">Prihodki</td>
-            <td>{{ report.income|number_format(2, ',', ' ') }} €</td>
-            <td>Izdani računi</td>
+            <td rowspan="4">Prihodki</td>
+            <td rowspan="4">{{ report.income|number_format(2, ',', ' ') }} €</td>
+            <td>Izdani računi{% for number, name in report.invoicesKontos %} <span class="badge badge-pill badge-info kontoInfo" title="{{ name }}">{{ number }}</span>{% endfor %}</td>
             <td>{{ report.invoices|number_format(2, ',', ' ') }} €</td>
          </tr>
+         <tr class="table-default">           
+            <td>Obdavčljive subvencije, nadomestila...{% for number, name in report.taxableSubventionsKontos %} <span class="badge badge-pill badge-info kontoInfo" title="{{ name }}">{{ number }}</span>{% endfor %}</td>
+            <td>{{ report.taxableSubventions|number_format(2, ',', ' ') }} €</td>
+         </tr>
+        
+         <tr class="table-default">           
+            <td>Ostalo{% for number, name in report.otherIncomesKontos %} <span class="badge badge-pill badge-info kontoInfo" title="{{ name }}">{{ number }}</span>{% endfor %}</td>
+            <td>{{ report.otherIncomes|number_format(2, ',', ' ') }} €</td>
+         </tr>
+          <tr class="table-default">           
+            <td>Neobdavčljive subvencije, nadomestila...  {% for number, name in report.otherSubventionsKontos %} <span class="badge badge-pill badge-info kontoInfo" title="{{ name }}">{{ number }}</span>{% endfor %}</td>
+            <td>{{ report.otherSubventions|number_format(2, ',', ' ') }} €</td>
+         </tr>
+         
+         
+         
          <tr class="table-default">
-            <td rowspan = "4">Odhodki</td>
-            <td rowspan = "4">{{ report.expenses|number_format(2, ',', ' ') }} €</td>
-            <td>Prejeti računi</td>
+            <td rowspan = "5">Odhodki</td>
+            <td rowspan = "5">{{ report.expenses|number_format(2, ',', ' ') }} €</td>
+            <td>Prejeti računi{% for number, name in report.incomingInvoicesKontos %} <span class="badge badge-pill badge-info kontoInfo" title="{{ name }}">{{ number }}</span>{% endfor %}</td>
             <td>{{ report.incomingInvoices|number_format(2, ',', ' ') }} €</td>
          </tr>
          <tr class="table-default">
-            <td>Prispevki</td>
+            <td>Prispevki{% for number, name in report.socialSecurityKontos %} <span class="badge badge-pill badge-info kontoInfo" title="{{ name }}">{{ number }}</span>{% endfor %}</td>
             <td>{{ report.socialSecurity|number_format(2, ',', ' ') }} €</td>
          </tr>
          <tr class="table-default">
-            <td>Potni stroški, prehrana</td>
+            <td>Potni stroški, prehrana{% for number, name in report.dailyExpensesKontos %} <span class="badge badge-pill badge-info kontoInfo" title="{{ name }}">{{ number }}</span>{% endfor %}</td>
             <td>{{ report.dailyExpenses|number_format(2, ',', ' ') }} €</td>
          </tr>         
          <tr class="table-default">
-            <td>Drugi stroški</td>
+            <td>Drugi stroški{% for number, name in report.otherKontos %} <span class="badge badge-pill badge-info kontoInfo" title="{{ name }}">{{ number }}</span>{% endfor %}</td>
             <td>{{ report.other|number_format(2, ',', ' ') }} €</td>
          </tr>
+         <tr class="table-secondary">
+            <td><span class="badge badge-pill badge-danger">Neobdavčeno</span> Dohodnina{% for number, name in report.incomeTaxKontos %} <span class="badge badge-pill badge-info kontoInfo" title="{{ name }}">{{ number }}</span>{% endfor %}</td>
+            <td>{{ report.incomeTax|number_format(2, ',', ' ') }} €</td>
+         </tr>  
          <tr class="table-default">
             <td rowspan="3">Stanje</td>
             <td rowspan = "3">{{ report.outcome|number_format(2, ',', ' ') }} €</td>
