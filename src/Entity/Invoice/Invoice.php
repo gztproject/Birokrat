@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use App\Entity\Base\AggregateBase;
+use App\Entity\Invoice\Enumerators\States;
 use App\Entity\Konto\Konto;
 use App\Entity\Organization\Organization;
 use App\Entity\User\User;
@@ -704,18 +705,4 @@ class Invoice extends AggregateBase implements iTransactionDocument
     {
     	return "Invoice: ".$this->number;
     }
-}
-
-/**
- * 00-draft, 10-new, 20-issued, 30-paid, 40-cancelled, 50-rejected.
- *
- * @author gapi
- */
-abstract class States {
-	const draft = 00;
-	const new = 10;
-	const issued = 20;
-	const paid = 30;
-	const cancelled = 40;
-	const rejected = 50;
 }

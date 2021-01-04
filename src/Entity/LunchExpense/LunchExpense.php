@@ -4,6 +4,7 @@ namespace App\Entity\LunchExpense;
 
 use App\Entity\Base\AggregateBase;
 use App\Entity\Konto\Konto;
+use App\Entity\LunchExpense\Enumerators\States;
 use App\Entity\Transaction\Transaction;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -191,12 +192,4 @@ class LunchExpense extends AggregateBase implements iTransactionDocument
     	$string .= "LunchExpense " . $this->getDateString();
     	return $string;
     }
-}
-
-abstract class States
-{
-	const draft = 00;
-	const new = 10;
-	const booked = 20;
-	const rejected = 100;
 }

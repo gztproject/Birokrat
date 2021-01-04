@@ -13,6 +13,7 @@ use Doctrine\DBAL\Types\DecimalType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use App\Entity\Konto\Konto;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 
 class TransactionType extends AbstractType
 {
@@ -50,7 +51,10 @@ class TransactionType extends AbstractType
             ])
             ->add('description', TextareaType::class, [
             		'label' => 'label.description'
-            ])            
+            ]) 
+            ->add('hidden', CheckboxType::class, [
+            		'label' => 'label.hidden'
+            ]) 
         ;
     }
 

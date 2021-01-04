@@ -13,6 +13,7 @@ use App\Entity\User\User;
 use App\Entity\Transaction\Transaction;
 use App\Entity\Transaction\CreateTransactionCommand;
 use App\Entity\Transaction\iTransactionDocument;
+use App\Entity\TravelExpense\Enumerators\States;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\TravelExpense\TravelExpenseRepository")
@@ -65,7 +66,7 @@ class TravelExpense extends AggregateBase implements iTransactionDocument
     public function __construct(CreateTravelExpenseCommand $c, User $user)
     {
     	parent::__construct($user);
-    	$this->state = 00;
+    	$this->state = States::new;
         $this->travelStops = new ArrayCollection();
         
         $this->date = $c->date;
@@ -80,7 +81,7 @@ class TravelExpense extends AggregateBase implements iTransactionDocument
     
     public function setNew(User $user): Transaction
     {
-    	$this->setState(10);
+    	$this->setState(States::unbooked);
     	
     	parent::updateBase($user);
     	
@@ -112,7 +113,7 @@ class TravelExpense extends AggregateBase implements iTransactionDocument
     	if($user == null)
     		throw new \Exception("Updating user must be set.");
     	
-    	if($this->state > 10)
+    	if($this->state > States::unbooked)
     		throw new \Exception("Can't update booked or cancelled TravelExpenses.");
     	
     	parent::updateBase($user);
@@ -173,7 +174,7 @@ class TravelExpense extends AggregateBase implements iTransactionDocument
     	if($user == null)
     		throw new \Exception("Updating user must be set.");
     		
-    	if($this->state != 10)
+    	if($this->state != States::unbooked)
     		throw new \Exception("I can only bundle new expenses.");
     	
     	if ($this->travelExpenseBundle != null)
@@ -190,7 +191,7 @@ class TravelExpense extends AggregateBase implements iTransactionDocument
     	if($user == null)
     		throw new \Exception("Updating user must be set.");
     		
-    	if($this->state != 10)
+    	if($this->state != States::unbooked)
     		throw new \Exception("I can only book new expenses.");
     			
     	parent::updateBase($user);
@@ -209,7 +210,7 @@ class TravelExpense extends AggregateBase implements iTransactionDocument
     public function createTravelStop(CreateTravelStopCommand $c): TravelStop
     {
     	echo("Creating new TravelStop with post ".$c->post.". ");
-    	if($this->state > 10)
+    	if($this->state > States::unbooked)
     		throw new \Exception("Can't update booked or cancelled TravelExpenses.");
     	$ts = new TravelStop($c, $this);
     	echo("Created ".$ts);
@@ -228,7 +229,7 @@ class TravelExpense extends AggregateBase implements iTransactionDocument
      */
     private function updateTravelStop(ITravelStopCommand $c, TravelStop $ts): TravelStop
     {
-    	if($this->state > 10)
+    	if($this->state > States::unbooked)
     		throw new \Exception("Can't update booked or cancelled TravelExpenses.");    	
     	if(!$this->travelStops->contains($ts))
     		throw new \Exception("Can't update a travelStop that's not in this TravelExpense.");
@@ -240,7 +241,7 @@ class TravelExpense extends AggregateBase implements iTransactionDocument
         
     private function removeTravelStop(TravelStop $ts): TravelExpense
     {
-    	if($this->state > 10)
+    	if($this->state > States::unbooked)
     		throw new \Exception("Can't update booked or cancelled TravelExpenses.");
     	if(!$this->travelStops->contains($ts))
     		throw new \Exception("Can't remove a travelStop that's not in this TravelExpense.");
@@ -265,7 +266,7 @@ class TravelExpense extends AggregateBase implements iTransactionDocument
      */
     private function removeAllTravelStops(): TravelExpense
     {
-    	if($this->state > 10)
+    	if($this->state > States::unbooked)
     		throw new \Exception("Can't update booked or cancelled TravelExpenses.");
     	
     	foreach($this->travelStops as $ts)
@@ -302,7 +303,8 @@ class TravelExpense extends AggregateBase implements iTransactionDocument
     /**
      * Sets TE state
      *
-     * @param integer $state 00-new, 10-unbooked, 20-booked, 100-cancelled.
+     * @param States 
+     * @see \App\Entity\TravelExpense\Enumerators\States
      */
     private function setState(?int $state): int
     {
@@ -315,26 +317,26 @@ class TravelExpense extends AggregateBase implements iTransactionDocument
     /**
      * Checks if transition of states is allowed and everything is properly set.
      *
-     * @param int $currState Current TE state
-     * @param int $newState New TE state
+     * @param States $currState Current TE state
+     * @param States $newState New TE state
      */
     private function checkState(int $currState, int $newState)
     {
     	switch ($currState) {
-    		case 00: //new
-    			if ($newState != 10 && $newState != 100)
+    		case States::new: //new
+    			if ($newState != States::unbooked && $newState != States::cancelled)
     				throw new \Exception("Can't transition to state $newState from $currState");
     				break;
-    		case 10: //unbooked
-    			if ($newState != 20 && $newState != 100)
+    		case States::unbooked: //unbooked
+    			if ($newState != States::booked && $newState != States::cancelled)
     				throw new \Exception("Can't transition to state $newState from $currState");
     				break;
-    		case 20: //booked
-    			if ($newState != 100) //Do we really want to be able to cancel booked TEs?
+    		case States::booked: //booked
+    			if ($newState != States::cancelled) //Do we really want to be able to cancel booked TEs?
     				throw new \Exception("Can't transition to state $newState from $currState");
     				break;
     				
-    		case 100: //cancelled
+    		case States::cancelled: //cancelled
     			throw new \Exception("Can't do anything with cancelled TE.");
     			break;
     		default:
