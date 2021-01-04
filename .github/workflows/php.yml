@@ -8,8 +8,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v1
-
+    - uses: actions/checkout@master
+    - uses: nanasess/setup-php@master
+      with:
+        php-version: '7.4'
     - name: Validate composer.json and composer.lock
       run: composer validate
 
