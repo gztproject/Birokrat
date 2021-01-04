@@ -3,11 +3,11 @@
 {% block body_id 'transaction_new' %}
 
 {% block main %}
-    <h1>{{ 'title.transaction_new'|trans }}</h1>
+    <h1>{{ 'title.new.transaction'|trans }}</h1>
 
     {{ include('dashboard/transaction/_form.html.twig', {
         form: form,
-        button_label: 'label.update_transaction'|trans,
+        button_label: 'label.update.transaction'|trans,
         include_save_and_create_new: true,
         include_back_to_home_link: true,        
     }, with_context = false) }}
