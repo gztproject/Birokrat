@@ -55,18 +55,18 @@ class TransactionController extends AbstractController {
 
 		$sheet = $spreadsheet->getActiveSheet ();
 		$sheet->setTitle ( "Transactions double-sided" );
-		
+
 		$row = 1;
-		
+
 		$sheet->setCellValue ( 'A' . $row, 'Organization' );
 		$sheet->setCellValue ( 'B' . $row, 'Date' );
 		$sheet->setCellValue ( 'C' . $row, 'Sum' );
 		$sheet->setCellValue ( 'D' . $row, 'Credit' );
 		$sheet->setCellValue ( 'E' . $row, 'Debit' );
 		$sheet->setCellValue ( 'F' . $row, 'Description' );
-		
+
 		$row ++;
-		
+
 		foreach ( $result as $res ) {
 			$sheet->setCellValue ( 'A' . $row, $res->getOrganization ()->getShortName () );
 			$sheet->setCellValue ( 'B' . $row, \PhpOffice\PhpSpreadsheet\Shared\Date::PHPToExcel ( $res->getDate () ) );
@@ -74,55 +74,55 @@ class TransactionController extends AbstractController {
 			$sheet->setCellValue ( 'D' . $row, $res->getCreditKonto ()->getNumber () );
 			$sheet->setCellValue ( 'E' . $row, $res->getDebitKonto ()->getNumber () );
 			$sheet->setCellValue ( 'F' . $row, $res->getDescription () );
-			
+
 			$row ++;
 		}
-		
+
 		$sheet->getStyle ( 'B' )->getNumberFormat ()->setFormatCode ( 'dd. mm. yyyy' );
 		$sheet->getStyle ( 'C' )->getNumberFormat ()->setFormatCode ( \PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_CURRENCY_EUR_SIMPLE );
-		
+
 		$sheet->getColumnDimension ( 'A' )->setAutoSize ( true );
 		$sheet->getColumnDimension ( 'B' )->setAutoSize ( true );
 		$sheet->getColumnDimension ( 'C' )->setAutoSize ( true );
 		$sheet->getColumnDimension ( 'D' )->setAutoSize ( true );
 		$sheet->getColumnDimension ( 'E' )->setAutoSize ( true );
 		$sheet->getColumnDimension ( 'F' )->setAutoSize ( true );
-		
-/*
-		$sheet = $spreadsheet->createSheet ();
-		$sheet->setTitle ( "Transactions simple" );
-		
-		$row = 1;
-		
-		$sheet->setCellValue ( 'A' . $row, 'Organization' );
-		$sheet->setCellValue ( 'B' . $row, 'Date' );
-		$sheet->setCellValue ( 'C' . $row, 'Sum' );
-		$sheet->setCellValue ( 'D' . $row, 'Description' );
-		
-		$row ++;
-		
-		foreach ( $result as $res ) {
-			$sum = $res->getSum () * $this->isPositive ( $res->getCreditKonto (), $res->getDebitKonto () );
-			
-			if ($sum == 0)
-				continue;
-				
-				$sheet->setCellValue ( 'A' . $row, $res->getOrganization ()->getShortName () );
-				$sheet->setCellValue ( 'B' . $row, \PhpOffice\PhpSpreadsheet\Shared\Date::PHPToExcel ( $res->getDate () ) );
-				$sheet->setCellValue ( 'C' . $row, $sum );
-				$sheet->setCellValue ( 'D' . $row, $res->getDescription () );
-				
-				$row ++;
-		}
-		
-		$sheet->getStyle ( 'B' )->getNumberFormat ()->setFormatCode ( 'dd. mm. yyyy' );
-		$sheet->getStyle ( 'C' )->getNumberFormat ()->setFormatCode ( \PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_CURRENCY_EUR_SIMPLE );
-		
-		$sheet->getColumnDimension ( 'A' )->setAutoSize ( true );
-		$sheet->getColumnDimension ( 'B' )->setAutoSize ( true );
-		$sheet->getColumnDimension ( 'C' )->setAutoSize ( true );
-		$sheet->getColumnDimension ( 'D' )->setAutoSize ( true );
-*/
+
+		/*
+		 * $sheet = $spreadsheet->createSheet ();
+		 * $sheet->setTitle ( "Transactions simple" );
+		 *
+		 * $row = 1;
+		 *
+		 * $sheet->setCellValue ( 'A' . $row, 'Organization' );
+		 * $sheet->setCellValue ( 'B' . $row, 'Date' );
+		 * $sheet->setCellValue ( 'C' . $row, 'Sum' );
+		 * $sheet->setCellValue ( 'D' . $row, 'Description' );
+		 *
+		 * $row ++;
+		 *
+		 * foreach ( $result as $res ) {
+		 * $sum = $res->getSum () * $this->isPositive ( $res->getCreditKonto (), $res->getDebitKonto () );
+		 *
+		 * if ($sum == 0)
+		 * continue;
+		 *
+		 * $sheet->setCellValue ( 'A' . $row, $res->getOrganization ()->getShortName () );
+		 * $sheet->setCellValue ( 'B' . $row, \PhpOffice\PhpSpreadsheet\Shared\Date::PHPToExcel ( $res->getDate () ) );
+		 * $sheet->setCellValue ( 'C' . $row, $sum );
+		 * $sheet->setCellValue ( 'D' . $row, $res->getDescription () );
+		 *
+		 * $row ++;
+		 * }
+		 *
+		 * $sheet->getStyle ( 'B' )->getNumberFormat ()->setFormatCode ( 'dd. mm. yyyy' );
+		 * $sheet->getStyle ( 'C' )->getNumberFormat ()->setFormatCode ( \PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_CURRENCY_EUR_SIMPLE );
+		 *
+		 * $sheet->getColumnDimension ( 'A' )->setAutoSize ( true );
+		 * $sheet->getColumnDimension ( 'B' )->setAutoSize ( true );
+		 * $sheet->getColumnDimension ( 'C' )->setAutoSize ( true );
+		 * $sheet->getColumnDimension ( 'D' )->setAutoSize ( true );
+		 */
 		// Create your Office 2007 Excel (XLSX Format)
 		$writer = new Xlsx ( $spreadsheet );
 
@@ -143,8 +143,7 @@ class TransactionController extends AbstractController {
 		if (($credit->getCategory ()->getNumber () == 11 || $credit->getCategory ()->getNumber () == 91) && ! ($debit->getCategory ()->getNumber () == 11 || $debit->getCategory ()->getNumber () == 91))
 			return - 1;
 
-		if (($debit->getCategory ()->getNumber () == 11 || $debit->getCategory ()->getNumber () == 91) && 
-				! ($credit->getCategory ()->getNumber () == 11 || $credit->getCategory ()->getNumber () == 91 || $credit->getCategory ()->getNumber () == 12))
+		if (($debit->getCategory ()->getNumber () == 11 || $debit->getCategory ()->getNumber () == 91) && ! ($credit->getCategory ()->getNumber () == 11 || $credit->getCategory ()->getNumber () == 91 || $credit->getCategory ()->getNumber () == 12))
 			return 1;
 
 		// if ($debit->getCategory ()->getNumber () == 28)
@@ -175,6 +174,7 @@ class TransactionController extends AbstractController {
 	 */
 	public function new(TransactionRepository $transactions, Request $request, PaginatorInterface $paginator): Response {
 		$createTransactionCommand = new CreateTransactionCommand ();
+		$createTransactionCommand->hidden = false;
 
 		$form = $this->createForm ( TransactionType::class, $createTransactionCommand )->add ( 'saveAndCreateNew', SubmitType::class );
 
