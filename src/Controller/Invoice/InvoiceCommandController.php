@@ -20,7 +20,7 @@ use Qipsius\TCPDFBundle\Controller\TCPDFController;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use App\Entity\Invoice\UpdateInvoiceCommand;
 use App\Entity\Invoice\UpdateInvoiceItemCommand;
-use App\Entity\Invoice\States;
+use App\Entity\Invoice\Enumerators\States;
 
 
 class InvoiceCommandController extends AbstractController

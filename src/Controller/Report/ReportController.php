@@ -16,7 +16,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Ramsey\Uuid\Uuid;
 use App\Entity\Report\Turnout;
-use App\Entity\Konto\KontoTypes;
+use App\Entity\Konto\Enumerators\KontoTypes;
 
 class ReportController extends AbstractController {
 	/**

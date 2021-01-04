@@ -4,6 +4,8 @@ namespace App\Entity\IncomingInvoice;
 
 use Doctrine\ORM\Mapping as ORM;
 use App\Entity\Base\AggregateBase;
+use App\Entity\IncomingInvoice\Enumerators\PaymentMethods;
+use App\Entity\IncomingInvoice\Enumerators\States;
 use App\Entity\Konto\Konto;
 use App\Entity\Organization\Organization;
 use App\Entity\User\User;
@@ -432,25 +434,4 @@ class IncomingInvoice extends AggregateBase implements iTransactionDocument {
 	public function __toString() {
 		return "Incoming invoice " . $this->issuer->getName () . ": " . $this->number;
 	}
-}
-
-/**
- * 00-draft, 10-received, 20-paid, 100-refunded, 110-rejected.
- *
- */
-abstract class States {
-	const draft = 00;
-	const received = 10;
-	const paid = 20;
-	const refunded = 100;
-	const rejected = 110;
-}
-
-/**
- * Payment methods
- *
- */
-abstract class PaymentMethods {
-	const cash = 00;
-	const transaction = 10;
 }
