@@ -12,7 +12,7 @@ use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use App\Entity\Organization\Partner;
 use App\Entity\Organization\Organization;
 use App\Entity\IncomingInvoice\CreateIncomingInvoiceCommand;
-use App\Entity\IncomingInvoice\PaymentMethods;
+use App\Entity\IncomingInvoice\Enumerators\PaymentMethods;
 use App\Entity\Konto\Konto;
 use App\Repository\KontoRepository;
 use App\Repository\Organization\PartnerRepository;
@@ -87,8 +87,8 @@ class IncomingInvoiceType extends AbstractType
             ))
             ->add('paymentMethod', ChoiceType::class, array(
             		'choices' => [
-            				'label.cash' => 00,
-            				'label.transfer' => 10
+            				'label.cash' => PaymentMethods::cash,
+            				'label.transfer' => PaymentMethods::transaction
             		],
             		'label' => 'label.paymentMethod',
             		'required' => false,

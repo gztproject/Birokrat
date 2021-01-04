@@ -161,7 +161,7 @@ class Transaction extends AggregateBase {
 		$this->creditKonto = $c->creditKonto;
 		$this->debitKonto = $c->debitKonto;
 		$this->description = $c->description;
-		$this->hidden = $c->hidden;
+		$this->hidden = $c->hidden??false;
 	}
 
 	/**

@@ -5,6 +5,7 @@ namespace App\Entity\Konto;
 use Doctrine\ORM\Mapping as ORM;
 use App\Entity\Base\AggregateBase;
 use App\Entity\User\User;
+use App\Entity\Konto\Enumerators\KontoTypes;
 
 /**
  *
@@ -148,26 +149,10 @@ class Konto extends KontoBase {
 	
 	/**
 	 * Returns the Konto type (active or passive). Use KontoTypes enum.
-	 * @return int
+	 * @return KontoTypes
+	 * @see \App\Entity\Konto\Enumerators\KontoTypes
 	 */
-	public function getType(): int {
+	public function getType(): KontoTypes {
 		return $this->type;
 	}	
-}
-
-/**
- * This is a konto type enum, telling us wether it's an active or passive konto
- * 0-active (debit-credit), 1-passive (credit-debit).
- *
- * @author gapi
- */
-abstract class KontoTypes {
-	/**
-	 * Active konto (debit-credit)
-	 */
-	const active = 0;
-	/**
-	 * Passive konto (credit-debit)
-	 */
-	const passive = 1;
 }
