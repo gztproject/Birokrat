@@ -20,6 +20,7 @@ class DDDDDD {
 	public $b5 = 0;
 	public $b6 = 0;
 	public $b7 = 0;
+	public $b8 = 0; // MTD - Korona 2020
 
 	/**
 	 * 3
@@ -247,7 +248,7 @@ class DDDDDD {
 	 */
 	public $ae;
 	public function recalculate() {
-		$this->b = $this->b1 + $this->b2 + $this->b3 + $this->b4 + $this->b5 + $this->b6 + $this->b7;
+		$this->b = $this->b1 + $this->b2 + $this->b3 + $this->b4 + $this->b5 + $this->b6 + $this->b7 + $this->b8;
 
 		$this->c = $this->c1 + $this->c2 + $this->c3 + $this->c4 + $this->c5 + $this->c6;
 
