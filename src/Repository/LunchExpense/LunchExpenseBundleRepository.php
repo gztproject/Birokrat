@@ -4,7 +4,7 @@ namespace App\Repository\LunchExpense;
 
 use App\Entity\LunchExpense\LunchExpenseBundle;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @method LunchExpenseBundle|null find($id, $lockMode = null, $lockVersion = null)

@@ -10,7 +10,6 @@ use App\Entity\Invoice\Enumerators\States;
 use App\Entity\Konto\Konto;
 use App\Entity\Organization\Organization;
 use App\Entity\User\User;
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Symfony\Component\Config\Definition\Exception\Exception;
 use App\Entity\Organization\Partner;
 use App\Entity\Transaction\Transaction;

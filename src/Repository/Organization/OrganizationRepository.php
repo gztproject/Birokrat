@@ -4,7 +4,7 @@ namespace App\Repository\Organization;
 
 use App\Entity\Organization\Organization;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @method Organization|null find($id, $lockMode = null, $lockVersion = null)

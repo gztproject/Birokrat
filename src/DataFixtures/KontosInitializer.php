@@ -2,7 +2,7 @@
 
 namespace App\DataFixtures;
 
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use App\Entity\Konto\KontoClass;
 use App\Entity\Konto\KontoCategory;
 use App\Entity\Konto\Konto;

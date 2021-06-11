@@ -4,7 +4,7 @@ namespace App\Repository\TravelExpense;
 
 use App\Entity\TravelExpense\TravelStop;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @method TravelStop|null find($id, $lockMode = null, $lockVersion = null)
