@@ -2,7 +2,7 @@
 
 namespace App\DataFixtures;
 
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use App\Entity\Geography\Country;
 
 class CountryInitializer implements IEntityInitializer

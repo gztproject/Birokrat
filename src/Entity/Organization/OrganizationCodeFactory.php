@@ -2,7 +2,7 @@
 
 namespace App\Entity\Organization;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 
 class OrganizationCodeFactory
 {
