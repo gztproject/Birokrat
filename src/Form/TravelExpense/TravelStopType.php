@@ -20,7 +20,7 @@ class TravelStopType extends AbstractType
         	))
             ->add('post', EntityType::class, array(
            		'class' => Post::class,
-           		'choice_label' => 'name',
+                'choice_label' => 'name', //'nameAndCode' -> can't type the name in this case
            		'expanded'=>false,
            		'multiple'=>false,
            		'label' => false,    

@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Entity\Transaction;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -35,293 +34,419 @@ use Psr\Log\LoggerInterface;
  *
  * @ORM\Entity(repositoryClass="App\Repository\Transaction\TransactionRepository")
  */
-class Transaction extends AggregateBase {
-	/**
-	 *
-	 * @ORM\ManyToOne(targetEntity="App\Entity\Organization\Organization")
-	 * @ORM\JoinColumn(nullable=false)
-	 */
-	private $organization;
+class Transaction extends AggregateBase
+{
 
-	/**
-	 *
-	 * @ORM\ManyToOne(targetEntity="App\Entity\Konto\Konto")
-	 * @ORM\JoinColumn(nullable=false)
-	 */
-	private $creditKonto;
+    /**
+     *
+     * @ORM\ManyToOne(targetEntity="App\Entity\Organization\Organization")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $organization;
 
-	/**
-	 *
-	 * @ORM\ManyToOne(targetEntity="App\Entity\Konto\Konto")
-	 * @ORM\JoinColumn(nullable=false)
-	 */
-	private $debitKonto;
+    /**
+     *
+     * @ORM\ManyToOne(targetEntity="App\Entity\Konto\Konto")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $creditKonto;
 
-	/**
-	 *
-	 * @ORM\Column(type="decimal", precision=10, scale=2)
-	 */
-	private $sum;
+    /**
+     *
+     * @ORM\ManyToOne(targetEntity="App\Entity\Konto\Konto")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $debitKonto;
 
-	/**
-	 *
-	 * @ORM\Column(type="datetime")
-	 */
-	private $date;
-	
-	/**
-	 * Should this transaction be hidden from regular transactions (for example we don't want to show the konto closing at the end of the year among refular transactions)
-	 * @ORM\Column(type="boolean")
-	 */
-	private $hidden;
+    /**
+     *
+     * @ORM\Column(type="decimal", precision=10, scale=2)
+     */
+    private $sum;
 
-	/**
-	 *
-	 * @ORM\Column(type="string", length=511, nullable=true)
-	 */
-	private $description;
+    /**
+     *
+     * @ORM\Column(type="datetime")
+     */
+    private $date;
 
-	/**
-	 *
-	 * @ORM\ManyToOne(targetEntity="App\Entity\Invoice\Invoice")
-	 */
-	private $invoice;
+    /**
+     * Should this transaction be hidden from regular transactions (for example we don't want to show the konto closing at the end of the year among refular transactions)
+     *
+     * @ORM\Column(type="boolean")
+     */
+    private $hidden;
 
-	/**
-	 *
-	 * @ORM\ManyToOne(targetEntity="App\Entity\IncomingInvoice\IncomingInvoice")
-	 */
-	private $incomingInvoice;
+    /**
+     *
+     * @ORM\Column(type="string", length=511, nullable=true)
+     */
+    private $description;
 
-	/**
-	 *
-	 * @ORM\ManyToOne(targetEntity="App\Entity\TravelExpense\TravelExpense")
-	 */
-	private $travelExpense;
+    /**
+     *
+     * @ORM\ManyToOne(targetEntity="App\Entity\Invoice\Invoice")
+     */
+    private $invoice;
 
-	/**
-	 *
-	 * @ORM\OneToOne(targetEntity="App\Entity\TravelExpense\TravelExpenseBundle", cascade={"persist", "remove"})
-	 */
-	private $travelExpenseBundle;
+    /**
+     *
+     * @ORM\ManyToOne(targetEntity="App\Entity\IncomingInvoice\IncomingInvoice")
+     */
+    private $incomingInvoice;
 
-	/**
-	 *
-	 * @ORM\OneToOne(targetEntity="App\Entity\LunchExpense\LunchExpense", cascade={"persist", "remove"})
-	 */
-	private $lunchExpense;
+    /**
+     *
+     * @ORM\ManyToOne(targetEntity="App\Entity\TravelExpense\TravelExpense")
+     */
+    private $travelExpense;
 
-	/**
-	 *
-	 * @ORM\OneToOne(targetEntity="App\Entity\LunchExpense\LunchExpenseBundle", cascade={"persist", "remove"})
-	 */
-	private $lunchExpenseBundle;
+    /**
+     *
+     * @ORM\OneToOne(targetEntity="App\Entity\TravelExpense\TravelExpenseBundle", cascade={"persist", "remove"})
+     */
+    private $travelExpenseBundle;
 
-	/**
-	 * Creates a new transaction
-	 *
-	 * @param CreateTransactionCommand $c
-	 * @param User $user
-	 * @param iTransactionDocument $document
-	 * @throws \Exception
-	 */
-	public function __construct(CreateTransactionCommand $c, User $user, ?iTransactionDocument $document) {
-		if (isset ( $document )) {
-			switch (get_class ( $document )) {
-				case Invoice::class :
-					$this->initWithInvoice ( $c, $document );
-					break;
-				case IncomingInvoice::class :
-					$this->initWithIncomingInvoice ( $c, $document );
-					break;
-				case TravelExpense::class :
-					$this->initWithTravelExpense ( $c, $document );
-					break;
-				case TravelExpenseBundle::class :
-					$this->initWithTravelExpenseBundle ( $c, $document );
-					break;
-				case LunchExpense::class :
-					$this->initWithLunchExpense ( $c, $document );
-					break;
-				case LunchExpenseBundle::class :
-					$this->initWithLunchExpenseBundle ( $c, $document );
-					break;
-				default :
-					throw new \Exception ( 'Not implemented yet.' );
-					break;
-			}
-		} else {
-			if (! isset ( $c->description ) || trim ( $c->description ) === '')
-				throw new \InvalidArgumentException ( "If creating a transaction with no document, a description must be provided." );
-		}
-		parent::__construct ( $user );
-		$this->organization = $c->organization;
-		$this->date = $c->date;
-		$this->sum = $c->sum;
-		$this->creditKonto = $c->creditKonto;
-		$this->debitKonto = $c->debitKonto;
-		$this->description = $c->description;
-		$this->hidden = $c->hidden??false;
-	}
+    /**
+     *
+     * @ORM\OneToOne(targetEntity="App\Entity\LunchExpense\LunchExpense", cascade={"persist", "remove"})
+     */
+    private $lunchExpense;
 
-	/**
-	 * Updates a transaction.
-	 * Not sure how much we should be using this though...
-	 *
-	 * @param UpdateTransactionCommand $c
-	 * @param User $user
-	 * @param iTransactionDocument $document
-	 * @throws \Exception
-	 * @return Transaction
-	 */
-	public function update(UpdateTransactionCommand $c, User $user, ?iTransactionDocument $document, LoggerInterface $logger): Transaction {
-		$logger->debug ( "Updating transaction " . $this . " with " . $c );
-		if (isset ( $document )) {
-			switch (get_class ( $document )) {
-				case Invoice::class :
-					parent::updateBase ( $user );
-					$this->updateWithInvoice ( $c, $document );
-					break;
-				case IncomingInvoice::class :
-					parent::updateBase ( $user );
-					$this->updateWithIncomingInvoice ( $c, $document );
-					break;
-				case TravelExpense::class :
-					parent::updateBase ( $user );
-					$this->updateWithTravelExpense ( $c, $document );
-					break;
-				case TravelExpenseBundle::class :
-					parent::updateBase ( $user );
-					$this->updateWithTravelExpenseBundle ( $c, $document );
-					break;
-				case LunchExpense::class :
-					parent::updateBase ( $user );
-					$this->updateWithLunchExpense ( $c, $document );
-					break;
-				default :
-					throw new \Exception ( 'Not implemented yet.' );
-					break;
-			}
-		} else
-			$this->updateWithDescription ();
+    /**
+     *
+     * @ORM\OneToOne(targetEntity="App\Entity\LunchExpense\LunchExpenseBundle", cascade={"persist", "remove"})
+     */
+    private $lunchExpenseBundle;
 
-		return $this;
-	}
-	private function initWithInvoice(CreateTransactionCommand $c, Invoice $invoice) {
-		$this->invoice = $invoice;
-	}
-	private function initWithIncomingInvoice(CreateTransactionCommand $c, IncomingInvoice $incomingInvoice) {
-		$this->incomingInvoice = $incomingInvoice;
-	}
-	private function initWithTravelExpenseBundle(CreateTransactionCommand $c, TravelExpenseBundle $bundle) {
-		$this->travelExpenseBundle = $bundle;
-	}
-	private function initWithTravelExpense(CreateTransactionCommand $c, TravelExpense $travelExpense) {
-		$this->travelExpense = $travelExpense;
-	}
-	private function initWithLunchExpense(CreateTransactionCommand $c, LunchExpense $le) {
-		$this->lunchExpense = $le;
-	}
-	private function initWithLunchExpenseBundle(CreateTransactionCommand $c, LunchExpenseBundle $bundle) {
-		$this->lunchExpenseBundle = $bundle;
-	}
-	private function updateCommon(UpdateTransactionCommand $c) {
-		if ($c->organization !== null && $c->organization !== $this->organization)
-			$this->organization = $c->organization;
-		if ($c->date !== null && $c->date !== $this->date)
-			$this->date = $c->date;
-		if ($c->sum !== null && $c->sum !== $this->sum)
-			$this->sum = $c->sum;
-		if ($c->creditKonto !== null && $c->creditKonto !== $this->creditKonto)
-			$this->creditKonto = $c->creditKonto;
-		if ($c->debitKonto !== null && $c->debitKonto !== $this->debitKonto)
-			$this->debitKonto = $c->debitKonto;
-		if ($c->description !== null && $c->description !== $this->description)
-			$this->description = $c->description;
-	}
-	private function updateWithDescription(UpdateTransactionCommand $c) {
-		$this->updateCommon ( $c );
-	}
-	private function updateWithInvoice(UpdateTransactionCommand $c, Invoice $invoice) {
-		$this->updateCommon ( $c );
-		$this->invoice = $invoice;
-	}
-	private function updateWithIncomingInvoice(UpdateTransactionCommand $c, IncomingInvoice $incomingInvoice) {
-		$this->updateCommon ( $c );
-	}
-	private function updateWithTravelExpense(UpdateTransactionCommand $c, TravelExpense $travelExpense) {
-		$this->updateCommon ( $c );
-		$this->travelExpense = $travelExpense;
-	}
-	private function updateWithTravelExpenseBundle(UpdateTransactionCommand $c, TravelExpenseBundle $bundle) {
-		$this->updateCommon ( $c );
-		$this->travelExpenseBundle = $bundle;
-	}
-	private function updateWithLunchExpense(UpdateLunchExpenseCommand $c, LunchExpense $le) {
-		$this->updateCommon ( $c );
-		$this->lunchExpense = $le;
-	}
+    /**
+     * Creates a new transaction
+     *
+     * @param CreateTransactionCommand $c
+     * @param User $user
+     * @param iTransactionDocument $document
+     * @throws \Exception
+     */
+    public function __construct(CreateTransactionCommand $c, User $user, ?iTransactionDocument $document)
+    {
+        if (isset($document)) {
+            switch (get_class($document)) {
+                case Invoice::class:
+                    $this->initWithInvoice($c, $document);
+                    break;
+                case IncomingInvoice::class:
+                    $this->initWithIncomingInvoice($c, $document);
+                    break;
+                case TravelExpense::class:
+                    $this->initWithTravelExpense($c, $document);
+                    break;
+                case TravelExpenseBundle::class:
+                    $this->initWithTravelExpenseBundle($c, $document);
+                    break;
+                case LunchExpense::class:
+                    $this->initWithLunchExpense($c, $document);
+                    break;
+                case LunchExpenseBundle::class:
+                    $this->initWithLunchExpenseBundle($c, $document);
+                    break;
+                default:
+                    throw new \Exception('Not implemented yet.');
+                    break;
+            }
+        } else {
+            if (! isset($c->description) || trim($c->description) === '')
+                throw new \InvalidArgumentException("If creating a transaction with no document, a description must be provided.");
+        }
+        parent::__construct($user);
+        $this->organization = $c->organization;
+        $this->date = $c->date;
+        $this->sum = $c->sum;
+        $this->creditKonto = $c->creditKonto;
+        $this->debitKonto = $c->debitKonto;
+        $this->description = $c->description;
+        $this->hidden = $c->hidden ?? false;
+    }
 
-	/*
-	 * **************************************************************************
-	 * * Public getters *
-	 * **************************************************************************
-	 */
-	public function getOrganization(): Organization {
-		return $this->organization;
-	}
-	public function getCreditKonto(): Konto {
-		return $this->creditKonto;
-	}
-	public function getDebitKonto(): Konto {
-		return $this->debitKonto;
-	}
-	public function getSum() {
-		return $this->sum;
-	}
-	public function getDate(): ?\DateTimeInterface {
-		return $this->date;
-	}
-	public function getDateString(): ?string {
-		return $this->date->format ( 'd. m. Y' );
-	}
-	public function getInvoice(): ?Invoice {
-		return $this->invoice;
-	}
-	public function getIncomingInvoice(): ?IncomingInvoice {
-		return $this->incomingInvoice;
-	}
-	public function getTravelExpense(): ?TravelExpense {
-		return $this->travelExpense;
-	}
-	public function getTravelExpenseBundle(): ?TravelExpenseBundle {
-		return $this->travelExpenseBundle;
-	}
-	public function getLunchExpense(): ?LunchExpense {
-		return $this->lunchExpense;
-	}
-	public function getLunchExpenseBundle(): ?LunchExpenseBundle {
-		return $this->lunchExpenseBundle;
-	}
-	public function getDescription(): ?string {
-		$sb = $this->description;
-		$sb .= $this->invoice;
-		$sb .= $this->incomingInvoice;
-		$sb .= $this->travelExpense;
-		$sb .= $this->travelExpenseBundle;
-		$sb .= $this->lunchExpense;
-		$sb .= $this->lunchExpenseBundle;
-		return $sb;
-	}
-	public function __toString(): string {
-		$sb = "Transaction: ";
-		$sb .= $this->date->format ( 'd. m. Y' ) . ": ";
-		$sb .= "Organization: " . $this->organization->getName () . "; ";
-		$sb .= "Kontos: " . $this->debitKonto->getNumber ();
-		$sb .= " <- " . $this->creditKonto->getNumber () . "; ";
-		$sb .= "SUM: " . $this->sum . "; ";
-		if ($this->description !== null)
-			$sb .= $this->description . "; ";
-		return $sb;
-	}
+    /**
+     * Updates a transaction.
+     * Not sure how much we should be using this though...
+     *
+     * @param UpdateTransactionCommand $c
+     * @param User $user
+     * @param ?iTransactionDocument $document
+     * @throws \Exception
+     * @return Transaction
+     */
+    public function update(UpdateTransactionCommand $c, User $user, ?iTransactionDocument $document, LoggerInterface $logger): Transaction
+    {
+        $logger->debug("Updating transaction " . $this . " with " . $c . "; Document: " . $document);
+        if (isset($document)) {
+            switch (get_class($document)) {
+                case \Proxies\__CG__\App\Entity\Invoice\Invoice::class:
+                    parent::updateBase($user);
+                    $this->updateWithInvoice($c, $document);
+                    break;
+                case \Proxies\__CG__\App\Entity\IncomingInvoice\IncomingInvoice::class:
+                    parent::updateBase($user);
+                    $this->updateWithIncomingInvoice($c, $document);
+                    break;
+                case \Proxies\__CG__\App\Entity\TravelExpense\TravelExpense::class:
+                    parent::updateBase($user);
+                    $this->updateWithTravelExpense($c, $document);
+                    break;
+                case \Proxies\__CG__\App\Entity\TravelExpenseBundle\TravelExpenseBundle::class:
+                    parent::updateBase($user);
+                    $this->updateWithTravelExpenseBundle($c, $document);
+                    break;
+                case \Proxies\__CG__\App\Entity\LunchExpense\LunchExpense::class:
+                    parent::updateBase($user);
+                    $this->updateWithLunchExpense($c, $document);
+                    break;
+                default:
+                    throw new \Exception('Not implemented yet.');
+                    break;
+            }
+        } else {
+            if (! isset($c->description) || trim($c->description) === '')
+                throw new \InvalidArgumentException("If updating a transaction with no document, a description must be provided.");
+            parent::updateBase($user);
+            $this->updateWithDescription($c);
+        }
+
+        return $this;
+    }
+
+    /**
+     *
+     * @param object $to
+     * @return object
+     */
+    public function mapTo($to)
+    {
+        if ($to instanceof UpdateTransactionCommand || $to instanceof CreateTransactionCommand) {
+            $reflect = new \ReflectionClass($this);
+            $props = $reflect->getProperties();
+            foreach ($props as $prop) {
+                $name = $prop->getName();
+                if (property_exists($to, $name)) {
+                    $to->$name = $this->$name;
+                }
+            }
+        } else {
+            throw (new \Exception('cant map ' . get_class($this) . ' to ' . get_class($to)));
+            return $to;
+        }
+    }
+
+    /**
+     * Makes a copy of itself
+     *
+     * @param User $user
+     *            The cloning user
+     * @return Transaction Cloned transaction
+     */
+    public function clone(User $user): Transaction
+    {
+        if ($this->hasDocument())
+            throw new \Exception('Can\'t clone a transaction with document.');
+        $c = new CreateTransactionCommand();
+        $this->mapTo($c);
+        $transaction = $user->createTransactionWithDescription($c);
+
+        return $transaction;
+    }
+
+    private function initWithInvoice(CreateTransactionCommand $c, Invoice $invoice)
+    {
+        $this->invoice = $invoice;
+    }
+
+    private function initWithIncomingInvoice(CreateTransactionCommand $c, IncomingInvoice $incomingInvoice)
+    {
+        $this->incomingInvoice = $incomingInvoice;
+    }
+
+    private function initWithTravelExpenseBundle(CreateTransactionCommand $c, TravelExpenseBundle $bundle)
+    {
+        $this->travelExpenseBundle = $bundle;
+    }
+
+    private function initWithTravelExpense(CreateTransactionCommand $c, TravelExpense $travelExpense)
+    {
+        $this->travelExpense = $travelExpense;
+    }
+
+    private function initWithLunchExpense(CreateTransactionCommand $c, LunchExpense $le)
+    {
+        $this->lunchExpense = $le;
+    }
+
+    private function initWithLunchExpenseBundle(CreateTransactionCommand $c, LunchExpenseBundle $bundle)
+    {
+        $this->lunchExpenseBundle = $bundle;
+    }
+
+    private function updateCommon(UpdateTransactionCommand $c)
+    {
+        if ($c->organization !== null && $c->organization !== $this->organization)
+            $this->organization = $c->organization;
+        if ($c->date !== null && $c->date !== $this->date)
+            $this->date = $c->date;
+        if ($c->sum !== null && $c->sum !== $this->sum)
+            $this->sum = $c->sum;
+        if ($c->creditKonto !== null && $c->creditKonto !== $this->creditKonto)
+            $this->creditKonto = $c->creditKonto;
+        if ($c->debitKonto !== null && $c->debitKonto !== $this->debitKonto)
+            $this->debitKonto = $c->debitKonto;
+        if ($c->description !== null && $c->description !== $this->description)
+            $this->description = $c->description;
+    }
+
+    private function updateWithDescription(UpdateTransactionCommand $c)
+    {
+        $this->updateCommon($c);
+    }
+
+    private function updateWithInvoice(UpdateTransactionCommand $c, Invoice $invoice)
+    {
+        $this->updateCommon($c);
+        $this->invoice = $invoice;
+    }
+
+    private function updateWithIncomingInvoice(UpdateTransactionCommand $c, IncomingInvoice $incomingInvoice)
+    {
+        $this->updateCommon($c);
+        $this->incomingInvoice = $incomingInvoice;
+    }
+
+    private function updateWithTravelExpense(UpdateTransactionCommand $c, TravelExpense $travelExpense)
+    {
+        $this->updateCommon($c);
+        $this->travelExpense = $travelExpense;
+    }
+
+    private function updateWithTravelExpenseBundle(UpdateTransactionCommand $c, TravelExpenseBundle $bundle)
+    {
+        $this->updateCommon($c);
+        $this->travelExpenseBundle = $bundle;
+    }
+
+    private function updateWithLunchExpense(UpdateLunchExpenseCommand $c, LunchExpense $le)
+    {
+        $this->updateCommon($c);
+        $this->lunchExpense = $le;
+    }
+
+    /*
+     * **************************************************************************
+     * * Public getters *
+     * **************************************************************************
+     */
+    public function getOrganization(): Organization
+    {
+        return $this->organization;
+    }
+
+    public function getCreditKonto(): Konto
+    {
+        return $this->creditKonto;
+    }
+
+    public function getDebitKonto(): Konto
+    {
+        return $this->debitKonto;
+    }
+
+    public function getSum()
+    {
+        return $this->sum;
+    }
+
+    public function getDate(): ?\DateTimeInterface
+    {
+        return $this->date;
+    }
+
+    public function getDateString(): ?string
+    {
+        return $this->date->format('d. m. Y');
+    }
+
+    public function getInvoice(): ?Invoice
+    {
+        return $this->invoice;
+    }
+
+    public function getIncomingInvoice(): ?IncomingInvoice
+    {
+        return $this->incomingInvoice;
+    }
+
+    public function getTravelExpense(): ?TravelExpense
+    {
+        return $this->travelExpense;
+    }
+
+    public function getTravelExpenseBundle(): ?TravelExpenseBundle
+    {
+        return $this->travelExpenseBundle;
+    }
+
+    public function getLunchExpense(): ?LunchExpense
+    {
+        return $this->lunchExpense;
+    }
+
+    public function getLunchExpenseBundle(): ?LunchExpenseBundle
+    {
+        return $this->lunchExpenseBundle;
+    }
+
+    public function getDescription(): ?string
+    {
+        $sb = $this->description;
+        $sb .= $this->invoice;
+        $sb .= $this->incomingInvoice;
+        $sb .= $this->travelExpense;
+        $sb .= $this->travelExpenseBundle;
+        $sb .= $this->lunchExpense;
+        $sb .= $this->lunchExpenseBundle;
+        return $sb;
+    }
+
+    public function __toString(): string
+    {
+        $sb = "Transaction: ";
+        $sb .= $this->date->format('d. m. Y') . ": ";
+        $sb .= "Organization: " . $this->organization->getName() . "; ";
+        $sb .= "Kontos: " . $this->debitKonto->getNumber();
+        $sb .= " <- " . $this->creditKonto->getNumber() . "; ";
+        $sb .= "SUM: " . $this->sum . "; ";
+        $sb .= "Document: " . $this->getDocument() . "; ";
+        if ($this->description !== null)
+            $sb .= $this->description . "; ";
+        return $sb;
+    }
+
+    public function hasDocument(): bool
+    {
+        return ($this->invoice != null) || ($this->incomingInvoice != null) || ($this->travelExpense != null) || ($this->travelExpenseBundle != null) || ($this->lunchExpense != null) || ($this->lunchExpenseBundle != null);
+    }
+
+    public function getDocument(): ?iTransactionDocument
+    {
+        if ($this->invoice != null)
+            return $this->invoice;
+        if ($this->incomingInvoice != null)
+            return $this->incomingInvoice;
+        if ($this->travelExpense != null)
+            return $this->travelExpense;
+        if ($this->travelExpenseBundle != null)
+            return $this->travelExpenseBundle;
+        if ($this->lunchExpense != null)
+            return $this->lunchExpense;
+        if ($this->lunchExpenseBundle != null)
+            return $this->lunchExpenseBundle;
+        return null;
+    }
 }
