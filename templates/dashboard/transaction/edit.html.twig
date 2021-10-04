@@ -1,24 +1,23 @@
 {% extends 'dashboard/layout.html.twig' %}
 
-{% block body_id 'transaction_new' %}
+{% block body_id 'dashboard_transaction_edit' %}
 
 {% block main %}
-    <h1>{{ 'title.new.transaction'|trans }}</h1>
+    <h1>{{ 'title.transaction.edit'|trans }}</h1>
 
     {{ include('dashboard/transaction/_form.html.twig', {
         form: form,
         button_label: 'label.update.transaction'|trans,
-        include_save_and_create_new: true,
-        include_back_to_home_link: true,  
-        include_templates: true,   
-        hasDocument: false,   
+        include_back_to_home_link: true, 
+        include_save_and_create_new: false, 
+        include_templates: false,  
+        hasDocument: transaction.hasDocument, 
+        document: transaction.getDocument, 
     }, with_context = false) }}
-
 {% endblock %}
 
 {% block sidebar %}
     {{ parent() }}
-
 {% endblock %}
 
 {% block javascripts %}

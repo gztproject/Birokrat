@@ -3,7 +3,7 @@
 {% block body_id 'admin_user_index' %}
 
 {% block main %}
-    <h1>{{ 'title.user_list'|trans }}</h1>
+    <h1>{{ 'title.list.user'|trans }}</h1>
     
     
     <div class="bs-component">
@@ -35,7 +35,7 @@
             </tr>
         {% else %}
             <tr class="table-warning">
-                <td colspan="4" align="center">{{ 'user.no_users_found'|trans }}</td>
+                <td colspan="4" align="center">{{ 'label.no_users_found'|trans }}</td>
            </tr>
         {% endfor %}
         </tbody>
@@ -46,7 +46,7 @@
 {% block sidebar %}
     <div class="section actions">
         <a href="{{ path('admin_user_new') }}" class="btn btn-sm btn-block btn-success">
-            <i class="fa fa-plus" aria-hidden="true"></i> {{ 'action.create_user'|trans }}
+            <i class="fa fa-plus" aria-hidden="true"></i> {{ 'action.create.user'|trans }}
         </a>
     </div>
 

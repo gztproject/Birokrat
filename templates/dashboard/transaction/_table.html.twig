@@ -7,6 +7,7 @@
                 <th scope="col"><i class="fa fa-euro-sign" aria-hidden="true"></i> {{ 'label.sum'|trans }}</th>                
                 <th scope="col"><i class="fa fa-list-alt " aria-hidden="true"></i> {{ 'label.debit'|trans }}</th>
                 <th scope="col"><i class="fa fa-list-alt " aria-hidden="true"></i> {{ 'label.credit'|trans }}</th>
+                <th scope="col"><i class="fa fa-cog" aria-hidden="true"></i> {{ 'label.actions'|trans }}</th>
             </tr>
         </thead>
         <tbody>
@@ -50,6 +51,18 @@
                 <td>{{ transaction.sum }} €</td>                      
                 <td>{{ transaction.debitKonto.number }}</td>          
                 <td>{{ transaction.creditKonto.number }}</td>
+                <td>
+                    {% if is_granted('ROLE_ADMIN') %}
+                    <a href="{{ path('transaction_edit', {'id': transaction.id}) }}" class="btn btn-sm btn-primary">
+                        <i class="fa fa-edit" aria-hidden="true"></i> {{ 'action.edit'|trans }}
+                    </a> 
+                    {% endif %}
+                    {% if not transaction.hasDocument %}
+                    <a href="{{ path('transaction_clone', {'id': transaction.id}) }}" class="btn btn-sm btn-primary">
+                        <i class="fa fa-copy" aria-hidden="true"></i> {{ 'action.clone'|trans }}
+                    </a> 
+                    {% endif %}
+                </td>
             </tr>
         {% else %}
             <tr class="table-warning">

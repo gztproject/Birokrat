@@ -23,7 +23,10 @@ $(function() {
 
 jQuery(document).ready(function() { 
 
-    $('#transaction_date').data("DateTimePicker").date(moment());
+    if($('#transaction_date').data("DateTimePicker").date() == null)
+    {
+        $('#transaction_date').data("DateTimePicker").date(moment());
+    }
 
     $("#transaction_presets").on('change', function() {
         var debit=$("#transaction_presets").find(":selected").data('debit');

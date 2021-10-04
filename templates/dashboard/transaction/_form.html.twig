@@ -2,17 +2,26 @@
     <div class="row">
         <div class="col-sm-6">
             <div class="form-group">                    
-                    {{ form_label(form.organization, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}
-                    <div class='input-group'>
-                    {{ form_widget(form.organization, {'attr': {'class': 'form-control'}}) }}                
+                {{ form_label(form.organization, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}
+                <div class='input-group'>
+                    {% if not hasDocument %}
+                        {{ form_widget(form.organization, {'attr': {'class': 'form-control'}}) }}  
+                    {% else %}  
+                        {{ form_widget(form.organization, {'attr': {'class': 'form-control'}, 'disabled': true}) }}
+                    {% endif %}           
+                                   
                 </div>
             </div>            
         </div>
         <div class="col-sm-6">
             <div class="form-group">
              {{ form_label(form.date, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}
-                <div class='input-group date' id='TransactionDatePicker'>                   
-                    {{ form_widget(form.date, {'attr': {'class': 'form-control'}}) }}
+                <div class='input-group date' id='TransactionDatePicker'>               
+                    {% if not hasDocument %}
+                        {{ form_widget(form.date, {'attr': {'class': 'form-control'}}) }}  
+                    {% else %}  
+                        {{ form_widget(form.date, {'attr': {'class': 'form-control'}, 'disabled': true}) }}
+                    {% endif %}  
                     <div class="input-group-append">
                         <span class="input-group-text"><i class="fa fa-calendar" aria-hidden="true"></i></span>
                     </div>
@@ -20,6 +29,7 @@
             </div>
         </div>
     </div>
+    {% if include_templates %}
     <div class="row">
         <div class="col-sm-12">
              <div class="form-group"> 
@@ -49,6 +59,7 @@
              </div>
         </div>
     </div>
+    {% endif %}
     <div class="row">
         <div class="col-sm-6">
             <div class="form-group">                    
@@ -68,26 +79,43 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-sm-6">
+        <div class="col-sm-5">
             <div class="form-group">                    
                 {{ form_label(form.sum, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}
                     <div class='input-group'>
-                        {{ form_widget(form.sum, {'attr': {'class': 'form-control'}}) }}                
+                    {% if not hasDocument %}
+                        {{ form_widget(form.sum, {'attr': {'class': 'form-control'}}) }}  
+                    {% else %}  
+                        {{ form_widget(form.sum, {'attr': {'class': 'form-control'}, 'disabled': true}) }}
+                    {% endif %}              
                     </div>
             </div>            
         </div>
         <div class="col-sm-6">
             <div class="form-group">                    
-                {{ form_label(form.description, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}
+                {{ form_label(form.description, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}                
                     <div class='input-group'>
-                        {{ form_widget(form.description, {'attr': {'class': 'form-control'}}) }}                
+                    {% if not hasDocument %}
+                        {{ form_widget(form.description, {'attr': {'class': 'form-control'}}) }} 
+                    {% else %}
+                        <textarea class='form-control' disabled='true'>{{ document }}</textarea> 
+                    {% endif %}                  
+                    </div>
+                     
+            </div>            
+        </div>
+        <div class="col-sm-1">
+            <div class="form-group">                    
+                {{ form_label(form.hidden, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}
+                    <div class='input-group'>
+                        {{ form_widget(form.hidden, {'attr': {'class': 'form-control'}}) }}                
                     </div>
             </div>            
         </div>
     </div>
     <div class="form-group">
             <button type="submit" class="btn btn-primary">
-                <i class="fa fa-save" aria-hidden="true"></i> {{ 'label.create_transaction'|trans }}
+                <i class="fa fa-save" aria-hidden="true"></i> {{ button_label|trans }}
             </button>  
             {% if include_save_and_create_new %}
                 {{ form_widget(form.saveAndCreateNew, {label: 'label.save_and_create_new', attr: {class: 'btn btn-primary'}}) }}

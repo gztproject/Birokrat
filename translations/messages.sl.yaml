@@ -1,0 +1,87 @@
+title:
+  list:
+    users: Seznam uporabnikov
+  new:
+    user: Nov uporabnik
+    transaction: Nova transakcija
+  edit:
+    user: Urejanje uporabnika {username}
+  delete:
+    userModal: Izbris uporabnika
+  login: Varna prijava
+  homepage: <![CDATA[Pozdravljeni v aplikaciji <strong>Birokrat</strong>]]>
+  user_list: Seznam uporabnikov
+  
+
+label:  
+  create:
+    transaction: Ustvari transakcijo
+  update:
+    transaction: Posodobi transakcijo
+  save_and_create_new: Shrani in ustvari novo
+  hidden: Skrito
+  presets: Predloge
+  description: Opis
+  username: Uporabniško ime
+  password: Geslo
+  repeatPassword: Ponovi geslo
+  rememberMe: Zapomni si me
+  date: Datum
+  datetime: Datum
+  year: Leto
+  dateFrom: Od
+  dateTo: Do   
+  price: Cena  
+  comment: Komentar  
+  email: E-mail
+  actions: Dejanja
+  firstname: Ime
+  lastname: Priimek
+  mobile: GSM
+  profilePicture: Avatar
+  isRoleAdmin: Administrator
+  no_users_found: Ne najdem nobenega uporabnika.
+
+
+
+action:
+  add:
+    user: Dodaj uporabnika
+  delete:
+    user: Izbriši uporabnika
+  show: Pokaži
+  show_user: Pokaži uporabnika
+  edit: Urejanje
+  sign_in: Prijava
+  login: Prijava
+  save: Shrani
+  backToList: Nazaj na seznam
+  cancel: Prekliči
+  setPaid: Plačano
+  
+body:
+  delete:
+    userModal: Ali ste prepričani da želite izbrisati uporabnika?
+  
+menu:
+  list:
+    invoices: Seznam računov
+  home: Domov
+  admin: Administrator
+  POC: POC
+  user: Uporabnik
+  logout: Odjava
+  users: Uporabniki
+  invoices: Računi
+  codesheets: Šifranti
+  organizations: Organizacije
+  kontos: Konti
+  posts: Pošte
+  countries: Države
+
+help:
+  invoice:
+    issueDate: Datum izdaje računa
+  login: Prijava
+
+Save: Shrani
