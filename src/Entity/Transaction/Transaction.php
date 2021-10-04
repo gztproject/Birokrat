@@ -178,41 +178,28 @@ class Transaction extends AggregateBase
      * @return Transaction
      */
     public function update(UpdateTransactionCommand $c, User $user, ?iTransactionDocument $document, LoggerInterface $logger): Transaction
-    {
-        $logger->debug("Updating transaction " . $this . " with " . $c . "; Document: " . $document);
+    {        
+        $sbi = "Updating transaction " . $this->getId().": ";
+        $sb = "";
         if (isset($document)) {
-            switch (get_class($document)) {
-                case \Proxies\__CG__\App\Entity\Invoice\Invoice::class:
-                    parent::updateBase($user);
-                    $this->updateWithInvoice($c, $document);
-                    break;
-                case \Proxies\__CG__\App\Entity\IncomingInvoice\IncomingInvoice::class:
-                    parent::updateBase($user);
-                    $this->updateWithIncomingInvoice($c, $document);
-                    break;
-                case \Proxies\__CG__\App\Entity\TravelExpense\TravelExpense::class:
-                    parent::updateBase($user);
-                    $this->updateWithTravelExpense($c, $document);
-                    break;
-                case \Proxies\__CG__\App\Entity\TravelExpenseBundle\TravelExpenseBundle::class:
-                    parent::updateBase($user);
-                    $this->updateWithTravelExpenseBundle($c, $document);
-                    break;
-                case \Proxies\__CG__\App\Entity\LunchExpense\LunchExpense::class:
-                    parent::updateBase($user);
-                    $this->updateWithLunchExpense($c, $document);
-                    break;
-                default:
-                    throw new \Exception('Not implemented yet.');
-                    break;
-            }
+            if ($this->getDocument()->getId() != $document->getId())
+                throw new \InvalidArgumentException("Transaction document cannot be changed!");
+            if ($c->organization != null && $this->organization != $c->organization)
+                throw new \InvalidArgumentException("Transaction organization cannot be changed directly if it has a document!");
+            if ($c->date != null && $this->date != $c->date)
+                throw new \InvalidArgumentException("Transaction date cannot be changed directly if it has a document!");
+            if ($c->sum != null && $this->sum != $c->sum)
+                throw new \InvalidArgumentException("Transaction sum cannot be changed directly if it has a document!");
+
+            $this->updateCommon($c, $user, $sb);
         } else {
             if (! isset($c->description) || trim($c->description) === '')
                 throw new \InvalidArgumentException("If updating a transaction with no document, a description must be provided.");
-            parent::updateBase($user);
-            $this->updateWithDescription($c);
-        }
-
+            $this->updateWithDescription($c, $user, $sb);
+        } 
+        if (trim($sb) == "")
+            $sb .= "No changes.";
+        $logger->info($sbi.$sb);
         return $this;
     }
 
@@ -286,55 +273,44 @@ class Transaction extends AggregateBase
         $this->lunchExpenseBundle = $bundle;
     }
 
-    private function updateCommon(UpdateTransactionCommand $c)
+    private function updateCommon(UpdateTransactionCommand $c, User $user, string &$sb)
     {
-        if ($c->organization !== null && $c->organization !== $this->organization)
-            $this->organization = $c->organization;
-        if ($c->date !== null && $c->date !== $this->date)
-            $this->date = $c->date;
-        if ($c->sum !== null && $c->sum !== $this->sum)
-            $this->sum = $c->sum;
-        if ($c->creditKonto !== null && $c->creditKonto !== $this->creditKonto)
-            $this->creditKonto = $c->creditKonto;
-        if ($c->debitKonto !== null && $c->debitKonto !== $this->debitKonto)
+        parent::updateBase($user);
+        if ($c->creditKonto != null && $c->creditKonto !== $this->creditKonto)
+        {
+            $sb .= "\nCredit konto ".$this->creditKonto->getNumber() ."->".$c->creditKonto->getNumber();
+            $this->creditKonto = $c->creditKonto;            
+        }
+        if ($c->debitKonto != null && $c->debitKonto !== $this->debitKonto)
+        {
+            $sb .= "\nDebit konto ".$this->debitKonto->getNumber() ."->".$c->debitKonto->getNumber();
             $this->debitKonto = $c->debitKonto;
-        if ($c->description !== null && $c->description !== $this->description)
+        }
+        if ($c->description != null && $c->description !== $this->description)
+        {
+            $sb .= "\nDescription ".$this->description ."->".$c->description;
             $this->description = $c->description;
+        }
     }
 
-    private function updateWithDescription(UpdateTransactionCommand $c)
+    private function updateWithDescription(UpdateTransactionCommand $c, User $user, string &$sb)
     {
-        $this->updateCommon($c);
-    }
-
-    private function updateWithInvoice(UpdateTransactionCommand $c, Invoice $invoice)
-    {
-        $this->updateCommon($c);
-        $this->invoice = $invoice;
-    }
-
-    private function updateWithIncomingInvoice(UpdateTransactionCommand $c, IncomingInvoice $incomingInvoice)
-    {
-        $this->updateCommon($c);
-        $this->incomingInvoice = $incomingInvoice;
-    }
-
-    private function updateWithTravelExpense(UpdateTransactionCommand $c, TravelExpense $travelExpense)
-    {
-        $this->updateCommon($c);
-        $this->travelExpense = $travelExpense;
-    }
-
-    private function updateWithTravelExpenseBundle(UpdateTransactionCommand $c, TravelExpenseBundle $bundle)
-    {
-        $this->updateCommon($c);
-        $this->travelExpenseBundle = $bundle;
-    }
-
-    private function updateWithLunchExpense(UpdateLunchExpenseCommand $c, LunchExpense $le)
-    {
-        $this->updateCommon($c);
-        $this->lunchExpense = $le;
+        $this->updateCommon($c, $user, $sb);
+        if ($c->organization != null && $c->organization->getName() !== $this->organization->getName())
+        {
+            $sb .= "\nOrganization ".$this->organization ."->".$c->organization;
+            $this->organization = $c->organization;
+        }
+        if ($c->date != null && $c->date !== $this->date)
+        {
+            $sb .= "\nDate ".$this->date ."->".$c->date;
+            $this->date = $c->date;
+        }
+        if ($c->sum != null && $c->sum !== $this->sum)
+        {
+            $sb .= "\nSum ".$this->sum ."->".$c->sum;
+            $this->sum = $c->sum;
+        }
     }
 
     /*
