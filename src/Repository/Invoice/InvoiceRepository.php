@@ -5,7 +5,7 @@ namespace App\Repository\Invoice;
 use App\Entity\Invoice\Invoice;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 
 /**
  * @method Invoice|null find($id, $lockMode = null, $lockVersion = null)

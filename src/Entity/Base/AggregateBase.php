@@ -4,6 +4,7 @@ namespace App\Entity\Base;
 
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
+use Ramsey\Uuid\UuidInterface;
 use App\Entity\User\User;
 use DateTime;
 
@@ -24,16 +25,16 @@ abstract class AggregateBase extends Base
      */
     public function __construct(User $user)
     {
-    	$this->id = Uuid::uuid1();
+    	$this->id = Uuid::uuid6();
     	parent::__construct($user);
     	return $this->id;
     }    
        
     /**
      * Returns the entity UUID
-     * @return Uuid
+     * @return UuidInterface
      */
-    public function getId(): Uuid
+    public function getId(): UuidInterface
     {
         return $this->id;
     }    
