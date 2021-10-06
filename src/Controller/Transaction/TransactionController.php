@@ -12,10 +12,12 @@ use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\Konto\Konto;
 use App\Entity\Transaction\Transaction;
 use App\Repository\Transaction\TransactionRepository;
+use App\Entity\Transaction\UpdateTransactionCommand;
 use App\Entity\Transaction\CreateTransactionCommand;
 use App\Form\Transaction\TransactionType;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use Psr\Log\LoggerInterface;
 
 class TransactionController extends AbstractController {
 	/**
@@ -197,5 +199,68 @@ class TransactionController extends AbstractController {
 		return $this->render ( 'dashboard/transaction/new.html.twig', [ 
 				'form' => $form->createView ()
 		] );
+	}
+	
+	/**
+	 * Displays a form to edit an existing transaction entity.
+	 *
+	 * @Route("/dashboard/transaction/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/edit",methods={"GET", "POST"}, name="transaction_edit")
+	 */
+	public function edit(Request $request, Transaction $transaction, LoggerInterface $logger): Response
+	{
+	    $updateTransactionCommand = new UpdateTransactionCommand();
+	    $transaction->mapTo($updateTransactionCommand);
+	    $doc = $transaction->getDocument();
+	    
+	    $form = $this->createForm(TransactionType::class, $updateTransactionCommand);
+	    $form->handleRequest($request);
+	    
+	    if ($form->isSubmitted() && $form->isValid()) {
+	        $transaction->update($updateTransactionCommand, $this->getUser(), $doc, $logger);
+	        $em = $this->getDoctrine()->getManager();
+	        
+	        $em->persist($transaction);
+	        $em->flush();
+	        
+	        return $this->redirectToRoute('transaction_show', array('id'=> $transaction->getId()));
+	    }
+	    
+	    return $this->render('dashboard/transaction/edit.html.twig', [
+	        'transaction' => $transaction,
+	        'form' => $form->createView(),
+	    ]);
+	}
+	
+	/**
+	 * Clones the transaction and displays a form to edit the new transaction entity.
+	 *
+	 * @Route("/dashboard/transaction/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/clone",methods={"GET", "POST"}, name="transaction_clone")
+	 */
+	public function clone(Request $request, Transaction $transaction): Response
+	{
+	    $clone = $transaction->clone($this->getUser());
+	    
+	    $updateTransactionCommand = new UpdateTransactionCommand();
+	    $clone->mapTo($updateTransactionCommand);
+	    	    	    
+	    $form = $this->createForm(TransactionType::class, $updateTransactionCommand);
+	    
+	    $form->handleRequest($request);
+	    
+	    if ($form->isSubmitted() && $form->isValid()) {
+	        $clone->update($updateTransactionCommand, $this->getUser());
+	        $em = $this->getDoctrine()->getManager();
+	        	        
+	        
+	        $em->persist($clone);
+	        $em->flush();
+	        
+	        return $this->redirectToRoute('transaction_show', array('id'=> $clone->getId()));
+	    }
+	    
+	    return $this->render('dashboard/transaction/edit.html.twig', [
+	        'transaction' => $clone,
+	        'form' => $form->createView(),
+	    ]);
 	}
 }

@@ -53,7 +53,8 @@ class TransactionType extends AbstractType
             		'label' => 'label.description'
             ]) 
             ->add('hidden', CheckboxType::class, [
-            		'label' => 'label.hidden'
+            		'label' => 'label.hidden',
+                    'required' => false
             ]) 
         ;
     }

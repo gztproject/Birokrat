@@ -57,10 +57,7 @@
         <source>http_error_500.suggestion</source>
         <target><![CDATA[Poskusite ponovno naložiti to stran čez nekaj minut ali pa <a href="{url}">se vrnite na domačo stran</a>.]]></target>
       </trans-unit>
-      <trans-unit id="0azKJvE" resname="title.homepage">
-        <source>title.homepage</source>
-        <target><![CDATA[Pozdravljeni v aplikaciji <strong>Birokrat</strong>]]></target>
-      </trans-unit>
+      
       <trans-unit id="9RwuNlf" resname="title.source_code">
         <source>title.source_code</source>
         <target>Izvorna koda uporabljena za izpis te strani</target>
@@ -72,63 +69,7 @@
       <trans-unit id="2bH7SjO" resname="title.twig_template_code">
         <source>title.twig_template_code</source>
         <target>Koda predloge Twig</target>
-      </trans-unit>
-      <trans-unit id="80JoLd0" resname="title.login">
-        <source>title.login</source>
-        <target>Varna prijava</target>
-      </trans-unit>
-      <trans-unit id="uTCQIEe" resname="title.user_list">
-        <source>title.user_list</source>
-        <target>Seznam uporabnikov</target>
-      </trans-unit>
-      <trans-unit id="pS55M7Q" resname="title.user_new">
-        <source>title.user_new</source>
-        <target>Nov uporabnik</target>
-      </trans-unit>
-      <trans-unit id="1sstKF9" resname="title.edit_user">
-        <source>title.edit_user</source>
-        <target>Urejanje uporabnika {username}</target>
-      </trans-unit>
-      <trans-unit id="RElHkkW" resname="title.add_comment">
-        <source>title.add_comment</source>
-        <target>Dodaj komentar</target>
-      </trans-unit>
-      <trans-unit id="KuKEZ2." resname="title.comment_error">
-        <source>title.comment_error</source>
-        <target>Pri objavi vašega komentarja je prišlo do napake</target>
-      </trans-unit>
-      <trans-unit id="Ffi98jp" resname="action.show">
-        <source>action.show</source>
-        <target>Prikaži</target>
-      </trans-unit>
-      <trans-unit id="iPMdx0G" resname="action.show_user">
-        <source>action.show_user</source>
-        <target>Prikaži uporabnika</target>
-      </trans-unit>
-      <trans-unit id="QbohvW1" resname="action.show_code">
-        <source>action.show_code</source>
-        <target>Prikaži kodo</target>
-      </trans-unit>
-      <trans-unit id="ovKkXwU" resname="action.edit">
-        <source>action.edit</source>
-        <target>Uredi</target>
-      </trans-unit>
-      <trans-unit id="lpqpnUS" resname="action.edit_post">
-        <source>action.edit_post</source>
-        <target>Uredi objavo</target>
-      </trans-unit>
-      <trans-unit id="HLtdhYw" resname="action.save">
-        <source>action.save</source>
-        <target>Shrani spremembe</target>
-      </trans-unit>
-      <trans-unit id="Qj1ElaL" resname="action.cancel">
-        <source>action.cancel</source>
-        <target>Prekliči</target>
-      </trans-unit>
-      <trans-unit id="mLTOxRQ" resname="action.setIssued">
-        <source>action.setIssued</source>
-        <target>Izdaj</target>
-      </trans-unit>
+      </trans-unit>            
       <trans-unit id="EnxNrcX" resname="action.setPaid">
         <source>action.setPaid</source>
         <target>Plačano</target>
@@ -281,122 +222,14 @@
         <source>action.edit_user</source>
         <target>Urejanje uporabnika</target>
       </trans-unit>
-      <trans-unit id="sqML_MO" resname="menu.toggle_nav">
-        <source>menu.toggle_nav</source>
-        <target>Preklop navigacije</target>
-      </trans-unit>
-      <trans-unit id="SWM2jM." resname="menu.choose_language">
-        <source>menu.choose_language</source>
-        <target>Izbira jezika</target>
-      </trans-unit>
-      <trans-unit id="OzbStDU" resname="menu.user_list">
-        <source>menu.user_list</source>
-        <target>Seznam uporabnikov</target>
-      </trans-unit>
-      <trans-unit id="5IeQGTY" resname="menu.invoice_list">
-        <source>menu.invoice_list</source>
-        <target>Seznam računov</target>
-      </trans-unit>
-      <trans-unit id="GyNiJAi" resname="menu.home">
-        <source>menu.home</source>
-        <target>Domov</target>
-      </trans-unit>
-      <trans-unit id="UoOv6mx" resname="menu.homepage">
-        <source>menu.homepage</source>
-        <target>Domača stran</target>
-      </trans-unit>
-      <trans-unit id="wvvYSw_" resname="menu.admin">
-        <source>menu.admin</source>
-        <target>Admin</target>
-      </trans-unit>
-      <trans-unit id="rjDqmQR" resname="menu.user">
-        <source>menu.user</source>
-        <target>Uporabnik</target>
-      </trans-unit>
-      <trans-unit id="wBTFKFR" resname="menu.logout">
-        <source>menu.logout</source>
-        <target>Odjava</target>
-      </trans-unit>
-      <trans-unit id="Mjg27W8" resname="menu.POC">
-        <source>menu.POC</source>
-        <target>POC</target>
-      </trans-unit>
-      <trans-unit id="Ovaudy8" resname="menu.invoices">
-        <source>menu.invoices</source>
-        <target>Računi</target>
-      </trans-unit>
-      <trans-unit id="zY.oLN." resname="post.to_publish_a_comment">
-        <source>post.to_publish_a_comment</source>
-        <target>za objavo komentarja</target>
-      </trans-unit>
-      <trans-unit id="is7pld7" resname="post.num_comments">
-        <source>post.num_comments</source>
-        <target>{count, plural, one {# komentar} two {# komentarja} few {# komentarji} other {# komentarjev}}</target>
-      </trans-unit>
-      <trans-unit id="vdsQrtG" resname="post.commented_on">
-        <source>post.commented_on</source>
-        <target>komentirano dne</target>
-      </trans-unit>
-      <trans-unit id="UZzyX5e" resname="post.no_comments">
-        <source>post.no_comments</source>
-        <target>Bodite prvi, da komentirate to objavo.</target>
-      </trans-unit>
-      <trans-unit id="aMaXcw0" resname="post.no_posts_found">
-        <source>post.no_posts_found</source>
-        <target>Na voljo ni nobene objave.</target>
-      </trans-unit>
-      <trans-unit id="uIfkb5m" resname="post.created_successfully">
-        <source>post.created_successfully</source>
-        <target>Objava uspešno ustvarjena!</target>
-      </trans-unit>
+     
       <trans-unit id="OBmPOoB" resname="user.updated_successfully">
         <source>user.updated_successfully</source>
         <target>Uporabnik uspešno posodobljen!</target>
       </trans-unit>
-      <trans-unit id="REYq3Ar" resname="post.deleted_successfully">
-        <source>post.deleted_successfully</source>
-        <target>Objava uspešno izbrisana!</target>
-      </trans-unit>
-      <trans-unit id="rAoWddb" resname="post.search_for">
-        <source>post.search_for</source>
-        <target>Iskanje za ...</target>
-      </trans-unit>
-      <trans-unit id="_SSBmQW" resname="post.search_no_results">
-        <source>post.search_no_results</source>
-        <target>Ni najdenih rezultatov</target>
-      </trans-unit>
-      <trans-unit id="KheXs2k" resname="notification.comment_created">
-        <source>notification.comment_created</source>
-        <target>Vaša objava je prejela komentar!</target>
-      </trans-unit>
-      <trans-unit id="DndmCkZ" resname="help.invoice_issueDate">
-        <source>help.invoice_issueDate</source>
-        <target>Datum izdaje računa</target>
-      </trans-unit>
-      <trans-unit id="WVrtpfW" resname="help.role_admin">
-        <source>help.role_admin</source>
-        <target>administrator</target>
-      </trans-unit>
-      <trans-unit id="_P4eKBi" resname="menu.codesheets">
-        <source>menu.codesheets</source>
-        <target>Šifranti</target>
-      </trans-unit>
-      <trans-unit id="UKAZ7Zu" resname="menu.organizations">
-        <source>menu.organizations</source>
-        <target>Organizacije</target>
-      </trans-unit>
-      <trans-unit id="8_WUZpH" resname="menu.kontos">
-        <source>menu.kontos</source>
-        <target>Konti</target>
-      </trans-unit>
-      <trans-unit id="HSqyBRt" resname="menu.posts">
-        <source>menu.posts</source>
-        <target>Pošte</target>
-      </trans-unit>
-      <trans-unit id="milG7Q3" resname="menu.countries">
-        <source>menu.countries</source>
-        <target>Države</target>
-      </trans-unit>
+     
+          
+      
       <trans-unit id="DlCwe.e" resname="title.invoices">
         <source>title.invoices</source>
         <target>Računi</target>
