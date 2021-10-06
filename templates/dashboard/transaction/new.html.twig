@@ -7,8 +7,8 @@
 
     {{ include('dashboard/transaction/_form.html.twig', {
         form: form,
-        button_label: 'label.update.transaction'|trans,
-        include_save_and_create_new: true,
+        button_label: 'label.create.transaction'|trans,
+        include_save_and_create_new: false,
         include_back_to_home_link: true,  
         include_templates: true,   
         hasDocument: false,   

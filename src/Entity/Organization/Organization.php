@@ -206,4 +206,10 @@ class Organization extends LegalEntityBase
         return $this->organizationSettings;
     }
         
+    public function __toString() : string
+    {
+        $sb = "";
+        $sb .= $this->code . ": " . $this->name;
+        return $sb;
+    }
 }

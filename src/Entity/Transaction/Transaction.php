@@ -179,7 +179,7 @@ class Transaction extends AggregateBase
      */
     public function update(UpdateTransactionCommand $c, User $user, ?iTransactionDocument $document, LoggerInterface $logger): Transaction
     {        
-        $sbi = "Updating transaction " . $this->getId().": ";
+        $sbi = "User " . $user->getFullname() . " updating transaction " . $this->getId().": ";
         $sb = "";
         if (isset($document)) {
             if ($this->getDocument()->getId() != $document->getId())
@@ -198,7 +198,8 @@ class Transaction extends AggregateBase
             $this->updateWithDescription($c, $user, $sb);
         } 
         if (trim($sb) == "")
-            $sb .= "No changes.";
+            $sb .= "; No changes.";
+        $sb = substr($sb, 2);
         $logger->info($sbi.$sb);
         return $this;
     }
@@ -220,7 +221,7 @@ class Transaction extends AggregateBase
                 }
             }
         } else {
-            throw (new \Exception('cant map ' . get_class($this) . ' to ' . get_class($to)));
+            throw (new \Exception('Can\'t map ' . get_class($this) . ' to ' . get_class($to)));
             return $to;
         }
     }
@@ -278,17 +279,17 @@ class Transaction extends AggregateBase
         parent::updateBase($user);
         if ($c->creditKonto != null && $c->creditKonto !== $this->creditKonto)
         {
-            $sb .= "\nCredit konto ".$this->creditKonto->getNumber() ."->".$c->creditKonto->getNumber();
+            $sb .= "; Credit konto ".$this->creditKonto->getNumber() ." -> ".$c->creditKonto->getNumber();
             $this->creditKonto = $c->creditKonto;            
         }
         if ($c->debitKonto != null && $c->debitKonto !== $this->debitKonto)
         {
-            $sb .= "\nDebit konto ".$this->debitKonto->getNumber() ."->".$c->debitKonto->getNumber();
+            $sb .= "; Debit konto ".$this->debitKonto->getNumber() ." -> ".$c->debitKonto->getNumber();
             $this->debitKonto = $c->debitKonto;
         }
         if ($c->description != null && $c->description !== $this->description)
         {
-            $sb .= "\nDescription ".$this->description ."->".$c->description;
+            $sb .= "; Description ".$this->description ." -> ".$c->description;
             $this->description = $c->description;
         }
     }
@@ -296,19 +297,19 @@ class Transaction extends AggregateBase
     private function updateWithDescription(UpdateTransactionCommand $c, User $user, string &$sb)
     {
         $this->updateCommon($c, $user, $sb);
-        if ($c->organization != null && $c->organization->getName() !== $this->organization->getName())
+        if ($c->organization != null && $c->organization !== $this->organization)
         {
-            $sb .= "\nOrganization ".$this->organization ."->".$c->organization;
+            $sb .= "; Organization ".$this->organization ." -> ".$c->organization;
             $this->organization = $c->organization;
         }
         if ($c->date != null && $c->date !== $this->date)
         {
-            $sb .= "\nDate ".$this->date ."->".$c->date;
+            $sb .= "; Date ".$this->date->format('d. m. Y') ." -> ".$c->date->format('d. m. Y');
             $this->date = $c->date;
         }
-        if ($c->sum != null && $c->sum !== $this->sum)
+        if ($c->sum != null && $c->sum != $this->sum)
         {
-            $sb .= "\nSum ".$this->sum ."->".$c->sum;
+            $sb .= "; Sum ".$this->sum ." -> ".$c->sum;
             $this->sum = $c->sum;
         }
     }
