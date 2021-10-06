@@ -11,7 +11,6 @@ title:
   login: Varna prijava
   homepage: <![CDATA[Pozdravljeni v aplikaciji <strong>Birokrat</strong>]]>
   user_list: Seznam uporabnikov
-  
 
 label:  
   create:
@@ -41,6 +40,8 @@ label:
   profilePicture: Avatar
   isRoleAdmin: Administrator
   no_users_found: Ne najdem nobenega uporabnika.
+  previous: Prejšnja
+  next: Naslednja
 
 
 
@@ -58,6 +59,7 @@ action:
   backToList: Nazaj na seznam
   cancel: Prekliči
   setPaid: Plačano
+  print: Tiskaj
   
 body:
   delete:

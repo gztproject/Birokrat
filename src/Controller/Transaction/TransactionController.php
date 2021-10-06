@@ -138,6 +138,7 @@ class TransactionController extends AbstractController {
 		// Return the excel file as an attachment
 		return $this->file ( $temp_file, $fileName, ResponseHeaderBag::DISPOSITION_INLINE );
 	}
+	
 	private function isPositive(Konto $credit, Konto $debit) {
 		if ($credit->getCategory ()->getNumber () == 76)
 			return 1;
@@ -236,7 +237,7 @@ class TransactionController extends AbstractController {
 	 *
 	 * @Route("/dashboard/transaction/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/clone",methods={"GET", "POST"}, name="transaction_clone")
 	 */
-	public function clone(Request $request, Transaction $transaction): Response
+	public function clone(Request $request, Transaction $transaction, LoggerInterface $logger): Response
 	{
 	    $clone = $transaction->clone($this->getUser());
 	    
@@ -248,7 +249,7 @@ class TransactionController extends AbstractController {
 	    $form->handleRequest($request);
 	    
 	    if ($form->isSubmitted() && $form->isValid()) {
-	        $clone->update($updateTransactionCommand, $this->getUser());
+	        $clone->update($updateTransactionCommand, $this->getUser(), null, $logger);
 	        $em = $this->getDoctrine()->getManager();
 	        	        
 	        

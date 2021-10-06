@@ -18,7 +18,6 @@
 		"ramsey/uuid" : "~4.1",
 		"ramsey/uuid-doctrine" : "~1.6",
 		"sensio/framework-extra-bundle" : "~6.1",
-		"sensiolabs/security-checker" : "~6.0",
 		"symfony/apache-pack" : "~1.0",
 		"symfony/asset" : "~5.2",
 		"symfony/console" : "~5.2",
