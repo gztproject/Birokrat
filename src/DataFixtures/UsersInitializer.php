@@ -3,31 +3,31 @@
 namespace App\DataFixtures;
 
 use Doctrine\Persistence\ObjectManager;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use App\Entity\User\User;
 use App\Entity\Organization\Organization;
 use Doctrine\ORM\EntityNotFoundException;
 
 class UsersInitializer implements IEntityInitializer
 {
-	private $manager;
-    private $organizations;
-    private $path;
-    private $encoder;
+    private ObjectManager $manager;
+    private array $organizations;
+    private string $path;
+    private UserPasswordHasherInterface $hasher;
     
     /**
      * Users initializer
      * @param string $path Relative path to .tsv file
      * @param array $organizations An array of organizations
      * @param ObjectManager $manager DB manager to use for storing entities
-     * @param UserPasswordEncoderInterface $encoder User password encoder
+     * @param UserPasswordHasherInterface $hasher User password hasher
      */    
-    public function __construct(ObjectManager $manager, string $path, array $organizations, UserPasswordEncoderInterface $encoder)
+    public function __construct(ObjectManager $manager, string $path, array $organizations, UserPasswordHasherInterface $hasher)
     {
     	$this->manager = $manager;
     	$this->path = __DIR__ . $path;
     	$this->organizations = $organizations;
-    	$this->encoder = $encoder;
+    	$this->hasher = $hasher;
     }
     
     /**     
@@ -58,9 +58,8 @@ class UsersInitializer implements IEntityInitializer
             	throw new EntityNotFoundException('Organization with code '.$row["OrganizationCode"].' doesn\'t exist.');
             $user->addOrganization($org);
         
-            // See https://symfony.com/doc/current/book/security.html#security-encoding-password
-            $encodedPassword = $this->encoder->encodePassword($user, $row["Password"]);
-            $user->setPassword($encodedPassword);
+            // See https://symfony.com/doc/current/book/security.html#security-encoding-password            
+            $user->setPassword($this->hahser->hash($row["Password"]));
             $user->eraseCredentials();
             $this->manager->persist($user);
         	array_push($users, $user);

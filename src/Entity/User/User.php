@@ -519,6 +519,11 @@ class User extends AggregateBase implements UserInterface, \Serializable
     	return;
     }
     
+    public function getUserIdentifier(): string
+    {
+        return $this->id->toString();
+    }
+    
     public function getSalt()
     {
     	return;

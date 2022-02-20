@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "967f12e0d079213e0c01b7c08434ffd9",
+    "content-hash": "b5fb91a2100a266e1202c85adcc87f0a",
     "packages": [
         {
             "name": "brick/math",
@@ -4774,28 +4774,28 @@
         },
         {
             "name": "symfony/flex",
-            "version": "v1.18.5",
+            "version": "v2.1.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/flex.git",
-                "reference": "10e438f53a972439675dc720706f0cd5c0ed94f1"
+                "reference": "dd7dafe3bfebf8441e167b76d8a18974585467f3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/flex/zipball/10e438f53a972439675dc720706f0cd5c0ed94f1",
-                "reference": "10e438f53a972439675dc720706f0cd5c0ed94f1",
+                "url": "https://api.github.com/repos/symfony/flex/zipball/dd7dafe3bfebf8441e167b76d8a18974585467f3",
+                "reference": "dd7dafe3bfebf8441e167b76d8a18974585467f3",
                 "shasum": ""
             },
             "require": {
-                "composer-plugin-api": "^1.0|^2.0",
-                "php": ">=7.1"
+                "composer-plugin-api": "^2.1",
+                "php": ">=8.0"
             },
             "require-dev": {
-                "composer/composer": "^1.0.2|^2.0",
-                "symfony/dotenv": "^4.4|^5.0|^6.0",
-                "symfony/filesystem": "^4.4|^5.0|^6.0",
-                "symfony/phpunit-bridge": "^4.4.12|^5.0|^6.0",
-                "symfony/process": "^4.4|^5.0|^6.0"
+                "composer/composer": "^2.1",
+                "symfony/dotenv": "^5.4|^6.0",
+                "symfony/filesystem": "^5.4|^6.0",
+                "symfony/phpunit-bridge": "^5.4|^6.0",
+                "symfony/process": "^5.4|^6.0"
             },
             "type": "composer-plugin",
             "extra": {
@@ -4819,7 +4819,7 @@
             "description": "Composer plugin for Symfony",
             "support": {
                 "issues": "https://github.com/symfony/flex/issues",
-                "source": "https://github.com/symfony/flex/tree/v1.18.5"
+                "source": "https://github.com/symfony/flex/tree/v2.1.6"
             },
             "funding": [
                 {
@@ -4835,7 +4835,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-02-16T17:26:46+00:00"
+            "time": "2022-02-16T17:31:43+00:00"
         },
         {
             "name": "symfony/form",
@@ -11272,6 +11272,82 @@
                 }
             ],
             "time": "2022-01-26T17:23:29+00:00"
+        },
+        {
+            "name": "symfony/runtime",
+            "version": "v6.0.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/runtime.git",
+                "reference": "3b1ee78e883101439eb6c033feb43a5eea7fe190"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/runtime/zipball/3b1ee78e883101439eb6c033feb43a5eea7fe190",
+                "reference": "3b1ee78e883101439eb6c033feb43a5eea7fe190",
+                "shasum": ""
+            },
+            "require": {
+                "composer-plugin-api": "^1.0|^2.0",
+                "php": ">=8.0.2"
+            },
+            "conflict": {
+                "symfony/dotenv": "<5.4"
+            },
+            "require-dev": {
+                "composer/composer": "^1.0.2|^2.0",
+                "symfony/console": "^5.4|^6.0",
+                "symfony/dotenv": "^5.4|^6.0",
+                "symfony/http-foundation": "^5.4|^6.0",
+                "symfony/http-kernel": "^5.4|^6.0"
+            },
+            "type": "composer-plugin",
+            "extra": {
+                "class": "Symfony\\Component\\Runtime\\Internal\\ComposerPlugin"
+            },
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Component\\Runtime\\": "",
+                    "Symfony\\Runtime\\Symfony\\Component\\": "Internal/"
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nicolas Grekas",
+                    "email": "p@tchwork.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Enables decoupling PHP applications from global state",
+            "homepage": "https://symfony.com",
+            "support": {
+                "source": "https://github.com/symfony/runtime/tree/v6.0.3"
+            },
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2022-01-26T17:34:56+00:00"
         },
         {
             "name": "symfony/web-profiler-bundle",

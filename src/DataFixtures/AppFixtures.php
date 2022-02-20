@@ -4,15 +4,15 @@ namespace App\DataFixtures;
 
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
     
 class AppFixtures extends Fixture
 {   	
-    private $passwordEncoder;
+    private $passwordHasher;
     
-    public function __construct(UserPasswordEncoderInterface $encoder)
+    public function __construct(UserPasswordHasherInterface $hasher)
     {
-        $this->passwordEncoder = $encoder;
+        $this->passwordHasher = $hasher;
     }
         
     public function load(ObjectManager $manager)
@@ -33,9 +33,10 @@ class AppFixtures extends Fixture
         $organizationsInitializer = new OrganizationsInitializer($manager, "/InitData/partners.tsv", "/InitData/organizations.tsv", $posts);
         $organizations = $organizationsInitializer->generate();
         
-        $usersInitilizer = new UsersInitializer($manager, "/InitData/users.tsv", $organizations, $this->passwordEncoder);
+        $usersInitilizer = new UsersInitializer($manager, "/InitData/users.tsv", $organizations, $this->passwordHasher);
         $usersInitilizer->generate();
         
         //test data
     }
+    
 }

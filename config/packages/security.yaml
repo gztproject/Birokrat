@@ -1,6 +1,6 @@
 security:
-    # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
-    encoders:
+    # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers    
+    password_hashers:
         App\Entity\User\User:
             algorithm: auto    
     providers:
@@ -20,10 +20,14 @@ security:
 
             # but the firewall does not require login on every page
             # denying access is done in access_control or in your controllers
-            anonymous: true
-            guard:
-                authenticators:
-                    - App\Security\LoginFormAuthenticator
+            #----- Gapi: Commented out updating to Symfony 6.0
+            #anonymous: true
+            
+            #guard:
+            #    authenticators:
+            #        - App\Security\LoginFormAuthenticator
+            
+            #----- END          
             logout:
                 # The route name the user can go to in order to logout
                 path: app_logout
