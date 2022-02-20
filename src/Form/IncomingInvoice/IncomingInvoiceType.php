@@ -74,9 +74,7 @@ class IncomingInvoiceType extends AbstractType
             			$qb = $repository->createQueryBuilder('k');
             			return $qb
             			->leftJoin('k.category', 'c')
-            			->where('c.number = ?1 OR c.number = ?2')
-            			->setParameter('1', '40')
-            			->setParameter('2', '41')
+            			->where('c.number = 04 OR c.number = 40 OR c.number = 41 OR c.number = 43')
             			->orderBy('k.number', 'ASC')
             			;
             		},

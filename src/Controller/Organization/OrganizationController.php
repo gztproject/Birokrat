@@ -26,7 +26,7 @@ class OrganizationController extends AbstractController
      */
 	public function index(): Response
     {
-    	$myOrganizations = $this->get('security.token_storage')->getToken()->getUser()->getOrganizations();
+    	$myOrganizations = $this->getUser()->getOrganizations();
         
         return $this->render(
         		'dashboard/organization/index.html.twig', 

@@ -19,22 +19,24 @@ class PartnerRepository extends ServiceEntityRepository
         parent::__construct($registry, Partner::class);
     }
 
-    // /**
-    //  * @return Partner[] Returns an array of Partner objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    /**
+     * @return Partner[] Returns an array of Partner objects
+     */    
+    public function GetPartnersRecentFirst()
     {
-        return $this->createQueryBuilder('o')
-            ->andWhere('o.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('o.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
+        $sql = "SELECT * FROM(
+                    (SELECT 1 AS resType, pf.* FROM partner pf ORDER BY pf.created_on ASC LIMIT 0,5)
+                UNION
+                    (SELECT 2 AS resType, p.* FROM partner p)
+                ) AS res
+                ORDER BY resType, CASE resType WHEN 1 THEN created_on ELSE name END;";
+        
+        $conn = $this->getEntityManager()->getConnection();
+        $stmt = $conn->prepare($sql);
+        
+        return $stmt->execute();        
     }
-    */
+    
 
     /*
     public function findOneBySomeField($value): ?Partner
