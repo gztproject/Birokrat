@@ -456,12 +456,12 @@
         ]
     },
     "symfony/mailgun-mailer": {
-        "version": "4.3",
+        "version": "6.0",
         "recipe": {
             "repo": "github.com/symfony/recipes",
             "branch": "master",
-            "version": "4.3",
-            "ref": "a2bc739b34862b926b8a58263fd3901297eec3b5"
+            "version": "4.4",
+            "ref": "addcb559b32d9dbb4843826b063565e1b15a2a57"
         }
     },
     "symfony/maker-bundle": {
