@@ -14,8 +14,9 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use Serializable;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use App\Entity\Base\AggregateBase;
 use App\Entity\LunchExpense\CreateLunchExpenseBundleCommand;
 use App\Entity\LunchExpense\CreateLunchExpenseCommand;
@@ -32,13 +33,14 @@ use App\Entity\IncomingInvoice\IncomingInvoice;
 use App\Entity\TravelExpense\TravelExpense;
 use App\Entity\Geography\Country;
 use App\Entity\Geography\CreateCountryCommand;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 
 /**
  * @ORM\Table(name="app_users")
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  */
-class User extends AggregateBase implements UserInterface, \Serializable
+class User extends AggregateBase implements UserInterface, PasswordAuthenticatedUserInterface, Serializable
 {
     /**
      * @ORM\Column(type="string", length=255)
@@ -108,10 +110,10 @@ class User extends AggregateBase implements UserInterface, \Serializable
      * 
      * @param CreateUserCommand $c
      * @param User $user
-     * @param UserPasswordEncoderInterface $passwordEncoder
+     * @param UserPasswordHasherInterface $passwordHasher
      * @return \App\Entity\User\User
      */
-    public function __construct(CreateUserCommand $c, User $user, UserPasswordEncoderInterface $passwordEncoder)
+    public function __construct(CreateUserCommand $c, User $user, UserPasswordHasherInterface $passwordHasher)
     {
     	parent::__construct($user);
         $this->isActive = true;
@@ -126,14 +128,14 @@ class User extends AggregateBase implements UserInterface, \Serializable
         $this->signatureFilename = $c->signatureFilename;
         
         $this->checkPasswordRequirements($c->password);
-        $this->password = $passwordEncoder->encodePassword($this, $c->password);
+        $this->password = $passwordHasher->hashPassword($this, $c->password);
         
         $this->roles = array($c->isRoleAdmin?'ROLE_ADMIN':'ROLE_USER');
                 
         return $this;
     }  
     
-    public function update(UpdateUserCommand $c, User $user, UserPasswordEncoderInterface $passwordEncoder)
+    public function update(UpdateUserCommand $c, User $user, UserPasswordHasherInterface $passwordHasher)
     {
     	parent::updateBase($user);
     	if($c->username != null && $c->username != $this->username) $this->username = $c->username;
@@ -147,8 +149,8 @@ class User extends AggregateBase implements UserInterface, \Serializable
     	if(strlen($c->password) != 0) 
     	{
     		$this->checkPasswordRequirements($c->password);
-    		if($passwordEncoder->isPasswordValid($this, $c->oldPassword))
-    			$this->password = $passwordEncoder->encodePassword($this, $c->password);
+    		if($passwordHasher->isPasswordValid($this, $c->oldPassword))
+    		    $this->password = $passwordHasher->hashPassword($this, $c->password);
     		else throw new \Exception("Old password is incorrect.");
     	}
     	
@@ -273,12 +275,12 @@ class User extends AggregateBase implements UserInterface, \Serializable
     /**
      * Creates a new User.
      * @param CreateUserCommand $c
-     * @param UserPasswordEncoderInterface $passwordEncoder
+     * @param UserPasswordHasherInterface $passwordHasher
      * @return User New user
      */
-    public function createUser(CreateUserCommand $c, UserPasswordEncoderInterface $passwordEncoder): User
+    public function createUser(CreateUserCommand $c, UserPasswordHasherInterface $passwordHasher): User
     {
-    	return new User($c, $this, $passwordEncoder);
+        return new User($c, $this, $passwordHasher);
     }
     
     /**
@@ -521,7 +523,7 @@ class User extends AggregateBase implements UserInterface, \Serializable
     
     public function getUserIdentifier(): string
     {
-        return $this->id->toString();
+        return $this->username;
     }
     
     public function getSalt()

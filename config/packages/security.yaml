@@ -8,7 +8,7 @@ security:
         sql_db_provider:
             entity:
                 class: App\Entity\User\User
-                property: username       
+                property: username 
 
     firewalls:
         dev:
@@ -23,11 +23,14 @@ security:
             #----- Gapi: Commented out updating to Symfony 6.0
             #anonymous: true
             
-            #guard:
-            #    authenticators:
+            #custom_authenticators:
             #        - App\Security\LoginFormAuthenticator
             
-            #----- END          
+            #----- END
+            form_login:
+                # "login" is the name of the route created previously
+                login_path: app_login
+                check_path: app_login            
             logout:
                 # The route name the user can go to in order to logout
                 path: app_logout

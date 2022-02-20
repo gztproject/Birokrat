@@ -58,8 +58,9 @@ class UsersInitializer implements IEntityInitializer
             	throw new EntityNotFoundException('Organization with code '.$row["OrganizationCode"].' doesn\'t exist.');
             $user->addOrganization($org);
         
-            // See https://symfony.com/doc/current/book/security.html#security-encoding-password            
-            $user->setPassword($this->hahser->hash($row["Password"]));
+            // See https://symfony.com/doc/current/book/security.html#security-encoding-password
+            $hashed = $this->hahser->hashPassword($user, $row["Password"]);
+            $user->setPassword($hashed);
             $user->eraseCredentials();
             $this->manager->persist($user);
         	array_push($users, $user);
