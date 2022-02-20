@@ -4,7 +4,7 @@
 	"license" : "MIT",
 	"description" : "A DIY web-based accounting software",
 	"require" : {
-		"php" : " ^7.4|^8.0",
+		"php" : "^8.0",
 		"ext-ctype" : "*",
 		"ext-iconv" : "*",
 		"doctrine/orm" : "~2.8",
@@ -60,7 +60,10 @@
 		"preferred-install" : {
 			"*" : "dist"
 		},
-		"sort-packages" : true
+		"sort-packages" : true,
+		"allow-plugins": {
+			"symfony/flex": true
+		}
 	},
 	"autoload" : {
 		"psr-4" : {
