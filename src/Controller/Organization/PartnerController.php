@@ -27,7 +27,7 @@ class PartnerController extends AbstractController
      */
 	public function index(PartnerRepository $partners): Response
     {
-    	$myPartners = $partners->findBy([], ['name' => 'DESC']);
+    	$myPartners = $partners->findBy([], ['name' => 'ASC']);
         
         return $this->render('dashboard/partner/index.html.twig', ['partners' => $myPartners]);
     }
@@ -176,4 +176,5 @@ class PartnerController extends AbstractController
         
         return $this->redirectToRoute('partner_index');
     }
+
 }

@@ -30,7 +30,7 @@ class IncomingInvoiceType extends AbstractType
         			$qb = $repository->createQueryBuilder('p');
         			return $qb        			
         			->where('p.isSupplier = 1')
-        			->orderBy('p.id', 'ASC')
+        			->orderBy('p.name', 'ASC')
         			;
         		},
         		'choice_label' => 'name',

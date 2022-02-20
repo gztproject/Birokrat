@@ -36,7 +36,7 @@ class InvoiceType extends AbstractType
         				$qb = $repository->createQueryBuilder('p');
         				return $qb
         				->where('p.isClient = 1')
-        				->orderBy('p.id', 'ASC')
+        				->orderBy('p.name', 'ASC')
         				;
         			},
         			'choice_label' => 'name',
