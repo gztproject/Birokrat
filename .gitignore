@@ -29,3 +29,8 @@ src/DataFixtures/InitData/organizations.tsv
 src/DataFixtures/InitData/partners.tsv
 
 src/DataFixtures/InitData/users.tsv
+
+###> phpunit/phpunit ###
+/phpunit.xml
+.phpunit.result.cache
+###< phpunit/phpunit ###
