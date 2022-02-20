@@ -37,6 +37,17 @@
         </div>
     </div>
 </div>
+
+<h2>{{ 'title.partners'|trans }}</h2>
+<div class="row">
+    <div class="col-sm-12">
+        <div class="bs-component">
+        {{ include('dashboard/report/_partnerReport.html.twig', {
+                report: partnerReport                
+            }, with_context = false) }}
+        </div>
+    </div>
+</div>
 {% endblock %}
 
 {% block sidebar %}
