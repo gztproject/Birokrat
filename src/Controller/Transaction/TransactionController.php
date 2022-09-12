@@ -32,7 +32,7 @@ class TransactionController extends AbstractController {
 
 		$queryBuilder = $transactions->getFilteredQuery ( $dateFrom, $dateTo, $orgId );
 
-		$pagination = $paginator->paginate ( $queryBuilder, $request->query->getInt ( 'page', 1 ), 10 );
+		$pagination = $paginator->paginate ( $queryBuilder, $request->query->getInt ( 'page', 1 ), $request->query->getInt ( 'results', 100 ) );
 
 		return $this->render ( 'dashboard/transaction/index.html.twig', [ 
 				'pagination' => $pagination

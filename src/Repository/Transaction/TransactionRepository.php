@@ -28,7 +28,8 @@ class TransactionRepository extends ServiceEntityRepository
     	->orderBy('t.date', 'DESC');
     }
     
-    public function getFilteredQuery($from, $to, $orgId, $order = "DESC"): QueryBuilder
+//    public function getFilteredQuery($from, $to, $orgId, $order = "DESC"): QueryBuilder
+    public function getFilteredQuery($from, $to, $orgId, ?string $order = "DESC", ?int $limit = null): QueryBuilder
     {
     	$qb = $this
     	->createQueryBuilder('t')
@@ -52,6 +53,11 @@ class TransactionRepository extends ServiceEntityRepository
     		
     		$qb->andWhere('t.organization = :orgid')->setParameter('orgid', $orgId);
     	}
+	
+	if($limit)
+    	{
+            $qb->setMaxResults($limit);
+        }
     	
     	return $qb->orderBy('t.date', $order);
     }

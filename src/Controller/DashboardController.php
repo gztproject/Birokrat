@@ -18,7 +18,7 @@ class DashboardController extends AbstractController
     {     
     	$myInvoices = $invoices->findBy(['state' => [10,20,30]], ['dateOfIssue' => 'DESC', 'number' => 'DESC'], 5);
     	$myTEs = $travelExpenses->findBy([], ['date' => 'DESC'], 5);
-    	$myTransactions = $transactions->findBy([], ['date' => 'DESC'], 5);
+	$myTransactions = $transactions->getFilteredQuery(null, date('U'), null, 'DESC', 5)->getQuery()->getResult();
     	return $this->render('dashboard/index.html.twig', ['invoices' => $myInvoices, 'travelExpenses' => $myTEs, 'transactions'=>$myTransactions]);
     }    
     
