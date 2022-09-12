@@ -628,7 +628,12 @@ class Invoice extends AggregateBase implements iTransactionDocument
      */
     public function getInvoiceItems(): Collection
     {
-    	return $this->invoiceItems;
+	$iterator = $this->invoiceItems->getIterator();
+        $iterator->uasort(function ($a, $b) {
+            return ($a->getCode() < $b->getCode()) ? -1 : 1;
+        });
+        return new ArrayCollection(iterator_to_array($iterator));
+//    	return $this->invoiceItems;
     }
 
     public function getState(): int
