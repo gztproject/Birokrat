@@ -1,12 +1,10 @@
 {
     "devDependencies": {
-        "@babel/preset-env": "^7.11.5",
-        "@fortawesome/fontawesome-free": "^5.14.0",
-        "@symfony/webpack-encore": "^0.30.2",
-        "bootstrap": "^4.5.2",
-        "copy-webpack-plugin": "^6.1.1",
-        "node-sass": "^4.14.1",
-        "sass-loader": "^7.0.1",
+        "@hotwired/stimulus": "^3.0.0",
+        "@symfony/stimulus-bridge": "^3.0.0",
+        "@symfony/webpack-encore": "^1.7.0",
+        "core-js": "^3.0.0",
+        "regenerator-runtime": "^0.13.2",
         "webpack-notifier": "^1.6.0"
     },
     "license": "UNLICENSED",
@@ -16,29 +14,5 @@
         "dev": "encore dev",
         "watch": "encore dev --watch",
         "build": "encore production --progress"
-    },
-    "dependencies": {
-        "acorn": "^6.4.1",
-        "bloodhound-js": "^1.2.3",
-        "bootstrap-sass": "^3.4.1",
-        "bootstrap-tagsinput": "^0.7.1",
-        "bootswatch": "^4.5.2",
-        "core-js": "3",
-        "dotenv": "^8.1.0",
-        "dotenv-webpack": "^1.8.0",
-        "eonasdan-bootstrap-datetimepicker": "^4.17.47",
-        "fontawesome": "^5.6.3",
-        "fs": "^0.0.1-security",
-        "jquery": "^3.5.1",
-        "jquery.soap": "^1.7.3",
-        "lato-font": "^3.0.0",
-        "minimist": "^1.2.5",
-        "moment": "^2.28.0",
-        "moment-timezone": "^0.5.31",
-        "popper.js": "^1.15.0",
-        "query-string": "^6.13.2",
-        "serialize-javascript": "^3.1.0",
-        "typeahead.js": "^0.11.1",
-        "with-query": "^1.1.2"
     }
 }
