@@ -1,5 +1,5 @@
 security:
-    # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers    
+    # https://symfony.com/doc/current/security.html#registering-the-user-hashing-passwords
     password_hashers:
         App\Entity\User\User:
             algorithm: auto    
