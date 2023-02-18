@@ -57,12 +57,12 @@
         ]
     },
     "doctrine/doctrine-migrations-bundle": {
-        "version": "1.2",
+        "version": "3.1",
         "recipe": {
             "repo": "github.com/symfony/recipes",
-            "branch": "master",
-            "version": "1.2",
-            "ref": "c1431086fec31f17fbcfe6d6d7e92059458facc1"
+            "branch": "main",
+            "version": "3.1",
+            "ref": "c1431086fec31f17fbcfe6d6d7e92059458fabc1"
         }
     },
     "doctrine/event-manager": {
