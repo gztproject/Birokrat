@@ -100,14 +100,14 @@
 		}
 	},
 	"support" : {
-		"email" : "gasper.doljak@gmail.com",
+		"email" : "info@gzt.si",
 		"issues" : "https://github.com/gztproject/Birokrat/issues",
 		"wiki" : "https://github.com/gztproject/Birokrat/wiki"
 	},
 	"minimum-stability" : "stable",
 	"authors" : [{
 			"name" : "Gašper Doljak",
-			"email" : "gasper.doljak@gmail.com",
+			"email" : "gasper@gzt.si",
 			"homepage" : "https://www.gzt.si",
 			"role" : "Main dev"
 		}
