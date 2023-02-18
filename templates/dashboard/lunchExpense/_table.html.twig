@@ -12,7 +12,7 @@
     {% for lunchExpense in lunchExpenses %}
             <tr class="table-primary">
                 <td>{{ lunchExpense.dateString }}</td>                
-                <td>{{ lunchExpense.sum }}</td> 
+                <td>{{ lunchExpense.sum | format_currency('EUR')}}</td> 
                 {% if ShowCBs is defined and ShowCBs == true%}             
                 <td> 
                     <input class="form-check-input TECheckBox" type="checkbox" value={{ lunchExpense.id }}>                                    

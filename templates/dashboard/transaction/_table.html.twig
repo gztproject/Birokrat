@@ -48,7 +48,7 @@
                     <a href="{{ path('transaction_show', {'id': transaction.id}) }}">{{'label.transaction'|trans }}: {{ transaction.description }}</a>
                 {% endif %}
                 </td>
-                <td>{{ transaction.sum }} €</td>                      
+                <td>{{ transaction.sum |format_currency('EUR') }} </td>                      
                 <td>{{ transaction.debitKonto.number }}</td>          
                 <td>{{ transaction.creditKonto.number }}</td>
                 <td>

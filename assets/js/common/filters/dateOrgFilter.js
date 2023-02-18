@@ -38,7 +38,7 @@ $(function() {
         showTodayButton: true,
         showClear: true,
         locale:'sl',
-        //defaultDate: moment().startOf('month'),
+        defaultDate: moment().startOf('year'),
 
     });
 
@@ -58,6 +58,7 @@ $(function() {
         showTodayButton: true,
         showClear: true,
         locale:'sl',
+        defaultDate: moment().endoendOf('today'),
         useCurrent: false //Important! See issue #1075   
     });    
     

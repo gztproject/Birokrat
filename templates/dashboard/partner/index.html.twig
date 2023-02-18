@@ -31,7 +31,7 @@
                 <td>{{ organization.isSupplier ? '<i class="fa fa-check" aria-hidden="true"></i>' : ''}}</td>
                 <td class="text-right">
                     <div class="item-actions">
-                        <a href="{{ path('partner_show', {'id': organization.id}) }}" class="btn btn-sm btn-default">
+                        <a href="{{ path('partner_show', {'id': organization.id}) }}" class="btn btn-sm btn-primary">
                             <i class="fa fa-eye" aria-hidden="true"></i> {{ 'action.show'|trans }}
                         </a>
                         <a href="{{ path('partner_edit', {'id': organization.id}) }}" class="btn btn-sm btn-primary">

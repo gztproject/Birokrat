@@ -61,6 +61,7 @@ action:
   cancel: Prekliči
   setPaid: Plačano
   print: Tiskaj
+  setIssued: Izdaj
   
 body:
   delete:

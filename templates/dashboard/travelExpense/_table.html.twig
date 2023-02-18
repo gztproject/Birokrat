@@ -13,8 +13,8 @@
             <tr class="table-primary">
                 <td>{{ travelExpense.dateString }}</td>
                 <td>{{ travelExpense.travelDescription }}</td>
-                <td>{{ travelExpense.totalDistance }}</td> 
-                <td>{{ (travelExpense.totalDistance * travelExpense.rate) | round(2, 'common')}} €</td>                
+                <td>{{ travelExpense.totalDistance | format_number({fraction_digit:2}) }} km</td> 
+                <td>{{ (travelExpense.totalDistance * travelExpense.rate) | format_currency('EUR')}} </td>                
                 <td>
                     <div class="item-actions">
                         <a href="{{ path('travelExpense_show', {'id': travelExpense.id}) }}" class="btn btn-sm btn-primary">

@@ -32,7 +32,7 @@
                 <td>{{ invoice.dateOfIssueString }}</td>
                 <td>{{ invoice.Recepient.ShortName }}</td>
                 <td>{{ invoice.ReferenceNumber }}</td>
-                <td>{{ invoice.TotalPrice }}</td>
+                <td>{{ invoice.TotalPrice | format_currency('EUR') }}</td>
                 <td>{% if invoice.datePaid %}
                         {{ invoice.DatePaidString }}
                     {% else %}
