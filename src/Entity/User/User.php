@@ -14,7 +14,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
-use Serializable;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use App\Entity\Base\AggregateBase;
@@ -40,7 +39,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
  * @ORM\Table(name="app_users")
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  */
-class User extends AggregateBase implements UserInterface, PasswordAuthenticatedUserInterface, Serializable
+class User extends AggregateBase implements UserInterface, PasswordAuthenticatedUserInterface
 {
     /**
      * @ORM\Column(type="string", length=255)
@@ -490,31 +489,9 @@ class User extends AggregateBase implements UserInterface, PasswordAuthenticated
     
     /*
      * ********************************************************************
-     * Stuff needed by UserInterface and Serializable
+     * Stuff needed by UserInterface
      * ********************************************************************
-     */
-    
-     /** @see \Serializable::serialize() */
-    public function serialize()
-    {
-    	return serialize(array(
-    			$this->id,
-    			$this->username,
-    			$this->password,
-    			$this->isActive,
-    	));
-    }
-    
-    /** @see \Serializable::unserialize() */
-    public function unserialize($serialized)
-    {
-    	list (
-    			$this->id,
-    			$this->username,
-    			$this->password,
-    			$this->isActive,
-    			) = unserialize($serialized);
-    }
+     */     
         
     public function eraseCredentials()
     {

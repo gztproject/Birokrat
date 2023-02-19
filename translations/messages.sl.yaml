@@ -43,6 +43,9 @@ label:
   no_users_found: Ne najdem nobenega uporabnika.
   previous: Prejšnja
   next: Naslednja
+  SendInvoiceHeader: Pošiljanje računa po e-pošti 
+  subject: Zadeva
+  body: Sporočilo
 
 
 
@@ -62,6 +65,7 @@ action:
   setPaid: Plačano
   print: Tiskaj
   setIssued: Izdaj
+  send: Pošlji
   
 body:
   delete:

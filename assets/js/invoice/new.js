@@ -95,14 +95,14 @@ jQuery(document).ready(function() {
         setItemValue(0,0);
     }
     else
-    {        
-        for(var i=0;i<$collectionHolder.find('tr').length;i++)
-        {        
-            $('#remove-invoice-item-' + i).on('click', function(e) {   
-                var index = e.target.id.split('-')[3];      
+    {     
+        $('.removeBtn').on('click', function(e) {   
+                var index = e.currentTarget.id.split('-')[3];    
                 removeInvoiceItemForm($collectionHolder, index); 
                 setTotalPrice(calculateTotal());       
-            });             
+            });    
+        for(var i=0;i<$collectionHolder.find('tr').length;i++)
+        {               
             $('#invoice_invoiceItemCommands_' + i + '_quantity').on('keydown', function(e){
                 var index = e.target.id.split('_')[2]; 
                 setTimeout(function () {       
@@ -272,7 +272,7 @@ function addInvoiceItemForm($collectionHolder, $addRemoveInvoiceItemButtons, $nu
 
         // Display the form in the page in an li, before the "Add a tag" link li
         var $newFormLi = $('<tr class="invoice-item-tr-' + index + '">'+
-        '<td class="codeInput">' + $('#invoice_invoiceItemCommands_' + index + '_code', newForm).parent().html() + '</td>'+
+        '<td class="codeInputRow">' + $('#invoice_invoiceItemCommands_' + index + '_code', newForm).parent().html() + '</td>'+
         '<td class="nameInput" data-item-index="' + index + '">' + $('#invoice_invoiceItemCommands_' + index + '_name' ,newForm).parent().html() + '</td>'+
         '<td class="quantityInput">' + $('#invoice_invoiceItemCommands_' + index + '_quantity', newForm).parent().html()+'</td>'+
         '<td class="unitInput">' + $('#invoice_invoiceItemCommands_' + index + '_unit', newForm).parent().html()+'</td>'+
@@ -318,16 +318,27 @@ function addInvoiceItemForm($collectionHolder, $addRemoveInvoiceItemButtons, $nu
         $('#invoice_invoiceItemCommands_' + index + '_discount').val(0);
 
         setItemValue(index,0);
+        renumberInvoiceItems($collectionHolder)
     }    
 }
 
 function removeInvoiceItemForm($collectionHolder, index) {
-    if(index < 1)
+    if($collectionHolder.find('tr').length <= 2)
     {
         alert("Can't delete last item!");
         return;
-    }
-    $collectionHolder.data('index', index);
-    $('.invoice-item-tr-' + index, $collectionHolder).remove()
+    }   
+    $('.invoice-item-tr-' + index, $collectionHolder).remove()    
     
+    renumberInvoiceItems($collectionHolder);
+}
+
+function renumberInvoiceItems($collectionHolder)
+{    
+    // AddTravelStopbutton is also a row ;)
+    for(var i=0;i<$collectionHolder.find('tr').length - 1;i++)
+    { 
+      //  $('#travel_expense_travelStopCommands_'+i+'_stopOrder', $collectionHolder).val(i+1);      
+         $('.codeInput', $collectionHolder.find('tr')[i]).val(i+1)
+    }
 }

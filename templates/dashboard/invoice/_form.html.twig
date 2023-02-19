@@ -116,7 +116,7 @@
 
                 {% for invoiceItem in form.invoiceItemCommands %}
                     <tr class="invoice-item-tr-{{ loop.index0 }}">
-                        <td class="codeInput">{{ form_widget(invoiceItem.code)}}</td>
+                        <td class="codeInputRow">{{ form_widget(invoiceItem.code)}}</td>
                         <td class="nameInput" data-item-index={{ loop.index0 }}>{{ form_widget(invoiceItem.name)}}</td>
                         <td class="quantityInput">{{ form_widget(invoiceItem.quantity)}}</td>
                         <td class="unitInput">{{ form_widget(invoiceItem.unit)}}</td>

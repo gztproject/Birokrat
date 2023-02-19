@@ -60,14 +60,10 @@ jQuery(document).ready(function() {
     
     else //addTravelStopForm already appends the click remove function
     {
-        for(var i=0;i<$collectionHolder.find('tr').length;i++)
-        {            
-             var btn = $('.remove-travel-stop-btn', $collectionHolder.find('tr')[i]);             
-             btn.on('click', function(e) {   
-                var index = e.currentTarget.id.split('-')[3];      
-                removeTravelStopForm($collectionHolder, index);               
-            }); 
-        }
+        $('.remove-travel-stop-btn').on('click', function(e) {   
+            var index = e.currentTarget.id.split('-')[3];      
+            removeTravelStopForm($collectionHolder, index);               
+        }); 
     }
     $collectionHolder.append($addTravelStopButton);   
    
@@ -124,6 +120,7 @@ function addTravelStopForm($collectionHolder, $addTravelStopButton, $number) {
     $('.post-Selector').on('change', function(e){        
         autoFillDistance($collectionHolder, index);
     });
+    renumberTravelStops($collectionHolder);
 }
 
 function removeTravelStopForm($collectionHolder, index) {
@@ -134,13 +131,8 @@ function removeTravelStopForm($collectionHolder, index) {
     {
         alert("Can't delete last 2 stops!");
         return;
-    }    
+    }
     
-    // decrease the index with one for the next item
-     // AddTravelStopbutton is also a row ;)
-    var lastIdx = $collectionHolder.data('index')*1;
-    $collectionHolder.data('index', lastIdx - 1);
-    //$collectionHolder.data('index', index);
     $('.travel-stop-tr-' + index, $collectionHolder).remove()
     
     renumberTravelStops($collectionHolder);
