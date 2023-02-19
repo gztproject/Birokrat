@@ -36,10 +36,10 @@
                 
                 {% for travelStop in form.travelStopCommands %}
                     <tr class="form-group travel-stop-tr-{{ loop.index0 }}">
-                        <td>{{ form_widget(travelStop.stopOrder, {'attr': {'class': 'form-control'}})}}</td>
+                        <td>{{ form_widget(travelStop.stopOrder, {'attr': {'class': 'form-control StopOrder'}})}}</td>
                         <td class="post-Selector" data-stop-index="{{ loop.index0 }}">{{ form_widget(travelStop.post, {'attr': {'class': 'form-control'}})}}</td>
                         <td colspan="2">{{ form_widget(travelStop.distanceFromPrevious, {'attr': {'class': 'form-control'}})}}</td>
-                        <td><a id="remove-travel-stop-{{ loop.index0 }}'" class="btn btn-sm btn-block btn-danger"><i class="fa fa-minus" aria-hidden="true"></i></a></td>
+                        <td><a id="remove-travel-stop-{{ loop.index0 }}" class="btn btn-sm btn-block btn-danger remove-travel-stop-btn"><i class="fa fa-minus" aria-hidden="true"></i></a></td>
                     </tr>
                 {% endfor %}
                 </tbody>

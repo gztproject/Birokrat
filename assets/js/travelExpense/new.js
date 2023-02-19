@@ -57,17 +57,19 @@ jQuery(document).ready(function() {
     { 
         addTravelStopForm($collectionHolder, $addTravelStopButton, 2);
     }
-    else
-    { 
+    
+    else //addTravelStopForm already appends the click remove function
+    {
         for(var i=0;i<$collectionHolder.find('tr').length;i++)
-        { 
-            $('#remove-travel-stop-' + i).on('click', function(e) {   
-                var index = e.target.id.split('-')[3];      
+        {            
+             var btn = $('.remove-travel-stop-btn', $collectionHolder.find('tr')[i]);             
+             btn.on('click', function(e) {   
+                var index = e.currentTarget.id.split('-')[3];      
                 removeTravelStopForm($collectionHolder, index);               
             }); 
         }
-        $collectionHolder.append($addTravelStopButton);
     }
+    $collectionHolder.append($addTravelStopButton);   
    
     var value = $('#travel_expense_travelStopCommands_0_post option:contains("Škofja Loka")', $collectionHolder)[0].value;
     $('#travel_expense_travelStopCommands_0_post', $collectionHolder)[0].value = value;
@@ -80,7 +82,7 @@ jQuery(document).ready(function() {
     });
 });
 
-function addTravelStopForm($collectionHolder, $addRemoveTravelStopButtons, $number) {
+function addTravelStopForm($collectionHolder, $addTravelStopButton, $number) {
     for(var i=0; i<$number;i++){
         // Get the data-prototype explained earlier
         var prototype = $collectionHolder.data('prototype');
@@ -100,18 +102,18 @@ function addTravelStopForm($collectionHolder, $addRemoveTravelStopButtons, $numb
 
         // Display the form in the page in an li, before the "Add a tag" link li
         var $newFormLi = $('<tr class="form group travel-stop-tr-' + index + '">'+
-                                '<td>' + $('#travel_expense_travelStopCommands_' + index + '_stopOrder', newForm).parent().html() + '</td>' + 
+                                '<td class="StopOrder">' + $('#travel_expense_travelStopCommands_' + index + '_stopOrder', newForm).parent().html() + '</td>' + 
                                 '<td class="post-Selector" data-index="' + index + '">' + 
                                     $('#travel_expense_travelStopCommands_' + index + '_post' ,newForm).parent().html() + '</td>'+
                                 '<td colspan="2">' + $('#travel_expense_travelStopCommands_' + index + '_distanceFromPrevious', newForm).parent().html()+'</td>'+
-                                '<td> <a id="remove-travel-stop-'+ index +'" class="btn btn-sm btn-block btn-danger"><i class="fa fa-minus" aria-hidden="true"></i></a></td>'+
+                                '<td> <a id="remove-travel-stop-'+ index +'" class="btn btn-sm btn-block btn-danger remove-travel-stop-btn"><i class="fa fa-minus" aria-hidden="true"></i></a></td>'+
                             '</tr>');        
 
         $('#travel_expense_travelStopCommands_' + index + '_stopOrder', $newFormLi).val(index+1); 
         $('#travel_expense_travelStopCommands_' + index + '_post', $newFormLi).val('');
         
         $collectionHolder.append($newFormLi);
-        $collectionHolder.append($addRemoveTravelStopButtons);
+        $collectionHolder.append($addTravelStopButton);
 
         $('#remove-travel-stop-'+index).on('click', function(e) {        
             removeTravelStopForm($collectionHolder, index);        
@@ -126,14 +128,32 @@ function addTravelStopForm($collectionHolder, $addRemoveTravelStopButtons, $numb
 
 function removeTravelStopForm($collectionHolder, index) {
     // ToDo: enable removing any stop (but for the last two), automatically recalculate distances and renumber travelStopNumbers (maybe also indices).
-    if(index < 2)
+    
+    // AddTravelStopbutton is also a row ;)
+    if($collectionHolder.find('tr').length <= 3)
     {
-        alert("Can't delete last stop!");
+        alert("Can't delete last 2 stops!");
         return;
-    }
+    }    
+    
+    // decrease the index with one for the next item
+     // AddTravelStopbutton is also a row ;)
+    var lastIdx = $collectionHolder.data('index')*1;
+    $collectionHolder.data('index', lastIdx - 1);
     //$collectionHolder.data('index', index);
     $('.travel-stop-tr-' + index, $collectionHolder).remove()
     
+    renumberTravelStops($collectionHolder);
+}
+
+function renumberTravelStops($collectionHolder)
+{    
+    // AddTravelStopbutton is also a row ;)
+    for(var i=0;i<$collectionHolder.find('tr').length - 1;i++)
+    { 
+      //  $('#travel_expense_travelStopCommands_'+i+'_stopOrder', $collectionHolder).val(i+1);      
+         $('.StopOrder', $collectionHolder.find('tr')[i]).val(i+1)
+    }
 }
 
 function autoFillDistance($collectionHolder, index){

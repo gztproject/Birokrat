@@ -6,17 +6,17 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use App\Entity\Geography\Post;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use App\Entity\TravelExpense\CreateTravelStopCommand;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 
 class TravelStopType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
     	$builder  
-        	->add('stopOrder', TextType::class, array(
+        	->add('stopOrder', NumberType::class, array(
       			'label' => false,
-        		'attr' => ['class' => 'form-control'],
+        		'attr' => ['class' => 'form-control StopOrder'],
         	))
             ->add('post', EntityType::class, array(
            		'class' => Post::class,
@@ -26,7 +26,7 @@ class TravelStopType extends AbstractType
            		'label' => false,    
             	'attr' => ['class' => 'form-control'],
             ))
-            ->add('distanceFromPrevious', TextType::class, array(
+            ->add('distanceFromPrevious', NumberType::class, array(
             		'label' => false,
             		'attr' => ['class' => 'form-control'],
             ))

@@ -9,7 +9,8 @@
                 <div class='col-md-7'>
                     <div class="row">
                         <div class='col-sm-3'>
-                            <img src="http://www.gzt-project.si/logo.png" alt="Logo" height="100" width="100"> 
+                            <!-- ToDo: Get from OrganizationSettings -->
+                            <img src="http://www.gzt.si/Logo_GZT_new_white.png" alt="Logo" height="125"> 
                         </div>
                         <div class='col-sm-9'>                    
                             <h4>{{ invoice.issuer.name }}</h4>
@@ -74,9 +75,9 @@
                                     <td>{{ ii.name }}</td>
                                     <td>{{ ii.quantity }}</td>
                                     <td>{{ ii.unit }}</td>
-                                    <td>{{ ii.price|number_format(2, ',', ' ') }} €</td>
+                                    <td>{{ ii.price | format_currency('EUR') }}</td>
                                     <td>{{ ii.discount * 100 }} %</td>
-                                    <td>{{ (ii.price * (1-ii.discount) * ii.quantity)|number_format(2, ',', ' ') }} €</td>
+                                    <td>{{ (ii.price * (1-ii.discount) * ii.quantity) | format_currency('EUR') }}</td>
                                 </tr>
                             {% endfor %}
                         </tbody>
@@ -96,13 +97,13 @@
                 <div class='col-md-3'>
                     <table>
                         <tr>
-                            <td>Skupaj:</td><td>{{ (invoice.totalValue)|number_format(2, ',', ' ') }} €</td>                            
+                            <td>Skupaj:</td><td>{{ (invoice.totalValue) | format_currency('EUR') }}</td>                            
                         </tr>
                         <tr>
                             <td>Popust:</td><td>{{ (invoice.discount * 100)|number_format(2, ',', ' ')}} %</td>
                         </tr>
                         <tr>
-                            <td>Za plačilo:</td><td>{{ invoice.totalPrice|number_format(2, ',', ' ') }} €</td>
+                            <td>Za plačilo:</td><td>{{ invoice.totalPrice | format_currency('EUR') }}</td>
                         </tr>
                     </table>
                 </div>
