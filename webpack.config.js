@@ -7,12 +7,16 @@ if (!Encore.isRuntimeEnvironmentConfigured()) {
 }
 
 Encore
-    // directory where compiled assets will be stored
     .setOutputPath('public/build/')
-    // public path used by the web server to access the output path
     .setPublicPath('/build')
-    // only needed for CDN's or subdirectory deploy
-    //.setManifestKeyPrefix('build/')
+    .cleanupOutputBeforeBuild()
+    .autoProvidejQuery()
+    .autoProvideVariables({
+        "window.Bloodhound": require.resolve('bloodhound-js'),
+        "jQuery.tagsinput": "bootstrap-tagsinput"
+    })
+    .enableSassLoader()
+    .enableVersioning()
 
     /*
      * ENTRY CONFIG
@@ -26,7 +30,7 @@ Encore
     .addEntry('js/dashboard', './assets/js/dashboard.js')
     .addEntry('js/search', './assets/js/search.js')
     .addEntry('js/codesheets', './assets/js/codesheets.js')
-    
+
     //TravelExpense
     .addEntry('js/travelExpense/index', './assets/js/travelExpense/index.js')
     .addEntry('js/travelExpense/new', './assets/js/travelExpense/new.js')
@@ -44,7 +48,7 @@ Encore
     //IncomingInvoice
     .addEntry('js/incomingInvoice/new', './assets/js/incomingInvoice/new.js')
     .addEntry('js/incomingInvoice/list', './assets/js/incomingInvoice/list.js')
-    
+
     //Organization
     .addEntry('js/organization/new', './assets/js/organization/new.js')
     .addEntry('js/organization/show', './assets/js/organization/show.js')
@@ -62,64 +66,21 @@ Encore
     //POC
     .addEntry('js/poc.typeahead', './assets/js/poc.typeahead.js')
 
-    
+
     //Styles
     .addStyleEntry('css/app', ['./assets/scss/app.scss'])
     .addStyleEntry('css/copyleft', ['./assets/css/copyleft.css'])
     .addStyleEntry('css/admin', ['./assets/scss/admin.scss'])
     .addStyleEntry('css/dashboard', ['./assets/scss/dashboard.scss'])
     .addStyleEntry('css/invoice', ['./assets/scss/invoice.scss'])
-    .addStyleEntry('css/report', ['./assets/scss/report.scss'])    
-   
-    // enables the Symfony UX Stimulus bridge (used in assets/bootstrap.js)
-    .enableStimulusBridge('./assets/controllers.json')
+    .addStyleEntry('css/report', ['./assets/scss/report.scss'])
 
-    // When enabled, Webpack "splits" your files into smaller pieces for greater optimization.
-    .splitEntryChunks()
-
-    // will require an extra script tag for runtime.js
-    // but, you probably want this, unless you're building a single-page app
-    .enableSingleRuntimeChunk()
-
-    /*
-     * FEATURE CONFIG
-     *
-     * Enable & configure other features below. For a full
-     * list of features, see:
-     * https://symfony.com/doc/current/frontend.html#adding-more-features
-     */
-    .cleanupOutputBeforeBuild()
-    .enableBuildNotifications()
-    .enableSourceMaps(!Encore.isProduction())
-    // enables hashed filenames (e.g. app.abc123.css)
-    .enableVersioning(Encore.isProduction())
-
-    // configure Babel
-    // .configureBabel((config) => {
-    //     config.plugins.push('@babel/a-babel-plugin');
-    // })
-
-    // enables and configure @babel/preset-env polyfills
-    .configureBabelPresetEnv((config) => {
-        config.useBuiltIns = 'usage';
-        config.corejs = '3.23';
+    .configureBabel(function(babelConfig) {
     })
 
-    // enables Sass/SCSS support
-    .enableSassLoader()
-
-    // uncomment if you use TypeScript
-    //.enableTypeScriptLoader()
-
-    // uncomment if you use React
-    //.enableReactPreset()
-
-    // uncomment to get integrity="..." attributes on your script & link tags
-    // requires WebpackEncoreBundle 1.4 or higher
-    //.enableIntegrityHashes(Encore.isProduction())
-
-    // uncomment if you're having problems with a jQuery plugin
-    .autoProvidejQuery()
-;
+    .splitEntryChunks()
+    .enableSourceMaps(!Encore.isProduction())
+    .enableSingleRuntimeChunk()
+    ;
 
 module.exports = Encore.getWebpackConfig();

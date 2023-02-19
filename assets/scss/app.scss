@@ -3,15 +3,23 @@
 // see https://github.com/thomaspark/bootswatch/issues/55#issuecomment-298093182
 $web-font-path: 'data:text/css;base64,';
 
+@import "~bootswatch/dist/slate/variables";
+@import "~bootstrap/scss/bootstrap";
+//@import "~bootstrap-sass/assets/stylesheets/bootstrap-sprockets";
+//@import "~bootstrap-sass/assets/stylesheets/bootstrap";
+@import "~bootswatch/dist/slate/bootswatch";
+
 @import '~@fortawesome/fontawesome-free/css/all.css';
 
-@import "node_modules/bootswatch/dist/slate/_variables.scss";
-@import "node_modules/bootstrap/scss/bootstrap.scss";
-@import "node_modules/bootswatch/dist/slate/_bootswatch.scss";
-
 @import "datetime-vars.scss";
+@import "~eonasdan-bootstrap-datetimepicker/src/sass/bootstrap-datetimepicker-build";
+/*
 
-@import "node_modules/eonasdan-bootstrap-datetimepicker/src/sass/bootstrap-datetimepicker-build.scss";
+
+
+
+
+*/
 
 .col-form-label {
     margin-bottom: 0;
