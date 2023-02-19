@@ -3,6 +3,7 @@ namespace App\Controller\Organization;
 
 use App\Form\Geography\AddressType;
 use App\Form\Organization\OrganizationType;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -68,10 +69,10 @@ class OrganizationController extends AbstractController
     /**
      * @Route("/dashboard/organization/new", methods={"GET", "POST"}, name="organization_new")
      */
-    public function new(Request $request)
+    public function new(Request $request, ManagerRegistry $doctrine)
     {
         $c = new CreateOrganizationCommand();
-        $c->code = OrganizationCodeFactory::factory('App\Entity\Organization\Organization', $this->getDoctrine())->generate();
+        $c->code = OrganizationCodeFactory::factory('App\Entity\Organization\Organization', $doctrine)->generate();
         
         $form = $this->createForm(OrganizationType::class, $c)
         		->add('address', AddressType::class);
@@ -80,7 +81,7 @@ class OrganizationController extends AbstractController
         
         if ($form->isSubmitted() && $form->isValid()) {  
         	
-        	$adr = $this->getDoctrine()->getRepository(Address::class)->findBy(['line1'=>$c->address->line1]);
+        	$adr = $doctrine->getRepository(Address::class)->findBy(['line1'=>$c->address->line1]);
         	
         	$address = null;
         	foreach($adr as $a)
@@ -90,7 +91,7 @@ class OrganizationController extends AbstractController
         			$address = $a;
         		}
         	}
-        	$entityManager = $this->getDoctrine()->getManager();
+        	$entityManager = $doctrine->getManager();
         	if($address === null)
         	{
         		$post = $c->address->post;
@@ -106,7 +107,7 @@ class OrganizationController extends AbstractController
         	
         	$organization = $this->getUser()->createOrganization($c);
         	
-        	$entityManager = $this->getDoctrine()->getManager();
+        	$entityManager = $doctrine->getManager();
         	
         	$entityManager->persist($organization);
         	$entityManager->flush();
@@ -138,7 +139,7 @@ class OrganizationController extends AbstractController
      *
      * @Route("/dashboard/organization/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/edit",methods={"GET", "POST"}, name="organization_edit")
      */
-    public function edit(Request $request, Organization $organization): Response
+    public function edit(Request $request, Organization $organization, ManagerRegistry $doctrine): Response
     {
     	$updateCommand = new UpdateOrganizationCommand();
     	$organization->mapTo($updateCommand);
@@ -155,7 +156,7 @@ class OrganizationController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) 
         {            
             $updateCommand = $form->getData(); 
-            $adr = $this->getDoctrine()->getRepository(Address::class)->findBy(['line1'=>$updateCommand->address->line1]);
+            $adr = $doctrine->getRepository(Address::class)->findBy(['line1'=>$updateCommand->address->line1]);
             
             $address = null;
             foreach($adr as $a)
@@ -165,7 +166,7 @@ class OrganizationController extends AbstractController
             		$address = $a;
             	}
             }
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $doctrine->getManager();
             if($address === null)
             {
             	$post = $updateCommand->address->post;
@@ -180,8 +181,8 @@ class OrganizationController extends AbstractController
             $updateCommand->address = $address;
             
             $organization->update($updateCommand, $this->getUser());                                   
-            $this->getDoctrine()->getManager()->persist($organization);            
-            $this->getDoctrine()->getManager()->flush();            
+            $doctrine->getManager()->persist($organization);            
+            $doctrine->getManager()->flush();            
             $this->addFlash('success', 'organization.updated_successfully');            
             return $this->redirectToRoute('organization_edit', ['id' => $organization->getId()]);
         }
@@ -200,13 +201,13 @@ class OrganizationController extends AbstractController
      *
      * @Route("/dashboard/organization/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/delete", methods={"POST"}, name="organization_delete")
      */
-    public function delete(Request $request, Organization $organization): Response
+    public function delete(Request $request, Organization $organization, ManagerRegistry $doctrine): Response
     {
         if (!$this->isCsrfTokenValid('delete', $request->request->get('token'))) {
             return $this->redirectToRoute('organization_index');
         }
                         
-        $em = $this->getDoctrine()->getManager();
+        $em = $doctrine->getManager();
         $em->remove($organization);
         $em->flush();
         

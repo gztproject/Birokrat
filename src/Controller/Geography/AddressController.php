@@ -1,6 +1,7 @@
 <?php 
 namespace App\Controller\Geography;
 
+use Doctrine\Persistence\ManagerRegistry;
 use App\Form\Geography\AddressType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,7 +16,7 @@ class AddressController extends AbstractController
     /**
      * @Route("/dashboard/address/new", methods={"POST"}, name="address_new")
      */
-    public function newAddress(Request $request): Response
+    public function newAddress(Request $request, ManagerRegistry $doctrine): Response
     {	
     	$c = new CreateAddressCommand();
     	$form = $this->createForm(AddressType::class, $c);    	
@@ -23,7 +24,7 @@ class AddressController extends AbstractController
     	$form->handleRequest($request);
     	
     	if ($form->isSubmitted() && $form->isValid()) {
-    		$adr = $this->getDoctrine()->getRepository(Address::class)->findOneBy(['line1'=>$c->line1]);
+    		$adr = $doctrine->getRepository(Address::class)->findOneBy(['line1'=>$c->line1]);
     		
     		if($adr != null && $adr->getLine2() == $c->line2 && $adr->getPost() == $c->post)
     		{
@@ -31,7 +32,7 @@ class AddressController extends AbstractController
     		}
     		$post = $c->post;
     		$address = $post->createAddress($c, $this->getUser());
-    		$entityManager = $this->getDoctrine()->getManager();    		
+    		$entityManager = $doctrine->getManager();    		
     		$entityManager->persist($address);    		
     		$entityManager->flush();
     		

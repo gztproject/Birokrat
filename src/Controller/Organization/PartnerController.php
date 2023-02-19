@@ -3,6 +3,7 @@ namespace App\Controller\Organization;
 
 use App\Form\Geography\AddressType;
 use App\Form\Organization\PartnerType;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -35,17 +36,17 @@ class PartnerController extends AbstractController
     /**
      * @Route("/dashboard/partner/new", methods={"GET", "POST"}, name="partner_new")
      */
-    public function new(Request $request)
+    public function new(Request $request, ManagerRegistry $doctrine)
     {
     	$c = new CreatePartnerCommand();                
-        $c->code = OrganizationCodeFactory::factory('App\Entity\Organization\Partner', $this->getDoctrine())->generate();        
+        $c->code = OrganizationCodeFactory::factory('App\Entity\Organization\Partner', $doctrine)->generate();        
         $form = $this->createForm(PartnerType::class, $c)
         		->add('address', AddressType::class);
                 
         $form->handleRequest($request);        
         if ($form->isSubmitted() && $form->isValid()) {
         	
-        	$adr = $this->getDoctrine()->getRepository(Address::class)->findBy(['line1'=>$c->address->line1]);
+        	$adr = $doctrine->getRepository(Address::class)->findBy(['line1'=>$c->address->line1]);
         	
         	$address = null;
         	foreach($adr as $a)
@@ -55,7 +56,7 @@ class PartnerController extends AbstractController
         			$address = $a;
         		}
         	}
-        	$entityManager = $this->getDoctrine()->getManager();
+        	$entityManager = $doctrine->getManager();
         	if($address === null)
         	{
         		$post = $c->address->post;
@@ -101,7 +102,7 @@ class PartnerController extends AbstractController
      *
      * @Route("/dashboard/partner/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/edit",methods={"GET", "POST"}, name="partner_edit")
      */
-    public function edit(Request $request, Partner $partner): Response
+    public function edit(Request $request, Partner $partner, ManagerRegistry $doctrine): Response
     {
     	$updateCommand = new UpdatePartnerCommand();
     	$partner->mapTo($updateCommand);
@@ -118,7 +119,7 @@ class PartnerController extends AbstractController
         {            
         	$updateCommand = $form->getData();
         	
-        	$adr = $this->getDoctrine()->getRepository(Address::class)->findBy(['line1'=>$updateCommand->address->line1]);
+        	$adr = $doctrine->getRepository(Address::class)->findBy(['line1'=>$updateCommand->address->line1]);
         	        	
         	$address = null;
         	foreach($adr as $a)
@@ -128,7 +129,7 @@ class PartnerController extends AbstractController
 	        		$address = $a;
         		}        		
         	}
-        	$entityManager = $this->getDoctrine()->getManager();
+        	$entityManager = $doctrine->getManager();
         	if($address === null)
         	{
         		$post = $updateCommand->address->post;
@@ -162,13 +163,13 @@ class PartnerController extends AbstractController
      *
      * @Route("/dashboard/partner/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/delete", methods={"POST"}, name="partner_delete")
      */
-    public function delete(Request $request, Partner $partner): Response
+    public function delete(Request $request, Partner $partner, ManagerRegistry $doctrine): Response
     {
         if (!$this->isCsrfTokenValid('delete', $request->request->get('token'))) {
             return $this->redirectToRoute('partner_index');
         }
                         
-        $em = $this->getDoctrine()->getManager();
+        $em = $doctrine->getManager();
         $em->remove($partner);
         $em->flush();
         

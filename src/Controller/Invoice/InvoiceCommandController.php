@@ -1,6 +1,7 @@
 <?php 
 namespace App\Controller\Invoice;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -29,7 +30,7 @@ class InvoiceCommandController extends AbstractController
     /**
      * @Route("/dashboard/invoice/new", methods={"GET", "POST"}, name="invoice_new")
      */
-    public function new(Request $request): Response
+    public function new(Request $request, ManagerRegistry $doctrine): Response
     {
     	$createInvoiceCommand = new CreateInvoiceCommand();
     	
@@ -41,7 +42,7 @@ class InvoiceCommandController extends AbstractController
     		 		
     		$invoice = $this->getUser()->createInvoice($createInvoiceCommand);
     		    		
-    		$em = $this->getDoctrine()->getManager();
+    		$em = $doctrine->getManager();
     		foreach($createInvoiceCommand->invoiceItemCommands as $c)
     		{
     			$ii = $invoice->createInvoiceItem($c);
@@ -65,7 +66,7 @@ class InvoiceCommandController extends AbstractController
      *
      * @Route("/dashboard/invoice/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/edit",methods={"GET", "POST"}, name="invoice_edit")
      */
-    public function edit(Request $request, Invoice $invoice): Response
+    public function edit(Request $request, Invoice $invoice, ManagerRegistry $doctrine): Response
     {
     	$updateInvoiceCommand = new UpdateInvoiceCommand();
     	$invoice->mapTo($updateInvoiceCommand);    	
@@ -82,7 +83,7 @@ class InvoiceCommandController extends AbstractController
     	
     	if ($form->isSubmitted() && $form->isValid()) {
     		$invoice->update($updateInvoiceCommand, $this->getUser());
-    		$em = $this->getDoctrine()->getManager();
+    		$em = $doctrine->getManager();
     		
     		foreach($invoice->getInvoiceItems() as $ii)
     		{
@@ -106,7 +107,7 @@ class InvoiceCommandController extends AbstractController
      *
      * @Route("/dashboard/invoice/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/clone",methods={"GET", "POST"}, name="invoice_clone")
      */
-    public function clone(Request $request, Invoice $invoice): Response
+    public function clone(Request $request, Invoice $invoice, ManagerRegistry $doctrine): Response
     {
     	$clone = $invoice->clone($this->getUser());
     	
@@ -126,7 +127,7 @@ class InvoiceCommandController extends AbstractController
     	
     	if ($form->isSubmitted() && $form->isValid()) {
     		$clone->update($updateInvoiceCommand, $this->getUser());
-    		$em = $this->getDoctrine()->getManager();
+    		$em = $doctrine->getManager();
     		
     		foreach($clone->getInvoiceItems() as $ii)
     		{
@@ -149,19 +150,19 @@ class InvoiceCommandController extends AbstractController
     /**
      * @Route("/dashboard/invoice/issue", methods={"POST"}, name="invoice_issue")
      */
-    public function issue(Request $request): Response
+    public function issue(Request $request, ManagerRegistry $doctrine): Response
     {
     	$id = $request->request->get('id', null);
     	if($id == null)
     		throw new \Exception("Bad request. I need an id.");
-    	$invoice = $this->getDoctrine()->getRepository(Invoice::class)->findOneBy(['id'=>$id]);
+    	$invoice = $doctrine->getRepository(Invoice::class)->findOneBy(['id'=>$id]);
     	if($invoice == null)
     		throw new \Exception("Can't find an invoice with id ".$id);
     	$date = new \DateTime($request->request->get('date', null));
-    	$entityManager = $this->getDoctrine()->getManager();
+    	$entityManager = $doctrine->getManager();
     	$dateOfIssue = new \Datetime($request->request->get('dateOfIssue', 'now'));
     	$state = $request->request->get('state', States::new);
-    	$number = InvoiceNumberFactory::factory($invoice->getIssuer(), $state, $dateOfIssue, $this->getDoctrine())->generate();
+    	$number = InvoiceNumberFactory::factory($invoice->getIssuer(), $state, $dateOfIssue, $doctrine)->generate();
     	
     	$transaction = $invoice->setIssued($date, $number, $this->getUser());
     	
@@ -177,11 +178,11 @@ class InvoiceCommandController extends AbstractController
     /**
      * @Route("/dashboard/invoice/pay", methods={"POST"}, name="invoice_set_paid")
      */
-    public function setPaid(Request $request): Response
+    public function setPaid(Request $request, ManagerRegistry $doctrine): Response
     {
-    	$invoice = $this->getDoctrine()->getRepository(Invoice::class)->findOneBy(['id'=>$request->request->get('id', null)]);
+    	$invoice = $doctrine->getRepository(Invoice::class)->findOneBy(['id'=>$request->request->get('id', null)]);
     	$date = new \DateTime($request->request->get('date', null));    	
-    	$entityManager = $this->getDoctrine()->getManager();
+    	$entityManager = $doctrine->getManager();
     	    	
     	$transaction = $invoice->setPaid($date, $this->getUser());
     	    	
@@ -195,10 +196,10 @@ class InvoiceCommandController extends AbstractController
     /**
      * @Route("/dashboard/invoice/cancel", methods={"POST"}, name="invoice_cancel")
      */
-    public function cancel(Request $request): Response
+    public function cancel(Request $request, ManagerRegistry $doctrine): Response
     {
-    	$invoice = $this->getDoctrine()->getRepository(Invoice::class)->findOneBy(['id'=>$request->request->get('id', null)]);
-    	$entityManager = $this->getDoctrine()->getManager();
+    	$invoice = $doctrine->getRepository(Invoice::class)->findOneBy(['id'=>$request->request->get('id', null)]);
+    	$entityManager = $doctrine->getManager();
     	
     	$invoice->cancel($request->request->get('reason', ""));
     	
@@ -211,12 +212,12 @@ class InvoiceCommandController extends AbstractController
     /**
      * @Route("/dashboard/invoice/send", methods={"POST"}, name="invoice_send")
      */
-    public function send(Request $request, MailerInterface $mailer, TCPDFController $tcpdf, TranslatorInterface $translator): JsonResponse
+    public function send(Request $request, MailerInterface $mailer, TCPDFController $tcpdf, TranslatorInterface $translator, ManagerRegistry $doctrine): JsonResponse
     {
     	$id = $request->request->get('id', null);
     	if($id == null)
     		throw new \Exception("Bad request. I need an id.");
-    	$invoice = $this->getDoctrine()->getRepository(Invoice::class)->findOneBy(['id'=>$id]);    	
+    	$invoice = $doctrine->getRepository(Invoice::class)->findOneBy(['id'=>$id]);    	
     	$email = $request->request->get('email', null);
     	$subject = $request->request->get('subject', null);
     	$body = $request->request->get('body', null);

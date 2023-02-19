@@ -1,6 +1,7 @@
 <?php 
 namespace App\Controller\Geography;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -29,7 +30,7 @@ class PostController extends AbstractController
     /**
      * @Route("/dashboard/codesheets/post/new", methods={"POST"}, name="add_post")
      */
-    public function addPost(Request $request): Response
+    public function addPost(Request $request, ManagerRegistry $doctrine): Response
     {
     	$c = new CreatePostCommand();
     	$form = $this->createForm(PostType::class, $c);
@@ -37,7 +38,7 @@ class PostController extends AbstractController
     	$form->handleRequest($request);
     	
     	if ($form->isSubmitted() && $form->isValid()) {
-    		$post = $this->getDoctrine()->getRepository(Post::class)->findOneBy(['codeInternational'=>$c->codeInternational]);
+    		$post = $doctrine->getRepository(Post::class)->findOneBy(['codeInternational'=>$c->codeInternational]);
     		
     		if($post != null && $post->getName() == $c->name && $post->getCountry() == $c->country)
     		{
@@ -45,7 +46,7 @@ class PostController extends AbstractController
     		}
     		$country = $c->country;
     		$post = $country->createPost($c, $this->getUser());
-    		$entityManager = $this->getDoctrine()->getManager();
+    		$entityManager = $doctrine->getManager();
     		$entityManager->persist($post);
     		$entityManager->flush();
     		

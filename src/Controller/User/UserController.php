@@ -4,6 +4,7 @@ namespace App\Controller\User;
 use App\Form\User\UserType;
 use App\Entity\User\User;
 use App\Repository\UserRepository;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -40,7 +41,7 @@ class UserController extends AbstractController
     /**
      * @Route("/admin/user/new", methods={"GET", "POST"}, name="admin_user_new")
      */
-    public function new(Request $request, UserPasswordEncoderInterface $passwordEncoder)
+    public function new(Request $request, UserPasswordEncoderInterface $passwordEncoder, ManagerRegistry $doctrine)
     {
         // 1) build the form
         $createUserCommand = new CreateUserCommand();
@@ -87,7 +88,7 @@ class UserController extends AbstractController
         	
         	
             // 4) save the User!
-            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager = $doctrine->getManager();
             $entityManager->persist($user);
             $entityManager->flush();
             
@@ -125,7 +126,7 @@ class UserController extends AbstractController
      * @Route("/admin/user/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/edit",methods={"GET", "POST"}, name="admin_user_edit")
      * @IsGranted("edit", subject="user", message="Users can only be edited by their authors.")
      */
-    public function edit(Request $request, User $user, UserPasswordEncoderInterface $passwordEncoder): Response
+    public function edit(Request $request, User $user, UserPasswordEncoderInterface $passwordEncoder, ManagerRegistry $doctrine): Response
     {
     	$c = new UpdateUserCommand();
     	$user->mapTo($c);
@@ -180,9 +181,9 @@ class UserController extends AbstractController
         	}
             
                                    
-            $this->getDoctrine()->getManager()->persist($user);
+            $doctrine->getManager()->persist($user);
             
-            $this->getDoctrine()->getManager()->flush();
+            $doctrine->getManager()->flush();
             
             $this->addFlash('success', 'user.updated_successfully');
             
@@ -208,14 +209,14 @@ class UserController extends AbstractController
     /**
      * @Route("/admin/user/addOrganization", methods={"POST"}, name="user_addOrganization")
      */
-    public function addOrganization(Request $request): Response
+    public function addOrganization(Request $request, ManagerRegistry $doctrine): Response
     {
-    	$user = $this->getDoctrine()->getRepository(User::class)->findOneBy(['id'=>$request->request->get('userId', null)]);
-    	$organization = $this->getDoctrine()->getRepository(Organization::class)->findOneBy(['id'=>$request->request->get('organizationId', null)]);
+    	$user = $doctrine->getRepository(User::class)->findOneBy(['id'=>$request->request->get('userId', null)]);
+    	$organization = $doctrine->getRepository(Organization::class)->findOneBy(['id'=>$request->request->get('organizationId', null)]);
     	
     	$user->addOrganization($organization, $this->getUser());
     	
-    	$entityManager = $this->getDoctrine()->getManager();
+    	$entityManager = $doctrine->getManager();
     	    	
     	
     	$entityManager->persist($user);
@@ -239,13 +240,13 @@ class UserController extends AbstractController
      * @Route("/admin/user/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/delete", methods={"POST"}, name="admin_user_delete")
      * @IsGranted("delete", subject="user")
      */
-    public function delete(Request $request, User $user): Response
+    public function delete(Request $request, User $user, ManagerRegistry $doctrine): Response
     {
         if (!$this->isCsrfTokenValid('delete', $request->request->get('token'))) {
             return $this->redirectToRoute('admin_user_index');
         }
                         
-        $em = $this->getDoctrine()->getManager();
+        $em = $doctrine->getManager();
         $em->remove($user);
         $em->flush();
         

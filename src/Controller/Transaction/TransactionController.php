@@ -2,6 +2,7 @@
 
 namespace App\Controller\Transaction;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -207,7 +208,7 @@ class TransactionController extends AbstractController {
 	 *
 	 * @Route("/dashboard/transaction/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/edit",methods={"GET", "POST"}, name="transaction_edit")
 	 */
-	public function edit(Request $request, Transaction $transaction, LoggerInterface $logger): Response
+	public function edit(Request $request, Transaction $transaction, LoggerInterface $logger, ManagerRegistry $doctrine): Response
 	{
 	    $updateTransactionCommand = new UpdateTransactionCommand();
 	    $transaction->mapTo($updateTransactionCommand);
@@ -218,7 +219,7 @@ class TransactionController extends AbstractController {
 	    
 	    if ($form->isSubmitted() && $form->isValid()) {
 	        $transaction->update($updateTransactionCommand, $this->getUser(), $doc, $logger);
-	        $em = $this->getDoctrine()->getManager();
+	        $em = $doctrine->getManager();
 	        
 	        $em->persist($transaction);
 	        $em->flush();
@@ -237,7 +238,7 @@ class TransactionController extends AbstractController {
 	 *
 	 * @Route("/dashboard/transaction/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/clone",methods={"GET", "POST"}, name="transaction_clone")
 	 */
-	public function clone(Request $request, Transaction $transaction, LoggerInterface $logger): Response
+	public function clone(Request $request, Transaction $transaction, LoggerInterface $logger, ManagerRegistry $doctrine): Response
 	{
 	    $clone = $transaction->clone($this->getUser());
 	    
@@ -250,7 +251,7 @@ class TransactionController extends AbstractController {
 	    
 	    if ($form->isSubmitted() && $form->isValid()) {
 	        $clone->update($updateTransactionCommand, $this->getUser(), null, $logger);
-	        $em = $this->getDoctrine()->getManager();
+	        $em = $doctrine->getManager();
 	        	        
 	        
 	        $em->persist($clone);

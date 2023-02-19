@@ -2,6 +2,7 @@
 
 namespace App\Controller\TravelExpense;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
@@ -30,7 +31,7 @@ class TravelExpenseCommandController extends AbstractController
 	/**
      * @Route("/dashboard/travelExpense/new", methods={"GET", "POST"}, name="travelExpense_new")
      */
-	public function new(Request $request, TravelExpenseRepository $travelExpenses, LunchExpenseRepository $lunchExpenses, LoggerInterface $logger): Response
+    public function new(Request $request, TravelExpenseRepository $travelExpenses, LunchExpenseRepository $lunchExpenses, LoggerInterface $logger, ManagerRegistry $doctrine): Response
     {
     	$c = new CreateTravelExpenseCommand();    	
     	    	
@@ -45,7 +46,7 @@ class TravelExpenseCommandController extends AbstractController
     		
     		$te = $this->getUser()->createTravelExpense($c);  
     		
-    		$em = $this->getDoctrine()->getManager();
+    		$em = $doctrine->getManager();
     		
     		foreach($c->travelStopCommands as $tsc)
     		{
@@ -103,7 +104,7 @@ class TravelExpenseCommandController extends AbstractController
      *
      * @Route("/dashboard/travelExpense/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/edit",methods={"GET", "POST"}, name="travelExpense_edit")
      */
-    public function edit(Request $request, TravelExpense $te, LoggerInterface $logger, TransactionRepository $transactions): Response
+    public function edit(Request $request, TravelExpense $te, LoggerInterface $logger, TransactionRepository $transactions, ManagerRegistry $doctrine): Response
     {
     	$updateTECommand = new UpdateTravelExpenseCommand();
     	$te->mapTo($updateTECommand);
@@ -131,7 +132,7 @@ class TravelExpenseCommandController extends AbstractController
     		
     		$transaction->update($utc, $this->getUser(), $te, $logger);
     		
-    		$em = $this->getDoctrine()->getManager();
+    		$em = $doctrine->getManager();
     		
     		foreach($te->getTravelStops() as $ts)
     		{
@@ -159,7 +160,8 @@ class TravelExpenseCommandController extends AbstractController
      *
      * @Route("/dashboard/travelExpense/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/clone",methods={"GET", "POST"}, name="travelExpense_clone")
      */
-    public function clone(Request $request, TravelExpense $te, TravelExpenseRepository $travelExpenses, LunchExpenseRepository $lunchExpenses, LoggerInterface $logger): Response
+    public function clone(Request $request, TravelExpense $te, TravelExpenseRepository $travelExpenses, LunchExpenseRepository $lunchExpenses, 
+        LoggerInterface $logger, ManagerRegistry $doctrine): Response
     {
     	$clone = $te->clone($this->getUser());
     	
@@ -180,7 +182,7 @@ class TravelExpenseCommandController extends AbstractController
     	
     	if ($form->isSubmitted() && $form->isValid()) {
     		$clone->update($updateTECommand, $this->getUser(), $logger);
-    		$em = $this->getDoctrine()->getManager();
+    		$em = $doctrine->getManager();
     		
     		foreach($clone->getTravelStops() as $ts)
     		{
@@ -236,7 +238,7 @@ class TravelExpenseCommandController extends AbstractController
     /**
      * @Route("/dashboard/travelExpense/bookInBundle/withFilter", methods={"POST"}, name="travelExpense_bookinBundle_withFilter")
      */
-    public function book(TravelExpenseRepository $repo, Request $request): JsonResponse
+    public function book(TravelExpenseRepository $repo, Request $request, ManagerRegistry $doctrine): JsonResponse
     {
     	$dateFrom = $request->request->get('dateFrom', 0);
     	$dateTo = $request->request->get('dateTo', 0);
@@ -262,7 +264,7 @@ class TravelExpenseCommandController extends AbstractController
     		$bundle = $this->getUser()->createTravelExpenseBundle($c);      	
 	    	
     		$date = new \DateTime($request->request->get('date', null));
-    		$entityManager = $this->getDoctrine()->getManager();
+    		$entityManager = $doctrine->getManager();
 	    	
     		$transaction = $bundle->setBooked($date, $this->getUser());
 	    	

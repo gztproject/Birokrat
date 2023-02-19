@@ -2,6 +2,7 @@
 
 namespace App\Controller\LunchExpense;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,7 +21,7 @@ class LunchExpenseCommandController extends AbstractController
 	/**
      * @Route("/dashboard/lunchExpense/new", methods={"GET, POST"}, name="lunchExpense_new")
      */
-	public function new(Request $request, LunchExpenseRepository $lunchExpenses, LoggerInterface $logger): Response
+    public function new(Request $request, LunchExpenseRepository $lunchExpenses, LoggerInterface $logger, ManagerRegistry $doctrine): Response
     {
     	$c = new CreateLunchExpenseCommand();    	
     	    	
@@ -33,7 +34,7 @@ class LunchExpenseCommandController extends AbstractController
     		
     		$te = $this->getUser()->createLunchExpense($c);  
     		
-    		$em = $this->getDoctrine()->getManager();
+    		$em = $doctrine->getManager();
     		
     		foreach($c->lunchStopCommands as $tsc)
     		{
@@ -61,7 +62,7 @@ class LunchExpenseCommandController extends AbstractController
     /**
      * @Route("/dashboard/lunchExpense/bookInBundle/withFilter", methods={"POST"}, name="lunchExpense_bookinBundle_withFilter")
      */
-    public function book(LunchExpenseRepository $repo, Request $request): JsonResponse
+    public function book(LunchExpenseRepository $repo, Request $request, ManagerRegistry $doctrine): JsonResponse
     {
     	$dateFrom = $request->request->get('dateFrom', 0);
     	$dateTo = $request->request->get('dateTo', 0);
@@ -87,7 +88,7 @@ class LunchExpenseCommandController extends AbstractController
     		$bundle = $this->getUser()->createLunchExpenseBundle($c);      	
 	    	
     		$date = new \DateTime($request->request->get('date', null));
-    		$entityManager = $this->getDoctrine()->getManager();
+    		$entityManager = $doctrine->getManager();
 	    	
     		$transaction = $bundle->setBooked($date, $this->getUser());
 	    	

@@ -1,6 +1,7 @@
 <?php 
 namespace App\Controller\IncomingInvoice;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -20,7 +21,7 @@ class IncomingInvoiceCommandController extends AbstractController
     /**
      * @Route("/dashboard/incomingInvoice/new", methods={"GET", "POST"}, name="incomingInvoice_new")
      */
-    public function new(Request $request): Response
+    public function new(Request $request, ManagerRegistry $doctrine): Response
     {
     	$c = new CreateIncomingInvoiceCommand();
     	
@@ -36,7 +37,7 @@ class IncomingInvoiceCommandController extends AbstractController
     		else
     			$transaction = $invoice->setReceived(new \DateTime('now'), $this->getUser(), $c->debitKonto);
     		    		
-    		$em = $this->getDoctrine()->getManager();
+    		$em = $doctrine->getManager();
     		    		    		
     		$em->persist($invoice);
     		$em->persist($transaction);
@@ -55,7 +56,7 @@ class IncomingInvoiceCommandController extends AbstractController
      *
      * @Route("/dashboard/incomingInvoice/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/clone",methods={"GET", "POST"}, name="incomingInvoice_clone")
      */
-    public function clone(Request $request, IncomingInvoice $invoice): Response
+    public function clone(Request $request, IncomingInvoice $invoice, ManagerRegistry $doctrine): Response
     {
     	$clone = $invoice->clone($this->getUser());
     	
@@ -70,7 +71,7 @@ class IncomingInvoiceCommandController extends AbstractController
     	if ($form->isSubmitted() && $form->isValid()) {
     		$clone->update($c, $this->getUser());
     		$transaction = $clone->setReceived(new \DateTime('now'), $this->getUser());
-    		$em = $this->getDoctrine()->getManager();
+    		$em = $doctrine->getManager();
     		
     		$em->persist($clone);
     		$em->persist($transaction);
@@ -89,11 +90,11 @@ class IncomingInvoiceCommandController extends AbstractController
     /**
      * @Route("/dashboard/incomingInvoice/pay", methods={"POST"}, name="incomingInvoice_pay")
      */
-    public function pay(Request $request): Response
+    public function pay(Request $request, ManagerRegistry $doctrine): Response
     {
-    	$invoice = $this->getDoctrine()->getRepository(IncomingInvoice::class)->findOneBy(['id'=>$request->request->get('id', null)]);
+    	$invoice = $doctrine->getRepository(IncomingInvoice::class)->findOneBy(['id'=>$request->request->get('id', null)]);
     	$date = new \DateTime($request->request->get('date', null));    	
-    	$entityManager = $this->getDoctrine()->getManager();
+    	$entityManager = $doctrine->getManager();
     	
     	    	
     	$transaction = $invoice->setPaid($date, $this->getUser(), $request->request->get('mode', null));
@@ -108,10 +109,10 @@ class IncomingInvoiceCommandController extends AbstractController
     /**
      * @Route("/dashboard/incomingInvoice/reject", methods={"POST"}, name="incomingInvoice_reject")
      */
-    public function reject(Request $request): Response
+    public function reject(Request $request, ManagerRegistry $doctrine): Response
     {
-    	$invoice = $this->getDoctrine()->getRepository(IncomingInvoice::class)->findOneBy(['id'=>$request->request->get('id', null)]);
-    	$entityManager = $this->getDoctrine()->getManager();
+    	$invoice = $doctrine->getRepository(IncomingInvoice::class)->findOneBy(['id'=>$request->request->get('id', null)]);
+    	$entityManager = $doctrine->getManager();
     	
     	$invoice->reject($request->request->get('reason', ""));
     	

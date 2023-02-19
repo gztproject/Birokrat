@@ -1,6 +1,7 @@
 <?php 
 namespace App\Controller\Invoice;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -35,9 +36,8 @@ class InvoiceQueryController extends AbstractController
     /**
      * @Route("/dashboard/invoice/getNewNumber", methods={"POST"}, name="invoice_getNewNumber")
      */
-    public function getNewNumber(Request $request): JsonResponse
-    {    	
-    	$doctrine = $this->getDoctrine();
+    public function getNewNumber(Request $request, ManagerRegistry $doctrine): JsonResponse
+    {   
     	$issuer = $doctrine->getRepository(Organization::class)->findOneBy(['id'=>$request->request->get('issuerId', null)]);
     	$dateOfIssue = new \Datetime($request->request->get('dateOfIssue', 'now'));
     	$state = $request->request->get('state', 10);
@@ -66,9 +66,8 @@ class InvoiceQueryController extends AbstractController
     /**
      * @Route("/dashboard/invoice/getDefaultDueInDays", methods={"POST"}, name="invoice_getDefaultDueInDays")
      */
-    public function getDefaultDueInDays(Request $request): JsonResponse
-    {
-    	$doctrine = $this->getDoctrine();
+    public function getDefaultDueInDays(Request $request, ManagerRegistry $doctrine): JsonResponse
+    {    	
     	$issuer = $doctrine->getRepository(Organization::class)->findOneBy(['id'=>$request->request->get('issuerId', null)]);
     	try {
     		$data = $issuer->getOrganizationSettings()!=null?$issuer->getOrganizationSettings()->getDefaultPaymentDueIn():15;
