@@ -49,7 +49,7 @@ jobs:
       - uses: shivammathur/setup-php@v2
         with:
           php-version: '8.4'
-          extensions: ctype, iconv, mbstring, intl, xml, zip, pdo_mysql
+          extensions: ctype, iconv, mbstring, intl, xml, zip, pdo_mysql, gd
           coverage: none
           tools: composer
 
@@ -73,8 +73,8 @@ jobs:
       - name: Create test database
         run: php bin/console doctrine:database:create --if-not-exists --env=test --no-interaction
 
-      - name: Run Doctrine migrations
-        run: php bin/console doctrine:migrations:migrate --no-interaction --env=test --allow-no-migration
+      - name: Create schema from mappings
+        run: php bin/console doctrine:schema:create --env=test --no-interaction
 
       - name: Lint container, YAML, and Twig
         run: |
