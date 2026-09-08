@@ -63,14 +63,14 @@ class UserType extends AbstractType
             		'mapped' => false,
             		'required' => false,
             		'constraints' => [
-            				new File([
-            						'maxSize' => '1024k',
-            						'mimeTypes' => [
+            				new File(
+            						maxSize: '1024k',
+            						mimeTypes: [
             								'image/png',
             								'image/jpeg'
             						],
-            						'mimeTypesMessage' => 'Please upload a valid png or jpg image',
-            				])
+            						mimeTypesMessage: 'Please upload a valid png or jpg image',
+            				)
             		],
             ])
             ->add('isRoleAdmin', CheckboxType::class,[

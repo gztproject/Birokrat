@@ -46,10 +46,10 @@ class ChangePasswordType extends AbstractType
                 'type' => PasswordType::class,
                 'constraints' => [
                     new NotBlank(),
-                    new Length([
-                        'min' => 5,
-                        'max' => BCryptPasswordEncoder::MAX_PASSWORD_LENGTH,
-                    ]),
+                    new Length(
+                        min: 5,
+                        max: BCryptPasswordEncoder::MAX_PASSWORD_LENGTH,
+                    ),
                 ],
                 'first_options' => [
                     'label' => 'label.new_password',

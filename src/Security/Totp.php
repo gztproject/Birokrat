@@ -36,6 +36,14 @@ final class Totp
         );
     }
 
+    public static function qrCodeDataUri(string $uri): string
+    {
+        $barcode = new \TCPDF2DBarcode($uri, 'QRCODE,M');
+        $svg = $barcode->getBarcodeSVGcode(6, 6, 'black');
+
+        return 'data:image/svg+xml;base64,'.base64_encode($svg);
+    }
+
     public static function at(string $secret, int $timeSlice): string
     {
         $secretKey = self::base32Decode($secret);
