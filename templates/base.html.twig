@@ -81,7 +81,7 @@
                                 {% for locale in locales|split('|') %}
                                 <a class="dropdown-item" {% if app.request.locale == locale %}
                                     aria-checked="true" {% else %} aria-checked="false" {% endif %}
-                                    href="{{ path(app.request.get('_route', 'dashboard_index'), app.request.get('_route_params', [])|merge({_locale: locale})) }}">{{ locale|locale_name|capitalize }}</a>
+                                    href="{{ path(app.request.attributes.get('_route', 'dashboard_index'), app.request.attributes.get('_route_params', {})|merge({_locale: locale})) }}">{{ locale|locale_name|capitalize }}</a>
                                 {% endfor %}
                             </div></li>
                                 {% endif %}
