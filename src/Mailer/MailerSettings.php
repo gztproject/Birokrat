@@ -40,9 +40,12 @@ final class MailerSettings
         return $this->overrideTo() !== '' && \in_array($this->environment, ['dev', 'test'], true);
     }
 
-    public function describeDelivery(string $intendedRecipient): string
+    public function describeDelivery(string $intendedRecipient, string $cc = ''): string
     {
         $message = 'Invoice sent to '.$intendedRecipient;
+        if (trim($cc) !== '') {
+            $message .= ' (CC: '.$cc.')';
+        }
         if ($this->shouldRedirect()) {
             $message .= $this->isNullTransport()
                 ? ' (not delivered: MAILER_DSN is null; would redirect to '.$this->overrideTo().')'

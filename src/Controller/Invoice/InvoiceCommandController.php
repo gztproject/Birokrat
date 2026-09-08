@@ -24,6 +24,7 @@ use App\Entity\Invoice\UpdateInvoiceCommand;
 use App\Entity\Invoice\UpdateInvoiceItemCommand;
 use App\Entity\Invoice\Enumerators\States;
 use App\Mailer\MailerSettings;
+use App\Mailer\RecipientListParser;
 use App\Service\Ledger\BankFeeFactory;
 
 
@@ -210,13 +211,17 @@ class InvoiceCommandController extends AbstractController
     		throw new \Exception("Bad request. I need an id.");
     	$invoice = $doctrine->getRepository(Invoice::class)->findOneBy(['id'=>$id]);    	
     	$email = $request->request->get('email', null);
+    	$ccRaw = (string) $request->request->get('cc', '');
     	$subject = $request->request->get('subject', null);
     	$body = $request->request->get('body', null);
     	try {
-    		if($email == null || $email == "")
+    		$parser = new RecipientListParser();
+    		$toAddresses = $parser->parse((string) $email);
+    		if($toAddresses === [])
     		{    					
     			throw new \Exception("Client has no e-mail addres.");
     		}
+    		$ccAddresses = $parser->parse($ccRaw);
     		$path = __DIR__."/../../../tmp/";
     		//Check if the directory already exists.
     		if(!is_dir($path)){
@@ -229,10 +234,13 @@ class InvoiceCommandController extends AbstractController
     		
     		$emailObject = (new Email())
     		->from('birokrat@gzt.si')
-    			->to($email)
+    			->to(...$toAddresses)
     			->subject($subject)
     			->html('<p>'.$body.'</p>')
     			->attachFromPath($path.$title);
+    		if ($ccAddresses !== []) {
+    			$emailObject->cc(...$ccAddresses);
+    		}
     		$userEmail = $this->getUser()?->getEmail();
     		if ($userEmail) {
     			$emailObject->replyTo($userEmail);
@@ -242,16 +250,34 @@ class InvoiceCommandController extends AbstractController
     		
     		unlink($path.$title);
     		
-    		$data = $mailerSettings->describeDelivery($email);
+    		$partner = $invoice->getRecepient();
+    		$data = $mailerSettings->describeDelivery((string) $email, $ccRaw);
     		$status = "ok";
+    		$payload = [
+    			'status' => $status,
+    			'data' => [$data],
+    			'partnerNeedsUpdate' => $partner->emailsDifferFrom($toAddresses, $ccAddresses),
+    			'mergeUrl' => $this->generateUrl('partner_emails_merge', ['id' => $partner->getId()]),
+    			'editUrl' => $this->generateUrl('partner_edit', [
+    				'id' => $partner->getId(),
+    				'to' => (string) $email,
+    				'cc' => $ccRaw,
+    			]),
+    			'to' => (string) $email,
+    			'cc' => $ccRaw,
+    			'partnerUpdateHint' => $translator->trans('label.partnerEmailsDiffer'),
+    			'saveOnPartner' => $translator->trans('action.saveOnPartner'),
+    			'editPartnerEmails' => $translator->trans('action.editPartnerEmails'),
+    		];
     	}
     	catch (Exception $e)
     	{
     		//$this->addFlash('danger', 'invoice.not_sent');
     		$status = "error";
     		$data = $e->getMessage();
+    		$payload = ['status' => $status, 'data' => [$data]];
     	}
     	
-    	return new JsonResponse(array(array('status'=>$status,'data'=>array($data))));
+    	return new JsonResponse(array($payload));
     }
 }

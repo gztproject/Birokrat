@@ -17,6 +17,9 @@ use App\Entity\Geography\Address;
 use App\Entity\Geography\CreateAddressCommand;
 use App\Entity\Geography\UpdateAddressCommand;
 use App\Entity\Organization\UpdatePartnerCommand;
+use App\Entity\Organization\CreatePartnerEmailCommand;
+use App\Mailer\RecipientListParser;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Doctrine\Common\Collections\ArrayCollection;
 use App\Entity\Organization\Organization;
 
@@ -99,6 +102,9 @@ class PartnerController extends AbstractController
     	$addressCommand = new UpdateAddressCommand();
     	$partner->getAddress()->mapTo($addressCommand);
     	$updateCommand->address = $addressCommand;
+    	if ($request->isMethod('GET')) {
+    		$this->prefillRecipientQuery($updateCommand, $partner, (string) $request->query->get('to', ''), (string) $request->query->get('cc', ''));
+    	}
     	$form = $this->createForm(PartnerType::class, $updateCommand)
     	->add('address', AddressType::class, ['data' => $addressCommand]);
     	
@@ -162,6 +168,53 @@ class PartnerController extends AbstractController
         $this->addFlash('success', 'partner.deleted_successfully');
         
         return $this->redirectToRoute('partner_index');
+    }
+
+    #[Route(path: "/dashboard/partner/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/emails/merge", methods: ["POST"], name: "partner_emails_merge")]
+    public function mergeEmails(Request $request, Partner $partner, ManagerRegistry $doctrine): JsonResponse
+    {
+        $parser = new RecipientListParser();
+        try {
+            $to = $parser->parse((string) $request->request->get('to', ''));
+            $cc = $parser->parse((string) $request->request->get('cc', ''));
+            $partner->applyRecipientMerge($to, $cc, $this->getUser());
+            $doctrine->getManager()->persist($partner);
+            $doctrine->getManager()->flush();
+        } catch (\Throwable $e) {
+            return new JsonResponse(['status' => 'error', 'data' => [$e->getMessage()]], 400);
+        }
+
+        return new JsonResponse(['status' => 'ok']);
+    }
+
+    private function prefillRecipientQuery(UpdatePartnerCommand $command, Partner $partner, string $to, string $cc): void
+    {
+        $parser = new RecipientListParser();
+        if ($to !== '' && ($command->email === null || $command->email === '')) {
+            $command->email = $to;
+        }
+        if ($cc === '') {
+            return;
+        }
+        foreach ($parser->parse($cc) as $address) {
+            if ($partner->hasMailbox($address->getAddress())) {
+                continue;
+            }
+            $already = false;
+            foreach ($command->extraEmailCommands as $existing) {
+                if (strcasecmp((string) $existing->email, $address->getAddress()) === 0) {
+                    $already = true;
+                    break;
+                }
+            }
+            if ($already) {
+                continue;
+            }
+            $extra = new CreatePartnerEmailCommand();
+            $extra->email = $address->getAddress();
+            $extra->name = $address->getName() !== '' ? $address->getName() : null;
+            $command->extraEmailCommands[] = $extra;
+        }
     }
 
 }

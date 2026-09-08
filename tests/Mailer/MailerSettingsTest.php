@@ -30,8 +30,8 @@ class MailerSettingsTest extends TestCase
 
         $this->assertTrue($settings->isSendVisible());
         $this->assertSame(
-            'Invoice sent to client@example.com (redirected to gasper@sensware.si)',
-            $settings->describeDelivery('client@example.com'),
+            'Invoice sent to client@example.com (CC: acc@example.com) (redirected to gasper@sensware.si)',
+            $settings->describeDelivery('client@example.com', 'acc@example.com'),
         );
     }
 }

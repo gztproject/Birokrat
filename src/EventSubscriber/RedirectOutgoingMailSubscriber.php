@@ -33,13 +33,24 @@ final class RedirectOutgoingMailSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $original = implode(', ', array_map(
+        $originalTo = implode(', ', array_map(
             static fn (Address $address): string => $address->toString(),
             $message->getTo(),
         ));
+        $originalCc = implode(', ', array_map(
+            static fn (Address $address): string => $address->toString(),
+            $message->getCc(),
+        ));
+        $original = $originalTo;
+        if ($originalCc !== '') {
+            $original .= $original !== '' ? '; CC: '.$originalCc : 'CC: '.$originalCc;
+        }
         if ($original !== '') {
             $message->getHeaders()->addTextHeader('X-Original-To', $original);
         }
         $message->to($override);
+        if ($message->getCc() !== []) {
+            $message->getHeaders()->remove('Cc');
+        }
     }
 }

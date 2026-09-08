@@ -123,8 +123,14 @@
                     <div class="modal-body">
                         <form>
                             <div class="mb-3">
-                                <label for="emailInput">{{ 'label.email' | trans }}</label>
-                                <input type="email" class="form-control" id="emailInput" aria-describedby="emailHelp" placeholder="Enter email" value="{{ invoice.recepient.email }}">
+                                <label for="emailInput">{{ 'label.to'|trans }}</label>
+                                <input type="text" class="form-control" id="emailInput" aria-describedby="emailHelp" placeholder="{{ 'help.recipientList'|trans }}" value="{{ invoice.recepient.formatToList }}">
+                                <div id="emailHelp" class="form-text">{{ 'help.recipientList'|trans }}</div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="ccInput">{{ 'label.cc'|trans }}</label>
+                                <input type="text" class="form-control" id="ccInput" aria-describedby="ccHelp" placeholder="{{ 'help.recipientList'|trans }}" value="{{ invoice.recepient.formatCcList }}">
+                                <div id="ccHelp" class="form-text">{{ 'help.extraEmailsCc'|trans }}</div>
                             </div>
                             <div class="mb-3">
                                 <label for="subjectInput">{{ 'label.subject' | trans }}</label>

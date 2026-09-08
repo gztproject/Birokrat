@@ -36,6 +36,36 @@ class RedirectOutgoingMailSubscriberTest extends TestCase
         $this->assertSame('gasper@sensware.si', $email->getTo()[0]->getAddress());
     }
 
+    public function testRecordsOriginalCcInDev(): void
+    {
+        $email = (new Email())
+            ->from('birokrat@gzt.si')
+            ->to('client@example.com')
+            ->cc('acc@example.com')
+            ->subject('Invoice')
+            ->text('body');
+        $event = new MessageEvent(
+            $email,
+            new Envelope(new Address('birokrat@gzt.si'), [
+                new Address('client@example.com'),
+                new Address('acc@example.com'),
+            ]),
+            'null',
+        );
+
+        $subscriber = new RedirectOutgoingMailSubscriber(new MailerSettings('dev', 'null://null', 'gasper@sensware.si'));
+        $subscriber->onMessage($event);
+
+        $this->assertSame(['gasper@sensware.si'], array_map(
+            static fn (Address $address): string => $address->getAddress(),
+            $event->getEnvelope()->getRecipients(),
+        ));
+        $this->assertStringContainsString('client@example.com', $email->getHeaders()->get('X-Original-To')?->getBodyAsString() ?? '');
+        $this->assertStringContainsString('acc@example.com', $email->getHeaders()->get('X-Original-To')?->getBodyAsString() ?? '');
+        $this->assertSame('gasper@sensware.si', $email->getTo()[0]->getAddress());
+        $this->assertSame([], $email->getCc());
+    }
+
     public function testDoesNotRewriteInProd(): void
     {
         $email = (new Email())->from('birokrat@gzt.si')->to('client@example.com')->subject('Invoice')->text('body');
