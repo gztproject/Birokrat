@@ -58,10 +58,10 @@ class InvoiceType extends AbstractType
             ])
             ->add('invoiceItemCommands', CollectionType::class, [
             		'entry_type' => InvoiceItemType::class,
-            		//'entry_options' => ['label' => false],
+            		'entry_options' => ['label' => false],
             		'allow_add' => true,
             		'allow_delete' => true,
-            		'label' => 'label.invoiceItem',
+            		'label' => false,
             		'by_reference' => false,
             ])
             ->add('discount', NumberType::class, array(

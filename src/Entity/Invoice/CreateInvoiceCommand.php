@@ -12,13 +12,13 @@ class CreateInvoiceCommand
     
     public $number;
 
-    public $discount;
+    public $discount = 0;
     
     /**
      * Need this for getting them from the form to controller...
      * @var Array[CreateInvoiceItemCommand]
      */
-    public $invoiceItemCommands;
+    public $invoiceItemCommands = [];
     
     public $dateServiceRenderedFrom;
     

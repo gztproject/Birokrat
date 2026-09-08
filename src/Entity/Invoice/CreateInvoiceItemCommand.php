@@ -10,13 +10,13 @@ class CreateInvoiceItemCommand
 
     public $name;
 
-    public $quantity;
+    public $quantity = 1;
 
-    public $unit;
+    public $unit = 'x';
 
-    public $price;
+    public $price = 0;
 
-    public $discount;
+    public $discount = 0;
 
     
     public function __get($name) 

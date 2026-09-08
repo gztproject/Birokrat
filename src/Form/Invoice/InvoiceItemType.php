@@ -15,27 +15,27 @@ class InvoiceItemType extends AbstractType
         $builder 
         ->add('code', TextType::class, array(
         		'label' => false,
-        		'attr' => ['class' => 'codeInput'],
+        		'attr' => ['class' => 'form-control codeInput'],
         ))
         ->add('name', TextType::class, array(        		
         		'label' => false,
-        		'attr' => ['class' => 'nameInput'],
+        		'attr' => ['class' => 'form-control nameInput'],
         ))
         ->add('quantity', NumberType::class, array(
         		'label' => false,
-        		'attr' => ['class' => 'quantityInput'],
+        		'attr' => ['class' => 'form-control quantityInput'],
         ))
         ->add('unit', TextType::class, array(
         		'label' => false,
-        		'attr' => ['class' => 'unitInput'],
+        		'attr' => ['class' => 'form-control unitInput'],
         ))
         ->add('price', NumberType::class, array(
         		'label' => false,
-        		'attr' => ['class' => 'priceInput'],
+        		'attr' => ['class' => 'form-control priceInput'],
         ))
         ->add('discount', NumberType::class, array(
         		'label' => false,
-        		'attr' => ['class' => 'discountInput'],
+        		'attr' => ['class' => 'form-control discountInput'],
         ))
         ;
     }

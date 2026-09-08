@@ -14,6 +14,7 @@ use App\Entity\Invoice\InvoiceNumberFactory;
 use App\Form\Invoice\InvoiceType;
 use App\Entity\Konto\Konto;
 use App\Entity\Invoice\CreateInvoiceCommand;
+use App\Entity\Invoice\CreateInvoiceItemCommand;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
 use App\Entity\Invoice\InvoicePdfFactory;
@@ -31,6 +32,8 @@ class InvoiceCommandController extends AbstractController
     public function new(Request $request, ManagerRegistry $doctrine): Response
     {
     	$createInvoiceCommand = new CreateInvoiceCommand();
+    	$createInvoiceCommand->invoiceItemCommands[] = new CreateInvoiceItemCommand();
+    	$createInvoiceCommand->invoiceItemCommands[0]->code = '1';
     	
     	$form = $this->createForm(InvoiceType::class, $createInvoiceCommand);
     	

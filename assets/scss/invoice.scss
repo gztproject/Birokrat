@@ -1,55 +1,58 @@
-#InvoiceFormContainer{
+#InvoiceFormContainer {
     padding-top: 1rem;
-    padding-bottom: 1rem; 
+    padding-bottom: 1rem;
 }
 
-.table {
-    max-width: none;
-}
-input.codeInput{
-    width: 100%;
-}
-input.nameInput{
-    width: 100%;
-}
-input.quantityInput{
-    width: 100%;
-}
-input.unitInput{
-    width: 100%;
-}
-input.priceInput{
-    width: 100%;
-}
-input.discountInput{
-    width: 100%;
-}
-input.valueInput{
+#invoice-items-table {
     width: 100%;
 }
 
+#invoice-items-table th,
+#invoice-items-table td {
+    vertical-align: middle;
+}
 
-td.codeInput{
-    width: 5%;
+#invoice-items-table input.form-control {
+    width: 100%;
+    min-width: 0;
 }
-td.nameInput{
-    width: 40%;
+
+td.codeInput,
+th:nth-child(1) {
+    width: 6%;
 }
-td.quantityInput{
-    width: 5%;
+
+td.nameInput,
+th:nth-child(2) {
+    width: 36%;
 }
-td.unitInput{
-    width: 5%;
+
+td.quantityInput,
+th:nth-child(3) {
+    width: 8%;
 }
-td.priceInput{
-    width: 10%;
+
+td.unitInput,
+th:nth-child(4) {
+    width: 7%;
 }
-td.discountInput{
-    width: 5%;
+
+td.priceInput,
+th:nth-child(5) {
+    width: 12%;
 }
-td.valueInput{
-    width: 10%;
+
+td.discountInput,
+th:nth-child(6) {
+    width: 8%;
 }
-td.removeBtn{
-    width: 5%;
+
+td.valueInput,
+th:nth-child(7) {
+    width: 15%;
+}
+
+td.removeBtn,
+th:nth-child(8) {
+    width: 8%;
 }
