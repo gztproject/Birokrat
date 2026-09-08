@@ -11,6 +11,8 @@ use App\Form\IncomingInvoice\IncomingInvoiceType;
 use App\Entity\IncomingInvoice\CreateIncomingInvoiceCommand;
 use App\Entity\IncomingInvoice\UpdateIncomingInvoiceCommand;
 use App\Service\Ledger\BankFeeFactory;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 
 class IncomingInvoiceCommandController extends AbstractController
@@ -26,6 +28,7 @@ class IncomingInvoiceCommandController extends AbstractController
     	$form->handleRequest($request);
     	
     	if ($form->isSubmitted() && $form->isValid()) {
+    		$c->scanFilename = $this->storeIncomingInvoiceScan($form->get('scan')->getData());
     		$invoice = $this->getUser()->createIncomingInvoice($c);
     		$allocations = $c->allocations ?? [];
     		if($c->paidOnSpot)
@@ -64,6 +67,10 @@ class IncomingInvoiceCommandController extends AbstractController
     	$form->handleRequest($request);
     	
     	if ($form->isSubmitted() && $form->isValid()) {
+    		$uploaded = $this->storeIncomingInvoiceScan($form->get('scan')->getData());
+    		if ($uploaded) {
+    			$c->scanFilename = $uploaded;
+    		}
     		$clone->update($c, $this->getUser());
     		$transactions = $clone->setReceived(new \DateTime('now'), $this->getUser(), $c->debitKonto ?? null, $c->allocations ?? []);
     		$em = $doctrine->getManager();
@@ -75,10 +82,37 @@ class IncomingInvoiceCommandController extends AbstractController
     		return $this->redirectToRoute('incomingInvoice_show', array('id'=> $clone->getId()));
     	}
     	
-    	return $this->render('dashboard/invoice/edit.html.twig', [
+    	return $this->render('dashboard/incomingInvoice/edit.html.twig', [
     			'invoice' => $clone,
     			'form' => $form->createView(),
     	]);
+    }
+
+    private function storeIncomingInvoiceScan(?UploadedFile $scanFile): ?string
+    {
+    	if (!$scanFile) {
+    		return null;
+    	}
+
+    	$originalFilename = pathinfo($scanFile->getClientOriginalName(), PATHINFO_FILENAME);
+    	$safeFilename = transliterator_transliterate('Any-Latin; Latin-ASCII; [^A-Za-z0-9_] remove; Lower()', $originalFilename);
+    	$newFilename = $safeFilename.'-'.uniqid().'.'.$scanFile->guessExtension();
+    	$directory = $this->getParameter('incoming_scans_directory');
+    	if (!is_dir($directory)) {
+    		mkdir($directory, 0775, true);
+    	}
+
+    	try {
+    		$scanFile->move(
+    			$directory,
+    			$newFilename
+    		);
+    	} catch (FileException $e) {
+    		$this->addFlash('warning', 'File Exception: '.$e->getMessage());
+    		return null;
+    	}
+
+    	return $newFilename;
     }
     
        

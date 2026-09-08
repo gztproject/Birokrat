@@ -22,6 +22,7 @@ yarn-error.log
 CHEATSHEET\.txt
 
 public/uploads/signatures/
+public/uploads/incoming-invoices/
 
 src/DataFixtures/InitData/clients.tsv
 

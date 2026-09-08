@@ -20,6 +20,9 @@ use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use App\Form\Transaction\AllocationType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Validator\Constraints\File;
 
 class IncomingInvoiceType extends AbstractType
 {
@@ -100,6 +103,27 @@ class IncomingInvoiceType extends AbstractType
             		'by_reference' => false,
             		'required' => false,
             		'label' => 'label.allocations',
+            ])
+            ->add('note', TextareaType::class, [
+            		'label' => 'label.note',
+            		'required' => false,
+            		'attr' => ['rows' => 3],
+            ])
+            ->add('scan', FileType::class, [
+            		'label' => 'label.scan',
+            		'mapped' => false,
+            		'required' => false,
+            		'constraints' => [
+            				new File(
+            						maxSize: '8192k',
+            						mimeTypes: [
+            								'application/pdf',
+            								'image/png',
+            								'image/jpeg',
+            						],
+            						mimeTypesMessage: 'Please upload a valid PDF, PNG or JPG file',
+            				)
+            		],
             ])
         ;
     }

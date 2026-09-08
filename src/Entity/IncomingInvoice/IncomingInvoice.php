@@ -88,6 +88,9 @@ class IncomingInvoice extends AggregateBase implements iTransactionDocument {
 		$this->number = $c->number;
 		$this->recepient = $c->recepient;
 		$this->price = $c->price;
+		$this->referenceNumber = $c->reference;
+		$this->note = $c->note ?? null;
+		$this->scanFilename = $c->scanFilename ?? null;
 	}
 
 	/**
@@ -98,8 +101,8 @@ class IncomingInvoice extends AggregateBase implements iTransactionDocument {
 	 * @return IncomingInvoice
 	 */
 	public function update(UpdateIncomingInvoiceCommand $c, User $user): IncomingInvoice {
-		// We can only update invoices in state 10.
-		if ($this->state != States::received)
+		// Draft clones and newly received invoices can still be corrected.
+		if ($this->state != States::draft && $this->state != States::received)
 			throw new \LogicException ( "Only new invoices can be updated." );
 		parent::updateBase ( $user );
 		if ($c->dateOfIssue != null && $c->dateOfIssue != $this->dateOfIssue)
@@ -112,6 +115,14 @@ class IncomingInvoice extends AggregateBase implements iTransactionDocument {
 			$this->number = $c->number;
 		if ($c->recepient != null && $c->recepient != $this->recepient)
 			$this->recepient = $c->recepient;
+		if ($c->price != null && $c->price != $this->price)
+			$this->price = $c->price;
+		if (property_exists($c, 'reference') && $c->reference != $this->referenceNumber)
+			$this->referenceNumber = $c->reference;
+		if (property_exists($c, 'note') && $c->note != $this->note)
+			$this->note = $c->note;
+		if (!empty($c->scanFilename) && $c->scanFilename != $this->scanFilename)
+			$this->scanFilename = $c->scanFilename;
 
 		return $this;
 	}
@@ -343,6 +354,9 @@ class IncomingInvoice extends AggregateBase implements iTransactionDocument {
 					$to->$name = $this->$name;
 				}
 			}
+			if (property_exists ( $to, 'reference' )) {
+				$to->reference = $this->referenceNumber;
+			}
 		} else {
 			throw (new \InvalidArgumentException ( 'cant map ' . get_class ( $this ) . ' to ' . get_class ( $to ) ));
 			return $to;
@@ -370,6 +384,12 @@ class IncomingInvoice extends AggregateBase implements iTransactionDocument {
 	}
 	public function getReferenceNumber(): string {
 		return $this->referenceNumber != null ? $this->referenceNumber : "";
+	}
+	public function getNote(): ?string {
+		return $this->note;
+	}
+	public function getScanFilename(): ?string {
+		return $this->scanFilename;
 	}
 	public function getState(): int {
 		return $this->state;

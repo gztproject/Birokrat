@@ -16,6 +16,10 @@ class CreateIncomingInvoiceCommand
     
     public $reference;
     
+    public $note;
+
+    public $scanFilename;
+    
     public $price;
 
     public $dueDate;
