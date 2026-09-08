@@ -4,7 +4,7 @@
 
 {% block main %}
     <h1>{{ 'title.lunchExpenses'|trans }} ({{ pagination.getTotalItemCount }})</h1>
-    <div class="bs-component">
+    <div class="bs-component" data-controller="expense-bundle" data-expense-bundle-url-value="/dashboard/lunchExpense/bookInBundle/withFilter">
     {{ include('dashboard/lunchExpense/_table.html.twig', {
             lunchExpenses: pagination,
             ShowCBs: true                
@@ -16,7 +16,7 @@
 {% block sidebar %}
     
     {{ parent() }}
-    <div class="bs-component">
+    <div class="bs-component" data-controller="expense-bundle" data-expense-bundle-url-value="/dashboard/lunchExpense/bookInBundle/withFilter">
         <div class="list-group">
             <div class="list-group-item list-group-item-action flex-column align-items-start">
                 <div class="d-flex w-100 justify-content-between">
@@ -27,7 +27,7 @@
                         <i class="fa fa-plus" aria-hidden="true"></i> {{ 'action.create_lunchExpense'|trans }}
                     </a>
                     <button type="button" id="bookCheckedTEs" class="btn btn-info btn-block">{{ 'action.bookSelectedLunchExpenses' | trans }}</button>
-                    <button type="button" id="bookVisibleTEs" class="btn btn-info btn-block">{{ 'action.bookVisibleLunchExpenses' | trans }}</button>
+                    <button type="button" id="bookVisibleTEs" class="btn btn-info btn-block" data-action="expense-bundle#bookVisible">{{ 'action.bookVisibleLunchExpenses' | trans }}</button>
                 </div>
             </div>
             </br>
