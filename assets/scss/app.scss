@@ -1,10 +1,7 @@
-$web-font-path: 'data:text/css;base64,';
-
-@import "~bootswatch/dist/slate/variables";
+@import "variables";
 @import "~bootstrap/scss/bootstrap";
-@import "~bootswatch/dist/slate/bootswatch";
-
-@import '~@fortawesome/fontawesome-free/css/all.css';
+@import "~@fortawesome/fontawesome-free/css/all.css";
+@import "theme";
 
 .col-form-label {
     margin-bottom: 0;
@@ -26,12 +23,4 @@ $web-font-path: 'data:text/css;base64,';
 
 .TECheckBox {
     margin-left: $input-padding-x;
-}
-
-#main_container {
-    margin-top: 80px;
-}
-
-nav.dev {
-    background-color: darkred !important;
 }

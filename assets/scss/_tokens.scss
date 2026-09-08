@@ -1,0 +1,22 @@
+// Brand and surface tokens for the accounting UI.
+// Mapped onto Bootstrap in _variables.scss and refined for color modes in _theme.scss.
+
+$brand-navy: #1d4e89;
+$brand-navy-600: #163d6c;
+
+$success-soft: #2f8f5b;
+$info-soft: #2a8fad;
+$warning-soft: #c47d0a;
+$danger-soft: #c44743;
+
+$surface-page-light: #f4f6f8;
+$surface-card-light: #ffffff;
+$text-light: #1a1d21;
+$text-muted-light: #5c6570;
+$border-light: #d8dee6;
+
+$surface-page-dark: #12151a;
+$surface-card-dark: #1b2028;
+$text-dark: #e6e9ee;
+$text-muted-dark: #9aa3ad;
+$border-dark: #2c3440;

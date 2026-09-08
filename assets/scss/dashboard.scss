@@ -1,1 +1,8 @@
-/* Dashboard layout extras — Bootswatch/app.scss already covers the theme. */
+.dashboard-section + .dashboard-section {
+    margin-top: 1.5rem;
+}
+
+.dashboard-section .card-header h2 {
+    font-size: 1.1rem;
+    margin: 0;
+}

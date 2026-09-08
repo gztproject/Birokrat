@@ -1,0 +1,256 @@
+:root,
+[data-bs-theme="light"] {
+    --app-surface: #{$surface-card-light};
+    --app-border: #{$border-light};
+    --app-navbar-bg: #{$surface-card-light};
+    --app-navbar-color: #{$text-light};
+    --app-navbar-muted: #{$text-muted-light};
+    --app-navbar-border: #{$border-light};
+    --app-document-bg: #{$surface-card-light};
+}
+
+[data-bs-theme="dark"] {
+    --bs-body-bg: #{$surface-page-dark};
+    --bs-body-color: #{$text-dark};
+    --bs-secondary-color: #{$text-muted-dark};
+    --bs-tertiary-bg: #{$surface-card-dark};
+    --bs-border-color: #{$border-dark};
+    --bs-heading-color: #{$text-dark};
+    --bs-link-color: #8bb4e3;
+    --bs-link-hover-color: #b7d0ef;
+    --bs-emphasis-color: #{$text-dark};
+    --app-surface: #{$surface-card-dark};
+    --app-border: #{$border-dark};
+    --app-navbar-bg: #{$surface-card-dark};
+    --app-navbar-color: #{$text-dark};
+    --app-navbar-muted: #{$text-muted-dark};
+    --app-navbar-border: #{$border-dark};
+    --app-document-bg: #{$surface-card-dark};
+}
+
+@mixin app-table-variant($name, $tint) {
+    .table-#{$name} {
+        --bs-table-bg: #{$tint};
+        --bs-table-color: #{$text-dark};
+        --bs-table-striped-bg: #{$tint};
+        --bs-table-striped-color: #{$text-dark};
+        --bs-table-hover-bg: #{mix(#ffffff, $tint, 6%)};
+        --bs-table-hover-color: #{$text-dark};
+        --bs-table-active-bg: #{mix(#ffffff, $tint, 8%)};
+        --bs-table-active-color: #{$text-dark};
+        --bs-table-border-color: #{$border-dark};
+        color: #{$text-dark};
+    }
+}
+
+[data-bs-theme="dark"] {
+    @include app-table-variant("primary", #1a2a3d);
+    @include app-table-variant("secondary", #252a32);
+    @include app-table-variant("success", #163226);
+    @include app-table-variant("info", #16343c);
+    @include app-table-variant("warning", #3a2c14);
+    @include app-table-variant("danger", #3a1e1e);
+
+    .btn-outline-secondary {
+        --bs-btn-color: #{$text-muted-dark};
+        --bs-btn-border-color: #{$border-dark};
+        --bs-btn-hover-color: #{$text-dark};
+        --bs-btn-hover-bg: #{$surface-card-dark};
+        --bs-btn-hover-border-color: #{mix(#ffffff, $border-dark, 18%)};
+        --bs-btn-active-color: #{$text-dark};
+        --bs-btn-active-bg: #{$surface-card-dark};
+        --bs-btn-active-border-color: #{mix(#ffffff, $border-dark, 18%)};
+    }
+}
+
+body {
+    min-height: 100vh;
+}
+
+#main_container {
+    margin-top: 4.5rem;
+    min-height: calc(100vh - 8rem);
+}
+
+.app-navbar {
+    --bs-navbar-brand-color: var(--app-navbar-color);
+    --bs-navbar-brand-hover-color: var(--app-navbar-color);
+    --bs-navbar-color: var(--app-navbar-muted);
+    --bs-navbar-hover-color: var(--app-navbar-color);
+    --bs-navbar-active-color: var(--app-navbar-color);
+    --bs-navbar-toggler-border-color: var(--app-border);
+    --bs-navbar-toggler-icon-bg: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%2826, 29, 33, 0.75%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+    background-color: var(--app-navbar-bg);
+    border-bottom: 1px solid var(--app-navbar-border);
+    color: var(--app-navbar-color);
+}
+
+[data-bs-theme="dark"] .app-navbar {
+    --bs-navbar-toggler-icon-bg: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28230, 233, 238, 0.85%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+
+.app-navbar .navbar-brand {
+    color: var(--app-navbar-color);
+    font-weight: 650;
+    letter-spacing: -0.02em;
+}
+
+.app-navbar .navbar-brand:hover,
+.app-navbar .navbar-brand:focus {
+    color: var(--app-navbar-color);
+}
+
+.app-navbar .nav-link {
+    color: var(--app-navbar-muted);
+}
+
+.app-navbar .nav-link:hover,
+.app-navbar .nav-link:focus,
+.app-navbar .nav-link.active,
+.app-navbar .nav-item.active > .nav-link {
+    color: var(--app-navbar-color);
+}
+
+.app-navbar .nav-link.active {
+    font-weight: 600;
+}
+
+.app-footer {
+    border-top: 1px solid var(--app-border);
+    color: var(--bs-secondary-color);
+    font-size: 0.875rem;
+    padding-block: 1.25rem;
+}
+
+.app-card {
+    background-color: var(--app-surface);
+    border: 1px solid var(--app-border);
+    border-radius: $border-radius;
+}
+
+.app-card .card-header {
+    background: transparent;
+    border-bottom: 1px solid var(--app-border);
+    font-weight: 600;
+}
+
+.app-card .card-header a {
+    color: inherit;
+    text-decoration: none;
+}
+
+.app-card .card-header a:hover {
+    color: var(--bs-link-color);
+}
+
+.page-header {
+    align-items: baseline;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1rem;
+    justify-content: space-between;
+    margin-bottom: 1.25rem;
+}
+
+.page-title {
+    color: var(--bs-heading-color, var(--bs-body-color));
+    font-size: 1.5rem;
+    line-height: 1.25;
+    margin: 0;
+}
+
+.page-title .page-count {
+    color: var(--bs-secondary-color);
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.sidebar-panel {
+    position: sticky;
+    top: 5rem;
+}
+
+.sidebar-panel .btn {
+    margin-bottom: 0.5rem;
+}
+
+.auth-card {
+    background-color: var(--app-surface);
+    border: 1px solid var(--app-border);
+    border-radius: $border-radius-lg;
+}
+
+.auth-card .card-header {
+    background: transparent;
+    border-bottom: 1px solid var(--app-border);
+}
+
+.invoice-document {
+    background-color: var(--app-document-bg);
+    border: 1px solid var(--app-border);
+    border-radius: $border-radius;
+    padding: 1.5rem;
+}
+
+.invoice-logo {
+    background-color: $brand-navy;
+    border-radius: $border-radius;
+    padding: 0.5rem;
+}
+
+.tabular-nums,
+.money {
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+    white-space: nowrap;
+}
+
+.status-badge {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+}
+
+.item-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    justify-content: flex-end;
+}
+
+.table-hover tbody tr.invoiceRow {
+    cursor: pointer;
+}
+
+.env-badge {
+    background-color: var(--bs-danger);
+    border-radius: $border-radius-sm;
+    color: #fff;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    line-height: 1;
+    margin-left: 0.35rem;
+    padding: 0.2rem 0.35rem;
+    vertical-align: middle;
+}
+
+.filter-panel .form-label,
+.filter-panel .col-form-label-lg {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    margin-top: 0.5rem;
+}
+
+.empty-state {
+    color: var(--bs-secondary-color);
+    padding: 1.25rem 0.5rem;
+    text-align: center;
+}
+
+.table > :not(caption) > * > th {
+    color: var(--bs-secondary-color);
+    font-size: 0.8125rem;
+    text-transform: none;
+    white-space: nowrap;
+}

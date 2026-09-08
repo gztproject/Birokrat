@@ -1,9 +1,60 @@
-.subtable{
-    table-layout: fixed;
+.report-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    margin-bottom: 1rem;
 }
-td{
+
+.report-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+}
+
+.report-table th,
+.report-table td {
+    border: 1px solid var(--app-border, #d8dee6);
+    padding: 0.35rem 0.5rem;
+    vertical-align: middle;
+}
+
+.report-table .lblheader,
+.report-table .lblheader2,
+.report-table thead td,
+.report-table thead th {
+    background-color: var(--bs-tertiary-bg, #e9ecef);
+    font-weight: 600;
+    text-align: center;
+}
+
+.report-table .lbl {
     text-align: left;
 }
-td.number{
-    text-align: right;    
+
+.report-table .input,
+.report-table .oddcolor,
+.report-table .evencolor,
+.report-table td.number {
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+    white-space: nowrap;
+}
+
+.report-table tr.bold > td,
+.report-table tr.bold > th {
+    font-weight: 650;
+}
+
+.report-table .col-index,
+.report-table .col-aop {
+    text-align: center;
+    width: 10%;
+}
+
+.report-section-title {
+    margin: 1.25rem 0 0.75rem;
+}
+
+.subtable {
+    table-layout: fixed;
 }
