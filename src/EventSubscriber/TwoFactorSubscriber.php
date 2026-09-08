@@ -3,7 +3,6 @@
 namespace App\EventSubscriber;
 
 use App\Entity\User\User;
-use App\Security\Totp;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
