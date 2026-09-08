@@ -14,7 +14,7 @@ title:
   partners: Pregled po dobaviteljih
   incomingInvoices: Prejeti računi
 
-label:  
+label:
   create:
     transaction: Ustvari transakcijo
   update:
@@ -31,9 +31,9 @@ label:
   datetime: Datum
   year: Leto
   dateFrom: Od
-  dateTo: Do   
-  price: Cena  
-  comment: Komentar  
+  dateTo: Do
+  price: Cena
+  comment: Komentar
   email: E-mail
   actions: Dejanja
   firstname: Ime
@@ -44,7 +44,7 @@ label:
   no_users_found: Ne najdem nobenega uporabnika.
   previous: Prejšnja
   next: Naslednja
-  SendInvoiceHeader: Pošiljanje računa po e-pošti 
+  SendInvoiceHeader: Pošiljanje računa po e-pošti
   subject: Zadeva
   body: Sporočilo
   bankCost: Bančni strošek
@@ -61,14 +61,6 @@ label:
   displayName: Prikazno ime
   emailRole: Vloga
   partnerEmailsDiffer: E-naslovi na partnerju so prazni ali se razlikujejo od tega pošiljanja.
-
-help:
-  recipientList: "Ime <naslov@domena.si>; drugi@domena.si"
-  extraEmailsCc: Dodatni naslovi so ob pošiljanju računa v kopiji (CC).
-
-
-
-
 
 action:
   add:
@@ -90,11 +82,10 @@ action:
   saveOnPartner: Shrani na partnerja
   editPartnerEmails: Uredi partnerja
 
-  
 body:
   delete:
     userModal: Ali ste prepričani da želite izbrisati uporabnika?
-  
+
 menu:
   list:
     invoices: Seznam računov
@@ -112,6 +103,8 @@ menu:
   countries: Države
 
 help:
+  recipientList: "Ime <naslov@domena.si>; drugi@domena.si"
+  extraEmailsCc: Dodatni naslovi so ob pošiljanju računa v kopiji (CC).
   invoice:
     issueDate: Datum izdaje računa
   login: Prijava
