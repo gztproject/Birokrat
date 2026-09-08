@@ -34,3 +34,6 @@ src/DataFixtures/InitData/users.tsv
 /phpunit.xml
 .phpunit.result.cache
 ###< phpunit/phpunit ###
+
+# Adversarial review evidence packets (local only)
+.adversarial-review/
