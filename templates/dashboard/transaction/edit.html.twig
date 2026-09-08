@@ -3,8 +3,7 @@
 {% block body_id 'dashboard_transaction_edit' %}
 
 {% block main %}
-    <h1>{{ 'title.transaction.edit'|trans }}</h1>
-
+    {{ include('components/_page_header.html.twig', { title: 'title.transaction.edit'|trans }) }}
     {{ include('dashboard/transaction/_form.html.twig', {
         form: form,
         button_label: 'label.update.transaction'|trans,

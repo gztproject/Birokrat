@@ -9,25 +9,23 @@
 
 {% block main %}
 
-
-
-<h2>Priloga 3</h2>
-<h3>Podatki iz bilance stanja</h3>
+<h2 class="report-section-title">Priloga 3</h2>
+<h3 class="report-section-title">Podatki iz bilance stanja</h3>
 
 <div class="row">
 	<div class="col-sm-12">
-		<table width="100%">
+		<table>
 			<tbody>
 				<tr>
-					<td style="text-align: right">
+					<td>
 						<p>Zneski v eurih s centi</p>
 					</td>
 				</tr>
 			</tbody>
 		</table>
-		<table class="tablebullet" width="100%">
+		<table class="report-table">
 			<thead>
-				<tr class="lblheader" style="text-align: center">
+				<tr class="lblheader">
 					<td>Zaporedna številka</td>
 					<td>Oznaka za AOP</td>
 					<td>Postavka</td>
@@ -36,45 +34,39 @@
 				</tr>
 			</thead>
 			<tbody>
-				<!-- ngRepeat: rw in data.Data.Att03 -->
-				<tr ng-repeat="rw in data.Data.Att03"
-					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
-					class="ng-scope bold">
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">1</span></td>
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						class="ng-binding">001</span></td>
-					<td class="lbl"><span class="ng-binding">SREDSTVA
+								<tr
+					class="bold">
+					<td class="lbl"><span
+						id="rowIndex" >1</span></td>
+					<td class="lbl"><span
+						>001</span></td>
+					<td class="lbl"><span >SREDSTVA
 							(2+12+25)</span></td>
 					<td class="input oddcolor">{{ bilancaReportThisYear.p001|money_amount }}
 						€</td>
 					<td class="input evencolor">{{ bilancaReportLastYear.p001|money_amount }}
 						€</td>
 				</tr>
-				<!-- end ngRepeat: rw in data.Data.Att03 -->
-				<tr ng-repeat="rw in data.Data.Att03"
-					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
-					class="ng-scope bold">
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">2</span></td>
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						class="ng-binding">002</span></td>
-					<td class="lbl"><span class="ng-binding">A. DOLGOROČNA
+								<tr
+					class="bold">
+					<td class="lbl"><span
+						id="rowIndex" >2</span></td>
+					<td class="lbl"><span
+						>002</span></td>
+					<td class="lbl"><span >A. DOLGOROČNA
 							SREDSTVA (3+6+7+8+11)</span></td>
 					<td class="input oddcolor">{{ bilancaReportThisYear.p002|money_amount }}
 						€</td>
 					<td class="input evencolor">{{ bilancaReportLastYear.p002|money_amount }}
 						€</td>
 				</tr>
-				<!-- end ngRepeat: rw in data.Data.Att03 -->
-				<tr ng-repeat="rw in data.Data.Att03"
-					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
-					class="ng-scope bold">
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">3</span></td>
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						class="ng-binding">003</span></td>
-					<td class="lbl"><span class="ng-binding">I.
+								<tr
+					class="bold">
+					<td class="lbl"><span
+						id="rowIndex" >3</span></td>
+					<td class="lbl"><span
+						>003</span></td>
+					<td class="lbl"><span >I.
 							Neopredmetena sredstva in dolgoročne aktivne časovne razmejitve
 							(4+5)</span></td>
 					<td class="input oddcolor">{{ bilancaReportThisYear.p003|money_amount }}
@@ -82,667 +74,577 @@
 					<td class="input evencolor">{{ bilancaReportLastYear.p003|money_amount }}
 						€</td>
 				</tr>
-				<!-- end ngRepeat: rw in data.Data.Att03 -->
-				<tr ng-repeat="rw in data.Data.Att03"
-					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
-					class="ng-scope">
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">4</span></td>
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						class="ng-binding">004</span></td>
-					<td class="lbl"><span class="ng-binding">1.
+								<tr
+					>
+					<td class="lbl"><span
+						id="rowIndex" >4</span></td>
+					<td class="lbl"><span
+						>004</span></td>
+					<td class="lbl"><span >1.
 							Neopredmetena sredstva</span></td>
 					<td class="input oddcolor">{{ bilancaReportThisYear.p004|money_amount }}
 						€</td>
 					<td class="input evencolor">{{ bilancaReportLastYear.p004|money_amount }}
 						€</td>
 				</tr>
-				<!-- end ngRepeat: rw in data.Data.Att03 -->
-				<tr ng-repeat="rw in data.Data.Att03"
-					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
-					class="ng-scope">
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">5</span></td>
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						class="ng-binding">009</span></td>
-					<td class="lbl"><span class="ng-binding">2. Dolgoročne
+								<tr
+					>
+					<td class="lbl"><span
+						id="rowIndex" >5</span></td>
+					<td class="lbl"><span
+						>009</span></td>
+					<td class="lbl"><span >2. Dolgoročne
 							aktivne časovne razmejitve</span></td>
 					<td class="input oddcolor">{{ bilancaReportThisYear.p009|money_amount }}
 						€</td>
 					<td class="input evencolor">{{ bilancaReportLastYear.p009|money_amount }}
 						€</td>>
 				</tr>
-				<!-- end ngRepeat: rw in data.Data.Att03 -->
-				<tr ng-repeat="rw in data.Data.Att03"
-					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
-					class="ng-scope bold">
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">6</span></td>
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						class="ng-binding">010</span></td>
-					<td class="lbl"><span class="ng-binding">II.
+								<tr
+					class="bold">
+					<td class="lbl"><span
+						id="rowIndex" >6</span></td>
+					<td class="lbl"><span
+						>010</span></td>
+					<td class="lbl"><span >II.
 							Opredmetena osnovna sredstva</span></td>
 					<td class="input oddcolor">{{ bilancaReportThisYear.p010|money_amount }}
 						€</td>
 					<td class="input evencolor">{{ bilancaReportLastYear.p010|money_amount }}
 						€</td>
 				</tr>
-				<!-- end ngRepeat: rw in data.Data.Att03 -->
-				<tr ng-repeat="rw in data.Data.Att03"
-					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
-					class="ng-scope bold">
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">7</span></td>
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						class="ng-binding">018</span></td>
-					<td class="lbl"><span class="ng-binding">III. Naložbene
+								<tr
+					class="bold">
+					<td class="lbl"><span
+						id="rowIndex" >7</span></td>
+					<td class="lbl"><span
+						>018</span></td>
+					<td class="lbl"><span >III. Naložbene
 							nepremičnine</span></td>
 					<td class="input oddcolor">{{ bilancaReportThisYear.p018|money_amount }}
 						€</td>
 					<td class="input evencolor">{{ bilancaReportLastYear.p018|money_amount }}
 						€</td>
 				</tr>
-				<!-- end ngRepeat: rw in data.Data.Att03 -->
-				<tr ng-repeat="rw in data.Data.Att03"
-					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
-					class="ng-scope bold">
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">8</span></td>
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						class="ng-binding">019</span></td>
-					<td class="lbl"><span class="ng-binding">IV. Dolgoročne
+								<tr
+					class="bold">
+					<td class="lbl"><span
+						id="rowIndex" >8</span></td>
+					<td class="lbl"><span
+						>019</span></td>
+					<td class="lbl"><span >IV. Dolgoročne
 							finančne naložbe (9+10)</span></td>
 					<td class="input oddcolor">{{ bilancaReportThisYear.p019|money_amount }}
 						€</td>
 					<td class="input evencolor">{{ bilancaReportLastYear.p019|money_amount }}
 						€</td>
 				</tr>
-				<!-- end ngRepeat: rw in data.Data.Att03 -->
-				<tr ng-repeat="rw in data.Data.Att03"
-					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
-					class="ng-scope">
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">9</span></td>
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						class="ng-binding">020</span></td>
-					<td class="lbl"><span class="ng-binding">1. Dolgoročne
+								<tr
+					>
+					<td class="lbl"><span
+						id="rowIndex" >9</span></td>
+					<td class="lbl"><span
+						>020</span></td>
+					<td class="lbl"><span >1. Dolgoročne
 							finančne naložbe, razen posojil</span></td>
 					<td class="input oddcolor">{{ bilancaReportThisYear.p020|money_amount }}
 						€</td>
 					<td class="input evencolor">{{ bilancaReportLastYear.p020|money_amount }}
 						€</td>
 				</tr>
-				<!-- end ngRepeat: rw in data.Data.Att03 -->
-				<tr ng-repeat="rw in data.Data.Att03"
-					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
-					class="ng-scope">
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">10</span></td>
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						class="ng-binding">024</span></td>
-					<td class="lbl"><span class="ng-binding">2. Dolgoročna
+								<tr
+					>
+					<td class="lbl"><span
+						id="rowIndex" >10</span></td>
+					<td class="lbl"><span
+						>024</span></td>
+					<td class="lbl"><span >2. Dolgoročna
 							posojila</span></td>
 					<td class="input oddcolor">{{ bilancaReportThisYear.p024|money_amount }}
 						€</td>
 					<td class="input evencolor">{{ bilancaReportLastYear.p024|money_amount }}
 						€</td>
 				</tr>
-				<!-- end ngRepeat: rw in data.Data.Att03 -->
-				<tr ng-repeat="rw in data.Data.Att03"
-					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
-					class="ng-scope bold">
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">11</span></td>
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						class="ng-binding">027</span></td>
-					<td class="lbl"><span class="ng-binding">V. Dolgoročne
+								<tr
+					class="bold">
+					<td class="lbl"><span
+						id="rowIndex" >11</span></td>
+					<td class="lbl"><span
+						>027</span></td>
+					<td class="lbl"><span >V. Dolgoročne
 							poslovne terjatve</span></td>
 					<td class="input oddcolor">{{ bilancaReportThisYear.p027|money_amount }}
 						€</td>
 					<td class="input evencolor">{{ bilancaReportLastYear.p027|money_amount }}
 						€</td>
 				</tr>
-				<!-- end ngRepeat: rw in data.Data.Att03 -->
-				<tr ng-repeat="rw in data.Data.Att03"
-					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
-					class="ng-scope bold">
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">12</span></td>
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						class="ng-binding">032</span></td>
-					<td class="lbl"><span class="ng-binding">B. KRATKOROČNA
+								<tr
+					class="bold">
+					<td class="lbl"><span
+						id="rowIndex" >12</span></td>
+					<td class="lbl"><span
+						>032</span></td>
+					<td class="lbl"><span >B. KRATKOROČNA
 							SREDSTVA (13+14+20+23+24)</span></td>
 					<td class="input oddcolor">{{ bilancaReportThisYear.p032|money_amount }}
 						€</td>
 					<td class="input evencolor">{{ bilancaReportLastYear.p032|money_amount }}
 						€</td>
 				</tr>
-				<!-- end ngRepeat: rw in data.Data.Att03 -->
-				<tr ng-repeat="rw in data.Data.Att03"
-					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
-					class="ng-scope bold">
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">13</span></td>
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						class="ng-binding">033</span></td>
-					<td class="lbl"><span class="ng-binding">I. Sredstva
+								<tr
+					class="bold">
+					<td class="lbl"><span
+						id="rowIndex" >13</span></td>
+					<td class="lbl"><span
+						>033</span></td>
+					<td class="lbl"><span >I. Sredstva
 							(skupine za odtujitev) za prodajo</span></td>
 					<td class="input oddcolor">{{ bilancaReportThisYear.p033|money_amount }}
 						€</td>
 					<td class="input evencolor">{{ bilancaReportLastYear.p033|money_amount }}
 						€</td>
 				</tr>
-				<!-- end ngRepeat: rw in data.Data.Att03 -->
-				<tr ng-repeat="rw in data.Data.Att03"
-					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
-					class="ng-scope bold">
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">14</span></td>
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						class="ng-binding">034</span></td>
-					<td class="lbl"><span class="ng-binding">II. Zaloge
+								<tr
+					class="bold">
+					<td class="lbl"><span
+						id="rowIndex" >14</span></td>
+					<td class="lbl"><span
+						>034</span></td>
+					<td class="lbl"><span >II. Zaloge
 							(15+16+17+18+19)</span></td>
 					<td class="input oddcolor">{{ bilancaReportThisYear.p034|money_amount }}
 						€</td>
 					<td class="input evencolor">{{ bilancaReportLastYear.p034|money_amount }}
 						€</td>
 				</tr>
-				<!-- end ngRepeat: rw in data.Data.Att03 -->
-				<tr ng-repeat="rw in data.Data.Att03"
-					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
-					class="ng-scope">
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">15</span></td>
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						class="ng-binding">035</span></td>
-					<td class="lbl"><span class="ng-binding">1. Material</span></td>
+								<tr
+					>
+					<td class="lbl"><span
+						id="rowIndex" >15</span></td>
+					<td class="lbl"><span
+						>035</span></td>
+					<td class="lbl"><span >1. Material</span></td>
 					<td class="input oddcolor">{{ bilancaReportThisYear.p035|money_amount }}
 						€</td>
 					<td class="input evencolor">{{ bilancaReportLastYear.p035|money_amount }}
 						€</td>
 				</tr>
-				<!-- end ngRepeat: rw in data.Data.Att03 -->
-				<tr ng-repeat="rw in data.Data.Att03"
-					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
-					class="ng-scope">
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">16</span></td>
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						class="ng-binding">036</span></td>
-					<td class="lbl"><span class="ng-binding">2. Nedokončana
+								<tr
+					>
+					<td class="lbl"><span
+						id="rowIndex" >16</span></td>
+					<td class="lbl"><span
+						>036</span></td>
+					<td class="lbl"><span >2. Nedokončana
 							proizvodnja</span></td>
 					<td class="input oddcolor">{{ bilancaReportThisYear.p036|money_amount }}
 						€</td>
 					<td class="input evencolor">{{ bilancaReportLastYear.p036|money_amount }}
 						€</td>
 				</tr>
-				<!-- end ngRepeat: rw in data.Data.Att03 -->
-				<tr ng-repeat="rw in data.Data.Att03"
-					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
-					class="ng-scope">
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">17</span></td>
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						class="ng-binding">037</span></td>
-					<td class="lbl"><span class="ng-binding">3. Proizvodi</span></td>
+								<tr
+					>
+					<td class="lbl"><span
+						id="rowIndex" >17</span></td>
+					<td class="lbl"><span
+						>037</span></td>
+					<td class="lbl"><span >3. Proizvodi</span></td>
 					<td class="input oddcolor">{{ bilancaReportThisYear.p037|money_amount }}
 						€</td>
 					<td class="input evencolor">{{ bilancaReportLastYear.p037|money_amount }}
 						€</td>
 				</tr>
-				<!-- end ngRepeat: rw in data.Data.Att03 -->
-				<tr ng-repeat="rw in data.Data.Att03"
-					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
-					class="ng-scope">
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">18</span></td>
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						class="ng-binding">038</span></td>
-					<td class="lbl"><span class="ng-binding">4. Trgovsko
+								<tr
+					>
+					<td class="lbl"><span
+						id="rowIndex" >18</span></td>
+					<td class="lbl"><span
+						>038</span></td>
+					<td class="lbl"><span >4. Trgovsko
 							blago</span></td>
 					<td class="input oddcolor">{{ bilancaReportThisYear.p038|money_amount }}
 						€</td>
 					<td class="input evencolor">{{ bilancaReportLastYear.p038|money_amount }}
 						€</td>
 				</tr>
-				<!-- end ngRepeat: rw in data.Data.Att03 -->
-				<tr ng-repeat="rw in data.Data.Att03"
-					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
-					class="ng-scope">
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">19</span></td>
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						class="ng-binding">039</span></td>
-					<td class="lbl"><span class="ng-binding">5. Predujmi za
+								<tr
+					>
+					<td class="lbl"><span
+						id="rowIndex" >19</span></td>
+					<td class="lbl"><span
+						>039</span></td>
+					<td class="lbl"><span >5. Predujmi za
 							zaloge</span></td>
 					<td class="input oddcolor">{{ bilancaReportThisYear.p039|money_amount }}
 						€</td>
 					<td class="input evencolor">{{ bilancaReportLastYear.p039|money_amount }}
 						€</td>
 				</tr>
-				<!-- end ngRepeat: rw in data.Data.Att03 -->
-				<tr ng-repeat="rw in data.Data.Att03"
-					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
-					class="ng-scope bold">
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">20</span></td>
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						class="ng-binding">040</span></td>
-					<td class="lbl"><span class="ng-binding">III.
+								<tr
+					class="bold">
+					<td class="lbl"><span
+						id="rowIndex" >20</span></td>
+					<td class="lbl"><span
+						>040</span></td>
+					<td class="lbl"><span >III.
 							Kratkoročne finančne naložbe (21+22)</span></td>
 					<td class="input oddcolor">{{ bilancaReportThisYear.p040|money_amount }}
 						€</td>
 					<td class="input evencolor">{{ bilancaReportLastYear.p040|money_amount }}
 						€</td>
 				</tr>
-				<!-- end ngRepeat: rw in data.Data.Att03 -->
-				<tr ng-repeat="rw in data.Data.Att03"
-					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
-					class="ng-scope">
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">21</span></td>
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						class="ng-binding">041</span></td>
-					<td class="lbl"><span class="ng-binding">1. Kratkoročne
+								<tr
+					>
+					<td class="lbl"><span
+						id="rowIndex" >21</span></td>
+					<td class="lbl"><span
+						>041</span></td>
+					<td class="lbl"><span >1. Kratkoročne
 							finančne naložbe, razen posojil</span></td>
 					<td class="input oddcolor">{{ bilancaReportThisYear.p041|money_amount }}
 						€</td>
 					<td class="input evencolor">{{ bilancaReportLastYear.p041|money_amount }}
 						€</td>
 				</tr>
-				<!-- end ngRepeat: rw in data.Data.Att03 -->
-				<tr ng-repeat="rw in data.Data.Att03"
-					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
-					class="ng-scope">
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">22</span></td>
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						class="ng-binding">045</span></td>
-					<td class="lbl"><span class="ng-binding">2. Kratkoročna
+								<tr
+					>
+					<td class="lbl"><span
+						id="rowIndex" >22</span></td>
+					<td class="lbl"><span
+						>045</span></td>
+					<td class="lbl"><span >2. Kratkoročna
 							posojila</span></td>
 					<td class="input oddcolor">{{ bilancaReportThisYear.p045|money_amount }}
 						€</td>
 					<td class="input evencolor">{{ bilancaReportLastYear.p045|money_amount }}
 						€</td>>
 				</tr>
-				<!-- end ngRepeat: rw in data.Data.Att03 -->
-				<tr ng-repeat="rw in data.Data.Att03"
-					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
-					class="ng-scope bold">
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">23</span></td>
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						class="ng-binding">048</span></td>
-					<td class="lbl"><span class="ng-binding">IV.
+								<tr
+					class="bold">
+					<td class="lbl"><span
+						id="rowIndex" >23</span></td>
+					<td class="lbl"><span
+						>048</span></td>
+					<td class="lbl"><span >IV.
 							Kratkoročne poslovne terjatve</span></td>
 					<td class="input oddcolor">{{ bilancaReportThisYear.p048|money_amount }}
 						€</td>
 					<td class="input evencolor">{{ bilancaReportLastYear.p048|money_amount }}
 						€</td>
 				</tr>
-				<!-- end ngRepeat: rw in data.Data.Att03 -->
-				<tr ng-repeat="rw in data.Data.Att03"
-					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
-					class="ng-scope bold">
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">24</span></td>
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						class="ng-binding">052</span></td>
-					<td class="lbl"><span class="ng-binding">V. Denarna
+								<tr
+					class="bold">
+					<td class="lbl"><span
+						id="rowIndex" >24</span></td>
+					<td class="lbl"><span
+						>052</span></td>
+					<td class="lbl"><span >V. Denarna
 							sredstva</span></td>
 					<td class="input oddcolor">{{ bilancaReportThisYear.p052|money_amount }}
 						€</td>
 					<td class="input evencolor">{{ bilancaReportLastYear.p052|money_amount }}
 						€</td>
 				</tr>
-				<!-- end ngRepeat: rw in data.Data.Att03 -->
-				<tr ng-repeat="rw in data.Data.Att03"
-					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
-					class="ng-scope bold">
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">25</span></td>
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						class="ng-binding">053</span></td>
-					<td class="lbl"><span class="ng-binding">C. KRATKOROČNE
+								<tr
+					class="bold">
+					<td class="lbl"><span
+						id="rowIndex" >25</span></td>
+					<td class="lbl"><span
+						>053</span></td>
+					<td class="lbl"><span >C. KRATKOROČNE
 							AKTIVNE ČASOVNE RAZMEJITVE</span></td>
 					<td class="input oddcolor">{{ bilancaReportThisYear.p053|money_amount }}
 						€</td>
 					<td class="input evencolor">{{ bilancaReportLastYear.p053|money_amount }}
 						€</td>d>
 				</tr>
-				<!-- end ngRepeat: rw in data.Data.Att03 -->
-				<tr ng-repeat="rw in data.Data.Att03"
-					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
-					class="ng-scope bold">
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">26</span></td>
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						class="ng-binding">054</span></td>
-					<td class="lbl"><span class="ng-binding">Zabilančna
+								<tr
+					class="bold">
+					<td class="lbl"><span
+						id="rowIndex" >26</span></td>
+					<td class="lbl"><span
+						>054</span></td>
+					<td class="lbl"><span >Zabilančna
 							sredstva</span></td>
 					<td class="input oddcolor">{{ bilancaReportThisYear.p054|money_amount }}
 						€</td>
 					<td class="input evencolor">{{ bilancaReportLastYear.p054|money_amount }}
 						€</td>
 				</tr>
-				<!-- end ngRepeat: rw in data.Data.Att03 -->
-				<tr ng-repeat="rw in data.Data.Att03"
-					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
-					class="ng-scope bold">
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">27</span></td>
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						class="ng-binding">055</span></td>
-					<td class="lbl"><span class="ng-binding">OBVEZNOSTI DO
+								<tr
+					class="bold">
+					<td class="lbl"><span
+						id="rowIndex" >27</span></td>
+					<td class="lbl"><span
+						>055</span></td>
+					<td class="lbl"><span >OBVEZNOSTI DO
 							VIROV SREDSTEV (28+36+39+42+46)</span></td>
 					<td class="input oddcolor">{{ bilancaReportThisYear.p055|money_amount }}
 						€</td>
 					<td class="input evencolor">{{ bilancaReportLastYear.p055|money_amount }}
 						€</td>
 				</tr>
-				<!-- end ngRepeat: rw in data.Data.Att03 -->
-				<tr ng-repeat="rw in data.Data.Att03"
-					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
-					class="ng-scope bold">
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">28</span></td>
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						class="ng-binding">056</span></td>
-					<td class="lbl"><span class="ng-binding">A. PODJETNIKOV
+								<tr
+					class="bold">
+					<td class="lbl"><span
+						id="rowIndex" >28</span></td>
+					<td class="lbl"><span
+						>056</span></td>
+					<td class="lbl"><span >A. PODJETNIKOV
 							KAPITAL (29+30+31+32+33+34-35)</span></td>
 					<td class="input oddcolor">{{ bilancaReportThisYear.p056|money_amount }}
 						€</td>
 					<td class="input evencolor">{{ bilancaReportLastYear.p056|money_amount }}
 						€</td>
 				</tr>
-				<!-- end ngRepeat: rw in data.Data.Att03 -->
-				<tr ng-repeat="rw in data.Data.Att03"
-					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
-					class="ng-scope bold">
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">29</span></td>
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						class="ng-binding">058</span></td>
-					<td class="lbl"><span class="ng-binding">I. Začetni
+								<tr
+					class="bold">
+					<td class="lbl"><span
+						id="rowIndex" >29</span></td>
+					<td class="lbl"><span
+						>058</span></td>
+					<td class="lbl"><span >I. Začetni
 							podjetnikov kapital</span></td>
 					<td class="input oddcolor">{{ bilancaReportThisYear.p058|money_amount }}
 						€</td>
 					<td class="input evencolor">{{ bilancaReportLastYear.p058|money_amount }}
 						€</td>
 				</tr>
-				<!-- end ngRepeat: rw in data.Data.Att03 -->
-				<tr ng-repeat="rw in data.Data.Att03"
-					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
-					class="ng-scope bold">
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">30</span></td>
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						class="ng-binding">060a</span></td>
-					<td class="lbl"><span class="ng-binding">II. Prenosi
+								<tr
+					class="bold">
+					<td class="lbl"><span
+						id="rowIndex" >30</span></td>
+					<td class="lbl"><span
+						>060a</span></td>
+					<td class="lbl"><span >II. Prenosi
 							stvarnega premoženja med opravljanjem dejavnosti</span></td>
 					<td class="input oddcolor">{{ bilancaReportThisYear.p060a|money_amount }}
 						€</td>
 					<td class="input evencolor">{{ bilancaReportLastYear.p060a|money_amount }}
 						€</td>
 				</tr>
-				<!-- end ngRepeat: rw in data.Data.Att03 -->
-				<tr ng-repeat="rw in data.Data.Att03"
-					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
-					class="ng-scope bold">
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">31</span></td>
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						class="ng-binding">060b</span></td>
-					<td class="lbl"><span class="ng-binding">III. Pritoki
+								<tr
+					class="bold">
+					<td class="lbl"><span
+						id="rowIndex" >31</span></td>
+					<td class="lbl"><span
+						>060b</span></td>
+					<td class="lbl"><span >III. Pritoki
 							in odtoki denarnih sredstev</span></td>
 					<td class="input oddcolor">{{ bilancaReportThisYear.p060b|money_amount }}
 						€</td>
 					<td class="input evencolor">{{ bilancaReportLastYear.p060b|money_amount }}
 						€</td>
 				</tr>
-				<!-- end ngRepeat: rw in data.Data.Att03 -->
-				<tr ng-repeat="rw in data.Data.Att03"
-					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
-					class="ng-scope bold">
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">32</span></td>
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						class="ng-binding">067</span></td>
-					<td class="lbl"><span class="ng-binding">IV.
+								<tr
+					class="bold">
+					<td class="lbl"><span
+						id="rowIndex" >32</span></td>
+					<td class="lbl"><span
+						>067</span></td>
+					<td class="lbl"><span >IV.
 							Revalorizacijske rezerve</span></td>
 					<td class="input oddcolor">{{ bilancaReportThisYear.p067|money_amount }}
 						€</td>
 					<td class="input evencolor">{{ bilancaReportLastYear.p067|money_amount }}
 						€</td>
 				</tr>
-				<!-- end ngRepeat: rw in data.Data.Att03 -->
-				<tr ng-repeat="rw in data.Data.Att03"
-					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
-					class="ng-scope bold">
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">33</span></td>
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						class="ng-binding">301</span></td>
-					<td class="lbl"><span class="ng-binding">V. Rezerve,
+								<tr
+					class="bold">
+					<td class="lbl"><span
+						id="rowIndex" >33</span></td>
+					<td class="lbl"><span
+						>301</span></td>
+					<td class="lbl"><span >V. Rezerve,
 							nastale zaradi vrednotenja po pošteni vrednosti</span></td>
 					<td class="input oddcolor">{{ bilancaReportThisYear.p301|money_amount }}
 						€</td>
 					<td class="input evencolor">{{ bilancaReportLastYear.p301|money_amount }}
 						€</td>
 				</tr>
-				<!-- end ngRepeat: rw in data.Data.Att03 -->
-				<tr ng-repeat="rw in data.Data.Att03"
-					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
-					class="ng-scope bold">
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">34</span></td>
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						class="ng-binding">070</span></td>
-					<td class="lbl"><span class="ng-binding">VI.
+								<tr
+					class="bold">
+					<td class="lbl"><span
+						id="rowIndex" >34</span></td>
+					<td class="lbl"><span
+						>070</span></td>
+					<td class="lbl"><span >VI.
 							Podjetnikov dohodek</span></td>
 					<td class="input oddcolor">{{ bilancaReportThisYear.p070|money_amount }}
 						€</td>
 					<td class="input evencolor">{{ bilancaReportLastYear.p070|money_amount }}
 						€</td>
 				</tr>
-				<!-- end ngRepeat: rw in data.Data.Att03 -->
-				<tr ng-repeat="rw in data.Data.Att03"
-					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
-					class="ng-scope bold">
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">35</span></td>
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						class="ng-binding">071</span></td>
-					<td class="lbl"><span class="ng-binding">VII. Negativni
+								<tr
+					class="bold">
+					<td class="lbl"><span
+						id="rowIndex" >35</span></td>
+					<td class="lbl"><span
+						>071</span></td>
+					<td class="lbl"><span >VII. Negativni
 							poslovni izid</span></td>
 					<td class="input oddcolor">{{ bilancaReportThisYear.p071|money_amount }}
 						€</td>
 					<td class="input evencolor">{{ bilancaReportLastYear.p071|money_amount }}
 						€</td>
 				</tr>
-				<!-- end ngRepeat: rw in data.Data.Att03 -->
-				<tr ng-repeat="rw in data.Data.Att03"
-					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
-					class="ng-scope bold">
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">36</span></td>
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						class="ng-binding">072</span></td>
-					<td class="lbl"><span class="ng-binding">B. REZERVACIJE
+								<tr
+					class="bold">
+					<td class="lbl"><span
+						id="rowIndex" >36</span></td>
+					<td class="lbl"><span
+						>072</span></td>
+					<td class="lbl"><span >B. REZERVACIJE
 							IN DOLGOROČNE PASIVNE ČASOVNE RAZMEJITVE (37+38)</span></td>
 					<td class="input oddcolor">{{ bilancaReportThisYear.p072|money_amount }}
 						€</td>
 					<td class="input evencolor">{{ bilancaReportLastYear.p072|money_amount }}
 						€</td>
 				</tr>
-				<!-- end ngRepeat: rw in data.Data.Att03 -->
-				<tr ng-repeat="rw in data.Data.Att03"
-					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
-					class="ng-scope">
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">37</span></td>
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						class="ng-binding">073</span></td>
-					<td class="lbl"><span class="ng-binding">1. Rezervacije</span></td>
+								<tr
+					>
+					<td class="lbl"><span
+						id="rowIndex" >37</span></td>
+					<td class="lbl"><span
+						>073</span></td>
+					<td class="lbl"><span >1. Rezervacije</span></td>
 					<td class="input oddcolor">{{ bilancaReportThisYear.p073|money_amount }}
 						€</td>
 					<td class="input evencolor">{{ bilancaReportLastYear.p073|money_amount }}
 						€</td>
 				</tr>
-				<!-- end ngRepeat: rw in data.Data.Att03 -->
-				<tr ng-repeat="rw in data.Data.Att03"
-					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
-					class="ng-scope">
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">38</span></td>
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						class="ng-binding">074</span></td>
-					<td class="lbl"><span class="ng-binding">2. Dolgoročne
+								<tr
+					>
+					<td class="lbl"><span
+						id="rowIndex" >38</span></td>
+					<td class="lbl"><span
+						>074</span></td>
+					<td class="lbl"><span >2. Dolgoročne
 							pasivne časovne razmejitve</span></td>
 					<td class="input oddcolor">{{ bilancaReportThisYear.p074|money_amount }}
 						€</td>
 					<td class="input evencolor">{{ bilancaReportLastYear.p074|money_amount }}
 						€</td>>
 				</tr>
-				<!-- end ngRepeat: rw in data.Data.Att03 -->
-				<tr ng-repeat="rw in data.Data.Att03"
-					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
-					class="ng-scope bold">
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">39</span></td>
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						class="ng-binding">075</span></td>
-					<td class="lbl"><span class="ng-binding">C. DOLGOROČNE
+								<tr
+					class="bold">
+					<td class="lbl"><span
+						id="rowIndex" >39</span></td>
+					<td class="lbl"><span
+						>075</span></td>
+					<td class="lbl"><span >C. DOLGOROČNE
 							OBVEZNOSTI (40+41)</span></td>
 					<td class="input oddcolor">{{ bilancaReportThisYear.p075|money_amount }}
 						€</td>
 					<td class="input evencolor">{{ bilancaReportLastYear.p075|money_amount }}
 						€</td>
 				</tr>
-				<!-- end ngRepeat: rw in data.Data.Att03 -->
-				<tr ng-repeat="rw in data.Data.Att03"
-					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
-					class="ng-scope bold">
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">40</span></td>
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						class="ng-binding">076</span></td>
-					<td class="lbl"><span class="ng-binding">I. Dolgoročne
+								<tr
+					class="bold">
+					<td class="lbl"><span
+						id="rowIndex" >40</span></td>
+					<td class="lbl"><span
+						>076</span></td>
+					<td class="lbl"><span >I. Dolgoročne
 							finančne obveznosti</span></td>
 					<td class="input oddcolor">{{ bilancaReportThisYear.p076|money_amount }}
 						€</td>
 					<td class="input evencolor">{{ bilancaReportLastYear.p076|money_amount }}
 						€</td>
 				</tr>
-				<!-- end ngRepeat: rw in data.Data.Att03 -->
-				<tr ng-repeat="rw in data.Data.Att03"
-					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
-					class="ng-scope bold">
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">41</span></td>
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						class="ng-binding">080</span></td>
-					<td class="lbl"><span class="ng-binding">II. Dolgoročne
+								<tr
+					class="bold">
+					<td class="lbl"><span
+						id="rowIndex" >41</span></td>
+					<td class="lbl"><span
+						>080</span></td>
+					<td class="lbl"><span >II. Dolgoročne
 							poslovne obveznosti</span></td>
 					<td class="input oddcolor">{{ bilancaReportThisYear.p080|money_amount }}
 						€</td>
 					<td class="input evencolor">{{ bilancaReportLastYear.p080|money_amount }}
 						€</td>
 				</tr>
-				<!-- end ngRepeat: rw in data.Data.Att03 -->
-				<tr ng-repeat="rw in data.Data.Att03"
-					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
-					class="ng-scope bold">
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">42</span></td>
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						class="ng-binding">085</span></td>
-					<td class="lbl"><span class="ng-binding">Č. KRATKOROČNE
+								<tr
+					class="bold">
+					<td class="lbl"><span
+						id="rowIndex" >42</span></td>
+					<td class="lbl"><span
+						>085</span></td>
+					<td class="lbl"><span >Č. KRATKOROČNE
 							OBVEZNOSTI (43+44+45)</span></td>
 					<td class="input oddcolor">{{ bilancaReportThisYear.p085|money_amount }}
 						€</td>
 					<td class="input evencolor">{{ bilancaReportLastYear.p085|money_amount }}
 						€</td>
 				</tr>
-				<!-- end ngRepeat: rw in data.Data.Att03 -->
-				<tr ng-repeat="rw in data.Data.Att03"
-					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
-					class="ng-scope bold">
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">43</span></td>
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						class="ng-binding">086</span></td>
-					<td class="lbl"><span class="ng-binding">I. Obveznosti,
+								<tr
+					class="bold">
+					<td class="lbl"><span
+						id="rowIndex" >43</span></td>
+					<td class="lbl"><span
+						>086</span></td>
+					<td class="lbl"><span >I. Obveznosti,
 							vključene v skupine za odtujitev</span></td>
 					<td class="input oddcolor">{{ bilancaReportThisYear.p086|money_amount }}
 						€</td>
 					<td class="input evencolor">{{ bilancaReportLastYear.p086|money_amount }}
 						€</td>
 				</tr>
-				<!-- end ngRepeat: rw in data.Data.Att03 -->
-				<tr ng-repeat="rw in data.Data.Att03"
-					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
-					class="ng-scope bold">
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">44</span></td>
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						class="ng-binding">087</span></td>
-					<td class="lbl"><span class="ng-binding">II.
+								<tr
+					class="bold">
+					<td class="lbl"><span
+						id="rowIndex" >44</span></td>
+					<td class="lbl"><span
+						>087</span></td>
+					<td class="lbl"><span >II.
 							Kratkoročne finančne obveznosti</span></td>
 					<td class="input oddcolor">{{ bilancaReportThisYear.p087|money_amount }}
 						€</td>
 					<td class="input evencolor">{{ bilancaReportLastYear.p087|money_amount }}
 						€</td>
 				</tr>
-				<!-- end ngRepeat: rw in data.Data.Att03 -->
-				<tr ng-repeat="rw in data.Data.Att03"
-					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
-					class="ng-scope bold">
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">45</span></td>
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						class="ng-binding">091</span></td>
-					<td class="lbl"><span class="ng-binding">III.
+								<tr
+					class="bold">
+					<td class="lbl"><span
+						id="rowIndex" >45</span></td>
+					<td class="lbl"><span
+						>091</span></td>
+					<td class="lbl"><span >III.
 							Kratkoročne poslovne obveznosti</span></td>
 					<td class="input oddcolor">{{ bilancaReportThisYear.p091|money_amount }}
 						€</td>
 					<td class="input evencolor">{{ bilancaReportLastYear.p091|money_amount }}
 						€</td>
 				</tr>
-				<!-- end ngRepeat: rw in data.Data.Att03 -->
-				<tr ng-repeat="rw in data.Data.Att03"
-					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
-					class="ng-scope bold">
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">46</span></td>
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						class="ng-binding">095</span></td>
-					<td class="lbl"><span class="ng-binding">D. KRATKOROČNE
+								<tr
+					class="bold">
+					<td class="lbl"><span
+						id="rowIndex" >46</span></td>
+					<td class="lbl"><span
+						>095</span></td>
+					<td class="lbl"><span >D. KRATKOROČNE
 							PASIVNE ČASOVNE RAZMEJITVE</span></td>
 					<td class="input oddcolor">{{ bilancaReportThisYear.p095|money_amount }}
 						€</td>
 					<td class="input evencolor">{{ bilancaReportLastYear.p095|money_amount }}
 						€</td>
 				</tr>
-				<!-- end ngRepeat: rw in data.Data.Att03 -->
-				<tr ng-repeat="rw in data.Data.Att03"
-					ng-class="{bold: (isInputReadOnly($index) || isRowBold($index)) }"
-					class="ng-scope bold">
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						id="rowIndex" ng-bind="periodId($index)" class="ng-binding">47</span></td>
-					<td class="lbl" style="width: 10%; text-align: center;"><span
-						class="ng-binding">096</span></td>
-					<td class="lbl"><span class="ng-binding">Zabilančne
+								<tr
+					class="bold">
+					<td class="lbl"><span
+						id="rowIndex" >47</span></td>
+					<td class="lbl"><span
+						>096</span></td>
+					<td class="lbl"><span >Zabilančne
 							obveznosti</span></td>
 					<td class="input oddcolor">{{ bilancaReportThisYear.p096|money_amount }}
 						€</td>
 					<td class="input evencolor">{{ bilancaReportLastYear.p096|money_amount }}
 						€</td>
 				</tr>
-				<!-- end ngRepeat: rw in data.Data.Att03 -->
-			</tbody>
+							</tbody>
 		</table>
-
 
 	</div>
 </div>

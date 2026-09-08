@@ -3,7 +3,7 @@
 {% block body_id 'post_index' %}
 
 {% block main %}
-    <h1>{{ 'title.post'|trans }}</h1>
+    {{ include('components/_page_header.html.twig', { title: 'title.post'|trans }) }}
     <div class="bs-component">
     {{ include('dashboard/codesheets/post/_table.html.twig', {
                 posts: posts                

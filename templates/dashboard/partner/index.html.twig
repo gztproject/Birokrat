@@ -3,7 +3,7 @@
 {% block body_id 'partner_index' %}
 
 {% block main %}
-    <h1>{{ 'title.partner_list'|trans }}</h1>
+    {{ include('components/_page_header.html.twig', { title: 'title.partner_list'|trans }) }}
     
     
     <div class="bs-component">
@@ -29,7 +29,7 @@
                 <td>{{ organization.taxable ? '<i class="fa fa-check" aria-hidden="true"></i>' : ''}}</td>
                 <td>{{ organization.isClient ? '<i class="fa fa-check" aria-hidden="true"></i>' : ''}}</td>
                 <td>{{ organization.isSupplier ? '<i class="fa fa-check" aria-hidden="true"></i>' : ''}}</td>
-                <td class="text-right">
+                <td class="text-end">
                     <div class="item-actions">
                         <a href="{{ path('partner_show', {'id': organization.id}) }}" class="btn btn-sm btn-primary">
                             <i class="fa fa-eye" aria-hidden="true"></i> {{ 'action.show'|trans }}
@@ -52,7 +52,7 @@
 
 {% block sidebar %}
     <div class="section actions">
-        <a href="{{ path('partner_new') }}" class="btn btn-sm btn-block btn-success">
+        <a href="{{ path('partner_new') }}" class="btn btn-sm w-100 btn-success">
             <i class="fa fa-plus" aria-hidden="true"></i> {{ 'action.create_partner'|trans }}
         </a>
     </div>

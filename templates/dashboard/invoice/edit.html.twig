@@ -8,7 +8,7 @@
 {% endblock %}
 
 {% block main %}
-    <h1>{{ 'title.invoice_edit'|trans }}</h1>
+    {{ include('components/_page_header.html.twig', { title: 'title.invoice_edit'|trans }) }}
 
     {{ include('dashboard/invoice/_form.html.twig', {
         form: form,

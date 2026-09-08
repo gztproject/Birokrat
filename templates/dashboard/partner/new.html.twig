@@ -3,9 +3,7 @@
 {% block body_id 'partner_new' %}
 
 {% block main %}
-    <h1>{{ 'title.partner_new'|trans }}</h1>
-    
-    
+    {{ include('components/_page_header.html.twig', { title: 'title.partner_new'|trans }) }}
     {{ include('dashboard/partner/_form.html.twig', {
         form: form,
         button_label: 'action.create'|trans,

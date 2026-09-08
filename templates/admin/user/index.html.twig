@@ -3,7 +3,7 @@
 {% block body_id 'admin_user_index' %}
 
 {% block main %}
-    <h1>{{ 'title.list.user'|trans }}</h1>
+    {{ include('components/_page_header.html.twig', { title: 'title.list.user'|trans }) }}
     
     
     <div class="bs-component">
@@ -21,7 +21,7 @@
             <tr class="table-primary">
                 <td>{{ user.username }}</td>
                 <td>{{ user.email }}</td>
-                <td class="text-right">
+                <td class="text-end">
                     <div class="item-actions">
                         <a href="{{ path('admin_user_show', {'id': user.id}) }}" class="btn btn-sm btn-secondary">
                             <i class="fa fa-eye" aria-hidden="true"></i> {{ 'action.show'|trans }}
@@ -45,7 +45,7 @@
 
 {% block sidebar %}
     <div class="section actions">
-        <a href="{{ path('admin_user_new') }}" class="btn btn-sm btn-block btn-success">
+        <a href="{{ path('admin_user_new') }}" class="btn btn-sm w-100 btn-success">
             <i class="fa fa-plus" aria-hidden="true"></i> {{ 'action.create.user'|trans }}
         </a>
     </div>

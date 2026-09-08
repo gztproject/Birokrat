@@ -1,7 +1,7 @@
 {{ form_start(form, {'attr': {'class': 'bs-component'}}) }}
     <div class="row">
         <div class="col-sm-6">
-            <div class="form-group">
+            <div class="mb-3">
                 {{ form_label(form.organization, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}
                 <div class="input-group">
                     {{ form_widget(form.organization, {'attr': {'class': 'form-control'}}) }}
@@ -9,7 +9,7 @@
             </div>
         </div>
         <div class="col-sm-6">
-            <div class="form-group">
+            <div class="mb-3">
                 {{ form_label(form.date, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}
                 <div class="input-group">
                     {{ form_widget(form.date, {'attr': {'class': 'form-control'}}) }}
@@ -20,7 +20,7 @@
     </div>
     <div class="row">
         <div class="col-sm-6">
-            <div class="form-group">
+            <div class="mb-3">
                 {{ form_label(form.sum, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}
                 <div class="input-group">
                     {{ form_widget(form.sum, {'attr': {'class': 'form-control'}}) }}
@@ -28,7 +28,7 @@
             </div>
         </div>
     </div>
-    <div class="form-group">
+    <div class="mb-3">
         <button type="submit" class="btn btn-primary">
             <i class="fa fa-save" aria-hidden="true"></i> {{ button_label }}
         </button>

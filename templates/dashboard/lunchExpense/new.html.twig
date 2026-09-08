@@ -3,8 +3,7 @@
 {% block body_id 'lunchExpense_new' %}
 
 {% block main %}
-    <h1>{{ 'action.create_lunchExpense'|trans }}</h1>
-
+    {{ include('components/_page_header.html.twig', { title: 'action.create_lunchExpense'|trans }) }}
     {{ include('dashboard/lunchExpense/_form.html.twig', {
         form: form,
         button_label: 'action.create_lunchExpense'|trans,

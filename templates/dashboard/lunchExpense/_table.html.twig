@@ -1,57 +1,47 @@
-<table id="lunchExpensesTable" class="table table-hover">
+<table id="lunchExpensesTable" class="table table-hover align-middle">
         <thead>
             <tr>
-                <th scope="col"><i class="fa fa-calendar" aria-hidden="true"></i>{{ 'label.date'|trans }}</th>
-                <th scope="col"><i class="fa fa-coins" aria-hidden="true"></i> {{ 'label.cost'|trans }}</th> 
-                {% if ShowCBs is defined and ShowCBs == true%}  
-                    <th scope="col" class="text-center"><i class="fa fa-check" aria-hidden="true"></i></th>  
+                <th scope="col"><i class="fa fa-calendar" aria-hidden="true"></i> {{ 'label.date'|trans }}</th>
+                <th scope="col" class="text-end"><i class="fa fa-coins" aria-hidden="true"></i> {{ 'label.cost'|trans }}</th>
+                {% if ShowCBs is defined and ShowCBs == true%}
+                    <th scope="col" class="text-center"><i class="fa fa-check" aria-hidden="true"></i></th>
                 {% endif %}
             </tr>
         </thead>
         <tbody>
     {% for lunchExpense in lunchExpenses %}
-            <tr class="table-primary">
-                <td>{{ lunchExpense.dateString }}</td>                
-                <td>{{ lunchExpense.sum | money}}</td> 
-                {% if ShowCBs is defined and ShowCBs == true%}             
-                <td> 
-                    <input class="form-check-input TECheckBox" type="checkbox" value={{ lunchExpense.id }}>                                    
+            <tr>
+                <td>{{ lunchExpense.dateString }}</td>
+                <td class="money">{{ lunchExpense.sum | money}}</td>
+                {% if ShowCBs is defined and ShowCBs == true%}
+                <td class="text-center">
+                    <input class="form-check-input TECheckBox" type="checkbox" value={{ lunchExpense.id }}>
                 </td>
                 {% endif %}
             </tr>
         {% else %}
-            <tr class="table-warning">
-                <td colspan="4" align="center">{{ 'lunchExpense.no_lunchExpenses_found'|trans }}</td>
-           </tr>
-        {% endfor %}    
+            {{ include('components/_empty_state.html.twig', { colspan: 4, message: 'lunchExpense.no_lunchExpenses_found'|trans }) }}
+        {% endfor %}
     </tbody>
 </table>
 
-<!-- Modal -->
-<div id="dateModal" class="modal fade" role="dialog">
+<div id="dateModal" class="modal fade" role="dialog" tabindex="-1">
   <div class="modal-dialog">
-
-    <!-- Modal content-->
     <div class="modal-content">
       <div class="modal-header">
         <h4 class="modal-title">{{ 'label.date'|trans }}</h4>
-        <button type="button" class="btn-close" data-bs-dismiss="modal">&times;</button>
-        
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <div class='row'>
-            <form>            
-                {{ 'label.date'|trans }}:<br>
-                <input id='modalDate' class='form-control' type="text" name="date" data-date-format="DD. MM. YYYY" data-date-locale="sl">      
-            </form> 
-        </div>        
+            <form>
+                <label class="form-label" for="modalDate">{{ 'label.date'|trans }}</label>
+                <input id="modalDate" class="form-control" type="text" name="date" data-date-format="DD. MM. YYYY" data-date-locale="sl">
+            </form>
       </div>
       <div class="modal-footer">
-        <button id='submitDate' type="submit" class="btn btn-success" ><i class="fa fa-check" aria-hidden="true"></i> {{ 'action.OK'|trans }}</button>
+        <button id="submitDate" type="submit" class="btn btn-success"><i class="fa fa-check" aria-hidden="true"></i> {{ 'action.OK'|trans }}</button>
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ 'label.close'|trans }}</button>
       </div>
     </div>
-
   </div>
 </div>
-

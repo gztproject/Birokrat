@@ -3,8 +3,7 @@
 {% block body_id 'partner_edit' %}
 
 {% block main %}
-    <h1>{{ 'title.partner_edit'|trans({'%partner%': partner.name}) }}</h1>
-
+    {{ include('components/_page_header.html.twig', { title: 'title.partner_edit'|trans({'%partner%': partner.name}) }) }}
     {{ include('dashboard/partner/_form.html.twig', {
         form: form,        
         button_label: 'action.save'|trans,
@@ -15,7 +14,7 @@
 
 {% block sidebar %}
     <div class="section">
-        <a href="{{ path('partner_show', {id: partner.id}) }}" class="btn btn-sm btn-block btn-success">
+        <a href="{{ path('partner_show', {id: partner.id}) }}" class="btn btn-sm w-100 btn-success">
             <i class="fa fa-eye" aria-hidden="true"></i> {{ 'action.show_partner'|trans }}
         </a>
     </div>

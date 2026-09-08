@@ -3,8 +3,7 @@
 {% block body_id 'dashboard_travelExpense_edit' %}
 
 {% block main %}
-    <h1>{{ 'title.travelExpense_edit'|trans }}</h1>
-
+    {{ include('components/_page_header.html.twig', { title: 'title.travelExpense_edit'|trans }) }}
     {{ include('dashboard/travelExpense/_form.html.twig', {
         form: form,
         button_label: 'label.update_travelExpense'|trans,

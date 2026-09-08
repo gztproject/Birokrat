@@ -3,7 +3,7 @@
 {% block body_id 'report_index' %}
 
 {% block main %}
-<h1>{{ 'title.reports'|trans }}</h1>
+{{ include('components/_page_header.html.twig', { title: 'title.reports'|trans }) }}
 
 <h2>{{ 'title.overview'|trans }}</h2>
 <div class="row">

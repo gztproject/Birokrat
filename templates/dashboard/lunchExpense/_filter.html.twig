@@ -1,12 +1,12 @@
 <form class="bs-component" data-controller="expense-filter" data-expense-filter-table-value="lunchExpensesTable" data-action="submit->expense-filter#apply">
-    <fieldset class="form-group">
+    <fieldset class="mb-3">
         <label class="col-form-label-lg" for="dateFieldFrom">{{ 'label.dateFrom'|trans }}</label>
         <input type="date" id="dateFieldFrom" class="form-control" data-expense-filter-target="from" data-action="change->expense-filter#onFromChange">
         <label class="col-form-label-lg" for="dateFieldTo">{{ 'label.dateTo'|trans }}</label>
         <input type="date" id="dateFieldTo" class="form-control" data-expense-filter-target="to" data-action="change->expense-filter#onToChange">
     </fieldset>
 
-    <fieldset class="form-group">
+    <fieldset class="mb-3">
         <div class="form-check">
           <label class="form-check-label">
             <input class="form-check-input" type="checkbox" id="showBooked" data-expense-filter-target="booked" data-action="change->expense-filter#onBookedChange">
@@ -21,7 +21,7 @@
         </div>
     </fieldset>
 
-    <fieldset class="form-group">
+    <fieldset class="mb-3">
         <button type="button" id="clearFilterBtn" class="btn btn-danger" data-action="expense-filter#clear">{{ 'label.clear' | trans }}</button>
         <button type="button" id="selectAllBtn" class="btn btn-info" data-action="expense-filter#selectAll">{{ 'label.selectAll' | trans }}</button>
     </fieldset>

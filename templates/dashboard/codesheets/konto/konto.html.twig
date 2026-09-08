@@ -3,7 +3,7 @@
 {% block body_id 'konto_index' %}
 
 {% block main %}
-    <h1>{{ 'title.konto'|trans }}</h1>
+    {{ include('components/_page_header.html.twig', { title: 'title.konto'|trans }) }}
     <div class="bs-component">
     {{ include('dashboard/codesheets/konto/_table.html.twig', {
                 kontos: kontos                

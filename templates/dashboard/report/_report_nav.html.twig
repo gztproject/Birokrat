@@ -1,13 +1,16 @@
 {% set q = app.request.query.all %}
-<a href="{{ path('report_index', q) }}" class="btn btn-sm btn-primary mb-1">
-    <i class="fa fa-eye" aria-hidden="true"></i> {{ 'title.overview'|trans }}
-</a>
-<a href="{{ path('report_dddddd', q) }}" class="btn btn-sm btn-primary mb-1">
-    <i class="fa fa-eye" aria-hidden="true"></i> Obračun akontacije dohodnine (DDD-DDD)
-</a>
-<a href="{{ path('report_bilanca', q) }}" class="btn btn-sm btn-primary mb-1">
-    <i class="fa fa-eye" aria-hidden="true"></i> Bilanca
-</a>
-<a href="{{ path('report_turnout', q) }}" class="btn btn-sm btn-primary mb-1">
-    <i class="fa fa-eye" aria-hidden="true"></i> Izkaz poslovnega izida
-</a>
+{% set route = app.request.attributes.get('_route') %}
+<nav class="report-nav nav nav-pills flex-column" aria-label="{{ 'menu.reports'|trans }}">
+    <a href="{{ path('report_index', q) }}" class="nav-link{% if route == 'report_index' %} active{% endif %}">
+        {{ 'title.overview'|trans }}
+    </a>
+    <a href="{{ path('report_dddddd', q) }}" class="nav-link{% if route == 'report_dddddd' %} active{% endif %}">
+        Obračun akontacije dohodnine (DDD-DDD)
+    </a>
+    <a href="{{ path('report_bilanca', q) }}" class="nav-link{% if route == 'report_bilanca' %} active{% endif %}">
+        Bilanca
+    </a>
+    <a href="{{ path('report_turnout', q) }}" class="nav-link{% if route == 'report_turnout' %} active{% endif %}">
+        Izkaz poslovnega izida
+    </a>
+</nav>

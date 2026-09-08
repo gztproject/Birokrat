@@ -3,8 +3,7 @@
 {% block body_id 'admin_user_new' %}
 
 {% block main %}
-    <h1>{{ 'title.user_new'|trans }}</h1>
-
+    {{ include('components/_page_header.html.twig', { title: 'title.user_new'|trans }) }}
    {{ include('admin/user/_form.html.twig', {
         form: form,
         button_label: 'action.save'|trans,

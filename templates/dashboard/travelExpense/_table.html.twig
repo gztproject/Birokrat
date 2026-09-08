@@ -1,69 +1,68 @@
-<table id="travelExpensesTable" class="table table-hover">
+<table id="travelExpensesTable" class="table table-hover align-middle">
         <thead>
             <tr>
-                <th scope="col"><i class="fa fa-calendar" aria-hidden="true"></i>{{ 'label.date'|trans }}</th>
+                <th scope="col"><i class="fa fa-calendar" aria-hidden="true"></i> {{ 'label.date'|trans }}</th>
                 <th scope="col"><i class="fa fa-map-marked-alt" aria-hidden="true"></i> {{ 'label.travelDescription'|trans }}</th>
-                <th scope="col"><i class="fa fa-tape" aria-hidden="true"></i> {{ 'label.distance'|trans }}</th>
-                <th scope="col"><i class="fa fa-coins" aria-hidden="true"></i> {{ 'label.cost'|trans }}</th>
-                <th scope="col" class="text-center"><i class="fa fa-cogs" aria-hidden="true"></i> {{ 'label.actions'|trans }}</th>
+                <th scope="col" class="text-end"><i class="fa fa-tape" aria-hidden="true"></i> {{ 'label.distance'|trans }}</th>
+                <th scope="col" class="text-end"><i class="fa fa-coins" aria-hidden="true"></i> {{ 'label.cost'|trans }}</th>
+                <th scope="col" class="text-end"><i class="fa fa-cogs" aria-hidden="true"></i> {{ 'label.actions'|trans }}</th>
             </tr>
         </thead>
         <tbody>
     {% for travelExpense in travelExpenses %}
-            <tr class="table-primary">
+            <tr>
                 <td>{{ travelExpense.dateString }}</td>
                 <td>{{ travelExpense.travelDescription }}</td>
-                <td>{{ travelExpense.totalDistance | format_number({fraction_digit:2}) }} km</td> 
-                <td>{{ (travelExpense.totalDistance * travelExpense.rate) | money}} </td>                
-                <td>
-                    <div class="item-actions">
-                        <a href="{{ path('travelExpense_show', {'id': travelExpense.id}) }}" class="btn btn-sm btn-primary">
-                            <i class="fa fa-eye" aria-hidden="true"></i> {{ 'action.show'|trans }}
-                        </a>
-                        <a href="{{ path('travelExpense_edit', {'id': travelExpense.id}) }}" class="btn btn-sm btn-primary">
-                            <i class="fa fa-edit" aria-hidden="true"></i> {{ 'action.edit'|trans }}
-                        </a>
-                        <a href="{{ path('travelExpense_clone', {'id': travelExpense.id}) }}" class="btn btn-sm btn-primary">
-                            <i class="fa fa-copy" aria-hidden="true"></i> {{ 'action.clone'|trans }}
-                        </a>
-                        {% if ShowCBs is defined and ShowCBs == true%}                            
-                            <input class="form-check-input TECheckBox" type="checkbox" value={{ travelExpense.id }}>                                    
-                        {% endif %}
-                    </div>
+                <td class="tabular-nums">{{ travelExpense.totalDistance | format_number({fraction_digit:2}) }} km</td>
+                <td class="money">{{ (travelExpense.totalDistance * travelExpense.rate) | money}} </td>
+                <td class="text-end">
+                    {% embed 'components/_action_menu.html.twig' %}
+                        {% block primary %}
+                            <a href="{{ path('travelExpense_show', {'id': travelExpense.id}) }}" class="btn btn-sm btn-primary">
+                                <i class="fa fa-eye" aria-hidden="true"></i> {{ 'action.show'|trans }}
+                            </a>
+                            {% if ShowCBs is defined and ShowCBs == true %}
+                                <input class="form-check-input TECheckBox" type="checkbox" value={{ travelExpense.id }}>
+                            {% endif %}
+                        {% endblock %}
+                        {% block more %}
+                            <li>
+                                <a class="dropdown-item" href="{{ path('travelExpense_edit', {'id': travelExpense.id}) }}">
+                                    <i class="fa fa-edit" aria-hidden="true"></i> {{ 'action.edit'|trans }}
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="{{ path('travelExpense_clone', {'id': travelExpense.id}) }}">
+                                    <i class="fa fa-copy" aria-hidden="true"></i> {{ 'action.clone'|trans }}
+                                </a>
+                            </li>
+                        {% endblock %}
+                    {% endembed %}
                 </td>
             </tr>
         {% else %}
-            <tr class="table-warning">
-                <td colspan="4" align="center">{{ 'travelExpense.no_travelExpenses_found'|trans }}</td>
-           </tr>
-        {% endfor %}    
+            {{ include('components/_empty_state.html.twig', { colspan: 5, message: 'travelExpense.no_travelExpenses_found'|trans }) }}
+        {% endfor %}
     </tbody>
 </table>
-   
-<!-- Modal -->
-<div id="dateModal" class="modal fade" role="dialog">
-  <div class="modal-dialog">
 
-    <!-- Modal content-->
+<div id="dateModal" class="modal fade" role="dialog" tabindex="-1">
+  <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
         <h4 class="modal-title">{{ 'label.date'|trans }}</h4>
-        <button type="button" class="btn-close" data-bs-dismiss="modal">&times;</button>
-        
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <div class='row'>
-            <form>            
-                {{ 'label.date'|trans }}:<br>
-                <input id='modalDate' class='form-control' type="text" name="date" data-date-format="DD. MM. YYYY" data-date-locale="sl">      
-            </form> 
-        </div>        
+            <form>
+                <label class="form-label" for="modalDate">{{ 'label.date'|trans }}</label>
+                <input id="modalDate" class="form-control" type="text" name="date" data-date-format="DD. MM. YYYY" data-date-locale="sl">
+            </form>
       </div>
       <div class="modal-footer">
-        <button id='submitDate' type="submit" class="btn btn-success" ><i class="fa fa-check" aria-hidden="true"></i> {{ 'action.OK'|trans }}</button>
+        <button id="submitDate" type="submit" class="btn btn-success"><i class="fa fa-check" aria-hidden="true"></i> {{ 'action.OK'|trans }}</button>
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ 'label.close'|trans }}</button>
       </div>
     </div>
-
   </div>
 </div>

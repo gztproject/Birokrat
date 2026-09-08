@@ -3,8 +3,7 @@
 {% block body_id 'travelExpense_show' %}
 
 {% block main %}
-    <h1>{{ travelExpense.TravelDescription }}</h1>
-    
+    {{ include('components/_page_header.html.twig', { title: travelExpense.TravelDescription }) }}
     {% endblock %}
 
 {% block sidebar %}

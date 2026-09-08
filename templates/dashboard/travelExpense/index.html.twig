@@ -3,7 +3,7 @@
 {% block body_id 'travelExpense_index' %}
 
 {% block main %}
-    <h1>{{ 'title.travelExpenses'|trans }} ({{ pagination.getTotalItemCount }})</h1>
+    {{ include('components/_page_header.html.twig', { title: 'title.travelExpenses'|trans, count: pagination.getTotalItemCount }) }}
     <div class="bs-component" data-controller="expense-bundle" data-expense-bundle-url-value="/dashboard/travelExpense/bookInBundle/withFilter">
     {{ include('dashboard/travelExpense/_table.html.twig', {
             travelExpenses: pagination,
@@ -22,11 +22,11 @@
                     <h5 class="mb-1">{{ "label.actions" | trans }}</h5>
                 </div>
                 <div id="actions" class="row">
-                    <a href="{{ path('travelExpense_new') }}" class="btn btn-block btn-success">
+                    <a href="{{ path('travelExpense_new') }}" class="btn w-100 btn-success">
                         <i class="fa fa-plus" aria-hidden="true"></i> {{ 'action.create_travelExpense'|trans }}
                     </a>
-                    <button type="button" id="bookCheckedTEs" class="btn btn-info btn-block">{{ 'action.bookSelectedTravelExpenses' | trans }}</button>
-                    <button type="button" id="bookVisibleTEs" class="btn btn-info btn-block" data-action="expense-bundle#bookVisible">{{ 'action.bookVisibleTravelExpenses' | trans }}</button>
+                    <button type="button" id="bookCheckedTEs" class="btn btn-info w-100">{{ 'action.bookSelectedTravelExpenses' | trans }}</button>
+                    <button type="button" id="bookVisibleTEs" class="btn btn-info w-100" data-action="expense-bundle#bookVisible">{{ 'action.bookVisibleTravelExpenses' | trans }}</button>
                 </div>
             </div>
             </br>

@@ -4,7 +4,7 @@
 }) }}
     <div class="row">
         <div class="col-sm-6">
-            <div class="form-group">                    
+            <div class="mb-3">                    
                 {{ form_label(form.organization, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}
                 <div class='input-group'>
                     {% if not hasDocument %}
@@ -17,7 +17,7 @@
             </div>            
         </div>
         <div class="col-sm-6">
-            <div class="form-group">
+            <div class="mb-3">
              {{ form_label(form.date, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}
                 <div class='input-group date' id='TransactionDatePicker'>               
                     {% if not hasDocument %}
@@ -35,7 +35,7 @@
     {% if include_templates %}
     <div class="row">
         <div class="col-sm-12">
-             <div class="form-group"> 
+             <div class="mb-3"> 
                 <label class='col-form-label-lg' for='transaction_presets' >{{ 'label.presets'|trans }}</label> 
                 <div class='input-group'>
                     <select id="transaction_presets" class="form-control" name="transaction[preset]" data-transaction-form-target="preset" data-action="change->transaction-form#applyPreset">
@@ -65,7 +65,7 @@
     {% endif %}
     <div class="row">
         <div class="col-sm-6">
-            <div class="form-group">                    
+            <div class="mb-3">                    
                 {{ form_label(form.debitKonto, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}
                     <div class='input-group'>
                         {{ form_widget(form.debitKonto, {'attr': {'class': 'form-control', 'data-transaction-form-target': 'debit'}}) }}                
@@ -73,7 +73,7 @@
             </div>            
         </div>
         <div class="col-sm-6">
-            <div class="form-group">                    
+            <div class="mb-3">                    
                 {{ form_label(form.creditKonto, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}
                     <div class='input-group'>
                         {{ form_widget(form.creditKonto, {'attr': {'class': 'form-control', 'data-transaction-form-target': 'credit'}}) }}                
@@ -83,7 +83,7 @@
     </div>
     <div class="row">
         <div class="col-sm-5">
-            <div class="form-group">                    
+            <div class="mb-3">                    
                 {{ form_label(form.sum, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}
                     <div class='input-group'>
                     {% if not hasDocument %}
@@ -96,7 +96,7 @@
         </div>
         {% if form.bankCost is defined %}
         <div class="col-sm-4">
-            <div class="form-group">
+            <div class="mb-3">
                 {{ form_label(form.bankCost, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}
                 <div class='input-group'>
                     {{ form_widget(form.bankCost, {'attr': {'class': 'form-control'}}) }}
@@ -105,7 +105,7 @@
         </div>
         {% endif %}
         <div class="col-sm-6">
-            <div class="form-group">                    
+            <div class="mb-3">                    
                 {{ form_label(form.description, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}                
                     <div class='input-group'>
                     {% if not hasDocument %}
@@ -118,7 +118,7 @@
             </div>            
         </div>
         <div class="col-sm-1">
-            <div class="form-group">                    
+            <div class="mb-3">                    
                 {{ form_label(form.hidden, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}
                     <div class='input-group'>
                         {{ form_widget(form.hidden, {'attr': {'class': 'form-control'}}) }}                
@@ -126,7 +126,7 @@
             </div>            
         </div>
     </div>
-    <div class="form-group">
+    <div class="mb-3">
             <button type="submit" class="btn btn-primary">
                 <i class="fa fa-save" aria-hidden="true"></i> {{ button_label }}
             </button>  

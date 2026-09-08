@@ -3,9 +3,7 @@
 {% block body_id entity ~ '_new' %}
 
 {% block main %}
-    <h1>{{ 'title.' ~ entity ~ '_new'|trans }}</h1>
-    
-    
+    {{ include('components/_page_header.html.twig', { title: 'title.' ~ entity ~ '_new'|trans }) }}
     {{ include('dashboard/organization/_form.html.twig', {
         form: form,
         entity: entity,

@@ -3,7 +3,7 @@
 {% block body_id entity ~ '_index' %}
 
 {% block main %}
-    <h1>{{ 'title.organization_list'|trans }}</h1>
+    {{ include('components/_page_header.html.twig', { title: 'title.organization_list'|trans }) }}
     
     
     <div class="bs-component">
@@ -25,7 +25,7 @@
                 <td>{{ organization.address.fullAddress }}</td>
                 <td>{{ organization.fullTaxNumber }}</td>
                 <td>{{ organization.taxable ? '<i class="fa fa-check" aria-hidden="true"></i>' : ''}}</td>
-                <td class="text-right">
+                <td class="text-end">
                     <div class="item-actions">
                         <a href="{{ path(entity ~ '_show', {'id': organization.id}) }}" class="btn btn-sm btn-secondary">
                             <i class="fa fa-eye" aria-hidden="true"></i> {{ 'action.show'|trans }}
@@ -49,7 +49,7 @@
 
 {% block sidebar %}
     <div class="section actions">
-        <a href="{{ path(entity ~ '_new') }}" class="btn btn-sm btn-block btn-success">
+        <a href="{{ path(entity ~ '_new') }}" class="btn btn-sm w-100 btn-success">
             <i class="fa fa-plus" aria-hidden="true"></i> {{ 'action.create_' ~ entity|trans }}
         </a>
     </div>
