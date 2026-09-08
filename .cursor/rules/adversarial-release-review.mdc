@@ -1,0 +1,26 @@
+---
+description: Adversarial multi-model review is required before version tags and releases
+alwaysApply: true
+---
+
+# Adversarial review before release
+
+Do not create a version tag, GitHub Release, or production deploy until this gate passes.
+
+## When
+
+- Tagging `master` as a release (`X.Y.Z`).
+- Tagging `dev` as a pre-release (`X.Y.Z-<pre>.N`).
+- User asks to release, ship, or cut a version.
+
+Not required for ordinary topic-branch commits. Still run it if the user asks for a review.
+
+## How
+
+1. Read and follow the `adversarial-multimodel-review` skill (plugin) and the project `release-gate` skill.
+2. Evidence packet in `.adversarial-review/` (gitignored). Diff base: `master` for a release, `dev` for a pre-release — the actual ship-against ref, not a guess.
+3. Target decision: **deploy** for `master`, **merge/tag** for `dev`.
+4. Tag only on `SAFE TO COMMIT` or `SAFE TO DEPLOY AFTER RUNTIME CHECK` (runtime checks done). Otherwise fix or stop.
+5. Do not auto-launch a third critic round without explicit user confirmation.
+
+Use `/mm-review` or: "Use the adversarial-multimodel-review skill to review this release."
