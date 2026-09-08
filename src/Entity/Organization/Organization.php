@@ -31,6 +31,7 @@ class Organization extends LegalEntityBase
     public function __construct(CreateOrganizationCommand $c, User $user)
     {
     	parent::__construct($user);
+    	$this->users = new ArrayCollection();
     	$this->code = $c->code;
     	$this->name = $c->name;
     	$this->taxNumber = $c->taxNumber;

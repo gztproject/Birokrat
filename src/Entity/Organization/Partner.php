@@ -48,6 +48,8 @@ class Partner extends LegalEntityBase
 			$this->bic = $c->bic;
 		$this->isClient = $c->isClient;
 		$this->isSupplier = $c->isSupplier;
+		$this->invoices = new \Doctrine\Common\Collections\ArrayCollection();
+		$this->incomingInvoices = new \Doctrine\Common\Collections\ArrayCollection();
 	}
 	
 	public function update (UpdatePartnerCommand $c, User $user): Partner

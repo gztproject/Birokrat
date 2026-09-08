@@ -8,6 +8,7 @@ use App\Entity\Organization\Organization;
 use App\Entity\Organization\Partner;
 use App\Entity\User\User;
 use App\Entity\Invoice\CreateInvoiceCommand;
+use App\Entity\Invoice\CreateInvoiceItemCommand;
 use App\Entity\Invoice\Invoice;
 use App\Entity\Konto\Konto;
 use App\Entity\Settings\OrganizationSettings;
@@ -25,6 +26,30 @@ class InvoiceTest extends TestCase
 		$this->assertEquals(10, $inv->getDueInDays());
 		$this->assertEquals(0, $inv->getTotalValue());
 		$this->assertEquals(10, $inv->getState());
+	}
+
+	public function testCreateInvoiceItemUpdatesTotals(): void
+	{
+		$inv = $this->createInvoice($this->createMock(User::class), $this->stubIssuer(), $this->stubPartner());
+		$item = new CreateInvoiceItemCommand();
+		$item->code = '1';
+		$item->name = 'Work';
+		$item->quantity = 2;
+		$item->unit = 'h';
+		$item->price = 50;
+		$item->discount = 0;
+
+		$inv->createInvoiceItem($item);
+
+		$this->assertEquals(1, $inv->getInvoiceItems()->count());
+		$this->assertEquals(100, $inv->getTotalValue());
+	}
+
+	public function testCancelNewInvoice(): void
+	{
+		$inv = $this->createInvoice($this->createMock(User::class), $this->stubIssuer(), $this->stubPartner());
+		$inv->cancel('duplicate');
+		$this->assertEquals(40, $inv->getState());
 	}
 
 	public function testIssueInvoice()

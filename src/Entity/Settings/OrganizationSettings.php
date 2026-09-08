@@ -97,6 +97,8 @@ class OrganizationSettings extends Base
     {
     	parent::__construct($user);
     	$this->organization = $organization;
+    	$this->autoCreatePerDiem = false;
+    	$this->autoCreateLunch = false;
     	$this->defaultPaymentDueIn = $c->defaultPaymentDueIn;
     	$this->invoicePrefix = $c->invoicePrefix;
     	$this->referenceModel = $c->referenceModel;

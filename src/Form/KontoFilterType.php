@@ -22,7 +22,7 @@ class KontoFilterType extends AbstractType
         		'label' => 'label.kontoClass',
         ));
             
-        $formModifier = function (FormInterface $form, KontoClass $class = null) {
+        $formModifier = function (FormInterface $form, ?KontoClass $class = null) {
             $categories = null === $class ? array() : $class->getCategories();
                 
             $form->add('kontoCategories', EntityType::class, array(
