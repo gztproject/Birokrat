@@ -48,8 +48,10 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
+         - { path: ^/2fa, roles: ROLE_USER }
          - { path: ^/admin, roles: ROLE_ADMIN }
          - { path: ^/dashboard, roles: ROLE_USER }
+         - { path: ^/user/2fa, roles: ROLE_USER }
          
     role_hierarchy:
         ROLE_ADMIN: ROLE_USER

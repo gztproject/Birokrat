@@ -26,4 +26,10 @@
 
     {{ parent() }}
 
+    <div class="section">
+        <a href="{{ path('user_2fa_setup') }}" class="btn btn-sm btn-block btn-info">
+            {{ 'label.totp'|trans }}
+        </a>
+    </div>
+
 {% endblock %}
