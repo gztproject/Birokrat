@@ -38,3 +38,6 @@ src/DataFixtures/InitData/users.tsv
 
 # Adversarial review evidence packets (local only)
 .adversarial-review/
+
+# Symfony dumped PHP config reference (auto-generated)
+/config/reference.php
