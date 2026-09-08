@@ -1,7 +1,6 @@
 # Dependabot reads this file from the default branch (`master`) only.
 # Version-update PRs target `dev`. Security-update PRs always target `master`
-# and ignore target-branch, so those automated PRs stay disabled until master
-# carries the current stack.
+# and ignore target-branch.
 version: 2
 updates:
   - package-ecosystem: composer
