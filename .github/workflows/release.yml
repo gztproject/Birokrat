@@ -1,0 +1,30 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - '*.*.*'
+
+permissions:
+  contents: write
+
+jobs:
+  ci:
+    uses: ./.github/workflows/php.yml
+
+  release:
+    needs: ci
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          if [[ "$TAG" == *-* ]]; then
+            gh release create "$TAG" --title "$TAG" --generate-notes --prerelease
+          else
+            gh release create "$TAG" --title "$TAG" --generate-notes
+          fi
