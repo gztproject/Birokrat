@@ -82,6 +82,9 @@
 			"App\\Tests\\" : "tests/"
 		}
 	},
+	"scripts" : {
+		"test" : "php bin/phpunit"
+	},
 	"replace" : {
 		"paragonie/random_compat" : "2.*",
 		"symfony/polyfill-ctype" : "*",
