@@ -24,6 +24,26 @@ class PartnerEmailMergeTest extends TestCase
         $this->assertSame('Računovodstvo <acc@z.com>', $partner->formatCcList());
     }
 
+    public function testFormatCcListDoesNotThrowOnOutlookStyleExtraMailbox(): void
+    {
+        $partner = $this->partner('a@x.com');
+        $extra = new CreatePartnerEmailCommand();
+        $extra->email = 'Računovodstvo <acc@z.com>';
+        $partner->createExtraEmail($extra, $partner->getCreatedBy());
+
+        $this->assertSame('Računovodstvo <acc@z.com>', $partner->formatCcList());
+    }
+
+    public function testFormatCcListSkipsInvalidExtraMailbox(): void
+    {
+        $partner = $this->partner('a@x.com');
+        $extra = new CreatePartnerEmailCommand();
+        $extra->email = 'not-an-email';
+        $partner->createExtraEmail($extra, $partner->getCreatedBy());
+
+        $this->assertSame('', $partner->formatCcList());
+    }
+
     public function testMergeUpdatesPrimaryAndAddsCcExtras(): void
     {
         $partner = $this->partner('old@x.com');

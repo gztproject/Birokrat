@@ -175,11 +175,10 @@ class Partner extends LegalEntityBase
 		$parser = new RecipientListParser();
 		$addresses = [];
 		foreach ($this->extraEmails as $extra) {
-			$display = trim((string) $extra->getName());
-			if ($display === '') {
-				$display = trim((string) $extra->getRole());
+			$address = $this->extraToAddress($extra);
+			if ($address instanceof Address) {
+				$addresses[] = $address;
 			}
-			$addresses[] = new Address($extra->getEmail(), $display);
 		}
 
 		return $parser->formatList($addresses);
@@ -230,7 +229,11 @@ class Partner extends LegalEntityBase
 		}
 		$extras = [];
 		foreach ($this->extraEmails as $extra) {
-			$extras[] = new Address($extra->getEmail());
+			$address = $this->extraToAddress($extra);
+			if (!$address instanceof Address) {
+				return true;
+			}
+			$extras[] = $address;
 		}
 
 		return $parser->mailboxSet($extras) !== $parser->mailboxSet($cc);
@@ -290,6 +293,32 @@ class Partner extends LegalEntityBase
 				$this->extraEmails->removeElement($extra);
 			}
 		}
+	}
+
+	private function extraToAddress(PartnerEmail $extra): ?Address
+	{
+		$raw = trim((string) $extra->getEmail());
+		if ($raw === '') {
+			return null;
+		}
+		try {
+			$parsed = (new RecipientListParser())->parse($raw);
+		} catch (\InvalidArgumentException) {
+			return null;
+		}
+		if ($parsed === []) {
+			return null;
+		}
+		$address = $parsed[0];
+		$display = trim((string) $extra->getName());
+		if ($display === '') {
+			$display = trim((string) $extra->getRole());
+		}
+		if ($display !== '' && $address->getName() === '') {
+			return new Address($address->getAddress(), $display);
+		}
+
+		return $address;
 	}
 
 	private function findExtraByMailbox(string $email): ?PartnerEmail

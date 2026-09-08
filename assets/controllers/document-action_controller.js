@@ -108,7 +108,14 @@ export default class extends Controller {
             return;
         }
         Modal.getOrCreateInstance(emailModal).show();
-        document.getElementById('sendEmailBtn')?.addEventListener('click', async () => {
+        const sendEmailBtn = document.getElementById('sendEmailBtn');
+        if (!sendEmailBtn) {
+            return;
+        }
+        if (this.sendEmailClick) {
+            sendEmailBtn.removeEventListener('click', this.sendEmailClick);
+        }
+        this.sendEmailClick = async () => {
             const to = document.getElementById('emailInput')?.value ?? '';
             const cc = document.getElementById('ccInput')?.value ?? '';
             const response = await postForm(this.sendUrlValue, {
@@ -154,7 +161,8 @@ export default class extends Controller {
                 extra.append(edit);
             }
             notify(result.data[0], extra);
-        }, { once: true });
+        };
+        sendEmailBtn.addEventListener('click', this.sendEmailClick);
     }
 
     openRow(event) {

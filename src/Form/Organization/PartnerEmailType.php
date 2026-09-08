@@ -8,6 +8,7 @@ use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Email;
 
 class PartnerEmailType extends AbstractType
 {
@@ -23,6 +24,7 @@ class PartnerEmailType extends AbstractType
                 'required' => false,
                 'attr' => ['class' => 'form-control', 'placeholder' => 'email'],
                 'row_attr' => ['class' => 'col-sm-4'],
+                'constraints' => [new Email()],
             ])
             ->add('name', TextType::class, [
                 'label' => false,

@@ -49,15 +49,18 @@ class TwoFactorController extends AbstractController
         $session = $request->getSession();
         $error = null;
         if ($request->isMethod('POST') && $request->request->get('disable')) {
-            $user->disableTotp();
-            $doctrine->getManager()->flush();
-            $session->remove('2fa_setup_secret');
-            $this->addFlash('success', '2FA disabled.');
+            $code = (string) $request->request->get('code', '');
+            if (!$user->isTotpEnabled() || !Totp::verify((string) $user->getTotpSecret(), $code)) {
+                $error = 'Invalid authentication code.';
+            } else {
+                $user->disableTotp();
+                $doctrine->getManager()->flush();
+                $session->remove('2fa_setup_secret');
+                $this->addFlash('success', '2FA disabled.');
 
-            return $this->redirectToRoute('user_2fa_setup');
-        }
-
-        if ($request->isMethod('POST')) {
+                return $this->redirectToRoute('user_2fa_setup');
+            }
+        } elseif ($request->isMethod('POST')) {
             $secret = (string) $session->get('2fa_setup_secret', '');
             $code = (string) $request->request->get('code', '');
             if ($secret !== '' && Totp::verify($secret, $code)) {
