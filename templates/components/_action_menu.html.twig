@@ -1,0 +1,14 @@
+<div class="item-actions">
+    {% block primary %}{% endblock %}
+    {% set more_content = block('more') %}
+    {% if more_content|trim is not empty %}
+        <div class="dropdown">
+            <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                {{ 'action.more'|trans }}
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end">
+                {{ more_content|raw }}
+            </ul>
+        </div>
+    {% endif %}
+</div>

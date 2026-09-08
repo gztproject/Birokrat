@@ -1,0 +1,17 @@
+{% set badge_class = {
+    'draft': 'text-bg-secondary',
+    'issued': 'text-bg-info',
+    'overdue': 'text-bg-warning',
+    'paid': 'text-bg-success',
+    'cancelled': 'text-bg-danger',
+    'rejected': 'text-bg-danger',
+}[status]|default('text-bg-secondary') %}
+{% set badge_label = {
+    'draft': 'label.draft',
+    'issued': 'label.issued',
+    'overdue': 'label.overdue',
+    'paid': 'label.paid',
+    'cancelled': 'label.cancelled',
+    'rejected': 'action.reject',
+}[status]|default('label.draft') %}
+<span class="badge rounded-pill status-badge {{ badge_class }}">{{ badge_label|trans }}</span>

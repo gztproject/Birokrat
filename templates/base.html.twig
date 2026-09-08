@@ -1,13 +1,23 @@
 <!DOCTYPE html>
-<html lang="{{ app.request.locale }}">
+<html lang="{{ app.request.locale }}" data-bs-theme="light">
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1"/>
         <title>{% block title %}GZT Birokrat{% endblock %}</title>
-        
-        {% block stylesheets %} 
-        
-            {{ encore_entry_link_tags('css/app') }}        
+        <script>
+            (function () {
+                try {
+                    var mode = localStorage.getItem('birokrat-theme') || 'system';
+                    var theme = (mode === 'dark' || mode === 'light')
+                        ? mode
+                        : (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+                    document.documentElement.setAttribute('data-bs-theme', theme);
+                } catch (e) {}
+            })();
+        </script>
+
+        {% block stylesheets %}
+            {{ encore_entry_link_tags('css/app') }}
             {{ encore_entry_link_tags('css/copyleft') }}
         {% endblock %}
 
@@ -15,31 +25,34 @@
     </head>
 
     <body id="{% block body_id %}{% endblock %}" data-controller="confirm" data-action="submit->confirm#intercept">
-
+        {% set current_route = app.request.attributes.get('_route') %}
         {% block header %}
-            <header class="{{ app.environment }}"> 
-                <nav class="navbar navbar-expand-md fixed-top navbar-dark bg-primary {{ app.environment }}" role="navigation">
+            <header>
+                <nav class="navbar navbar-expand-md fixed-top app-navbar {{ app.environment }}" role="navigation">
                     <div class="container-fluid">
-                        <a href="{{ path('dashboard_index') }}" class="navbar-brand">Birokrat</a>                       
-                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                        <a href="{{ path('dashboard_index') }}" class="navbar-brand">
+                            Birokrat
+                            {% if app.environment == 'dev' %}
+                                <span class="env-badge">DEV</span>
+                            {% endif %}
+                        </a>
+                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="{{ 'menu.toggle_nav'|trans }}">
                             <span class="navbar-toggler-icon"></span>
                         </button>
                         <div class="navbar-collapse collapse" id="navbarResponsive">
                             <ul class="navbar-nav">
-
                                 {% if app.user %}
-                                    <li class="nav-item active">
-                                        <a class="nav-link" href="{{ path('dashboard_index') }}">
+                                    <li class="nav-item">
+                                        <a class="nav-link{% if current_route == 'dashboard_index' %} active{% endif %}" href="{{ path('dashboard_index') }}">
                                             <i class="fa fa-home" aria-hidden="true"></i> {{ 'menu.home'|trans }}
                                         </a>
                                     </li>
-                                {% endif %}    
+                                {% endif %}
                                 {% block header_navigation_links %}
-                                                                    
                                     {% if is_granted('ROLE_ADMIN') %}
                                         <li class="nav-item dropdown">
-                                            <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="{{ path('admin_index') }}">
-                                                <i class="fa fa-lock" aria-hidden="true"></i> {{ 'menu.admin'|trans }}                                                
+                                            <a class="nav-link dropdown-toggle{% if current_route starts with 'admin_' %} active{% endif %}" data-bs-toggle="dropdown" href="{{ path('admin_index') }}">
+                                                <i class="fa fa-lock" aria-hidden="true"></i> {{ 'menu.admin'|trans }}
                                             </a>
                                             <div class="dropdown-menu" aria-labelledby="admin">
                                                 <a class="dropdown-item" href="{{ path('admin_index') }}">{{ 'menu.admin'|trans }}</a>
@@ -51,7 +64,29 @@
                                 {% endblock %}
                             </ul>
                             <ul class="navbar-nav ms-auto">
-                                {% if app.user %}                                                                 
+                                <li class="nav-item dropdown" data-controller="theme">
+                                    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" id="themeMenu">
+                                        <i class="fa fa-adjust" aria-hidden="true"></i> {{ 'theme.label'|trans }}
+                                    </a>
+                                    <ul class="dropdown-menu dropdown-menu-end" role="menu" aria-labelledby="themeMenu">
+                                        <li>
+                                            <a class="dropdown-item" href="#" data-theme-target="option" data-theme-value="light" data-action="theme#light" role="menuitemradio">
+                                                <i class="fa fa-sun" aria-hidden="true"></i> {{ 'theme.light'|trans }}
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="#" data-theme-target="option" data-theme-value="dark" data-action="theme#dark" role="menuitemradio">
+                                                <i class="fa fa-moon" aria-hidden="true"></i> {{ 'theme.dark'|trans }}
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" href="#" data-theme-target="option" data-theme-value="system" data-action="theme#system" role="menuitemradio">
+                                                <i class="fa fa-desktop" aria-hidden="true"></i> {{ 'theme.system'|trans }}
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                {% if app.user %}
                                     <li class="nav-item dropdown">
                                         <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">
                                             <i class="fa fa-user" aria-hidden="true"></i>
@@ -71,56 +106,54 @@
                                             </li>
                                         </ul>
                                     </li>
-                                
-                              <li class="nav-item dropdown"><a href="#"
-                            class="nav-link dropdown-toggle" data-bs-toggle="dropdown"
-                            aria-expanded="false" id="locales"> <i class="fa fa-globe"
-                                aria-hidden="true"></i> {{ app.request.locale }}
-                        </a>
-                            <div class="dropdown-menu" aria-labelledby="locales">
-                                {% for locale in locales|split('|') %}
-                                <a class="dropdown-item" {% if app.request.locale == locale %}
-                                    aria-checked="true" {% else %} aria-checked="false" {% endif %}
-                                    href="{{ path(app.request.attributes.get('_route', 'dashboard_index'), app.request.attributes.get('_route_params', {})|merge({_locale: locale})) }}">{{ locale|locale_name|capitalize }}</a>
-                                {% endfor %}
-                            </div></li>
+                                    <li class="nav-item dropdown">
+                                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" id="locales">
+                                            <i class="fa fa-globe" aria-hidden="true"></i> {{ app.request.locale }}
+                                        </a>
+                                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="locales">
+                                            {% for locale in locales|split('|') %}
+                                                <a class="dropdown-item" {% if app.request.locale == locale %}aria-checked="true"{% else %}aria-checked="false"{% endif %}
+                                                    href="{{ path(app.request.attributes.get('_route', 'dashboard_index'), app.request.attributes.get('_route_params', {})|merge({_locale: locale})) }}">
+                                                    {{ locale|locale_name|capitalize }}
+                                                </a>
+                                            {% endfor %}
+                                        </div>
+                                    </li>
                                 {% endif %}
                             </ul>
                         </div>
                     </div>
                 </nav>
-            </header>            
+            </header>
         {% endblock %}
 
-        <div id="main_container" class="container-fluid">            
+        <div id="main_container" class="container-fluid">
             {% block body %}
-                <div class="row">                    
-                    <div id="main" class="col-sm-9">  
-                    {{ include('default/_flash_messages.html.twig') }}                      
+                <div class="row g-4">
+                    <div id="main" class="col-lg-9">
+                        {{ include('default/_flash_messages.html.twig') }}
                         {% block main %}
-                        
                         {% endblock %}
                     </div>
 
-                    <div id="sidebar" class="col-sm-3">
-                        {% block sidebar %}
-                            
-                        {% endblock %}
+                    <div id="sidebar" class="col-lg-3">
+                        <div class="sidebar-panel">
+                            {% block sidebar %}
+                            {% endblock %}
+                        </div>
                     </div>
-                </div>                
+                </div>
             {% endblock %}
-            
         </div>
 
         {% block footer %}
-            <footer class="page-footer font-small stylish-color-dark pt-4">
+            <footer class="app-footer">
                 <div class="container">
                     <div class="row">
-                        <div id="footer-copyright" class="col-md-6">                        
-                            <p><span class="copyleft">&copy;</span> 2018 - {{ 'now'|date('Y') }}  GZT Project</p>
+                        <div id="footer-copyright" class="col-md-6">
+                            <p class="mb-0"><span class="copyleft">&copy;</span> 2018 - {{ 'now'|date('Y') }} GZT Project</p>
                         </div>
-                        <div id="footer-resources" class="col-md-6">                            
-                        </div>
+                        <div id="footer-resources" class="col-md-6"></div>
                     </div>
                 </div>
             </footer>

@@ -3,7 +3,7 @@
 {% block body_id 'admin_index' %}
 
 {% block main %}
-    <h1>{{ 'title.admin'|trans }}</h1>
+    {{ include('components/_page_header.html.twig', { title: 'title.admin'|trans }) }}
     
 {% endblock %}
 

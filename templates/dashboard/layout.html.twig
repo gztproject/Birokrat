@@ -1,5 +1,7 @@
 {% extends 'base.html.twig' %}
 
+{% set current_route = app.request.attributes.get('_route') %}
+
 {% block stylesheets %}
     {{ parent() }}
     {{ encore_entry_link_tags('css/dashboard') }}
@@ -7,7 +9,7 @@
 
 {% block header_navigation_links %}
     <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false" id="invoices">
+        <a class="nav-link dropdown-toggle{% if current_route starts with 'invoice_' or current_route starts with 'incomingInvoice_' %} active{% endif %}" href="#" data-bs-toggle="dropdown" aria-expanded="false" id="invoices">
             <i class="fa fa-receipt" aria-hidden="true"></i>
             {{ 'menu.invoices'|trans }}
         </a>
@@ -23,13 +25,13 @@
                 </a>
             </li>
         </ul>
-    </li>  
-    
+    </li>
+
     <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false" id="expenses">
+        <a class="nav-link dropdown-toggle{% if current_route starts with 'travelExpense_' or current_route starts with 'lunchExpense_' %} active{% endif %}" href="#" data-bs-toggle="dropdown" aria-expanded="false" id="expenses">
             <i class="fas fa-funnel-dollar"></i>
             {{ 'menu.expenses'|trans }}
-        </a>        
+        </a>
         <ul class="dropdown-menu" role="menu" aria-labelledby="expenses">
             <li>
                 <a class="dropdown-item" href="{{ path('travelExpense_index') }}">
@@ -42,13 +44,13 @@
                 </a>
             </li>
         </ul>
-    </li>  
-    
+    </li>
+
     <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false" id="reports">
+        <a class="nav-link dropdown-toggle{% if current_route starts with 'report_' or current_route starts with 'transaction_' %} active{% endif %}" href="#" data-bs-toggle="dropdown" aria-expanded="false" id="reports">
             <i class="fa fa-file" aria-hidden="true"></i>
             {{ 'menu.reports'|trans }}
-        </a>        
+        </a>
         <ul class="dropdown-menu" role="menu" aria-labelledby="reports">
             <li>
                 <a class="dropdown-item" href="{{ path('report_index') }}">
@@ -60,10 +62,10 @@
                     <i class="fa fa-file" aria-hidden="true"></i> {{ 'menu.transactions'|trans }}
                 </a>
             </li>
-        </ul>    
-    </li>  
+        </ul>
+    </li>
     <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false" id="codesheets">
+        <a class="nav-link dropdown-toggle{% if current_route starts with 'organization_' or current_route starts with 'partner_' or current_route starts with 'konto_' or current_route starts with 'post_' or current_route starts with 'country_' %} active{% endif %}" href="#" data-bs-toggle="dropdown" aria-expanded="false" id="codesheets">
             <i class="fa fa-user" aria-hidden="true"></i>
             {{ 'menu.codesheets'|trans }}
         </a>
@@ -77,12 +79,12 @@
                 <a class="dropdown-item" href="{{ path('partner_index')}}">
                     <i class="fa fa-tasks" aria-hidden="true"></i> {{ 'menu.clients'|trans }}
                 </a>
-            </li>            
+            </li>
             <li>
                 <a class="dropdown-item" href="{{ path('konto_index') }}">
                     <i class="fa fa-box" aria-hidden="true"></i> {{ 'menu.kontos'|trans }}
                 </a>
-            </li>            
+            </li>
             <li>
                 <a class="dropdown-item" href="{{ path('post_index') }}">
                     <i class="fa fa-mail-bulk" aria-hidden="true"></i> {{ 'menu.posts'|trans }}
@@ -95,7 +97,7 @@
                 </a>
             </li>
          </ul>
-    </li>    
+    </li>
     {{ parent() }}
 {% endblock %}
 
