@@ -77,10 +77,13 @@ class TwoFactorController extends AbstractController
             $session->set('2fa_setup_secret', $secret);
         }
 
+        $uri = Totp::provisioningUri($secret, $user->getUserIdentifier());
+
         return $this->render('security/2fa_setup.html.twig', [
             'enabled' => $user->isTotpEnabled(),
             'secret' => $secret,
-            'uri' => Totp::provisioningUri($secret, $user->getUserIdentifier()),
+            'uri' => $uri,
+            'qr' => Totp::qrCodeDataUri($uri),
             'error' => $error,
         ]);
     }

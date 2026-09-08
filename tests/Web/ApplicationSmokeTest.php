@@ -89,6 +89,10 @@ class ApplicationSmokeTest extends WebTestCase
         $this->client->request('GET', '/dashboard/lunchExpense');
         $this->assertResponseIsSuccessful();
 
+        $this->client->request('GET', '/user/2fa');
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorExists('img[alt="Authenticator QR code"]');
+
         $crawler = $this->client->request('GET', '/dashboard/lunchExpense/new');
         $this->assertResponseIsSuccessful();
         $this->assertSelectorExists('#lunch_expense_sum');
