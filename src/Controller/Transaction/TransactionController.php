@@ -18,6 +18,7 @@ use App\Entity\Transaction\CreateTransactionCommand;
 use App\Form\Transaction\TransactionType;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use App\Service\Ledger\BankFeeFactory;
 use Psr\Log\LoggerInterface;
 
 class TransactionController extends AbstractController {
@@ -164,7 +165,7 @@ class TransactionController extends AbstractController {
 	}
 
 	#[Route(path: "/dashboard/transaction/new", methods: ["GET", "POST"], name: "transaction_new")]
-	public function new(TransactionRepository $transactions, Request $request, PaginatorInterface $paginator, ManagerRegistry $doctrine): Response {
+	public function new(TransactionRepository $transactions, Request $request, PaginatorInterface $paginator, ManagerRegistry $doctrine, BankFeeFactory $bankFees): Response {
 		$createTransactionCommand = new CreateTransactionCommand ();
 		$createTransactionCommand->hidden = false;
 
@@ -179,6 +180,10 @@ class TransactionController extends AbstractController {
 			$em = $doctrine->getManager ();
 
 			$em->persist ( $transaction );
+			$fee = $bankFees->createIfNeeded($createTransactionCommand->organization, $createTransactionCommand->date, $createTransactionCommand->bankCost ?? 0, $this->getUser(), null, $transaction);
+			if ($fee) {
+				$em->persist($fee);
+			}
 			$em->flush ();
 
 			return $this->redirectToRoute ( 'transaction_show', array (

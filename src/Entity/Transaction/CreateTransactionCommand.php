@@ -11,6 +11,8 @@ class CreateTransactionCommand
 	public $date;
 	public $description;
 	public $hidden;
+	public $bankCost;
+	public $role;
 	
 	public function __get($name) {
 		return $this->$name;

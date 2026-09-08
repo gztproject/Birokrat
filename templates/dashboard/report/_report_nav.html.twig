@@ -1,0 +1,13 @@
+{% set q = app.request.query.all %}
+<a href="{{ path('report_index', q) }}" class="btn btn-sm btn-primary mb-1">
+    <i class="fa fa-eye" aria-hidden="true"></i> {{ 'title.overview'|trans }}
+</a>
+<a href="{{ path('report_dddddd', q) }}" class="btn btn-sm btn-primary mb-1">
+    <i class="fa fa-eye" aria-hidden="true"></i> Obračun akontacije dohodnine (DDD-DDD)
+</a>
+<a href="{{ path('report_bilanca', q) }}" class="btn btn-sm btn-primary mb-1">
+    <i class="fa fa-eye" aria-hidden="true"></i> Bilanca
+</a>
+<a href="{{ path('report_turnout', q) }}" class="btn btn-sm btn-primary mb-1">
+    <i class="fa fa-eye" aria-hidden="true"></i> Izkaz poslovnega izida
+</a>

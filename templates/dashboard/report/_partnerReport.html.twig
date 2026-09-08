@@ -13,19 +13,19 @@
         <tr class='table-secondary'>
             <td>{{ 'label.total'|trans }}</td>
             <td>{{ report.sum.number }}</td>
-            <td>{{ report.sum.total|number_format(2, ',', ' ') }} €</td>
-            <td>{{ report.sum.paid|number_format(2, ',', ' ') }} €</td>
-            <td>{{ report.sum.open|number_format(2, ',', ' ') }} €</td>
-            <td>{{ (report.sum.percent * 100)|number_format(2, ',', ' ')}} %</td>
+            <td>{{ report.sum.total|money_amount }} €</td>
+            <td>{{ report.sum.paid|money_amount }} €</td>
+            <td>{{ report.sum.open|money_amount }} €</td>
+            <td>{{ (report.sum.percent * 100)|money_amount}} %</td>
         </tr>
         {% for client in report.clients %}
             <tr class='table-default'>
                 <td><a href="{{ path('partner_show', {'id': client.id}) }}">{{ client.name }}</a></td>
                 <td>{{ client.number }}</td>
-                <td>{{ client.total|number_format(2, ',', ' ') }} €</td>
-                <td>{{ client.paid|number_format(2, ',', ' ') }} €</td>
-                <td>{{ client.open|number_format(2, ',', ' ') }} €</td>
-                <td>{{ (client.percent * 100)|number_format(2, ',', ' ')}} %</td>
+                <td>{{ client.total|money_amount }} €</td>
+                <td>{{ client.paid|money_amount }} €</td>
+                <td>{{ client.open|money_amount }} €</td>
+                <td>{{ (client.percent * 100)|money_amount}} %</td>
             </tr>
         {% endfor %}    
     </tbody>

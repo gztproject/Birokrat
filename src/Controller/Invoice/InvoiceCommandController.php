@@ -24,6 +24,7 @@ use App\Entity\Invoice\UpdateInvoiceCommand;
 use App\Entity\Invoice\UpdateInvoiceItemCommand;
 use App\Entity\Invoice\Enumerators\States;
 use App\Mailer\MailerSettings;
+use App\Service\Ledger\BankFeeFactory;
 
 
 class InvoiceCommandController extends AbstractController
@@ -168,7 +169,7 @@ class InvoiceCommandController extends AbstractController
     }
        
     #[Route(path: "/dashboard/invoice/pay", methods: ["POST"], name: "invoice_set_paid")]
-    public function setPaid(Request $request, ManagerRegistry $doctrine): Response
+    public function setPaid(Request $request, ManagerRegistry $doctrine, BankFeeFactory $bankFees): Response
     {
     	$invoice = $doctrine->getRepository(Invoice::class)->findOneBy(['id'=>$request->request->get('id', null)]);
     	$date = new \DateTime($request->request->get('date', null));    	
@@ -178,6 +179,10 @@ class InvoiceCommandController extends AbstractController
     	    	
     	$entityManager->persist($invoice);  
     	$entityManager->persist($transaction);
+    	$fee = $bankFees->createIfNeeded($invoice->getIssuer(), $date, $request->request->get('bankCost', 0), $this->getUser(), $invoice, $transaction);
+    	if ($fee) {
+    		$entityManager->persist($fee);
+    	}
     	$entityManager->flush();
     	
     	return $this->redirectToRoute('invoice_index');

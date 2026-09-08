@@ -19,6 +19,21 @@
     </div>
 </div>
 </br>
+<div class="row">
+    <div class="col-12">
+        <div class="bs-component">
+            <div class="card text-white bg-primary">
+                <div class="card-header">
+                  <a href="{{ path('incomingInvoice_index') }}"><h2>{{ 'title.incomingInvoices'|trans }}</h2></a>
+                </div>
+                <div class="card-body" data-controller="document-action" data-document-action-show-prefix-value="incomingInvoice" data-document-action-pay-url-value="/dashboard/incomingInvoice/pay">
+                {{ include('dashboard/incomingInvoice/_table.html.twig', {invoices: incomingInvoices}, with_context = false) }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</br>
 <div class="row">    
     <div class="col-12">
         <div class="bs-component">

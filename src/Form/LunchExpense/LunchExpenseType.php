@@ -8,6 +8,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use App\Form\Type\DateTimePickerType;
 use App\Entity\LunchExpense\CreateLunchExpenseCommand;
 use App\Entity\Organization\Organization;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 
 class LunchExpenseType extends AbstractType
 {
@@ -23,7 +24,11 @@ class LunchExpenseType extends AbstractType
         	))
             ->add('date', DateTimePickerType::class,[
             		'label' => 'label.date',
-            ])            
+            ])
+            ->add('sum', NumberType::class, [
+            		'label' => 'label.sum',
+            		'scale' => 2,
+            ])
         ;
     }
 

@@ -1,0 +1,27 @@
+{% extends 'dashboard/layout.html.twig' %}
+
+{% block body_id 'two_factor_setup' %}
+
+{% block main %}
+    <h1>{{ 'label.totp'|trans }}</h1>
+    {% if error %}
+        <div class="alert alert-danger">{{ error }}</div>
+    {% endif %}
+    {% if enabled %}
+        <p>Two-factor authentication is enabled.</p>
+        <form method="post">
+            <button type="submit" name="disable" value="1" class="btn btn-danger">Disable 2FA</button>
+        </form>
+    {% else %}
+        <p>Scan this URI in an authenticator app, or enter the secret manually, then confirm with a code.</p>
+        <p><code>{{ secret }}</code></p>
+        <p><small>{{ uri }}</small></p>
+        <form method="post">
+            <div class="form-group">
+                <label for="code">{{ 'label.totpCode'|trans }}</label>
+                <input id="code" name="code" class="form-control" inputmode="numeric" autocomplete="one-time-code" required>
+            </div>
+            <button type="submit" class="btn btn-primary mt-2">Enable 2FA</button>
+        </form>
+    {% endif %}
+{% endblock %}

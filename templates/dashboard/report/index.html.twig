@@ -54,10 +54,7 @@
     
     {{ parent() }}
     {{ include('common/filters/_dateOrgYearFilter.html.twig') }}
-    
-    <a href="{{ path('report_dddddd') }}" class="btn btn-sm btn-primary">
-        <i class="fa fa-eye" aria-hidden="true"></i> Obračun akontacije dohodnine (DDD-DDD)
-    </a>
+    {{ include('dashboard/report/_report_nav.html.twig') }}
     
 {% endblock %}
 

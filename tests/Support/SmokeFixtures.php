@@ -168,6 +168,9 @@ final class SmokeFixtures
         $this->set($user, 'mobile', null);
         $this->set($user, 'phone', null);
         $this->set($user, 'signatureFilename', '');
+        $this->set($user, 'position', $admin ? 'Administrator' : 'Tester');
+        $this->set($user, 'totpEnabled', false);
+        $this->set($user, 'totpSecret', null);
         $this->set($user, 'roles', [$admin ? 'ROLE_ADMIN' : 'ROLE_USER']);
         $this->set($user, 'password', $this->hasher->hashPassword($user, $password));
 

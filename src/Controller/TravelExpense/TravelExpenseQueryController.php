@@ -53,7 +53,12 @@ class TravelExpenseQueryController extends AbstractController
     #[Route(path: "/dashboard/travelExpense/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/pdf", methods: ["GET"], name: "travelExpense_pdf")]
     public function getPdf(TravelExpense $travelExpense, TCPDFController $tcpdf, TranslatorInterface $translator): Response
     {
-    	return TravelExpensePdfFactory::factory($travelExpense, $translator, $tcpdf, 'I')->generate();
+    	$content = TravelExpensePdfFactory::factory($travelExpense, $translator, $tcpdf, 'S')->generate();
+
+    	return new Response((string) $content, 200, [
+    		'Content-Type' => 'application/pdf',
+    		'Content-Disposition' => 'inline; filename="travel-expense.pdf"',
+    	]);
     }
     
 }

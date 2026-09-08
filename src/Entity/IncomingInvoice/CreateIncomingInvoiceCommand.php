@@ -2,6 +2,8 @@
 
 namespace App\Entity\IncomingInvoice;
 
+use Doctrine\Common\Collections\ArrayCollection;
+
 class CreateIncomingInvoiceCommand
 {
     public $dateOfIssue;
@@ -23,6 +25,15 @@ class CreateIncomingInvoiceCommand
     public $paidOnSpot;
     
     public $paymentMethod;
+
+    public $bankCost;
+
+    public $allocations;
+
+    public function __construct()
+    {
+        $this->allocations = new ArrayCollection();
+    }
     
     public function __get($name) {
 		return $this->$name;

@@ -3,23 +3,21 @@ namespace App\Controller\IncomingInvoice;
 
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Exception;
 use App\Entity\IncomingInvoice\IncomingInvoice;
 use App\Form\IncomingInvoice\IncomingInvoiceType;
 use App\Entity\IncomingInvoice\CreateIncomingInvoiceCommand;
 use App\Entity\IncomingInvoice\UpdateIncomingInvoiceCommand;
+use App\Service\Ledger\BankFeeFactory;
 
 
 class IncomingInvoiceCommandController extends AbstractController
 {    
        
     #[Route(path: "/dashboard/incomingInvoice/new", methods: ["GET", "POST"], name: "incomingInvoice_new")]
-    public function new(Request $request, ManagerRegistry $doctrine): Response
+    public function new(Request $request, ManagerRegistry $doctrine, BankFeeFactory $bankFees): Response
     {
     	$c = new CreateIncomingInvoiceCommand();
     	
@@ -28,17 +26,20 @@ class IncomingInvoiceCommandController extends AbstractController
     	$form->handleRequest($request);
     	
     	if ($form->isSubmitted() && $form->isValid()) {
-    		 		
     		$invoice = $this->getUser()->createIncomingInvoice($c);
+    		$allocations = $c->allocations ?? [];
     		if($c->paidOnSpot)
-    			$transaction = $invoice->setReceivedAndPaid(new \DateTime('now'), $this->getUser(), $c->paymentMethod, $c->debitKonto);
+    			$transactions = $invoice->setReceivedAndPaid(new \DateTime('now'), $this->getUser(), $c->paymentMethod, $c->debitKonto, $allocations);
     		else
-    			$transaction = $invoice->setReceived(new \DateTime('now'), $this->getUser(), $c->debitKonto);
+    			$transactions = $invoice->setReceived(new \DateTime('now'), $this->getUser(), $c->debitKonto, $allocations);
     		    		
     		$em = $doctrine->getManager();
-    		    		    		
     		$em->persist($invoice);
-    		$em->persist($transaction);
+    		BankFeeFactory::persist($em, $transactions);
+    		$fee = $bankFees->createIfNeeded($invoice->getRecepient(), new \DateTime('now'), $c->bankCost ?? 0, $this->getUser(), $invoice, $transactions[0]);
+    		if ($fee) {
+    			$em->persist($fee);
+    		}
     		$em->flush();
     		
     		return $this->redirectToRoute('incomingInvoice_show', array('id'=> $invoice->getId()));
@@ -64,11 +65,11 @@ class IncomingInvoiceCommandController extends AbstractController
     	
     	if ($form->isSubmitted() && $form->isValid()) {
     		$clone->update($c, $this->getUser());
-    		$transaction = $clone->setReceived(new \DateTime('now'), $this->getUser());
+    		$transactions = $clone->setReceived(new \DateTime('now'), $this->getUser(), $c->debitKonto ?? null, $c->allocations ?? []);
     		$em = $doctrine->getManager();
     		
     		$em->persist($clone);
-    		$em->persist($transaction);
+    		BankFeeFactory::persist($em, $transactions);
     		$em->flush();
     		
     		return $this->redirectToRoute('incomingInvoice_show', array('id'=> $clone->getId()));
@@ -82,7 +83,7 @@ class IncomingInvoiceCommandController extends AbstractController
     
        
     #[Route(path: "/dashboard/incomingInvoice/pay", methods: ["POST"], name: "incomingInvoice_pay")]
-    public function pay(Request $request, ManagerRegistry $doctrine): Response
+    public function pay(Request $request, ManagerRegistry $doctrine, BankFeeFactory $bankFees): Response
     {
     	$invoice = $doctrine->getRepository(IncomingInvoice::class)->findOneBy(['id'=>$request->request->get('id', null)]);
     	$date = new \DateTime($request->request->get('date', null));    	
@@ -93,11 +94,15 @@ class IncomingInvoiceCommandController extends AbstractController
     	    	
     	$entityManager->persist($invoice);  
     	$entityManager->persist($transaction);
+    	$fee = $bankFees->createIfNeeded($invoice->getRecepient(), $date, $request->request->get('bankCost', 0), $this->getUser(), $invoice, $transaction);
+    	if ($fee) {
+    		$entityManager->persist($fee);
+    	}
     	$entityManager->flush();
     	
-    	return $this->redirectToRoute('invoice_index');
+    	return $this->redirectToRoute('incomingInvoice_index');
     }    
-    
+    	
     #[Route(path: "/dashboard/incomingInvoice/reject", methods: ["POST"], name: "incomingInvoice_reject")]
     public function reject(Request $request, ManagerRegistry $doctrine): Response
     {
@@ -109,7 +114,7 @@ class IncomingInvoiceCommandController extends AbstractController
     	$entityManager->persist($invoice);
     	$entityManager->flush();
     	
-    	return $this->redirectToRoute('invoice_index');
+    	return $this->redirectToRoute('incomingInvoice_index');
     }
     
     //ToDo: Add a refund handler...

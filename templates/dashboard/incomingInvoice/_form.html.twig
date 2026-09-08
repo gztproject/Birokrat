@@ -118,6 +118,34 @@
                 </div>  
             </div>
         </div>
+        <div class="row">
+            <div class="col-sm-3">
+                <div class="form-group">
+                    {{ form_label(form.bankCost, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}
+                    <div class='input-group'>
+                        {{ form_widget(form.bankCost, {'attr': {'class': 'form-control'}}) }}
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-9">
+                <div class="form-group" data-controller="collection" data-collection-min-rows-value="0">
+                    {{ form_label(form.allocations, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}
+                    <div data-collection-target="container" data-prototype="{{ ('<div class="row mb-2" data-collection-row>' ~ form_widget(form.allocations.vars.prototype) ~ '<div class="col-sm-1"><button type="button" class="btn btn-sm btn-danger" data-action="collection#remove"><i class="fa fa-minus"></i></button></div></div>')|e('html_attr') }}">
+                        {% for allocation in form.allocations %}
+                            <div class="row mb-2" data-collection-row>
+                                <div class="col-sm-5">{{ form_widget(allocation.konto, {'attr': {'class': 'form-control'}}) }}</div>
+                                <div class="col-sm-3">{{ form_widget(allocation.amount, {'attr': {'class': 'form-control'}}) }}</div>
+                                <div class="col-sm-3">{{ form_widget(allocation.note, {'attr': {'class': 'form-control'}}) }}</div>
+                                <div class="col-sm-1"><button type="button" class="btn btn-sm btn-danger" data-action="collection#remove"><i class="fa fa-minus"></i></button></div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <button type="button" class="btn btn-sm btn-success" data-action="collection#add">
+                        <i class="fa fa-plus"></i> {{ 'label.allocations'|trans }}
+                    </button>
+                </div>
+            </div>
+        </div>
     
     {% if include_bottom_buttons|default(true) %}
         {{ include('dashboard/incomingInvoice/_form_actions.html.twig', {

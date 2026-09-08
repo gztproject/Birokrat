@@ -8,9 +8,9 @@ export default class extends Controller {
     };
 
     connect() {
-        const existing = this.containerTarget.querySelectorAll('tr[data-collection-row]').length;
+        const existing = this.rows().length;
         this.containerTarget.dataset.index = String(existing);
-        while (this.containerTarget.querySelectorAll('tr[data-collection-row]').length < this.minRowsValue) {
+        while (this.rows().length < this.minRowsValue) {
             this.add();
         }
     }
@@ -21,7 +21,10 @@ export default class extends Controller {
         const html = prototype.replace(new RegExp(this.prototypeNameValue, 'g'), String(index));
         const wrapper = document.createElement('tbody');
         wrapper.innerHTML = html;
-        const row = wrapper.querySelector('tr') || this.buildTravelStopRow(html, index);
+        const row = wrapper.querySelector('[data-collection-row]')
+            || wrapper.querySelector('tr')
+            || wrapper.firstElementChild
+            || this.buildTravelStopRow(html, index);
         row.setAttribute('data-collection-row', '');
         this.containerTarget.append(row);
         this.containerTarget.dataset.index = String(index + 1);
@@ -48,17 +51,21 @@ export default class extends Controller {
     }
 
     remove(event) {
-        const rows = this.containerTarget.querySelectorAll('tr[data-collection-row]');
+        const rows = this.rows();
         if (rows.length <= this.minRowsValue) {
             window.alert(`Can't delete last ${this.minRowsValue} stops!`);
             return;
         }
-        event.currentTarget.closest('tr').remove();
+        event.currentTarget.closest('[data-collection-row]').remove();
         this.renumber();
     }
 
+    rows() {
+        return this.containerTarget.querySelectorAll('[data-collection-row]');
+    }
+
     renumber() {
-        this.containerTarget.querySelectorAll('tr[data-collection-row]').forEach((row, index) => {
+        this.rows().forEach((row, index) => {
             const order = row.querySelector('[id$="_stopOrder"], .StopOrder input');
             if (order) {
                 order.value = index + 1;

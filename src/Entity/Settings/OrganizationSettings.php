@@ -80,6 +80,12 @@ class OrganizationSettings extends Base
     private $RejectedIncomingInvoiceCredit;
     #[ORM\ManyToOne(targetEntity: \App\Entity\Konto\Konto::class)]
     private $RejectedIncomingInvoiceDebit;
+
+    #[ORM\ManyToOne(targetEntity: \App\Entity\Konto\Konto::class)]
+    private $BankFeeDebit;
+
+    #[ORM\ManyToOne(targetEntity: \App\Entity\Konto\Konto::class)]
+    private $BankFeeCredit;
     
     
     
@@ -117,6 +123,8 @@ class OrganizationSettings extends Base
     	$this->RefundedIncomingInvoiceDebit = $c->RefundedIncomingInvoiceDebit;
     	$this->RejectedIncomingInvoiceCredit = $c->RejectedIncomingInvoiceCredit;
     	$this->RejectedIncomingInvoiceDebit = $c->RejectedIncomingInvoiceDebit;
+    	$this->BankFeeDebit = $c->BankFeeDebit ?? null;
+    	$this->BankFeeCredit = $c->BankFeeCredit ?? null;
     	
     	//Obsolete...
     	$this->PaidIncomingInvoiceDebit = $c->PaidIncomingInvoiceDebit;
@@ -155,6 +163,8 @@ class OrganizationSettings extends Base
     	$this->RefundedIncomingInvoiceDebit = $c->RefundedIncomingInvoiceDebit;
     	$this->RejectedIncomingInvoiceCredit = $c->RejectedIncomingInvoiceCredit;
     	$this->RejectedIncomingInvoiceDebit = $c->RejectedIncomingInvoiceDebit;
+    	$this->BankFeeDebit = $c->BankFeeDebit ?? $this->BankFeeDebit;
+    	$this->BankFeeCredit = $c->BankFeeCredit ?? $this->BankFeeCredit;
     	 //Obsolete
     	$this->PaidIncomingInvoiceDebit = $c->PaidIncomingInvoiceDebit;
     	$this->PaidIncomingInvoiceCredit = $c->PaidIncomingInvoiceCredit;
@@ -301,6 +311,16 @@ class OrganizationSettings extends Base
     public function getRejectedIncomingInvoiceDebit(): ?Konto
     {
     	return $this->RejectedIncomingInvoiceDebit;
-    }  
+    }
+
+    public function getBankFeeDebit(): ?Konto
+    {
+    	return $this->BankFeeDebit;
+    }
+
+    public function getBankFeeCredit(): ?Konto
+    {
+    	return $this->BankFeeCredit;
+    }
     
 }
