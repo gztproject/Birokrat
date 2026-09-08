@@ -331,7 +331,7 @@ class ReportController extends AbstractController
             $totalOpen += $c['open'];
         }
         foreach ($result as $c) {
-            $c['percent'] = $c['total'] / $totalTotal;
+            $c['percent'] = $totalTotal == 0 ? 0 : $c['total'] / $totalTotal;
             $totalPercent += $c['percent'];
             array_push($clients, $c);
         }
@@ -403,7 +403,7 @@ class ReportController extends AbstractController
             $totalOpen += $c['open'];
         }
         foreach ($result as $c) {
-            $c['percent'] = $c['total'] / $totalTotal;
+            $c['percent'] = $totalTotal == 0 ? 0 : $c['total'] / $totalTotal;
             $totalPercent += $c['percent'];
             array_push($clients, $c);
         }
