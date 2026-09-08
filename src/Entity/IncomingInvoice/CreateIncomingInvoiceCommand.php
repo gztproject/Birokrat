@@ -35,24 +35,6 @@ class CreateIncomingInvoiceCommand
         $this->allocations = new ArrayCollection();
     }
     
-    public $issuer;
-
-    public $recepient;
-    
-    public $number;
-    
-    public $reference;
-    
-    public $price;
-
-    public $dueDate;
-    
-    public $debitKonto;
-    
-    public $paidOnSpot;
-    
-    public $paymentMethod;
-    
     public function __get($name) {
 		return $this->$name;
 	}
