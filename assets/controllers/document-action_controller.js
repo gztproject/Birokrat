@@ -94,11 +94,14 @@ export default class extends Controller {
     }
 
     send(event) {
-        const invId = event.currentTarget.id;
+        event.stopPropagation();
+        const invId = event.currentTarget.value || event.currentTarget.id;
         const emailModal = document.getElementById('emailModal');
-        if (emailModal) {
-            Modal.getOrCreateInstance(emailModal).show();
+        if (!emailModal) {
+            notify('Email form is missing on this page.');
+            return;
         }
+        Modal.getOrCreateInstance(emailModal).show();
         document.getElementById('sendEmailBtn')?.addEventListener('click', async () => {
             const response = await postForm(this.sendUrlValue, {
                 id: invId,

@@ -23,6 +23,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 use App\Entity\Invoice\UpdateInvoiceCommand;
 use App\Entity\Invoice\UpdateInvoiceItemCommand;
 use App\Entity\Invoice\Enumerators\States;
+use App\Mailer\MailerSettings;
 
 
 class InvoiceCommandController extends AbstractController
@@ -197,7 +198,7 @@ class InvoiceCommandController extends AbstractController
     }
     
     #[Route(path: "/dashboard/invoice/send", methods: ["POST"], name: "invoice_send")]
-    public function send(Request $request, MailerInterface $mailer, TCPDFController $tcpdf, TranslatorInterface $translator, ManagerRegistry $doctrine): JsonResponse
+    public function send(Request $request, MailerInterface $mailer, TCPDFController $tcpdf, TranslatorInterface $translator, ManagerRegistry $doctrine, MailerSettings $mailerSettings): JsonResponse
     {
     	$id = $request->request->get('id', null);
     	if($id == null)
@@ -222,19 +223,21 @@ class InvoiceCommandController extends AbstractController
     		$title = $translator->trans('title.invoice').' '.$invoice->getNumber().'.pdf';
     		
     		$emailObject = (new Email())
-    		->from('birokrat@gzt.si') //$this->getUser()->getEmail()?:
+    		->from('birokrat@gzt.si')
     			->to($email)
     			->subject($subject)
-    			->replyTo($this->getUser()->getEmail())
-    			->html('<p>'.$body.'</p>')  
-    			->attachFromPath($path.$title);    		
+    			->html('<p>'.$body.'</p>')
+    			->attachFromPath($path.$title);
+    		$userEmail = $this->getUser()?->getEmail();
+    		if ($userEmail) {
+    			$emailObject->replyTo($userEmail);
+    		}    		
     		
     		$mailer->send($emailObject);
     		
     		unlink($path.$title);
     		
-    		//$this->addFlash('success', 'invoice.sent');
-    		$data = "Invoice sent to ".$email;
+    		$data = $mailerSettings->describeDelivery($email);
     		$status = "ok";
     	}
     	catch (Exception $e)
