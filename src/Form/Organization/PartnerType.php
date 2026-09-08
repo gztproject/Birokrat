@@ -1,14 +1,12 @@
 <?php 
 namespace App\Form\Organization;
 
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\CallbackTransformer;
-use App\Entity\Geography\Address;
 use App\Entity\Organization\CreatePartnerCommand;
 
 class PartnerType extends AbstractType
@@ -43,8 +41,19 @@ class PartnerType extends AbstractType
             		'required' => false
             ])
             ->add('email', TextType::class,[
-            		'label' => 'label.email',
-            		'required' => false
+            		'label' => 'label.primaryEmail',
+            		'required' => false,
+            		'help' => 'help.recipientList',
+            ])
+            ->add('extraEmailCommands', CollectionType::class, [
+            		'entry_type' => PartnerEmailType::class,
+            		'entry_options' => ['label' => false],
+            		'allow_add' => true,
+            		'allow_delete' => true,
+            		'by_reference' => false,
+            		'required' => false,
+            		'label' => 'label.extraEmails',
+            		'help' => 'help.extraEmailsCc',
             ])
             ->add('phone', TextType::class,[
             		'label' => 'label.phone',

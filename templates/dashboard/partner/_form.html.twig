@@ -96,6 +96,7 @@
                     <div class='input-group'>
                         {{ form_widget(form.email, {'attr': {'class': 'form-control'}}) }}
                     </div>
+                    {{ form_help(form.email) }}
                 </div>
             </div>
             <div class="col-sm-6">
@@ -106,6 +107,26 @@
                     </div>
                 </div>
             </div>
+        </div>
+        <div class="mb-3" data-controller="collection" data-collection-min-rows-value="0">
+            {{ form_label(form.extraEmailCommands, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}
+            {{ form_help(form.extraEmailCommands) }}
+            <div class="row mb-1 small text-muted">
+                <div class="col-sm-4">{{ 'label.email'|trans }}</div>
+                <div class="col-sm-3">{{ 'label.displayName'|trans }}</div>
+                <div class="col-sm-4">{{ 'label.emailRole'|trans }}</div>
+            </div>
+            <div data-collection-target="container" data-prototype="{{ ('<div class="row mb-2" data-collection-row>' ~ form_widget(form.extraEmailCommands.vars.prototype) ~ '<div class="col-sm-1"><button type="button" class="btn btn-sm btn-danger" data-action="collection#remove"><i class="fa fa-minus"></i></button></div></div>')|e('html_attr') }}">
+                {% for extraEmail in form.extraEmailCommands %}
+                    <div class="row mb-2" data-collection-row>
+                        {{ form_widget(extraEmail) }}
+                        <div class="col-sm-1"><button type="button" class="btn btn-sm btn-danger" data-action="collection#remove"><i class="fa fa-minus"></i></button></div>
+                    </div>
+                {% endfor %}
+            </div>
+            <button type="button" class="btn btn-sm btn-success mt-1" data-action="collection#add">
+                <i class="fa fa-plus"></i> {{ 'label.extraEmails'|trans }}
+            </button>
         </div>
         <div class='row'>
             <div class="col-sm-6">

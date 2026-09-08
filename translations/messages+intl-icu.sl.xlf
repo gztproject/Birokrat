@@ -1155,6 +1155,50 @@
         <source>organization.settings_updated_successfully</source>
         <target>Nastavitve organizacije so shranjene.</target>
       </trans-unit>
+      <trans-unit id="label.to" resname="label.to">
+        <source>label.to</source>
+        <target>Za</target>
+      </trans-unit>
+      <trans-unit id="label.cc" resname="label.cc">
+        <source>label.cc</source>
+        <target>Kp</target>
+      </trans-unit>
+      <trans-unit id="label.primaryEmail" resname="label.primaryEmail">
+        <source>label.primaryEmail</source>
+        <target>Primarni e-mail</target>
+      </trans-unit>
+      <trans-unit id="label.extraEmails" resname="label.extraEmails">
+        <source>label.extraEmails</source>
+        <target>Dodatni e-naslovi</target>
+      </trans-unit>
+      <trans-unit id="label.displayName" resname="label.displayName">
+        <source>label.displayName</source>
+        <target>Prikazno ime</target>
+      </trans-unit>
+      <trans-unit id="label.emailRole" resname="label.emailRole">
+        <source>label.emailRole</source>
+        <target>Vloga</target>
+      </trans-unit>
+      <trans-unit id="label.partnerEmailsDiffer" resname="label.partnerEmailsDiffer">
+        <source>label.partnerEmailsDiffer</source>
+        <target>E-naslovi na partnerju so prazni ali se razlikujejo od tega pošiljanja.</target>
+      </trans-unit>
+      <trans-unit id="help.recipientList" resname="help.recipientList">
+        <source>help.recipientList</source>
+        <target>Ime &lt;naslov@domena.si&gt;; drugi@domena.si</target>
+      </trans-unit>
+      <trans-unit id="help.extraEmailsCc" resname="help.extraEmailsCc">
+        <source>help.extraEmailsCc</source>
+        <target>Dodatni naslovi so ob pošiljanju računa v kopiji (CC).</target>
+      </trans-unit>
+      <trans-unit id="action.saveOnPartner" resname="action.saveOnPartner">
+        <source>action.saveOnPartner</source>
+        <target>Shrani na partnerja</target>
+      </trans-unit>
+      <trans-unit id="action.editPartnerEmails" resname="action.editPartnerEmails">
+        <source>action.editPartnerEmails</source>
+        <target>Uredi partnerja</target>
+      </trans-unit>
 
     </body>
   </file>

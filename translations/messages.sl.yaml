@@ -54,6 +54,19 @@ label:
   advance: Predujem
   totp: Dvostopenjsko preverjanje
   totpCode: Koda 2FA
+  to: Za
+  cc: Kp
+  primaryEmail: Primarni e-mail
+  extraEmails: Dodatni e-naslovi
+  displayName: Prikazno ime
+  emailRole: Vloga
+  partnerEmailsDiffer: E-naslovi na partnerju so prazni ali se razlikujejo od tega pošiljanja.
+
+help:
+  recipientList: "Ime <naslov@domena.si>; drugi@domena.si"
+  extraEmailsCc: Dodatni naslovi so ob pošiljanju računa v kopiji (CC).
+
+
 
 
 
@@ -74,6 +87,9 @@ action:
   print: Tiskaj
   setIssued: Izdaj
   send: Pošlji
+  saveOnPartner: Shrani na partnerja
+  editPartnerEmails: Uredi partnerja
+
   
 body:
   delete:

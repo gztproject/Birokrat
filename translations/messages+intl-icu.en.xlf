@@ -653,6 +653,50 @@
                 <source>organization.settings_updated_successfully</source>
                 <target>Organization settings were saved.</target>
             </trans-unit>
+            <trans-unit id="label.to">
+                <source>label.to</source>
+                <target>To</target>
+            </trans-unit>
+            <trans-unit id="label.cc">
+                <source>label.cc</source>
+                <target>CC</target>
+            </trans-unit>
+            <trans-unit id="label.primaryEmail">
+                <source>label.primaryEmail</source>
+                <target>Primary email</target>
+            </trans-unit>
+            <trans-unit id="label.extraEmails">
+                <source>label.extraEmails</source>
+                <target>Extra emails</target>
+            </trans-unit>
+            <trans-unit id="label.displayName">
+                <source>label.displayName</source>
+                <target>Display name</target>
+            </trans-unit>
+            <trans-unit id="label.emailRole">
+                <source>label.emailRole</source>
+                <target>Role</target>
+            </trans-unit>
+            <trans-unit id="label.partnerEmailsDiffer">
+                <source>label.partnerEmailsDiffer</source>
+                <target>The partner emails are empty or differ from this send.</target>
+            </trans-unit>
+            <trans-unit id="help.recipientList">
+                <source>help.recipientList</source>
+                <target>Name &lt;address@domain.com&gt;; other@domain.com</target>
+            </trans-unit>
+            <trans-unit id="help.extraEmailsCc">
+                <source>help.extraEmailsCc</source>
+                <target>Extra addresses are copied (CC) when sending an invoice.</target>
+            </trans-unit>
+            <trans-unit id="action.saveOnPartner">
+                <source>action.saveOnPartner</source>
+                <target>Save on partner</target>
+            </trans-unit>
+            <trans-unit id="action.editPartnerEmails">
+                <source>action.editPartnerEmails</source>
+                <target>Edit partner</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

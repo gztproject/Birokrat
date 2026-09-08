@@ -14,6 +14,18 @@
                     <div class="card-body">                    
                         <strong>{{ 'label.name'|trans }}</strong>: {{ partner.name }}<br>
                         <strong>{{ 'label.email'|trans }}</strong>: {{ partner.email }}<br>
+                        {% if partner.extraEmails|length %}
+                            <strong>{{ 'label.extraEmails'|trans }}</strong>:
+                            <ul class="mb-0">
+                                {% for extra in partner.extraEmails %}
+                                    <li>
+                                        {{ extra.email }}
+                                        {% if extra.name %} ({{ extra.name }}){% endif %}
+                                        {% if extra.role %} — {{ extra.role }}{% endif %}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
                         <strong>{{ 'label.www'|trans }}</strong>: {{ partner.www }}<br>
                         <strong>{{ 'label.phone'|trans }}</strong>: {{ partner.phone }}<br>
                         <strong>{{ 'label.mobile'|trans }}</strong>: {{ partner.mobile }}<br>
