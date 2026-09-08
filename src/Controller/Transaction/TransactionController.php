@@ -164,7 +164,7 @@ class TransactionController extends AbstractController {
 	}
 
 	#[Route(path: "/dashboard/transaction/new", methods: ["GET", "POST"], name: "transaction_new")]
-	public function new(TransactionRepository $transactions, Request $request, PaginatorInterface $paginator): Response {
+	public function new(TransactionRepository $transactions, Request $request, PaginatorInterface $paginator, ManagerRegistry $doctrine): Response {
 		$createTransactionCommand = new CreateTransactionCommand ();
 		$createTransactionCommand->hidden = false;
 
@@ -176,7 +176,7 @@ class TransactionController extends AbstractController {
 
 			$transaction = $this->getUser ()->createTransactionWithDescription ( $createTransactionCommand );
 
-			$em = $this->getDoctrine ()->getManager ();
+			$em = $doctrine->getManager ();
 
 			$em->persist ( $transaction );
 			$em->flush ();
