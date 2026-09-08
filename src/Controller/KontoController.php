@@ -4,7 +4,7 @@ namespace App\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use App\Repository\KontoRepository;
 use App\Repository\KontoClassRepository;
 use App\Repository\KontoCategoryRepository;
@@ -12,9 +12,7 @@ use App\Form\KontoFilterType;
 
 class KontoController extends AbstractController
 {    
-    /**
-     * @Route("/codesheets/konto", methods={"GET", "POST"}, name="konto_index")
-     */
+    #[Route(path: "/codesheets/konto", methods: ["GET", "POST"], name: "konto_index")]
     public function index(Request $request, KontoClassRepository $kontoClasses, KontoCategoryRepository $kontoCategoties, KontoRepository $kontos): Response
     {                      
         $myKontoClasses = $kontoClasses->findAll();

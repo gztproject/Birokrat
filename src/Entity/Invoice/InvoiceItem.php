@@ -5,45 +5,29 @@ namespace App\Entity\Invoice;
 use Doctrine\ORM\Mapping as ORM;
 use App\Entity\Base\AggregateBase;
 
-/**
- * @ORM\Entity(repositoryClass="App\Repository\Invoice\InvoiceItemRepository")
- */
+#[ORM\Entity(repositoryClass: \App\Repository\Invoice\InvoiceItemRepository::class)]
 class InvoiceItem extends AggregateBase
 {
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: "string", length: 255)]
     private $code;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: "string", length: 255)]
     private $name;
 
-    /**
-     * @ORM\Column(type="decimal", precision=10, scale=2)
-     */
+    #[ORM\Column(type: "decimal", precision: 10, scale: 2)]
     private $quantity;
 
-    /**
-     * @ORM\Column(type="string", length=5)
-     */
+    #[ORM\Column(type: "string", length: 5)]
     private $unit;
 
-    /**
-     * @ORM\Column(type="decimal", precision=10, scale=2)
-     */
+    #[ORM\Column(type: "decimal", precision: 10, scale: 2)]
     private $price;
 
-    /**
-     * @ORM\Column(type="decimal", precision=5, scale=2, nullable=true)
-     */
+    #[ORM\Column(type: "decimal", precision: 5, scale: 2, nullable: true)]
     private $discount;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Invoice\Invoice", inversedBy="invoiceItems")
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: \App\Entity\Invoice\Invoice::class, inversedBy: "invoiceItems")]
+    #[ORM\JoinColumn(nullable: false)]
     private $invoice;
 
     public function __construct(CreateInvoiceItemCommand $c, Invoice $invoice)

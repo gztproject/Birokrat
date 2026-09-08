@@ -9,7 +9,7 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use App\Entity\Konto\Konto;
 use App\Entity\Transaction\Transaction;
 use App\Repository\Transaction\TransactionRepository;
@@ -21,10 +21,7 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Psr\Log\LoggerInterface;
 
 class TransactionController extends AbstractController {
-	/**
-	 *
-	 * @Route("/dashboard/transaction", methods={"GET"}, name="transaction_index")
-	 */
+	#[Route(path: "/dashboard/transaction", methods: ["GET"], name: "transaction_index")]
 	public function index(TransactionRepository $transactions, Request $request, PaginatorInterface $paginator): Response {
 		$dateFrom = $request->query->get ( 'dateFrom', null );
 		$dateTo = $request->query->get ( 'dateTo', null );
@@ -40,10 +37,7 @@ class TransactionController extends AbstractController {
 		] );
 	}
 
-	/**
-	 *
-	 * @Route("/dashboard/transaction/export", methods={"GET"}, name="transaction_export")
-	 */
+	#[Route(path: "/dashboard/transaction/export", methods: ["GET"], name: "transaction_export")]
 	public function export(TransactionRepository $transactions, Request $request, PaginatorInterface $paginator): Response {
 		$dateFrom = $request->query->get ( 'dateFrom', null );
 		$dateTo = $request->query->get ( 'dateTo', null );
@@ -160,10 +154,7 @@ class TransactionController extends AbstractController {
 		return 0;
 	}
 
-	/**
-	 *
-	 * @Route("/dashboard/transaction/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/show", methods={"GET"}, name="transaction_show")
-	 */
+	#[Route(path: "/dashboard/transaction/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/show", methods: ["GET"], name: "transaction_show")]
 	public function show(Transaction $transaction, PaginatorInterface $paginator): Response {
 		return $this->render ( 'dashboard/transaction/index.html.twig', [ 
 				'pagination' => $paginator->paginate ( [ 
@@ -172,10 +163,7 @@ class TransactionController extends AbstractController {
 		] );
 	}
 
-	/**
-	 *
-	 * @Route("/dashboard/transaction/new", methods={"GET", "POST"}, name="transaction_new")
-	 */
+	#[Route(path: "/dashboard/transaction/new", methods: ["GET", "POST"], name: "transaction_new")]
 	public function new(TransactionRepository $transactions, Request $request, PaginatorInterface $paginator): Response {
 		$createTransactionCommand = new CreateTransactionCommand ();
 		$createTransactionCommand->hidden = false;
@@ -203,11 +191,7 @@ class TransactionController extends AbstractController {
 		] );
 	}
 	
-	/**
-	 * Displays a form to edit an existing transaction entity.
-	 *
-	 * @Route("/dashboard/transaction/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/edit",methods={"GET", "POST"}, name="transaction_edit")
-	 */
+	#[Route(path: "/dashboard/transaction/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/edit", methods: ["GET", "POST"], name: "transaction_edit")]
 	public function edit(Request $request, Transaction $transaction, LoggerInterface $logger, ManagerRegistry $doctrine): Response
 	{
 	    $updateTransactionCommand = new UpdateTransactionCommand();
@@ -233,11 +217,7 @@ class TransactionController extends AbstractController {
 	    ]);
 	}
 	
-	/**
-	 * Clones the transaction and displays a form to edit the new transaction entity.
-	 *
-	 * @Route("/dashboard/transaction/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/clone",methods={"GET", "POST"}, name="transaction_clone")
-	 */
+	#[Route(path: "/dashboard/transaction/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/clone", methods: ["GET", "POST"], name: "transaction_clone")]
 	public function clone(Request $request, Transaction $transaction, LoggerInterface $logger, ManagerRegistry $doctrine): Response
 	{
 	    $clone = $transaction->clone($this->getUser());

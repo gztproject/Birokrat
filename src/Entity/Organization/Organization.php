@@ -14,19 +14,13 @@ use App\Entity\Settings\UpdateOrganizationSettingsCommand;
 use App\Entity\Settings\KontoPreference;
 use App\Entity\Settings\CreateKontoPreferenceCommand;
 
-/**
- * @ORM\Entity(repositoryClass="App\Repository\Organization\OrganizationRepository")
- */
+#[ORM\Entity(repositoryClass: \App\Repository\Organization\OrganizationRepository::class)]
 class Organization extends LegalEntityBase
 {
-    /**
-     * @ORM\ManyToMany(targetEntity="App\Entity\User\User", inversedBy="organizations")
-     */
+    #[ORM\ManyToMany(targetEntity: \App\Entity\User\User::class, inversedBy: "organizations")]
     private $users;
 
-    /**
-     * @ORM\OneToOne(targetEntity="App\Entity\Settings\OrganizationSettings", mappedBy="organization", cascade={"persist", "remove"})
-     */
+    #[ORM\OneToOne(targetEntity: \App\Entity\Settings\OrganizationSettings::class, mappedBy: "organization", cascade: ["persist", "remove"])]
     private $organizationSettings;
     
     /**

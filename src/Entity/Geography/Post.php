@@ -8,35 +8,23 @@ use Doctrine\ORM\Mapping as ORM;
 use App\Entity\Base\AggregateBase;
 use App\Entity\User\User;
 
-/**
- * @ORM\Entity(repositoryClass="App\Repository\PostRepository")
- */
+#[ORM\Entity(repositoryClass: \App\Repository\PostRepository::class)]
 class Post extends AggregateBase
 {
-    /**
-     * @ORM\Column(type="string", length=10)
-     */
+    #[ORM\Column(type: "string", length: 10)]
     private $code;
 
-    /**
-     * @ORM\Column(type="string", length=15)
-     */
+    #[ORM\Column(type: "string", length: 15)]
     private $codeInternational;
 
-    /**
-     * @ORM\Column(type="string", length=100)
-     */
+    #[ORM\Column(type: "string", length: 100)]
     private $name;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Geography\Country", inversedBy="posts")
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: \App\Entity\Geography\Country::class, inversedBy: "posts")]
+    #[ORM\JoinColumn(nullable: false)]
     private $country;
 
-    /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Geography\Address", mappedBy="post")
-     */
+    #[ORM\OneToMany(targetEntity: \App\Entity\Geography\Address::class, mappedBy: "post")]
     private $addresses;
 
     public function __construct(CreatePostCommand $c, User $user, Country $country)

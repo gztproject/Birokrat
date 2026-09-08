@@ -14,101 +14,53 @@ use App\Entity\Transaction\Transaction;
 use App\Entity\Transaction\iTransactionDocument;
 use App\Entity\Transaction\CreateTransactionCommand;
 
-/**
- *
- * @ORM\Entity(repositoryClass="App\Repository\IncomingInvoice\IncomingInvoiceRepository")
- */
+#[ORM\Entity(repositoryClass: \App\Repository\IncomingInvoice\IncomingInvoiceRepository::class)]
 class IncomingInvoice extends AggregateBase implements iTransactionDocument {
-	/**
-	 *
-	 * @ORM\Column(type="date")
-	 */
+	#[ORM\Column(type: "date")]
 	private $dateOfIssue;
 
-	/**
-	 *
-	 * @ORM\ManyToOne(targetEntity="App\Entity\Organization\Partner", inversedBy="incomingInvoices")
-	 * @ORM\JoinColumn(nullable=false)
-	 */
+	#[ORM\ManyToOne(targetEntity: \App\Entity\Organization\Partner::class, inversedBy: "incomingInvoices")]
+    #[ORM\JoinColumn(nullable: false)]
 	private $issuer;
 
-	/**
-	 *
-	 * @ORM\ManyToOne(targetEntity="App\Entity\Organization\Organization")
-	 * @ORM\JoinColumn(nullable=false)
-	 */
+	#[ORM\ManyToOne(targetEntity: \App\Entity\Organization\Organization::class)]
+    #[ORM\JoinColumn(nullable: false)]
 	private $recepient;
 
-	/**
-	 *
-	 * @ORM\Column(type="string", length=255)
-	 */
+	#[ORM\Column(type: "string", length: 255)]
 	private $number;
 
-	/**
-	 *
-	 * @ORM\Column(type="decimal", precision=15, scale=2)
-	 */
+	#[ORM\Column(type: "decimal", precision: 15, scale: 2)]
 	private $price;
 
-	/**
-	 *
-	 * @ORM\Column(type="string", length=50, nullable=true)
-	 */
+	#[ORM\Column(type: "string", length: 50, nullable: true)]
 	private $referenceNumber;
 
-	/**
-	 *
-	 *  @ORM\Column(type="integer")
-	 */
+	#[ORM\Column(type: "integer")]
 	private $state;
 
-	/**
-	 *
-	 * @ORM\Column(type="date")
-	 */
+	#[ORM\Column(type: "date")]
 	private $dueDate;
 
-	/**
-	 *
-	 * @ORM\Column(type="date", nullable=true)
-	 */
+	#[ORM\Column(type: "date", nullable: true)]
 	private $datePaid;
 
-	/**
-	 *
-	 * @ORM\Column(type="date", nullable=true)
-	 */
+	#[ORM\Column(type: "date", nullable: true)]
 	private $dateRejected;
 
-	/**
-	 *
-	 * @ORM\Column(type="string", length=100, nullable=true)
-	 */
+	#[ORM\Column(type: "string", length: 100, nullable: true)]
 	private $rejectedReason;
 
-	/**
-	 *
-	 * @ORM\Column(type="date", nullable=true)
-	 */
+	#[ORM\Column(type: "date", nullable: true)]
 	private $dateRefunded;
 
-	/**
-	 *
-	 * @ORM\Column(type="string", length=100, nullable=true)
-	 */
+	#[ORM\Column(type: "string", length: 100, nullable: true)]
 	private $refundReason;
 
-	/**
-	 *
-	 * @ORM\Column(type="string", length=512, nullable=true)
-	 */
+	#[ORM\Column(type: "string", length: 512, nullable: true)]
 	private $note;
 
-	/**
-	 *
-	 * @ORM\Column(type="string", nullable=true)
-	 */
+	#[ORM\Column(type: "string", nullable: true)]
 	private $scanFilename;
 
 	/**

@@ -10,11 +10,9 @@ use DateTime;
 
 abstract class AggregateBase extends Base
 {
-    /**
-     * @ORM\Id()     
-     * @ORM\Column(type="uuid")
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\Id]
+    #[ORM\Column(type: "uuid")]
+    #[ORM\JoinColumn(nullable: false)]
     protected $id;    
     
     /**

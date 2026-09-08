@@ -8,139 +8,83 @@ use App\Entity\Organization\Organization;
 use App\Entity\User\User;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass="App\Repository\Settings\OrganizationSettingsRepository")
- */
+#[ORM\Entity(repositoryClass: \App\Repository\Settings\OrganizationSettingsRepository::class)]
 class OrganizationSettings extends Base
 {
         
-    /**
-     * @ORM\Column(type="string", length=100, nullable=true)
-     */
+    #[ORM\Column(type: "string", length: 100, nullable: true)]
     private $invoicePrefix;
 
-    /**
-     * @ORM\Column(type="integer", nullable=true)
-     */
+    #[ORM\Column(type: "integer", nullable: true)]
     private $defaultPaymentDueIn;
 
-    /**
-     * @ORM\Column(type="string", length=10, nullable=true)
-     */
+    #[ORM\Column(type: "string", length: 10, nullable: true)]
     private $referenceModel;
     
-    /**
-     * @ORM\Column(type="float", nullable=true)
-     */
+    #[ORM\Column(type: "float", nullable: true)]
     private $travelExpenseRate;
     
-    /**
-	 * @ORM\Column(type="boolean")
-	 */
+    #[ORM\Column(type: "boolean")]
     private $autoCreatePerDiem;
     
-    /**
-     * @ORM\Column(type="float", nullable=true)
-     */
+    #[ORM\Column(type: "float", nullable: true)]
     private $perDiemValue;
     
-    /**
-     * @ORM\Column(type="boolean")
-     */
+    #[ORM\Column(type: "boolean")]
     private $autoCreateLunch;
     
-    /**
-     * @ORM\Column(type="float", nullable=true)
-     */
+    #[ORM\Column(type: "float", nullable: true)]
     private $lunchValue;
     
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Konto\Konto")
-     */
+    #[ORM\ManyToOne(targetEntity: \App\Entity\Konto\Konto::class)]
     private $IssueInvoiceDebit;
     
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Konto\Konto")
-     */
+    #[ORM\ManyToOne(targetEntity: \App\Entity\Konto\Konto::class)]
     private $IssueInvoiceCredit;
     
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Konto\Konto")
-     */
+    #[ORM\ManyToOne(targetEntity: \App\Entity\Konto\Konto::class)]
     private $InvoicePaidDebit;
     
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Konto\Konto")
-     */
+    #[ORM\ManyToOne(targetEntity: \App\Entity\Konto\Konto::class)]
     private $InvoicePaidCredit;
     
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Konto\Konto")
-     */
+    #[ORM\ManyToOne(targetEntity: \App\Entity\Konto\Konto::class)]
     private $IncurredTravelExpenseDebit;
     
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Konto\Konto")
-     */
+    #[ORM\ManyToOne(targetEntity: \App\Entity\Konto\Konto::class)]
     private $IncurredTravelExpenseCredit;
     
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Konto\Konto")
-     */
+    #[ORM\ManyToOne(targetEntity: \App\Entity\Konto\Konto::class)]
     private $PaidTravelExpenseDebit;
     
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Konto\Konto")
-     */
+    #[ORM\ManyToOne(targetEntity: \App\Entity\Konto\Konto::class)]
     private $PaidTravelExpenseCredit;
     
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Konto\Konto")
-     */
+    #[ORM\ManyToOne(targetEntity: \App\Entity\Konto\Konto::class)]
     private $ReceivedHomeIncomingInvoiceCredit;
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Konto\Konto")
-     */
+    #[ORM\ManyToOne(targetEntity: \App\Entity\Konto\Konto::class)]
     private $ReceivedForeignIncomingInvoiceCredit;
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Konto\Konto")
-     */
+    #[ORM\ManyToOne(targetEntity: \App\Entity\Konto\Konto::class)]
     private $ReceivedIncomingInvoiceDebit;
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Konto\Konto")
-     */
+    #[ORM\ManyToOne(targetEntity: \App\Entity\Konto\Konto::class)]
     private $PaidCashIncomingInvoiceCredit;
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Konto\Konto")
-     */
+    #[ORM\ManyToOne(targetEntity: \App\Entity\Konto\Konto::class)]
     private $PaidTransactionIncomingInvoiceCredit;
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Konto\Konto")
-     */
+    #[ORM\ManyToOne(targetEntity: \App\Entity\Konto\Konto::class)]
     private $PaidIncomingInvoiceDebit;
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Konto\Konto")
-     */
+    #[ORM\ManyToOne(targetEntity: \App\Entity\Konto\Konto::class)]
     private $RefundedIncomingInvoiceCredit;
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Konto\Konto")
-     */
+    #[ORM\ManyToOne(targetEntity: \App\Entity\Konto\Konto::class)]
     private $RefundedIncomingInvoiceDebit;
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Konto\Konto")
-     */
+    #[ORM\ManyToOne(targetEntity: \App\Entity\Konto\Konto::class)]
     private $RejectedIncomingInvoiceCredit;
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Konto\Konto")
-     */
+    #[ORM\ManyToOne(targetEntity: \App\Entity\Konto\Konto::class)]
     private $RejectedIncomingInvoiceDebit;
     
     
     
-    /**
-     * @ORM\Id()
-     * @ORM\OneToOne(targetEntity="App\Entity\Organization\Organization", inversedBy="organizationSettings", cascade={"persist", "remove"})
-     */
+    #[ORM\Id]
+    #[ORM\OneToOne(targetEntity: \App\Entity\Organization\Organization::class, inversedBy: "organizationSettings", cascade: ["persist", "remove"])]
     private $organization;
 
     /**

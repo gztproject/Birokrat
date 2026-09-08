@@ -8,9 +8,9 @@ use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use App\Entity\Organization\Organization;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -23,14 +23,7 @@ use Symfony\Component\Form\FormError;
 class UserController extends AbstractController
 {
     
-    /**
-     * Lists all Users.
-     *
-     * This controller responds to two different routes with the same URL:
-     *   * 'admin_user_index' is the route with a name that follows the same
-     *     structure as the rest of the controllers of this class. 
-     * @Route("/admin/user", methods={"GET"}, name="admin_user_index")
-     */
+    #[Route(path: "/admin/user", methods: ["GET"], name: "admin_user_index")]
     public function index(UserRepository $users): Response
     {
         $myUsers = $users->findBy(['isActive' => TRUE], ['username' => 'DESC']);
@@ -38,10 +31,8 @@ class UserController extends AbstractController
         return $this->render('admin/user/index.html.twig', ['users' => $myUsers]);
     }
     
-    /**
-     * @Route("/admin/user/new", methods={"GET", "POST"}, name="admin_user_new")
-     */
-    public function new(Request $request, UserPasswordEncoderInterface $passwordEncoder, ManagerRegistry $doctrine)
+    #[Route(path: "/admin/user/new", methods: ["GET", "POST"], name: "admin_user_new")]
+    public function new(Request $request, UserPasswordHasherInterface $passwordEncoder, ManagerRegistry $doctrine)
     {
         // 1) build the form
         $createUserCommand = new CreateUserCommand();
@@ -104,12 +95,8 @@ class UserController extends AbstractController
             );
     }
     
-    /**
-     * Finds and displays the User entity.
-     *
-     * @Route("/user/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}", methods={"GET"}, name="user_show")
-     * @Route("/admin/user/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}", methods={"GET"}, name="admin_user_show")
-     */
+    #[Route(path: "/user/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}", methods: ["GET"], name: "user_show")]
+    #[Route(path: "/admin/user/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}", methods: ["GET"], name: "admin_user_show")]
     public function show(User $user): Response
     {        
         $this->denyAccessUnlessGranted('show', $user, 'Invoices can only be shown to their authors.');
@@ -119,14 +106,10 @@ class UserController extends AbstractController
         ]);
     }
     
-    /**
-     * Displays a form to edit an existing user entity.
-     *
-     * @Route("/user/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/edit",methods={"GET", "POST"}, name="user_edit")
-     * @Route("/admin/user/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/edit",methods={"GET", "POST"}, name="admin_user_edit")
-     * @IsGranted("edit", subject="user", message="Users can only be edited by their authors.")
-     */
-    public function edit(Request $request, User $user, UserPasswordEncoderInterface $passwordEncoder, ManagerRegistry $doctrine): Response
+    #[Route(path: "/user/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/edit", methods: ["GET", "POST"], name: "user_edit")]
+    #[Route(path: "/admin/user/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/edit", methods: ["GET", "POST"], name: "admin_user_edit")]
+    #[IsGranted(attribute: "edit", subject: "user", message: "Users can only be edited by their authors.")]
+    public function edit(Request $request, User $user, UserPasswordHasherInterface $passwordEncoder, ManagerRegistry $doctrine): Response
     {
     	$c = new UpdateUserCommand();
     	$user->mapTo($c);
@@ -206,9 +189,7 @@ class UserController extends AbstractController
         ]);
     }  
     
-    /**
-     * @Route("/admin/user/addOrganization", methods={"POST"}, name="user_addOrganization")
-     */
+    #[Route(path: "/admin/user/addOrganization", methods: ["POST"], name: "user_addOrganization")]
     public function addOrganization(Request $request, ManagerRegistry $doctrine): Response
     {
     	$user = $doctrine->getRepository(User::class)->findOneBy(['id'=>$request->request->get('userId', null)]);
@@ -234,12 +215,8 @@ class UserController extends AbstractController
     }
    
     
-    /**
-     * Deletes a User entity.
-     *
-     * @Route("/admin/user/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/delete", methods={"POST"}, name="admin_user_delete")
-     * @IsGranted("delete", subject="user")
-     */
+    #[Route(path: "/admin/user/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/delete", methods: ["POST"], name: "admin_user_delete")]
+    #[IsGranted(attribute: "delete", subject: "user")]
     public function delete(Request $request, User $user, ManagerRegistry $doctrine): Response
     {
         if (!$this->isCsrfTokenValid('delete', $request->request->get('token'))) {

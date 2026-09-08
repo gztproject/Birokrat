@@ -7,28 +7,16 @@ use App\Entity\Base\AggregateBase;
 use App\Entity\User\User;
 use App\Entity\Konto\Enumerators\KontoTypes;
 
-/**
- *
- * @ORM\Entity(repositoryClass="App\Repository\KontoRepository")
- */
+#[ORM\Entity(repositoryClass: \App\Repository\KontoRepository::class)]
 class Konto extends KontoBase {
-	/**
-	 *
-	 * @ORM\ManyToOne(targetEntity="App\Entity\Konto\KontoCategory", inversedBy="kontos")
-	 * @ORM\JoinColumn(nullable=false)
-	 */
+	#[ORM\ManyToOne(targetEntity: \App\Entity\Konto\KontoCategory::class, inversedBy: "kontos")]
+    #[ORM\JoinColumn(nullable: false)]
 	private $category;
 
-	/**
-	 *
-	 * @ORM\Column(type="boolean")
-	 */
+	#[ORM\Column(type: "boolean")]
 	private $isActive;
 
-	/**
-	 *
-	 *  @ORM\Column(type="smallint")
-	 */
+	#[ORM\Column(type: "smallint")]
 	private $type;
 
 	/**

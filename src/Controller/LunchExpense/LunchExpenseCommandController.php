@@ -7,7 +7,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use App\Repository\LunchExpense\LunchExpenseRepository;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Entity\LunchExpense\CreateLunchExpenseCommand;
@@ -18,9 +18,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 class LunchExpenseCommandController extends AbstractController
 {    
-	/**
-     * @Route("/dashboard/lunchExpense/new", methods={"GET, POST"}, name="lunchExpense_new")
-     */
+	#[Route(path: "/dashboard/lunchExpense/new", methods: ["GET, POST"], name: "lunchExpense_new")]
     public function new(Request $request, LunchExpenseRepository $lunchExpenses, LoggerInterface $logger, ManagerRegistry $doctrine): Response
     {
     	$c = new CreateLunchExpenseCommand();    	
@@ -59,9 +57,7 @@ class LunchExpenseCommandController extends AbstractController
     }   
        
     
-    /**
-     * @Route("/dashboard/lunchExpense/bookInBundle/withFilter", methods={"POST"}, name="lunchExpense_bookinBundle_withFilter")
-     */
+    #[Route(path: "/dashboard/lunchExpense/bookInBundle/withFilter", methods: ["POST"], name: "lunchExpense_bookinBundle_withFilter")]
     public function book(LunchExpenseRepository $repo, Request $request, ManagerRegistry $doctrine): JsonResponse
     {
     	$dateFrom = $request->request->get('dateFrom', 0);

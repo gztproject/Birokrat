@@ -30,93 +30,50 @@ use Psr\Log\LoggerInterface;
  * Plačilo računa iz TRR sp, ki se ne glasi na sp (osebna raba, račun ni knjižen): 919/110
  */
 
-/**
- *
- * @ORM\Entity(repositoryClass="App\Repository\Transaction\TransactionRepository")
- */
+#[ORM\Entity(repositoryClass: \App\Repository\Transaction\TransactionRepository::class)]
 class Transaction extends AggregateBase
 {
 
-    /**
-     *
-     * @ORM\ManyToOne(targetEntity="App\Entity\Organization\Organization")
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: \App\Entity\Organization\Organization::class)]
+    #[ORM\JoinColumn(nullable: false)]
     private $organization;
 
-    /**
-     *
-     * @ORM\ManyToOne(targetEntity="App\Entity\Konto\Konto")
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: \App\Entity\Konto\Konto::class)]
+    #[ORM\JoinColumn(nullable: false)]
     private $creditKonto;
 
-    /**
-     *
-     * @ORM\ManyToOne(targetEntity="App\Entity\Konto\Konto")
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: \App\Entity\Konto\Konto::class)]
+    #[ORM\JoinColumn(nullable: false)]
     private $debitKonto;
 
-    /**
-     *
-     * @ORM\Column(type="decimal", precision=10, scale=2)
-     */
+    #[ORM\Column(type: "decimal", precision: 10, scale: 2)]
     private $sum;
 
-    /**
-     *
-     * @ORM\Column(type="datetime")
-     */
+    #[ORM\Column(type: "datetime")]
     private $date;
 
-    /**
-     * Should this transaction be hidden from regular transactions (for example we don't want to show the konto closing at the end of the year among refular transactions)
-     *
-     * @ORM\Column(type="boolean")
-     */
+    #[ORM\Column(type: "boolean")]
     private $hidden;
 
-    /**
-     *
-     * @ORM\Column(type="string", length=511, nullable=true)
-     */
+    #[ORM\Column(type: "string", length: 511, nullable: true)]
     private $description;
 
-    /**
-     *
-     * @ORM\ManyToOne(targetEntity="App\Entity\Invoice\Invoice")
-     */
+    #[ORM\ManyToOne(targetEntity: \App\Entity\Invoice\Invoice::class)]
     private $invoice;
 
-    /**
-     *
-     * @ORM\ManyToOne(targetEntity="App\Entity\IncomingInvoice\IncomingInvoice")
-     */
+    #[ORM\ManyToOne(targetEntity: \App\Entity\IncomingInvoice\IncomingInvoice::class)]
     private $incomingInvoice;
 
-    /**
-     *
-     * @ORM\ManyToOne(targetEntity="App\Entity\TravelExpense\TravelExpense")
-     */
+    #[ORM\ManyToOne(targetEntity: \App\Entity\TravelExpense\TravelExpense::class)]
     private $travelExpense;
 
-    /**
-     *
-     * @ORM\OneToOne(targetEntity="App\Entity\TravelExpense\TravelExpenseBundle", cascade={"persist", "remove"})
-     */
+    #[ORM\OneToOne(targetEntity: \App\Entity\TravelExpense\TravelExpenseBundle::class, cascade: ["persist", "remove"])]
     private $travelExpenseBundle;
 
-    /**
-     *
-     * @ORM\OneToOne(targetEntity="App\Entity\LunchExpense\LunchExpense", cascade={"persist", "remove"})
-     */
+    #[ORM\OneToOne(targetEntity: \App\Entity\LunchExpense\LunchExpense::class, cascade: ["persist", "remove"])]
     private $lunchExpense;
 
-    /**
-     *
-     * @ORM\OneToOne(targetEntity="App\Entity\LunchExpense\LunchExpenseBundle", cascade={"persist", "remove"})
-     */
+    #[ORM\OneToOne(targetEntity: \App\Entity\LunchExpense\LunchExpenseBundle::class, cascade: ["persist", "remove"])]
     private $lunchExpenseBundle;
 
     /**

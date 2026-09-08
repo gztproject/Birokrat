@@ -6,7 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\Serializer;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
@@ -18,18 +18,14 @@ use App\Form\Geography\PostType;
 
 class PostController extends AbstractController
 {    
-    /**
-     * @Route("/dashboard/codesheets/post", methods={"GET"}, name="post_index")
-     */
+    #[Route(path: "/dashboard/codesheets/post", methods: ["GET"], name: "post_index")]
     public function index(PostRepository $posts): Response
     {                      
     	$posts = $posts->findAll();
     	return $this->render('dashboard/codesheets/post/post.html.twig', ['posts' => $posts]);
     } 
     
-    /**
-     * @Route("/dashboard/codesheets/post/new", methods={"POST"}, name="add_post")
-     */
+    #[Route(path: "/dashboard/codesheets/post/new", methods: ["POST"], name: "add_post")]
     public function addPost(Request $request, ManagerRegistry $doctrine): Response
     {
     	$c = new CreatePostCommand();
@@ -73,9 +69,7 @@ class PostController extends AbstractController
     	return new JsonResponse(array(array('status'=>'error','data'=>'No data submitted')));
     }    
         
-    /**
-     * @Route("/api/post/list", methods={"GET"}, name="post_list")
-     */
+    #[Route(path: "/api/post/list", methods: ["GET"], name: "post_list")]
     public function listJson(PostRepository $posts): Response
     {
         $posts = $posts->findAll();
@@ -96,9 +90,7 @@ class PostController extends AbstractController
         return $response;
     }
 
-    /**
-     * @Route("/api/post/listNames", methods={"GET"}, name="post_name_list")
-     */
+    #[Route(path: "/api/post/listNames", methods: ["GET"], name: "post_name_list")]
     public function listNamesJson(PostRepository $posts): Response
     {
         $posts = $posts->findAll();

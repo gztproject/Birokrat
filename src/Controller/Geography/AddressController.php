@@ -6,16 +6,14 @@ use App\Form\Geography\AddressType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use App\Entity\Geography\Address;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Entity\Geography\CreateAddressCommand;
 
 class AddressController extends AbstractController
 {    
-    /**
-     * @Route("/dashboard/address/new", methods={"POST"}, name="address_new")
-     */
+    #[Route(path: "/dashboard/address/new", methods: ["POST"], name: "address_new")]
     public function newAddress(Request $request, ManagerRegistry $doctrine): Response
     {	
     	$c = new CreateAddressCommand();

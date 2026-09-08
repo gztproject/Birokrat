@@ -8,20 +8,14 @@ use Doctrine\ORM\Mapping as ORM;
 use App\Entity\Base\AggregateBase;
 use App\Entity\User\User;
 
-/**
- * @ORM\Entity(repositoryClass="App\Repository\KontoCategoryRepository")
- */
+#[ORM\Entity(repositoryClass: \App\Repository\KontoCategoryRepository::class)]
 class KontoCategory extends KontoBase
 {
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Konto\KontoClass", inversedBy="categories")
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: \App\Entity\Konto\KontoClass::class, inversedBy: "categories")]
+    #[ORM\JoinColumn(nullable: false)]
     private $class;
 
-    /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Konto\Konto", mappedBy="category")
-     */
+    #[ORM\OneToMany(targetEntity: \App\Entity\Konto\Konto::class, mappedBy: "category")]
     private $kontos;
 
     /**

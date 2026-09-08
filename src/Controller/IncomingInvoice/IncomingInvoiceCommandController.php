@@ -7,7 +7,7 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Exception;
 use App\Entity\IncomingInvoice\IncomingInvoice;
 use App\Form\IncomingInvoice\IncomingInvoiceType;
@@ -18,9 +18,7 @@ use App\Entity\IncomingInvoice\UpdateIncomingInvoiceCommand;
 class IncomingInvoiceCommandController extends AbstractController
 {    
        
-    /**
-     * @Route("/dashboard/incomingInvoice/new", methods={"GET", "POST"}, name="incomingInvoice_new")
-     */
+    #[Route(path: "/dashboard/incomingInvoice/new", methods: ["GET", "POST"], name: "incomingInvoice_new")]
     public function new(Request $request, ManagerRegistry $doctrine): Response
     {
     	$c = new CreateIncomingInvoiceCommand();
@@ -51,11 +49,7 @@ class IncomingInvoiceCommandController extends AbstractController
     	]);
     }
     
-    /**
-     * Clones the IncomingInvoice and displays a form to edit an existing incomingInvoice entity.
-     *
-     * @Route("/dashboard/incomingInvoice/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/clone",methods={"GET", "POST"}, name="incomingInvoice_clone")
-     */
+    #[Route(path: "/dashboard/incomingInvoice/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/clone", methods: ["GET", "POST"], name: "incomingInvoice_clone")]
     public function clone(Request $request, IncomingInvoice $invoice, ManagerRegistry $doctrine): Response
     {
     	$clone = $invoice->clone($this->getUser());
@@ -87,9 +81,7 @@ class IncomingInvoiceCommandController extends AbstractController
     }
     
        
-    /**
-     * @Route("/dashboard/incomingInvoice/pay", methods={"POST"}, name="incomingInvoice_pay")
-     */
+    #[Route(path: "/dashboard/incomingInvoice/pay", methods: ["POST"], name: "incomingInvoice_pay")]
     public function pay(Request $request, ManagerRegistry $doctrine): Response
     {
     	$invoice = $doctrine->getRepository(IncomingInvoice::class)->findOneBy(['id'=>$request->request->get('id', null)]);
@@ -106,9 +98,7 @@ class IncomingInvoiceCommandController extends AbstractController
     	return $this->redirectToRoute('invoice_index');
     }    
     
-    /**
-     * @Route("/dashboard/incomingInvoice/reject", methods={"POST"}, name="incomingInvoice_reject")
-     */
+    #[Route(path: "/dashboard/incomingInvoice/reject", methods: ["POST"], name: "incomingInvoice_reject")]
     public function reject(Request $request, ManagerRegistry $doctrine): Response
     {
     	$invoice = $doctrine->getRepository(IncomingInvoice::class)->findOneBy(['id'=>$request->request->get('id', null)]);

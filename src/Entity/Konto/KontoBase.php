@@ -7,19 +7,13 @@ use App\Entity\Base\AggregateBase;
 
 abstract class KontoBase extends AggregateBase
 {
-    /**
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Column(type: "integer")]
     protected $number;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: "string", length: 255)]
     protected $name;  
     
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
     protected $description;
         
     public function getNumber(): ?int

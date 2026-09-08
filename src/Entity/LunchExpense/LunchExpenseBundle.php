@@ -11,20 +11,14 @@ use App\Entity\Transaction\iTransactionDocument;
 use App\Entity\User\User;
 use App\Entity\Transaction\CreateTransactionCommand;
 
-/**
- * @ORM\Entity(repositoryClass="App\Repository\LunchExpense\LunchExpenseBundleRepository")
- */
+#[ORM\Entity(repositoryClass: \App\Repository\LunchExpense\LunchExpenseBundleRepository::class)]
 class LunchExpenseBundle extends AggregateBase implements iTransactionDocument
 {    
-    /**
-     * @ORM\OneToMany(targetEntity="App\Entity\LunchExpense\LunchExpense", mappedBy="lunchExpenseBundle")
-     */
+    #[ORM\OneToMany(targetEntity: \App\Entity\LunchExpense\LunchExpense::class, mappedBy: "lunchExpenseBundle")]
     private $lunchExpenses;
     
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Organization\Organization")
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: \App\Entity\Organization\Organization::class)]
+    #[ORM\JoinColumn(nullable: false)]
     private $organization;
     
 

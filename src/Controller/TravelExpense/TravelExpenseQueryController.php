@@ -2,7 +2,7 @@
 
 namespace App\Controller\TravelExpense;
 
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,9 +16,7 @@ use Qipsius\TCPDFBundle\Controller\TCPDFController;
 
 class TravelExpenseQueryController extends AbstractController
 {    
-	/**     
-     * @Route("/dashboard/travelExpense", methods={"GET"}, name="travelExpense_index")
-     */
+	#[Route(path: "/dashboard/travelExpense", methods: ["GET"], name: "travelExpense_index")]
 	public function index(TravelExpenseRepository $travelExpenses, Request $request, PaginatorInterface $paginator): Response
 	{   		
 		$dateFrom = $request->query->get('dateFrom', 0);
@@ -36,9 +34,7 @@ class TravelExpenseQueryController extends AbstractController
     	]);
     } 
     
-    /**
-     * @Route("/dashboard/travelExpense/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}", methods={"GET"}, name="travelExpense_show")
-     */
+    #[Route(path: "/dashboard/travelExpense/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}", methods: ["GET"], name: "travelExpense_show")]
     public function show(TravelExpense $travelExpense): Response
     {           
         return $this->render('dashboard/travelExpense/show.html.twig', [
@@ -46,9 +42,7 @@ class TravelExpenseQueryController extends AbstractController
         ]);
     } 
     
-    /**
-     * @Route("/dashboard/travelExpense/bundle/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}", methods={"GET"}, name="travelExpenseBundle_show")
-     */
+    #[Route(path: "/dashboard/travelExpense/bundle/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}", methods: ["GET"], name: "travelExpenseBundle_show")]
     public function showBundle(TravelExpenseBundle $travelExpenseBundle, Request $request, PaginatorInterface $paginator): Response
     {
     	return $this->render('dashboard/travelExpense/index.html.twig', [
@@ -56,9 +50,7 @@ class TravelExpenseQueryController extends AbstractController
     	]);
     } 
     
-    /**
-     * @Route("/dashboard/travelExpense/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/pdf", methods={"GET"}, name="travelExpense_pdf")
-     */
+    #[Route(path: "/dashboard/travelExpense/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/pdf", methods: ["GET"], name: "travelExpense_pdf")]
     public function getPdf(TravelExpense $travelExpense, TCPDFController $tcpdf, TranslatorInterface $translator): Response
     {
     	return TravelExpensePdfFactory::factory($travelExpense, $translator, $tcpdf, 'I')->generate();

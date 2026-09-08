@@ -7,7 +7,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use App\Entity\Organization\Organization;
 use App\Entity\Organization\UpdateOrganizationCommand;
@@ -22,9 +22,7 @@ use App\Entity\Geography\UpdateAddressCommand;
 class OrganizationController extends AbstractController
 {
     
-    /**
-     * @Route("/dashboard/organization", methods={"GET"}, name="organization_index")
-     */
+    #[Route(path: "/dashboard/organization", methods: ["GET"], name: "organization_index")]
 	public function index(): Response
     {
     	$myOrganizations = $this->getUser()->getOrganizations();
@@ -39,9 +37,7 @@ class OrganizationController extends AbstractController
         );
     }
     
-    /**
-     * @Route("/dashboard/organization/list", methods={"GET"}, name="organization_list")
-     */
+    #[Route(path: "/dashboard/organization/list", methods: ["GET"], name: "organization_list")]
     public function list(OrganizationRepository $organizations): Response
     {
     	$myOrganizations = $organizations->findBy([], ['name' => 'DESC']);
@@ -66,9 +62,7 @@ class OrganizationController extends AbstractController
     	);
     }
     
-    /**
-     * @Route("/dashboard/organization/new", methods={"GET", "POST"}, name="organization_new")
-     */
+    #[Route(path: "/dashboard/organization/new", methods: ["GET", "POST"], name: "organization_new")]
     public function new(Request $request, ManagerRegistry $doctrine)
     {
         $c = new CreateOrganizationCommand();
@@ -123,9 +117,7 @@ class OrganizationController extends AbstractController
         );
     }
     
-    /**
-     * @Route("/dashboard/organization/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}", methods={"GET"}, name="organization_show")
-     */
+    #[Route(path: "/dashboard/organization/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}", methods: ["GET"], name: "organization_show")]
     public function show(Organization $organization): Response
     {           
         return $this->render('dashboard/organization/show.html.twig', [
@@ -134,11 +126,7 @@ class OrganizationController extends AbstractController
         ]);
     }
     
-    /**
-     * Displays a form to edit an existing invoice entity.
-     *
-     * @Route("/dashboard/organization/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/edit",methods={"GET", "POST"}, name="organization_edit")
-     */
+    #[Route(path: "/dashboard/organization/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/edit", methods: ["GET", "POST"], name: "organization_edit")]
     public function edit(Request $request, Organization $organization, ManagerRegistry $doctrine): Response
     {
     	$updateCommand = new UpdateOrganizationCommand();
@@ -196,11 +184,7 @@ class OrganizationController extends AbstractController
     }    
    
     
-    /**
-     * Deletes an organization entity.
-     *
-     * @Route("/dashboard/organization/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/delete", methods={"POST"}, name="organization_delete")
-     */
+    #[Route(path: "/dashboard/organization/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/delete", methods: ["POST"], name: "organization_delete")]
     public function delete(Request $request, Organization $organization, ManagerRegistry $doctrine): Response
     {
         if (!$this->isCsrfTokenValid('delete', $request->request->get('token'))) {

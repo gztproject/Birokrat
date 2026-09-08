@@ -9,29 +9,19 @@ use App\Entity\IncomingInvoice\IncomingInvoice;
 use App\Entity\Invoice\Invoice;
 use Doctrine\Common\Collections\Collection;
 
-/**
- * @ORM\Entity(repositoryClass="App\Repository\Organization\PartnerRepository")
- */
+#[ORM\Entity(repositoryClass: \App\Repository\Organization\PartnerRepository::class)]
 class Partner extends LegalEntityBase
 {    
-	/**
-	 * @ORM\Column(type="boolean")
-	 */
+	#[ORM\Column(type: "boolean")]
 	private $isSupplier;
 	
-	/**
-	 * @ORM\Column(type="boolean")
-	 */
+	#[ORM\Column(type: "boolean")]
 	private $isClient;
 	
-	/**
-	 * @ORM\OneToMany(targetEntity="App\Entity\Invoice\Invoice", mappedBy="recepient", orphanRemoval=false)
-	 */
+	#[ORM\OneToMany(targetEntity: \App\Entity\Invoice\Invoice::class, mappedBy: "recepient", orphanRemoval: false)]
 	private $invoices;
 	
-	/**
-	 * @ORM\OneToMany(targetEntity="App\Entity\IncomingInvoice\IncomingInvoice", mappedBy="issuer", orphanRemoval=false)
-	 */
+	#[ORM\OneToMany(targetEntity: \App\Entity\IncomingInvoice\IncomingInvoice::class, mappedBy: "issuer", orphanRemoval: false)]
 	private $incomingInvoices;
 	
 	public function __construct(CreatePartnerCommand $c, User $user)

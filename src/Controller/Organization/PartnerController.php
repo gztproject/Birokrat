@@ -7,7 +7,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use App\Entity\Organization\Partner;
 use App\Repository\Organization\PartnerRepository;
@@ -23,9 +23,7 @@ use App\Entity\Organization\Organization;
 class PartnerController extends AbstractController
 {
     
-    /**
-     * @Route("/dashboard/partner", methods={"GET"}, name="partner_index")
-     */
+    #[Route(path: "/dashboard/partner", methods: ["GET"], name: "partner_index")]
 	public function index(PartnerRepository $partners): Response
     {
     	$myPartners = $partners->findBy([], ['name' => 'ASC']);
@@ -33,9 +31,7 @@ class PartnerController extends AbstractController
         return $this->render('dashboard/partner/index.html.twig', ['partners' => $myPartners]);
     }
     
-    /**
-     * @Route("/dashboard/partner/new", methods={"GET", "POST"}, name="partner_new")
-     */
+    #[Route(path: "/dashboard/partner/new", methods: ["GET", "POST"], name: "partner_new")]
     public function new(Request $request, ManagerRegistry $doctrine)
     {
     	$c = new CreatePartnerCommand();                
@@ -87,9 +83,7 @@ class PartnerController extends AbstractController
         );
     }
     
-    /**
-     * @Route("/dashboard/partner/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}", methods={"GET"}, name="partner_show")
-     */
+    #[Route(path: "/dashboard/partner/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}", methods: ["GET"], name: "partner_show")]
     public function show(Partner $partner): Response
     {       	
         return $this->render('dashboard/partner/show.html.twig', [
@@ -97,11 +91,7 @@ class PartnerController extends AbstractController
         ]);
     }
     
-    /**
-     * Displays a form to edit an existing partner entity.
-     *
-     * @Route("/dashboard/partner/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/edit",methods={"GET", "POST"}, name="partner_edit")
-     */
+    #[Route(path: "/dashboard/partner/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/edit", methods: ["GET", "POST"], name: "partner_edit")]
     public function edit(Request $request, Partner $partner, ManagerRegistry $doctrine): Response
     {
     	$updateCommand = new UpdatePartnerCommand();
@@ -158,11 +148,7 @@ class PartnerController extends AbstractController
     }    
    
     
-    /**
-     * Deletes an organization entity.
-     *
-     * @Route("/dashboard/partner/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/delete", methods={"POST"}, name="partner_delete")
-     */
+    #[Route(path: "/dashboard/partner/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/delete", methods: ["POST"], name: "partner_delete")]
     public function delete(Request $request, Partner $partner, ManagerRegistry $doctrine): Response
     {
         if (!$this->isCsrfTokenValid('delete', $request->request->get('token'))) {

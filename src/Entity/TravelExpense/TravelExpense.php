@@ -15,52 +15,34 @@ use App\Entity\Transaction\CreateTransactionCommand;
 use App\Entity\Transaction\iTransactionDocument;
 use App\Entity\TravelExpense\Enumerators\States;
 
-/**
- * @ORM\Entity(repositoryClass="App\Repository\TravelExpense\TravelExpenseRepository")
- */
+#[ORM\Entity(repositoryClass: \App\Repository\TravelExpense\TravelExpenseRepository::class)]
 class TravelExpense extends AggregateBase implements iTransactionDocument
 {
-    /**
-     * @ORM\Column(type="datetime")
-     */
+    #[ORM\Column(type: "datetime")]
     private $date;
     
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\User\User")
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: \App\Entity\User\User::class)]
+    #[ORM\JoinColumn(nullable: false)]
     private $employee;
     
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Organization\Organization")
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: \App\Entity\Organization\Organization::class)]
+    #[ORM\JoinColumn(nullable: false)]
     private $organization;
 
-    /**
-     * @ORM\Column(type="decimal", precision=10, scale=2)
-     */
+    #[ORM\Column(type: "decimal", precision: 10, scale: 2)]
     private $totalDistance;
 
-    /**
-     * @ORM\Column(type="decimal", precision=5, scale=3)
-     */
+    #[ORM\Column(type: "decimal", precision: 5, scale: 3)]
     private $rate;
 
-    /**
-     * @ORM\OneToMany(targetEntity="App\Entity\TravelExpense\TravelStop", mappedBy="travelExpense", orphanRemoval=true)
-     * @ORM\OrderBy({"stopOrder" = "ASC"})
-     */
+    #[ORM\OneToMany(targetEntity: \App\Entity\TravelExpense\TravelStop::class, mappedBy: "travelExpense", orphanRemoval: true)]
+    #[ORM\OrderBy(["stopOrder" => "ASC"])]
     private $travelStops;
 
-    /**
-     *  @ORM\Column(type="integer")
-     */
+    #[ORM\Column(type: "integer")]
     private $state;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\TravelExpense\TravelExpenseBundle", inversedBy="travelExpenses")
-     */
+    #[ORM\ManyToOne(targetEntity: \App\Entity\TravelExpense\TravelExpenseBundle::class, inversedBy: "travelExpenses")]
     private $travelExpenseBundle;
     
     public function __construct(CreateTravelExpenseCommand $c, User $user)

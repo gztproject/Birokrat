@@ -7,7 +7,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use App\Repository\LunchExpense\LunchExpenseRepository;
 use App\Repository\TravelExpense\TravelExpenseRepository;
 use App\Entity\Konto\Konto;
@@ -28,9 +28,7 @@ use App\Entity\Transaction\UpdateTransactionCommand;
 
 class TravelExpenseCommandController extends AbstractController
 {    
-	/**
-     * @Route("/dashboard/travelExpense/new", methods={"GET", "POST"}, name="travelExpense_new")
-     */
+	#[Route(path: "/dashboard/travelExpense/new", methods: ["GET", "POST"], name: "travelExpense_new")]
     public function new(Request $request, TravelExpenseRepository $travelExpenses, LunchExpenseRepository $lunchExpenses, LoggerInterface $logger, ManagerRegistry $doctrine): Response
     {
     	$c = new CreateTravelExpenseCommand();    	
@@ -99,11 +97,7 @@ class TravelExpenseCommandController extends AbstractController
     	]);
     }   
     
-    /**
-     * Displays a form to edit an existing TravelExpense.
-     *
-     * @Route("/dashboard/travelExpense/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/edit",methods={"GET", "POST"}, name="travelExpense_edit")
-     */
+    #[Route(path: "/dashboard/travelExpense/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/edit", methods: ["GET", "POST"], name: "travelExpense_edit")]
     public function edit(Request $request, TravelExpense $te, LoggerInterface $logger, TransactionRepository $transactions, ManagerRegistry $doctrine): Response
     {
     	$updateTECommand = new UpdateTravelExpenseCommand();
@@ -155,11 +149,7 @@ class TravelExpenseCommandController extends AbstractController
     	]);
     }
     
-    /**
-     * Clones an existing invoice and opens it in editor.
-     *
-     * @Route("/dashboard/travelExpense/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/clone",methods={"GET", "POST"}, name="travelExpense_clone")
-     */
+    #[Route(path: "/dashboard/travelExpense/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/clone", methods: ["GET", "POST"], name: "travelExpense_clone")]
     public function clone(Request $request, TravelExpense $te, TravelExpenseRepository $travelExpenses, LunchExpenseRepository $lunchExpenses, 
         LoggerInterface $logger, ManagerRegistry $doctrine): Response
     {
@@ -235,9 +225,7 @@ class TravelExpenseCommandController extends AbstractController
     	]);
     }
     
-    /**
-     * @Route("/dashboard/travelExpense/bookInBundle/withFilter", methods={"POST"}, name="travelExpense_bookinBundle_withFilter")
-     */
+    #[Route(path: "/dashboard/travelExpense/bookInBundle/withFilter", methods: ["POST"], name: "travelExpense_bookinBundle_withFilter")]
     public function book(TravelExpenseRepository $repo, Request $request, ManagerRegistry $doctrine): JsonResponse
     {
     	$dateFrom = $request->request->get('dateFrom', 0);

@@ -13,20 +13,14 @@ use App\Entity\User\User;
 use App\Entity\Transaction\CreateTransactionCommand;
 use Symfony\Component\Validator\Constraints\Date;
 
-/**
- * @ORM\Entity(repositoryClass="App\Repository\TravelExpense\TravelExpenseBundleRepository")
- */
+#[ORM\Entity(repositoryClass: \App\Repository\TravelExpense\TravelExpenseBundleRepository::class)]
 class TravelExpenseBundle extends AggregateBase implements iTransactionDocument
 {    
-    /**
-     * @ORM\OneToMany(targetEntity="App\Entity\TravelExpense\TravelExpense", mappedBy="travelExpenseBundle")
-     */
+    #[ORM\OneToMany(targetEntity: \App\Entity\TravelExpense\TravelExpense::class, mappedBy: "travelExpenseBundle")]
     private $travelExpenses;
     
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Organization\Organization")
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: \App\Entity\Organization\Organization::class)]
+    #[ORM\JoinColumn(nullable: false)]
     private $organization;
     
 

@@ -7,7 +7,7 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Exception;
 use App\Entity\Invoice\Invoice;
 use App\Entity\Invoice\InvoiceNumberFactory;
@@ -27,9 +27,7 @@ use App\Entity\Invoice\Enumerators\States;
 class InvoiceCommandController extends AbstractController
 {    
        
-    /**
-     * @Route("/dashboard/invoice/new", methods={"GET", "POST"}, name="invoice_new")
-     */
+    #[Route(path: "/dashboard/invoice/new", methods: ["GET", "POST"], name: "invoice_new")]
     public function new(Request $request, ManagerRegistry $doctrine): Response
     {
     	$createInvoiceCommand = new CreateInvoiceCommand();
@@ -61,11 +59,7 @@ class InvoiceCommandController extends AbstractController
     }
     
     
-    /**
-     * Displays a form to edit an existing invoice entity.
-     *
-     * @Route("/dashboard/invoice/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/edit",methods={"GET", "POST"}, name="invoice_edit")
-     */
+    #[Route(path: "/dashboard/invoice/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/edit", methods: ["GET", "POST"], name: "invoice_edit")]
     public function edit(Request $request, Invoice $invoice, ManagerRegistry $doctrine): Response
     {
     	$updateInvoiceCommand = new UpdateInvoiceCommand();
@@ -102,11 +96,7 @@ class InvoiceCommandController extends AbstractController
     	]);
     }
     
-    /**
-     * Displays a form to edit an existing invoice entity.
-     *
-     * @Route("/dashboard/invoice/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/clone",methods={"GET", "POST"}, name="invoice_clone")
-     */
+    #[Route(path: "/dashboard/invoice/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/clone", methods: ["GET", "POST"], name: "invoice_clone")]
     public function clone(Request $request, Invoice $invoice, ManagerRegistry $doctrine): Response
     {
     	$clone = $invoice->clone($this->getUser());
@@ -147,9 +137,7 @@ class InvoiceCommandController extends AbstractController
     }
     
     
-    /**
-     * @Route("/dashboard/invoice/issue", methods={"POST"}, name="invoice_issue")
-     */
+    #[Route(path: "/dashboard/invoice/issue", methods: ["POST"], name: "invoice_issue")]
     public function issue(Request $request, ManagerRegistry $doctrine): Response
     {
     	$id = $request->request->get('id', null);
@@ -175,9 +163,7 @@ class InvoiceCommandController extends AbstractController
     	]);
     }
        
-    /**
-     * @Route("/dashboard/invoice/pay", methods={"POST"}, name="invoice_set_paid")
-     */
+    #[Route(path: "/dashboard/invoice/pay", methods: ["POST"], name: "invoice_set_paid")]
     public function setPaid(Request $request, ManagerRegistry $doctrine): Response
     {
     	$invoice = $doctrine->getRepository(Invoice::class)->findOneBy(['id'=>$request->request->get('id', null)]);
@@ -193,9 +179,7 @@ class InvoiceCommandController extends AbstractController
     	return $this->redirectToRoute('invoice_index');
     }    
     
-    /**
-     * @Route("/dashboard/invoice/cancel", methods={"POST"}, name="invoice_cancel")
-     */
+    #[Route(path: "/dashboard/invoice/cancel", methods: ["POST"], name: "invoice_cancel")]
     public function cancel(Request $request, ManagerRegistry $doctrine): Response
     {
     	$invoice = $doctrine->getRepository(Invoice::class)->findOneBy(['id'=>$request->request->get('id', null)]);
@@ -209,9 +193,7 @@ class InvoiceCommandController extends AbstractController
     	return $this->redirectToRoute('invoice_index');
     }
     
-    /**
-     * @Route("/dashboard/invoice/send", methods={"POST"}, name="invoice_send")
-     */
+    #[Route(path: "/dashboard/invoice/send", methods: ["POST"], name: "invoice_send")]
     public function send(Request $request, MailerInterface $mailer, TCPDFController $tcpdf, TranslatorInterface $translator, ManagerRegistry $doctrine): JsonResponse
     {
     	$id = $request->request->get('id', null);

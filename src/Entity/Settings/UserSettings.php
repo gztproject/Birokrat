@@ -6,15 +6,11 @@ use App\Entity\Base\Base;
 use App\Entity\User\User;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass="App\Repository\Settings\UserSettingsRepository")
- */
+#[ORM\Entity(repositoryClass: \App\Repository\Settings\UserSettingsRepository::class)]
 class UserSettings extends Base
 {
-    /**
-     * @ORM\Id()
-     * @ORM\OneToOne(targetEntity="App\Entity\User\User", inversedBy="userSettings", cascade={"persist", "remove"})
-     */
+    #[ORM\Id]
+    #[ORM\OneToOne(targetEntity: \App\Entity\User\User::class, inversedBy: "userSettings", cascade: ["persist", "remove"])]
     private $user;
 
     /**

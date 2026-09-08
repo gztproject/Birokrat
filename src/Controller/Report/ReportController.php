@@ -5,7 +5,7 @@ use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use App\Entity\Organization\Organization;
 use App\Entity\Transaction\Transaction;
 use App\Entity\Report\DDDDDD;
@@ -19,10 +19,7 @@ use App\Entity\Konto\Enumerators\KontoTypes;
 
 class ReportController extends AbstractController
 {
-    /**
-     *
-     * @Route("/dashboard/report", methods={"GET"}, name="report_index")
-     */
+    #[Route(path: "/dashboard/report", methods: ["GET"], name: "report_index")]
     public function index(Request $request, EntityManagerInterface $em): Response
     {
         $dateFrom = $request->query->get('dateFrom', null);
@@ -38,10 +35,7 @@ class ReportController extends AbstractController
         ]);
     }
 
-    /**
-     *
-     * @Route("/dashboard/report/dddddd", methods={"GET"}, name="report_dddddd")
-     */
+    #[Route(path: "/dashboard/report/dddddd", methods: ["GET"], name: "report_dddddd")]
     public function ddddddReport(Request $request, EntityManagerInterface $em): Response
     {
         $dateFrom = $request->query->get('dateFrom', null);
@@ -54,10 +48,7 @@ class ReportController extends AbstractController
         ]);
     }
 
-    /**
-     *
-     * @Route("/dashboard/report/blianca", methods={"GET"}, name="report_bilanca")
-     */
+    #[Route(path: "/dashboard/report/blianca", methods: ["GET"], name: "report_bilanca")]
     public function bilancaReport(Request $request, EntityManagerInterface $em): Response
     {
         $dateTo = $request->query->get('dateTo', null);
@@ -71,10 +62,7 @@ class ReportController extends AbstractController
         ]);
     }
 
-    /**
-     *
-     * @Route("/dashboard/report/turnout", methods={"GET"}, name="report_turnout")
-     */
+    #[Route(path: "/dashboard/report/turnout", methods: ["GET"], name: "report_turnout")]
     public function izkazIzidaReport(Request $request, EntityManagerInterface $em): Response
     {
         $dateFrom = $request->query->get('dateFrom', null);

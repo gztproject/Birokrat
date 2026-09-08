@@ -16,133 +16,81 @@ use App\Entity\Transaction\Transaction;
 use App\Entity\Transaction\iTransactionDocument;
 use App\Entity\Transaction\CreateTransactionCommand;
 
-/**
- * @ORM\Entity(repositoryClass="App\Repository\Invoice\InvoiceRepository")
- */
+#[ORM\Entity(repositoryClass: \App\Repository\Invoice\InvoiceRepository::class)]
 class Invoice extends AggregateBase implements iTransactionDocument
 {
-    /**
-     * @ORM\Column(type="date")
-     */
+    #[ORM\Column(type: "date")]
     private $dateOfIssue;
     
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Organization\Organization")
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: \App\Entity\Organization\Organization::class)]
+    #[ORM\JoinColumn(nullable: false)]
     private $issuer;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Organization\Partner", inversedBy="invoices")
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: \App\Entity\Organization\Partner::class, inversedBy: "invoices")]
+    #[ORM\JoinColumn(nullable: false)]
     private $recepient;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: "string", length: 255)]
     private $number;
 
-    /**
-     * @ORM\Column(type="decimal", precision=5, scale=2, nullable=true)
-     */
+    #[ORM\Column(type: "decimal", precision: 5, scale: 2, nullable: true)]
     private $discount;
 
-    /**
-     * @ORM\Column(type="decimal", precision=15, scale=2)
-     */
+    #[ORM\Column(type: "decimal", precision: 15, scale: 2)]
     private $totalValue;
 
-    /**
-     * @ORM\Column(type="decimal", precision=15, scale=2)
-     */
+    #[ORM\Column(type: "decimal", precision: 15, scale: 2)]
     private $totalPrice;
 
-    /**
-     * @ORM\Column(type="string", length=50)
-     */
+    #[ORM\Column(type: "string", length: 50)]
     private $referenceNumber;
 
-    /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Invoice\InvoiceItem", mappedBy="invoice", orphanRemoval=true)
-     * @ORM\OrderBy({"code" = "ASC"})
-     */
+    #[ORM\OneToMany(targetEntity: \App\Entity\Invoice\InvoiceItem::class, mappedBy: "invoice", orphanRemoval: true)]
+    #[ORM\OrderBy(["code" => "ASC"])]
     private $invoiceItems;
 
-    /**
-     *  @ORM\Column(type="integer")
-     */
+    #[ORM\Column(type: "integer")]
     private $state;
         
-    /**
-     * @ORM\Column(type="date")
-     */
+    #[ORM\Column(type: "date")]
     private $dateServiceRenderedFrom;
     
-	/**
-     * @ORM\Column(type="date", nullable=true)
-     */
+	#[ORM\Column(type: "date", nullable: true)]
     private $dateServiceRenderedTo;
 
-    /**
-     * @ORM\Column(type="date")
-     */
+    #[ORM\Column(type: "date")]
     private $dueDate;
     
-    /**
-     * @ORM\Column(type="date", nullable=true)
-     */
+    #[ORM\Column(type: "date", nullable: true)]
     private $datePaid;
     
-    /**
-     * @ORM\Column(type="date", nullable=true)
-     */
+    #[ORM\Column(type: "date", nullable: true)]
     private $dateCancelled;
     
-    /**
-     * @ORM\Column(type="string", length=100, nullable=true)
-     */
+    #[ORM\Column(type: "string", length: 100, nullable: true)]
     private $cancelReason;
     
     /*
      * We're saving some denormalized issuer and client data in case of changes (eg. address, name, etc.)
      */
     
-    /**
-    * @ORM\Column(type="string", length=255)
-    */
+    #[ORM\Column(type: "string", length: 255)]
     private $issuerName;
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: "string", length: 255)]
     private $issuerAddress;
-    /**
-     * @ORM\Column(type="string", length=100)
-     */
+    #[ORM\Column(type: "string", length: 100)]
     private $issuerPostName;
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: "string", length: 255)]
     private $issuerTaxNumber;
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: "string", length: 255)]
     private $issuerAccountNumber;    
-    /**
-     * @ORM\Column(type="string", length=10)
-     */
+    #[ORM\Column(type: "string", length: 10)]
     private $issuerBic;
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: "string", length: 255)]
     private $recepientName;
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: "string", length: 255)]
     private $recepientAddress;
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: "string", length: 255)]
     private $recepientTaxNumber;   
     
     

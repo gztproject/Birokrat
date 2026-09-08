@@ -2,7 +2,7 @@
 
 namespace App\Controller\LunchExpense;
 
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -13,9 +13,7 @@ use Knp\Component\Pager\PaginatorInterface;
 
 class LunchExpenseQueryController extends AbstractController
 {    
-	/**     
-     * @Route("/dashboard/lunchExpense", methods={"GET"}, name="lunchExpense_index")
-     */
+	#[Route(path: "/dashboard/lunchExpense", methods: ["GET"], name: "lunchExpense_index")]
 	public function index(LunchExpenseRepository $lunchExpenses, Request $request, PaginatorInterface $paginator): Response
 	{   		
 		$dateFrom = $request->query->get('dateFrom', 0);
@@ -33,9 +31,7 @@ class LunchExpenseQueryController extends AbstractController
     	]);
     }     
     
-    /**
-     * @Route("/dashboard/lunchExpense/bundle/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}", methods={"GET"}, name="lunchExpenseBundle_show")
-     */
+    #[Route(path: "/dashboard/lunchExpense/bundle/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}", methods: ["GET"], name: "lunchExpenseBundle_show")]
     public function showBundle(LunchExpenseBundle $lunchExpenseBundle, Request $request, PaginatorInterface $paginator): Response
     {
     	return $this->render('dashboard/lunchExpense/index.html.twig', [

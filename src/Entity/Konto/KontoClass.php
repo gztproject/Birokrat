@@ -7,14 +7,10 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-/**
- * @ORM\Entity(repositoryClass="App\Repository\KontoClassRepository")
- */
+#[ORM\Entity(repositoryClass: \App\Repository\KontoClassRepository::class)]
 class KontoClass extends KontoBase
 {
-    /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Konto\KontoCategory", mappedBy="class")
-     */
+    #[ORM\OneToMany(targetEntity: \App\Entity\Konto\KontoCategory::class, mappedBy: "class")]
     private $categories;
 
     /**

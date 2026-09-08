@@ -8,39 +8,25 @@ use Doctrine\ORM\Mapping as ORM;
 use App\Entity\Base\AggregateBase;
 use App\Entity\User\User;
 
-/**
- * @ORM\Entity(repositoryClass="App\Repository\CountryRepository")
- */
+#[ORM\Entity(repositoryClass: \App\Repository\CountryRepository::class)]
 class Country extends AggregateBase
 {
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: "string", length: 255)]
     private $name;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: "string", length: 255)]
     private $nameInt;
 
-    /**
-     * @ORM\Column(type="string", length=2)
-     */
+    #[ORM\Column(type: "string", length: 2)]
     private $A2;
 
-    /**
-     * @ORM\Column(type="string", length=3)
-     */
+    #[ORM\Column(type: "string", length: 3)]
     private $A3;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Column(type: "integer")]
     private $N3;
 
-    /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Geography\Post", mappedBy="country")
-     */
+    #[ORM\OneToMany(targetEntity: \App\Entity\Geography\Post::class, mappedBy: "country")]
     private $posts;
 
     public function __construct(CreateCountryCommand $c, User $user)

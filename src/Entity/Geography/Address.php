@@ -6,25 +6,17 @@ use Doctrine\ORM\Mapping as ORM;
 use App\Entity\Base\AggregateBase;
 use App\Entity\User\User;
 
-/**
- * @ORM\Entity(repositoryClass="App\Repository\AddressRepository")
- */
+#[ORM\Entity(repositoryClass: \App\Repository\AddressRepository::class)]
 class Address extends AggregateBase
 {
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: "string", length: 255)]
     private $line1;
 
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
-     */
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
     private $line2;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Geography\Post", inversedBy="addresses")
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: \App\Entity\Geography\Post::class, inversedBy: "addresses")]
+    #[ORM\JoinColumn(nullable: false)]
     private $post;
     
     public function __construct(CreateAddressCommand $c, User $user, Post $post)

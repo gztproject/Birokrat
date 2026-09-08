@@ -35,74 +35,48 @@ use App\Entity\Geography\CreateCountryCommand;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 
-/**
- * @ORM\Table(name="app_users")
- * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
- */
+#[ORM\Table(name: "app_users")]
+#[ORM\Entity(repositoryClass: \App\Repository\UserRepository::class)]
 class User extends AggregateBase implements UserInterface, PasswordAuthenticatedUserInterface
 {
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: "string", length: 255)]
     private $username;
     
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: "string", length: 255)]
     private $firstName;
     
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: "string", length: 255)]
     private $lastName;
     
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
+    #[ORM\Column(type: "string", length: 255)]
     private $password;
     
-    /**
-     * @ORM\Column(type="array")
-     */
+    #[ORM\Column(type: "array")]
     private $roles;
     
-    /**
-     * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank()
-     * @Assert\Email()
-     */
+    #[ORM\Column(type: "string", length: 255)]
+    #[Assert\NotBlank]
+    #[Assert\Email]
     private $email;
     
-    /**
-     * @ORM\Column(type="string", length=20, nullable=true)
-     * @ORM\JoinColumn(nullable=true)
-     */
+    #[ORM\Column(type: "string", length: 20, nullable: true)]
+    #[ORM\JoinColumn(nullable: true)]
     private $mobile;
     
-    /**
-     * @ORM\Column(type="string", length=20, nullable=true)
-     * @ORM\JoinColumn(nullable=true)
-     */
+    #[ORM\Column(type: "string", length: 20, nullable: true)]
+    #[ORM\JoinColumn(nullable: true)]
     private $phone;
 
-    /**
-     * @ORM\Column(type="boolean")
-     */
+    #[ORM\Column(type: "boolean")]
     private $isActive;
     
-    /**
-     * @ORM\ManyToMany(targetEntity="App\Entity\Organization\Organization", mappedBy="users")
-     */
+    #[ORM\ManyToMany(targetEntity: \App\Entity\Organization\Organization::class, mappedBy: "users")]
     private $organizations;
 
-    /**
-     * @ORM\OneToOne(targetEntity="App\Entity\Settings\UserSettings", mappedBy="user" , cascade={"persist", "remove"})
-     */
+    #[ORM\OneToOne(targetEntity: \App\Entity\Settings\UserSettings::class, mappedBy: "user", cascade: ["persist", "remove"])]
     private $userSettings;
     
-    /**
-     * @ORM\Column(type="string")
-     */
+    #[ORM\Column(type: "string")]
     private $signatureFilename;
     
     /**
@@ -493,7 +467,7 @@ class User extends AggregateBase implements UserInterface, PasswordAuthenticated
      * ********************************************************************
      */     
         
-    public function eraseCredentials()
+    public function eraseCredentials(): void
     {
     	return;
     }

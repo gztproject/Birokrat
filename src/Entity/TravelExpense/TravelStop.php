@@ -9,40 +9,26 @@ use App\Entity\Geography\Post;
 use App\Entity\Organization\Organization;
 use App\Entity\User\User;
 
-/**
- * @ORM\Entity(repositoryClass="App\Repository\TravelStopRepository")
- */
+#[ORM\Entity(repositoryClass: \App\Repository\TravelStopRepository::class)]
 class TravelStop extends AggregateBase
 {
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Geography\Post")
-     */
+    #[ORM\ManyToOne(targetEntity: \App\Entity\Geography\Post::class)]
     private $post;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Geography\Address")
-     */
+    #[ORM\ManyToOne(targetEntity: \App\Entity\Geography\Address::class)]
     private $address;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Organization\Organization")
-     */
+    #[ORM\ManyToOne(targetEntity: \App\Entity\Organization\Organization::class)]
     private $organization;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\TravelExpense\TravelExpense", inversedBy="travelStops")
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: \App\Entity\TravelExpense\TravelExpense::class, inversedBy: "travelStops")]
+    #[ORM\JoinColumn(nullable: false)]
     private $travelExpense;
 
-    /**
-     * @ORM\Column(type="integer")
-     */
+    #[ORM\Column(type: "integer")]
     private $stopOrder;
 
-    /**
-     * @ORM\Column(type="decimal", precision=10, scale=2)
-     */
+    #[ORM\Column(type: "decimal", precision: 10, scale: 2)]
     private $distanceFromPrevious;
     
     

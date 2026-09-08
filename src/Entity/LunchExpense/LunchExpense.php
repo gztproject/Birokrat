@@ -16,32 +16,20 @@ use Symfony\Component\Validator\Constraints\Date;
 use App\Entity\Organization\Organization;
 use PhpParser\Node\Expr\Cast\Int_;
 
-/**
- * @ORM\Entity(repositoryClass="App\Repository\TravelExpense\TravelExpenseBundleRepository")
- */
+#[ORM\Entity(repositoryClass: \App\Repository\TravelExpense\TravelExpenseBundleRepository::class)]
 class LunchExpense extends AggregateBase implements iTransactionDocument
 {    
-	/**
-	 * @ORM\Column(type="date")
-	*/
+	#[ORM\Column(type: "date")]
    	private $date;
-   	/**
-   	 * @ORM\Column(type="decimal", precision=15, scale=2)
-   	 */
+   	#[ORM\Column(type: "decimal", precision: 15, scale: 2)]
    	private $sum;
-   	/**
-   	 *  @ORM\Column(type="integer")
-   	 */
+   	#[ORM\Column(type: "integer")]
    	private $state;
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Organization\Organization")
-     * @ORM\JoinColumn(nullable=false)
-     */
+    #[ORM\ManyToOne(targetEntity: \App\Entity\Organization\Organization::class)]
+    #[ORM\JoinColumn(nullable: false)]
     private $organization;
     
-    /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\LunchExpense\LunchExpenseBundle", inversedBy="lunchExpenses")
-     */
+    #[ORM\ManyToOne(targetEntity: \App\Entity\LunchExpense\LunchExpenseBundle::class, inversedBy: "lunchExpenses")]
     private $lunchExpenseBundle;
     
 
