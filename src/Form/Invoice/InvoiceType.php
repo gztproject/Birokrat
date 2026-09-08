@@ -33,11 +33,7 @@ class InvoiceType extends AbstractType
         	->add('recepient', EntityType::class, array(
         			'class' => Partner::class,
         			'query_builder' => function(PartnerRepository $repository) {
-        				$qb = $repository->createQueryBuilder('p');
-        				return $qb
-        				->where('p.isClient = 1')
-        				->orderBy('p.name', 'ASC')
-        				;
+        				return $repository->clientsRecentFirstQueryBuilder();
         			},
         			'choice_label' => 'name',
         			'expanded'=>false,

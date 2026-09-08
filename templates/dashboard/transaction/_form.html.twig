@@ -1,4 +1,7 @@
-{{ form_start(form, {'attr': {'class': 'bs-component'}}) }}
+{{ form_start(form, {'attr': include_templates
+    ? {'class': 'bs-component', 'data-controller': 'transaction-form'}
+    : {'class': 'bs-component'}
+}) }}
     <div class="row">
         <div class="col-sm-6">
             <div class="form-group">                    
@@ -35,7 +38,7 @@
              <div class="form-group"> 
                 <label class='col-form-label-lg' for='transaction_presets' >{{ 'label.presets'|trans }}</label> 
                 <div class='input-group'>
-                    <select id="transaction_presets" class="form-control" name="transaction[preset]">
+                    <select id="transaction_presets" class="form-control" name="transaction[preset]" data-transaction-form-target="preset" data-action="change->transaction-form#applyPreset">
                     {#ToDo: Create an entity for this kind of favourites and a system to manage them. #}
                         <option value="0" data-debit="" data-credit="" data-description=""></option>
                         <option value="1" data-debit="919" data-credit="110" data-description="Prenos na osebni račun">Prenos na osebni račun / izplačilo gotovine</option>
@@ -65,7 +68,7 @@
             <div class="form-group">                    
                 {{ form_label(form.debitKonto, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}
                     <div class='input-group'>
-                        {{ form_widget(form.debitKonto, {'attr': {'class': 'form-control'}}) }}                
+                        {{ form_widget(form.debitKonto, {'attr': {'class': 'form-control', 'data-transaction-form-target': 'debit'}}) }}                
                     </div>
             </div>            
         </div>
@@ -73,7 +76,7 @@
             <div class="form-group">                    
                 {{ form_label(form.creditKonto, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}
                     <div class='input-group'>
-                        {{ form_widget(form.creditKonto, {'attr': {'class': 'form-control'}}) }}                
+                        {{ form_widget(form.creditKonto, {'attr': {'class': 'form-control', 'data-transaction-form-target': 'credit'}}) }}                
                     </div>
             </div>            
         </div>
@@ -91,12 +94,22 @@
                     </div>
             </div>            
         </div>
+        {% if form.bankCost is defined %}
+        <div class="col-sm-4">
+            <div class="form-group">
+                {{ form_label(form.bankCost, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}
+                <div class='input-group'>
+                    {{ form_widget(form.bankCost, {'attr': {'class': 'form-control'}}) }}
+                </div>
+            </div>
+        </div>
+        {% endif %}
         <div class="col-sm-6">
             <div class="form-group">                    
                 {{ form_label(form.description, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}                
                     <div class='input-group'>
                     {% if not hasDocument %}
-                        {{ form_widget(form.description, {'attr': {'class': 'form-control'}}) }} 
+                        {{ form_widget(form.description, {'attr': {'class': 'form-control', 'data-transaction-form-target': 'description'}}) }} 
                     {% else %}
                         <textarea class='form-control' disabled='true'>{{ document }}</textarea> 
                     {% endif %}                  

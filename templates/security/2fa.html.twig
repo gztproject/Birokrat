@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block body_id 'two_factor' %}
+
+{% block main %}
+    {% if error %}
+        <div class="alert alert-danger">{{ error }}</div>
+    {% endif %}
+    <div class="row justify-content-center">
+        <div class="col-sm-5">
+            <div class="card bg-primary text-white mb-3">
+                <div class="card-header"><h1>{{ 'label.totp'|trans }}</h1></div>
+                <div class="card-body">
+                    <form method="post">
+                        <div class="form-group">
+                            <label for="code">{{ 'label.totpCode'|trans }}</label>
+                            <input id="code" name="code" class="form-control" inputmode="numeric" autocomplete="one-time-code" required>
+                        </div>
+                        <button type="submit" class="btn btn-light mt-2">{{ 'action.sign_in'|trans }}</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

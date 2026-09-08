@@ -2,6 +2,7 @@
 
 namespace App\Entity\TravelExpense;
 
+use App\Money\MoneyFormatter;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Qipsius\TCPDFBundle\Controller\TCPDFController;
 
@@ -162,11 +163,11 @@ class TravelExpensePdfFactory
    		$pdf->SetTextColor($purple[0], $purple[1], $purple[2]);
    		$pdf->MultiCell(40, $height, "Višina dnevnice",											$border, 'L', 0, 0, 14, 	$start + (12*$height), true, 0, false, true, 40, 'T');
    		$pdf->SetTextColor($black[0], $black[1], $black[2]);
-   		$pdf->MultiCell(120-40, $height, "0,00€",	 											$border, 'R', 0, 0, 14+40, 	$start + (12*$height), true, 0, false, true, 40, 'T');
+   		$pdf->MultiCell(120-40, $height, MoneyFormatter::format($this->__travelExpense->getOrganization()->getOrganizationSettings()->getPerDiemValue() ?? 0),	 											$border, 'R', 0, 0, 14+40, 	$start + (12*$height), true, 0, false, true, 40, 'T');
    		$pdf->SetTextColor($purple[0], $purple[1], $purple[2]);
    		$pdf->MultiCell(80, $height, "Odobravam izplačilo predujma v znesku",					$border, 'L', 0, 0, 14, 	$start + (13*$height), true, 0, false, true, 40, 'T');
    		$pdf->SetTextColor($black[0], $black[1], $black[2]);
-   		$pdf->MultiCell(120-80, $height, "0,00€",	 											$border, 'R', 0, 0, 14+80, 	$start + (13*$height), true, 0, false, true, 40, 'T');   
+   		$pdf->MultiCell(120-80, $height, MoneyFormatter::format($this->__travelExpense->getAdvance()),	 											$border, 'R', 0, 0, 14+80, 	$start + (13*$height), true, 0, false, true, 40, 'T');   
    		$pdf->SetTextColor($purple[0], $purple[1], $purple[2]);
    		$pdf->MultiCell(50, $height, "Podpis nalogodajalca",									$border, 'L', 0, 0, 14, 	$start + (15*$height), true, 0, false, true, 40, 'T');
    		
@@ -187,13 +188,40 @@ class TravelExpensePdfFactory
    				'L' => array('width' => 0.5, 'color' => $purple),
    		);
    		$pdf->MultiCell(120, 20, "Obračun potnih stroškov ", $border, 'R', 0, 0, 160, 20, true, 0, false, true, 40, 'T');
+
+   		$y = 42;
+   		$pdf->SetXY(160, $y);
+   		$pdf->SetFont('dejavusans', '', 8);
+   		$pdf->MultiCell(30, 6, 'Zap.', 1, 'C', 0, 0);
+   		$pdf->MultiCell(50, 6, 'Kraj', 1, 'C', 0, 0);
+   		$pdf->MultiCell(20, 6, 'km', 1, 'C', 0, 1);
+   		foreach ($this->__travelExpense->getTravelStops() as $stop) {
+   			$pdf->SetX(160);
+   			$pdf->MultiCell(30, 6, (string) $stop->getStopOrder(), 1, 'C', 0, 0);
+   			$pdf->MultiCell(50, 6, (string) $stop->getPost()->getName(), 1, 'L', 0, 0);
+   			$pdf->MultiCell(20, 6, MoneyFormatter::amount($stop->getDistanceFromPrevious() ?? 0, 1), 1, 'R', 0, 1);
+   		}
+   		$pdf->SetX(160);
+   		$pdf->MultiCell(80, 6, 'Stopnja €/km', 1, 'L', 0, 0);
+   		$pdf->MultiCell(20, 6, MoneyFormatter::amount($this->__travelExpense->getRate(), 3), 1, 'R', 0, 1);
+   		$pdf->SetX(160);
+   		$pdf->MultiCell(80, 6, 'Skupaj km', 1, 'L', 0, 0);
+   		$pdf->MultiCell(20, 6, MoneyFormatter::amount($this->__travelExpense->getTotalDistance(), 1), 1, 'R', 0, 1);
+   		$pdf->SetX(160);
+   		$pdf->MultiCell(80, 6, 'Skupaj potni stroški', 1, 'L', 0, 0);
+   		$pdf->MultiCell(20, 6, MoneyFormatter::format($this->__travelExpense->getTotalCost()), 1, 'R', 0, 1);
+   		$pdf->SetX(160);
+   		$pdf->MultiCell(80, 6, 'Dnevnica', 1, 'L', 0, 0);
+   		$pdf->MultiCell(20, 6, MoneyFormatter::format($this->__travelExpense->getOrganization()->getOrganizationSettings()->getPerDiemValue() ?? 0), 1, 'R', 0, 1);
+   		$pdf->SetX(160);
+   		$pdf->MultiCell(80, 6, 'Predujem', 1, 'L', 0, 0);
+   		$pdf->MultiCell(20, 6, MoneyFormatter::format($this->__travelExpense->getAdvance()), 1, 'R', 0, 1);
    		
-   		
-   		   		
-   				
    		//Close and output PDF document
 		if($this->__print) $pdf->IncludeJS("print();");
-   		$pdf->Output($title.'.pdf', $this->__dest);
+		$dest = $this->__dest === 'I' ? 'S' : $this->__dest;
+
+		return $pdf->Output($title.'.pdf', $dest);
    		
    		//============================================================+
    		// END OF FILE

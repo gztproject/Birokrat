@@ -76,6 +76,12 @@ class Transaction extends AggregateBase
     #[ORM\OneToOne(targetEntity: \App\Entity\LunchExpense\LunchExpenseBundle::class, cascade: ["persist", "remove"])]
     private $lunchExpenseBundle;
 
+    #[ORM\Column(type: "string", length: 32, nullable: true)]
+    private $role;
+
+    #[ORM\ManyToOne(targetEntity: Transaction::class)]
+    private $relatedTransaction;
+
     /**
      * Creates a new transaction
      *
@@ -122,6 +128,22 @@ class Transaction extends AggregateBase
         $this->debitKonto = $c->debitKonto;
         $this->description = $c->description;
         $this->hidden = $c->hidden ?? false;
+        $this->role = $c->role ?? null;
+    }
+
+    public function setRelatedTransaction(?Transaction $transaction): void
+    {
+        $this->relatedTransaction = $transaction;
+    }
+
+    public function getRelatedTransaction(): ?Transaction
+    {
+        return $this->relatedTransaction;
+    }
+
+    public function getRole(): ?string
+    {
+        return $this->role;
     }
 
     /**

@@ -18,6 +18,8 @@ use App\Repository\KontoRepository;
 use App\Repository\Organization\PartnerRepository;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use App\Form\Transaction\AllocationType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 
 class IncomingInvoiceType extends AbstractType
 {
@@ -27,11 +29,7 @@ class IncomingInvoiceType extends AbstractType
         	->add('issuer', EntityType::class, array(
         		'class' => Partner::class,
         		'query_builder' => function(PartnerRepository $repository) {
-        			$qb = $repository->createQueryBuilder('p');
-        			return $qb        			
-        			->where('p.isSupplier = 1')
-        			->orderBy('p.name', 'ASC')
-        			;
+        			return $repository->suppliersRecentFirstQueryBuilder();
         		},
         		'choice_label' => 'name',
         		'expanded'=>false,
@@ -89,6 +87,20 @@ class IncomingInvoiceType extends AbstractType
             		'label' => 'label.paidOnSpot',
             		'required' => false,
             ))
+            ->add('bankCost', NumberType::class, [
+            		'label' => 'label.bankCost',
+            		'required' => false,
+            		'scale' => 2,
+            		'html5' => true,
+            ])
+            ->add('allocations', CollectionType::class, [
+            		'entry_type' => AllocationType::class,
+            		'allow_add' => true,
+            		'allow_delete' => true,
+            		'by_reference' => false,
+            		'required' => false,
+            		'label' => 'label.allocations',
+            ])
         ;
     }
 

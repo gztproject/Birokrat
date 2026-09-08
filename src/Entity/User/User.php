@@ -78,6 +78,15 @@ class User extends AggregateBase implements UserInterface, PasswordAuthenticated
     
     #[ORM\Column(type: "string")]
     private $signatureFilename;
+
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
+    private $position;
+
+    #[ORM\Column(type: "string", length: 64, nullable: true)]
+    private $totpSecret;
+
+    #[ORM\Column(type: "boolean")]
+    private $totpEnabled = false;
     
     /**
      * 
@@ -99,6 +108,8 @@ class User extends AggregateBase implements UserInterface, PasswordAuthenticated
         $this->mobile = $c->mobile;
         $this->phone = $c->phone;
         $this->signatureFilename = $c->signatureFilename;
+        $this->position = $c->position ?? null;
+        $this->totpEnabled = false;
         
         $this->checkPasswordRequirements($c->password);
         $this->password = $passwordHasher->hashPassword($this, $c->password);
@@ -118,6 +129,7 @@ class User extends AggregateBase implements UserInterface, PasswordAuthenticated
     	if($c->mobile != null && $c->mobile != $this->mobile) $this->mobile = $c->mobile;
     	if($c->phone != null && $c->phone != $this->phone) $this->phone = $c->phone;
     	if($c->signatureFilename != null && $c->signatureFilename != $this->signatureFilename) $this->signatureFilename = $c->signatureFilename;
+    	if(property_exists($c, 'position') && $c->position !== null && $c->position != $this->position) $this->position = $c->position;
     	
     	if(strlen($c->password) != 0) 
     	{
@@ -410,7 +422,29 @@ class User extends AggregateBase implements UserInterface, PasswordAuthenticated
     
     public function getPosition(): ?string
     {
-    	return "Not implemented yet.";
+    	return $this->position;
+    }
+
+    public function isTotpEnabled(): bool
+    {
+    	return (bool) $this->totpEnabled;
+    }
+
+    public function getTotpSecret(): ?string
+    {
+    	return $this->totpSecret;
+    }
+
+    public function enableTotp(string $secret): void
+    {
+    	$this->totpSecret = $secret;
+    	$this->totpEnabled = true;
+    }
+
+    public function disableTotp(): void
+    {
+    	$this->totpSecret = null;
+    	$this->totpEnabled = false;
     }
 
     public function getIsActive(): ?bool

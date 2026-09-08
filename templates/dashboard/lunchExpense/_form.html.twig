@@ -1,0 +1,45 @@
+{{ form_start(form, {'attr': {'class': 'bs-component'}}) }}
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="form-group">
+                {{ form_label(form.organization, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}
+                <div class="input-group">
+                    {{ form_widget(form.organization, {'attr': {'class': 'form-control'}}) }}
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="form-group">
+                {{ form_label(form.date, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}
+                <div class="input-group">
+                    {{ form_widget(form.date, {'attr': {'class': 'form-control'}}) }}
+                    <span class="input-group-text"><i class="fa fa-calendar" aria-hidden="true"></i></span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="form-group">
+                {{ form_label(form.sum, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}
+                <div class="input-group">
+                    {{ form_widget(form.sum, {'attr': {'class': 'form-control'}}) }}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary">
+            <i class="fa fa-save" aria-hidden="true"></i> {{ button_label }}
+        </button>
+        {% if include_save_and_create_new %}
+            {{ form_widget(form.saveAndCreateNew, {label: 'label.save_and_create_new', attr: {class: 'btn btn-primary'}}) }}
+        {% endif %}
+        {% if include_back_to_home_link %}
+            <a href="{{ path('lunchExpense_index') }}" class="btn btn-link">
+                <i class="fa fa-list-alt" aria-hidden="true"></i> {{ 'action.back_to_list'|trans }}
+            </a>
+        {% endif %}
+    </div>
+    {{ form_row(form._token) }}
+{{ form_end(form, {'render_rest': false}) }}

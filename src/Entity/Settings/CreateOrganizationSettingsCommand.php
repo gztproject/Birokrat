@@ -24,6 +24,8 @@ class CreateOrganizationSettingsCommand
     public $RefundedIncomingInvoiceDebit;
     public $RejectedIncomingInvoiceCredit;
     public $RejectedIncomingInvoiceDebit;
+    public $BankFeeDebit;
+    public $BankFeeCredit;
     
     public function __get($name) {
     	return $this->$name;

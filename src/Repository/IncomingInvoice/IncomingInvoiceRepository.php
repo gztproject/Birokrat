@@ -32,10 +32,24 @@ class IncomingInvoiceRepository extends ServiceEntityRepository
     {
     	return $this->createQueryBuilder('i')
     	->addSelect('i')
-    	->where('i.state IN states')    	
+    	->where('i.state IN (:states)')
     	->orderBy('i.dateOfIssue', 'DESC')
     	->addOrderBy('i.number', 'DESC')
-    	->setParameter('states', '10,20');
+    	->setParameter('states', [10, 20]);
+    }
+
+    /**
+     * @return IncomingInvoice[]
+     */
+    public function findUnpaidReceived(int $limit = 5): array
+    {
+    	return $this->createQueryBuilder('i')
+    		->andWhere('i.state = :state')
+    		->setParameter('state', 10)
+    		->orderBy('i.dueDate', 'ASC')
+    		->setMaxResults($limit)
+    		->getQuery()
+    		->getResult();
     }
 
     // /**

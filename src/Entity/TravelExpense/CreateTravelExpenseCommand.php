@@ -15,6 +15,9 @@ class CreateTravelExpenseCommand
     public $employee;
     public $organization;
     public $rate;
+    public $reason;
+    public $advance;
+    public $number;
     
     public function __construct()
     {
