@@ -7,5 +7,7 @@ class CreatePartnerCommand extends CreateLegalEntityCommand
 	public $isClient;
 	
 	public $isSupplier;
-	
+
+	/** @var list<CreatePartnerEmailCommand> */
+	public $extraEmailCommands = [];
 }

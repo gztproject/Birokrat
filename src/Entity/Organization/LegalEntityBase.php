@@ -33,7 +33,7 @@ class LegalEntityBase extends AggregateBase
     #[ORM\Column(type: "string", length: 255, nullable: true)]
     protected $www;
 
-    #[ORM\Column(type: "string", length: 255, nullable: true)]
+    #[ORM\Column(type: "string", length: 2048, nullable: true)]
     protected $email;
 
     #[ORM\Column(type: "string", length: 255, nullable: true)]

@@ -4,10 +4,12 @@ namespace App\Entity\Organization;
 
 use App\Entity\User\User;
 use Doctrine\ORM\Mapping as ORM;
-use App\Entity\Base\AggregateBase;
 use App\Entity\IncomingInvoice\IncomingInvoice;
 use App\Entity\Invoice\Invoice;
+use App\Mailer\RecipientListParser;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Symfony\Component\Mime\Address;
 
 #[ORM\Entity(repositoryClass: \App\Repository\Organization\PartnerRepository::class)]
 class Partner extends LegalEntityBase
@@ -23,6 +25,9 @@ class Partner extends LegalEntityBase
 	
 	#[ORM\OneToMany(targetEntity: \App\Entity\IncomingInvoice\IncomingInvoice::class, mappedBy: "issuer", orphanRemoval: false)]
 	private $incomingInvoices;
+
+	#[ORM\OneToMany(targetEntity: PartnerEmail::class, mappedBy: 'partner', cascade: ['persist', 'remove'], orphanRemoval: true)]
+	private $extraEmails;
 	
 	public function __construct(CreatePartnerCommand $c, User $user)
 	{
@@ -48,13 +53,14 @@ class Partner extends LegalEntityBase
 			$this->bic = $c->bic;
 		$this->isClient = $c->isClient;
 		$this->isSupplier = $c->isSupplier;
-		$this->invoices = new \Doctrine\Common\Collections\ArrayCollection();
-		$this->incomingInvoices = new \Doctrine\Common\Collections\ArrayCollection();
+		$this->invoices = new ArrayCollection();
+		$this->incomingInvoices = new ArrayCollection();
+		$this->extraEmails = new ArrayCollection();
+		$this->syncExtraEmails($c->extraEmailCommands ?? [], $user);
 	}
 	
 	public function update (UpdatePartnerCommand $c, User $user): Partner
 	{
-		//Should we make a copy and deactivate old one not to mix up old stuff?
 		parent::updateBase($user);
 		if($c->name != null && $c->name != $this->name)
 			$this->name = $c->name;
@@ -82,6 +88,7 @@ class Partner extends LegalEntityBase
 			$this->isClient = $c->isClient;
 		if($c->isSupplier != null && $c->isSupplier != $this->isSupplier)
 			$this->isSupplier = $c->isSupplier;
+		$this->syncExtraEmails($c->extraEmailCommands ?? [], $user);
 									
 		return $this;
 	}
@@ -100,10 +107,16 @@ class Partner extends LegalEntityBase
 			foreach($props as $prop)
 			{
 				$name = $prop->getName();
-				if(property_exists($to, $name))
+				if(property_exists($to, $name) && $name !== 'extraEmails')
 				{
 					$to->$name = $this->$name;
 				}
+			}
+			$to->extraEmailCommands = [];
+			foreach ($this->extraEmails as $extra) {
+				$cmd = new CreatePartnerEmailCommand();
+				$extra->mapTo($cmd);
+				$to->extraEmailCommands[] = $cmd;
 			}
 		}
 		else
@@ -138,5 +151,156 @@ class Partner extends LegalEntityBase
 	{
 		return $this->incomingInvoices;
 	}
-    
+
+	/**
+	 * @return Collection|PartnerEmail[]
+	 */
+	public function getExtraEmails(): Collection
+	{
+		return $this->extraEmails;
+	}
+
+	public function formatToList(): string
+	{
+		$parser = new RecipientListParser();
+		try {
+			return $parser->formatList($parser->parse((string) $this->email));
+		} catch (\InvalidArgumentException) {
+			return (string) $this->email;
+		}
+	}
+
+	public function formatCcList(): string
+	{
+		$parser = new RecipientListParser();
+		$addresses = [];
+		foreach ($this->extraEmails as $extra) {
+			$display = trim((string) $extra->getName());
+			if ($display === '') {
+				$display = trim((string) $extra->getRole());
+			}
+			$addresses[] = new Address($extra->getEmail(), $display);
+		}
+
+		return $parser->formatList($addresses);
+	}
+
+	/**
+	 * @param list<Address> $to
+	 * @param list<Address> $cc
+	 */
+	public function applyRecipientMerge(array $to, array $cc, User $user): void
+	{
+		$parser = new RecipientListParser();
+		parent::updateBase($user);
+		if ($to !== []) {
+			$this->email = $parser->formatList($to);
+		}
+		foreach ($cc as $address) {
+			$existing = $this->findExtraByMailbox($address->getAddress());
+			if ($existing instanceof PartnerEmail) {
+				$existing->fillNameIfEmpty($address->getName(), $user);
+				continue;
+			}
+			if ($this->hasMailbox($address->getAddress())) {
+				continue;
+			}
+			$cmd = new CreatePartnerEmailCommand();
+			$cmd->email = $address->getAddress();
+			$cmd->name = $address->getName() !== '' ? $address->getName() : null;
+			$this->createExtraEmail($cmd, $user);
+		}
+	}
+
+	/**
+	 * @param list<Address> $to
+	 * @param list<Address> $cc
+	 */
+	public function emailsDifferFrom(array $to, array $cc): bool
+	{
+		$parser = new RecipientListParser();
+		$primary = [];
+		try {
+			$primary = $parser->parse((string) $this->email);
+		} catch (\InvalidArgumentException) {
+			return true;
+		}
+		if ($parser->mailboxSet($primary) !== $parser->mailboxSet($to)) {
+			return true;
+		}
+		$extras = [];
+		foreach ($this->extraEmails as $extra) {
+			$extras[] = new Address($extra->getEmail());
+		}
+
+		return $parser->mailboxSet($extras) !== $parser->mailboxSet($cc);
+	}
+
+	public function hasMailbox(string $email): bool
+	{
+		$needle = strtolower(trim($email));
+		$parser = new RecipientListParser();
+		try {
+			foreach ($parser->parse((string) $this->email) as $address) {
+				if (strtolower($address->getAddress()) === $needle) {
+					return true;
+				}
+			}
+		} catch (\InvalidArgumentException) {
+		}
+
+		return $this->findExtraByMailbox($email) instanceof PartnerEmail;
+	}
+
+	public function createExtraEmail(CreatePartnerEmailCommand $c, User $user): PartnerEmail
+	{
+		$email = new PartnerEmail($c, $this, $user);
+		$this->extraEmails->add($email);
+
+		return $email;
+	}
+
+	/**
+	 * @param list<CreatePartnerEmailCommand> $commands
+	 */
+	private function syncExtraEmails(array $commands, User $user): void
+	{
+		$keep = new ArrayCollection();
+		foreach ($commands as $cmd) {
+			if (!trim((string) ($cmd->email ?? ''))) {
+				continue;
+			}
+			$existing = null;
+			if ($cmd->id) {
+				foreach ($this->extraEmails as $extra) {
+					if ((string) $extra->getId() === (string) $cmd->id) {
+						$existing = $extra;
+						break;
+					}
+				}
+			}
+			if ($existing instanceof PartnerEmail) {
+				$keep->add($existing->update($cmd, $user));
+			} else {
+				$keep->add($this->createExtraEmail($cmd, $user));
+			}
+		}
+		foreach ($this->extraEmails as $extra) {
+			if (!$keep->contains($extra)) {
+				$this->extraEmails->removeElement($extra);
+			}
+		}
+	}
+
+	private function findExtraByMailbox(string $email): ?PartnerEmail
+	{
+		$needle = strtolower(trim($email));
+		foreach ($this->extraEmails as $extra) {
+			if (strtolower($extra->getEmail()) === $needle) {
+				return $extra;
+			}
+		}
+
+		return null;
+	}
 }
