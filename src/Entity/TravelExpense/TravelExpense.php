@@ -44,6 +44,15 @@ class TravelExpense extends AggregateBase implements iTransactionDocument
 
     #[ORM\ManyToOne(targetEntity: \App\Entity\TravelExpense\TravelExpenseBundle::class, inversedBy: "travelExpenses")]
     private $travelExpenseBundle;
+
+    #[ORM\Column(type: "string", length: 255, nullable: true)]
+    private $reason;
+
+    #[ORM\Column(type: "string", length: 50, nullable: true)]
+    private $number;
+
+    #[ORM\Column(type: "decimal", precision: 15, scale: 2, nullable: true)]
+    private $advance;
     
     public function __construct(CreateTravelExpenseCommand $c, User $user)
     {
@@ -58,6 +67,9 @@ class TravelExpense extends AggregateBase implements iTransactionDocument
         if($rate == null)
         	throw new \Exception("Please set default travel expense rate for your organization.");
         $this->rate = $c->rate ?: $rate;
+        $this->reason = $c->reason ?? '';
+        $this->advance = $c->advance ?? 0;
+        $this->number = $c->number ?: sprintf('PN-%s-%s', $this->date->format('Ymd'), substr((string) $this->getId(), 0, 8));
     }    
     
     
@@ -107,7 +119,11 @@ class TravelExpense extends AggregateBase implements iTransactionDocument
     		$this->employee = $c->employee;
     	
     	if($c->rate != null && $c->rate !== $this->rate)
-    		$this->rate = $c->rate;   	
+    		$this->rate = $c->rate;
+    	if(property_exists($c, 'reason') && $c->reason !== null && $c->reason !== $this->reason)
+    		$this->reason = $c->reason;
+    	if(property_exists($c, 'advance') && $c->advance !== null && $c->advance !== $this->advance)
+    		$this->advance = $c->advance;   	
     	
     	foreach($c->travelStopCommands as $stop)
     	{    		
@@ -441,12 +457,17 @@ class TravelExpense extends AggregateBase implements iTransactionDocument
     
     public function getNumber(): string
     {
-    	return "Not implemented yet";
+    	return $this->number ?: sprintf('PN-%s', $this->date?->format('Ymd') ?? $this->getId());
     }
     
     public function getReason(): ?string
     {
-    	return "Not implemented yet";
+    	return $this->reason;
+    }
+
+    public function getAdvance(): float
+    {
+    	return (float) ($this->advance ?? 0);
     }
     
     public function __toString(): string

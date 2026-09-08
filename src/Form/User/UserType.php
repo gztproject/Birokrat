@@ -37,6 +37,10 @@ class UserType extends AbstractType
             ->add('lastName', TextType::class,[
                 'label' => 'label.lastname'
             ])
+            ->add('position', TextType::class,[
+                'label' => 'label.position',
+                'required' => false,
+            ])
             ->add('password', RepeatedType::class, array(
                 'type' => PasswordType::class,
             	'invalid_message' => 'The password fields must match.',

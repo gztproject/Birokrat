@@ -16,6 +16,7 @@ class CreateUserCommand
 	public $isRoleAdmin;
 	public $oldPassword;
 	public $signatureFilename;
+	public $position;
 	
 	public function __get($name) {
 		return $this->$name;
