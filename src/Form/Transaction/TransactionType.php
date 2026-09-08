@@ -45,7 +45,15 @@ class TransactionType extends AbstractType
             		'label' => 'label.credit',
             ))
             ->add('sum', NumberType::class, [
-            		'label' => 'label.sum'
+            		'label' => 'label.sum',
+            		'scale' => 2,
+                    'html5' => true,
+            ])
+            ->add('bankCost', NumberType::class, [
+            		'label' => 'label.bankCost',
+            		'scale' => 2,
+                    'required' => false,
+                    'html5' => true,
             ])
             ->add('description', TextareaType::class, [
             		'label' => 'label.description'

@@ -12,6 +12,7 @@ title:
   homepage: <![CDATA[Pozdravljeni v aplikaciji <strong>Birokrat</strong>]]>
   user_list: Seznam uporabnikov
   partners: Pregled po dobaviteljih
+  incomingInvoices: Prejeti računi
 
 label:  
   create:
@@ -46,6 +47,13 @@ label:
   SendInvoiceHeader: Pošiljanje računa po e-pošti 
   subject: Zadeva
   body: Sporočilo
+  bankCost: Bančni strošek
+  allocations: Razdelitev zneska
+  reason: Namen poti
+  position: Delovno mesto
+  advance: Predujem
+  totp: Dvostopenjsko preverjanje
+  totpCode: Koda 2FA
 
 
 

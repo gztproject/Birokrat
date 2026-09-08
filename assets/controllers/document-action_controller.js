@@ -151,6 +151,10 @@ export default class extends Controller {
             if (method) {
                 payload.mode = method.value;
             }
+            const bankCost = document.getElementById('modalBankCost');
+            if (bankCost) {
+                payload.bankCost = bankCost.value;
+            }
             await postForm(url, payload);
             Modal.getOrCreateInstance(modal).hide();
             window.location.reload();

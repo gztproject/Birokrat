@@ -13,6 +13,8 @@ use App\Entity\Organization\Partner;
 use App\Entity\Transaction\Transaction;
 use App\Entity\Transaction\iTransactionDocument;
 use App\Entity\Transaction\CreateTransactionCommand;
+use App\Entity\Transaction\AllocationPlanner;
+use App\Entity\Transaction\TransactionRole;
 
 #[ORM\Entity(repositoryClass: \App\Repository\IncomingInvoice\IncomingInvoiceRepository::class)]
 class IncomingInvoice extends AggregateBase implements iTransactionDocument {
@@ -115,55 +117,35 @@ class IncomingInvoice extends AggregateBase implements iTransactionDocument {
 	}
 
 	/**
-	 * Sets the invoice received and creates the transaction.
+	 * Sets the invoice received and creates the transaction(s).
 	 *
-	 * @param \DateTime $date
-	 * @param User $user
-	 *        	Issuing user
-	 * @throws \InvalidArgumentException
-	 * @throws \LogicException
-	 * @return Transaction
+	 * @param iterable<int, object|array> $allocations
+	 * @return Transaction[]
 	 */
-	public function setReceived(\DateTime $date, User $user, Konto $cdc = null): Transaction {
+	public function setReceived(\DateTime $date, User $user, Konto $cdc = null, iterable $allocations = []): array {
 		$this->setState ( States::received );
 		parent::updateBase ( $user );
 
-		$c = new CreateTransactionCommand ();
-		$c->date = $this->dateOfIssue;
-		$c->organization = $this->recepient;
 		$dc = $cdc != null ? $cdc : $this->recepient->getOrganizationSettings ()->getReceivedIncomingInvoiceDebit ();
 		$cc = $this->getIssuer ()->getAddress ()->getPost ()->getCountry () == $this->getRecepient ()->getAddress ()->getPost ()->getCountry () ? $this->recepient->getOrganizationSettings ()->getReceivedHomeIncomingInvoiceCredit () : $this->recepient->getOrganizationSettings ()->getReceivedForeignIncomingInvoiceCredit ();
 		if ($cc == null || $dc == null)
 			throw new \LogicException ( "Please set konto preferences for this organization before issuing invoices." );
-		$c->creditKonto = $cc;
-		$c->debitKonto = $dc;
 		if ($this->price === null)
 			throw new \InvalidArgumentException ( "No price is set." );
-		$c->sum = $this->price;
 
-		$transaction = new Transaction ( $c, $user, $this );
-
-		return $transaction;
+		return $this->bookSplit ( $user, $this->dateOfIssue, $dc, $cc, $allocations );
 	}
 
 	/**
 	 * Sets the invoice recieved and paid directly on the spot.
 	 *
-	 * @param \DateTime $date
-	 * @param User $user
-	 * @param int $mode
-	 * @param Konto $cdc
-	 * @throws \InvalidArgumentException
-	 * @throws \LogicException
-	 * @return Transaction
+	 * @param iterable<int, object|array> $allocations
+	 * @return Transaction[]
 	 */
-	public function setReceivedAndPaid(\DateTime $date, User $user, int $mode, Konto $cdc = null): Transaction {
+	public function setReceivedAndPaid(\DateTime $date, User $user, int $mode, Konto $cdc = null, iterable $allocations = []): array {
 		$this->setState ( States::received );
 		parent::updateBase ( $user );
 
-		$c = new CreateTransactionCommand ();
-		$c->date = $this->dateOfIssue;
-		$c->organization = $this->recepient;
 		$dc = $cdc != null ? $cdc : $this->recepient->getOrganizationSettings ()->getReceivedIncomingInvoiceDebit ();
 		$cc = null;
 		switch ($mode) {
@@ -178,17 +160,41 @@ class IncomingInvoice extends AggregateBase implements iTransactionDocument {
 		}
 		if ($cc == null || $dc == null)
 			throw new \LogicException ( "Please set konto preferences for this organization before issuing invoices." );
-		$c->creditKonto = $cc;
-		$c->debitKonto = $dc;
 		if ($this->price === null)
 			throw new \InvalidArgumentException ( "No price is set." );
-		$c->sum = $this->price;
 
 		$this->setState ( States::paid );
 
-		$transaction = new Transaction ( $c, $user, $this );
+		return $this->bookSplit ( $user, $this->dateOfIssue, $dc, $cc, $allocations );
+	}
 
-		return $transaction;
+	/**
+	 * @param iterable<int, object|array> $allocations
+	 * @return Transaction[]
+	 */
+	private function bookSplit(User $user, \DateTimeInterface $date, Konto $defaultDebit, Konto $credit, iterable $allocations): array {
+		$lines = AllocationPlanner::lines ( $defaultDebit, (float) $this->price, $allocations );
+		$transactions = [];
+		$parent = null;
+		foreach ( $lines as $index => $line ) {
+			$c = new CreateTransactionCommand ();
+			$c->date = $date instanceof \DateTime ? $date : \DateTime::createFromInterface ( $date );
+			$c->organization = $this->recepient;
+			$c->creditKonto = $credit;
+			$c->debitKonto = $line ['konto'];
+			$c->sum = $line ['amount'];
+			$c->description = $line ['note'];
+			$c->role = $index === 0 ? TransactionRole::DOCUMENT : TransactionRole::ALLOCATION;
+			$transaction = new Transaction ( $c, $user, $this );
+			if ($parent instanceof Transaction) {
+				$transaction->setRelatedTransaction ( $parent );
+			} else {
+				$parent = $transaction;
+			}
+			$transactions [] = $transaction;
+		}
+
+		return $transactions;
 	}
 
 	/**
