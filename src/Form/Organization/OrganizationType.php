@@ -30,6 +30,30 @@ class OrganizationType extends AbstractType
             ->add('taxable', CheckboxType::class,[
             		'label' => 'label.taxable', 'required' => false
             ])
+            ->add('www', TextType::class,[
+            		'label' => 'label.www',
+            		'required' => false
+            ])
+            ->add('email', TextType::class,[
+            		'label' => 'label.email',
+            		'required' => false
+            ])
+            ->add('phone', TextType::class,[
+            		'label' => 'label.phone',
+            		'required' => false
+            ])
+            ->add('mobile', TextType::class,[
+            		'label' => 'label.mobile',
+            		'required' => false
+            ])
+            ->add('accountNumber', TextType::class,[
+            		'label' => 'label.accountNumber',
+            		'required' => false
+            ])
+            ->add('bic', TextType::class,[
+            		'label' => 'label.bic',
+            		'required' => false
+            ])
             ->get('taxable')
             ->addModelTransformer(new CallbackTransformer(
             		function($boolToCheckbox){

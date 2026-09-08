@@ -3,21 +3,27 @@
 {% block body_id 'partner_show' %}
 
 {% block main %}
-    <h1>{{ partner.name }}</h1>
+    {{ include('components/_page_header.html.twig', { title: partner.name }) }}
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-4">
-                <div class="card text-white bg-primary mb-3"> 
+                <div class="card app-card mb-3"> 
                     <div class="card-header">
                         <strong>{{ ('label.partnerData')|trans }}</strong>
                     </div>    
                     <div class="card-body">                    
-                        <strong>{{ 'label.name'|trans }}</strong>: {{ partner.name }}            
+                        <strong>{{ 'label.name'|trans }}</strong>: {{ partner.name }}<br>
+                        <strong>{{ 'label.email'|trans }}</strong>: {{ partner.email }}<br>
+                        <strong>{{ 'label.www'|trans }}</strong>: {{ partner.www }}<br>
+                        <strong>{{ 'label.phone'|trans }}</strong>: {{ partner.phone }}<br>
+                        <strong>{{ 'label.mobile'|trans }}</strong>: {{ partner.mobile }}<br>
+                        <strong>{{ 'label.accountNumber'|trans }}</strong>: {{ partner.accountNumber }}<br>
+                        <strong>{{ 'label.bic'|trans }}</strong>: {{ partner.bic }}
                     </div>
                 </div>
             </div>
             <div class="col-md-8">
-                <div class="card text-white bg-primary mb-3">   
+                <div class="card app-card mb-3">   
                     <div class="card-header">
                         <strong>{{ 'label.address'|trans }}</strong>
                     </div> 
@@ -36,7 +42,7 @@
         {% if partner.isClient %}
             <div class="row">
                 <div class="col-md-12">
-                    <div class="card text-white bg-primary mb-3">   
+                    <div class="card app-card mb-3">   
                         <div class="card-header">
                             <strong>{{ 'label.invoices'|trans }}</strong>
                         </div>  
@@ -56,7 +62,7 @@
         {% if partner.isSupplier %}
             <div class="row">
                 <div class="col-md-12">
-                    <div class="card text-white bg-primary mb-3">   
+                    <div class="card app-card mb-3">   
                         <div class="card-header">
                             <strong>{{ 'label.incomingInvoices'|trans }}</strong>
                     </div>  
@@ -78,7 +84,7 @@
 
 {% block sidebar %}
     <div class="section">
-        <a href="{{ path('partner_edit', {id: partner.id}) }}" class="btn btn-sm btn-block btn-success">
+        <a href="{{ path('partner_edit', {id: partner.id}) }}" class="btn btn-sm w-100 btn-success">
             <i class="fa fa-edit" aria-hidden="true"></i> {{ 'action.edit_contents'|trans }}
         </a>
     </div>

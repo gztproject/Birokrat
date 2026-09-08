@@ -103,8 +103,11 @@ class OrganizationSettings extends Base
     {
     	parent::__construct($user);
     	$this->organization = $organization;
-    	$this->autoCreatePerDiem = false;
-    	$this->autoCreateLunch = false;
+    	$this->autoCreatePerDiem = (bool) $c->autoCreatePerDiem;
+    	$this->autoCreateLunch = (bool) $c->autoCreateLunch;
+    	$this->travelExpenseRate = $c->travelExpenseRate;
+    	$this->perDiemValue = $c->perDiemValue;
+    	$this->lunchValue = $c->lunchValue;
     	$this->defaultPaymentDueIn = $c->defaultPaymentDueIn;
     	$this->invoicePrefix = $c->invoicePrefix;
     	$this->referenceModel = $c->referenceModel;
@@ -118,7 +121,9 @@ class OrganizationSettings extends Base
     	$this->PaidTravelExpenseDebit = $c->PaidTravelExpenseDebit;
     	$this->ReceivedHomeIncomingInvoiceCredit = $c->ReceivedHomeIncomingInvoiceCredit;
     	$this->ReceivedForeignIncomingInvoiceCredit = $c->ReceivedForeignIncomingInvoiceCredit;
-    	$this->ReceivedIncomingInvoiceDebit = $c->ReceivedIncomingInvoiceDebit;    	
+    	$this->ReceivedIncomingInvoiceDebit = $c->ReceivedIncomingInvoiceDebit;
+    	$this->PaidCashIncomingInvoiceCredit = $c->PaidCashIncomingInvoiceCredit ?? null;
+    	$this->PaidTransactionIncomingInvoiceCredit = $c->PaidTransactionIncomingInvoiceCredit ?? null;
     	$this->RefundedIncomingInvoiceCredit = $c->RefundedIncomingInvoiceCredit;
     	$this->RefundedIncomingInvoiceDebit = $c->RefundedIncomingInvoiceDebit;
     	$this->RejectedIncomingInvoiceCredit = $c->RejectedIncomingInvoiceCredit;
@@ -145,7 +150,12 @@ class OrganizationSettings extends Base
     	
     	$this->defaultPaymentDueIn = $c->defaultPaymentDueIn;
     	$this->invoicePrefix = $c->invoicePrefix;
-    	$this->referenceModel = $c->referenceModel;    	
+    	$this->referenceModel = $c->referenceModel;
+    	$this->travelExpenseRate = $c->travelExpenseRate;
+    	$this->autoCreatePerDiem = (bool) $c->autoCreatePerDiem;
+    	$this->perDiemValue = $c->perDiemValue;
+    	$this->autoCreateLunch = (bool) $c->autoCreateLunch;
+    	$this->lunchValue = $c->lunchValue;
     	
     	//ToDo: check for nulls...
     	$this->IssueInvoiceCredit = $c->IssueInvoiceCredit;
@@ -158,7 +168,9 @@ class OrganizationSettings extends Base
     	$this->PaidTravelExpenseDebit = $c->PaidTravelExpenseDebit;
     	$this->ReceivedHomeIncomingInvoiceCredit = $c->ReceivedHomeIncomingInvoiceCredit;
     	$this->ReceivedForeignIncomingInvoiceCredit = $c->ReceivedForeignIncomingInvoiceCredit;
-    	$this->ReceivedIncomingInvoiceDebit = $c->ReceivedIncomingInvoiceDebit;  
+    	$this->ReceivedIncomingInvoiceDebit = $c->ReceivedIncomingInvoiceDebit;
+    	$this->PaidCashIncomingInvoiceCredit = $c->PaidCashIncomingInvoiceCredit;
+    	$this->PaidTransactionIncomingInvoiceCredit = $c->PaidTransactionIncomingInvoiceCredit;
     	$this->RefundedIncomingInvoiceCredit = $c->RefundedIncomingInvoiceCredit;
     	$this->RefundedIncomingInvoiceDebit = $c->RefundedIncomingInvoiceDebit;
     	$this->RejectedIncomingInvoiceCredit = $c->RejectedIncomingInvoiceCredit;
@@ -320,7 +332,30 @@ class OrganizationSettings extends Base
 
     public function getBankFeeCredit(): ?Konto
     {
-    	return $this->BankFeeCredit;
+        return $this->BankFeeCredit;
+    }
+
+    public function mapTo(object $to): object
+    {
+    	if ($to instanceof UpdateOrganizationSettingsCommand || $to instanceof CreateOrganizationSettingsCommand)
+    	{
+    		$reflect = new \ReflectionClass($this);
+    		$props = $reflect->getProperties();
+    		foreach ($props as $prop)
+    		{
+    			$name = $prop->getName();
+    			if (property_exists($to, $name))
+    			{
+    				$to->$name = $this->$name;
+    			}
+    		}
+    	}
+    	else
+    	{
+    		throw new \InvalidArgumentException('cant map ' . get_class($this) . ' to ' . get_class($to));
+    	}
+
+    	return $to;
     }
     
 }

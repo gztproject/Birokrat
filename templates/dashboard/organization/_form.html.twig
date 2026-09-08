@@ -4,10 +4,10 @@
 {% endif %}
 
 {{ form_start(form) }}
-    <div class="jumbotron">         
+    <div class="invoice-document">         
             <div class='row'>
                 <div class="col-sm-7">
-                    <div class="form-group"> 
+                    <div class="mb-3"> 
                         {{ form_label(form.name, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}
                         <div class='input-group'>
                             {{ form_widget(form.name, {'attr': {'class': 'form-control'}}) }}
@@ -15,7 +15,7 @@
                     </div>
                 </div> 
                 <div class="col-sm-5">
-                    <div class="form-group"> 
+                    <div class="mb-3"> 
                         {{ form_label(form.shortName, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}
                         <div class='input-group'>
                             {{ form_widget(form.shortName, {'attr': {'class': 'form-control'}}) }} 
@@ -25,7 +25,7 @@
             </div>
             <div class='row'>
                 <div class="col-sm-9">
-                    <div class="form-group"> 
+                    <div class="mb-3"> 
                         {{ form_label(form.taxNumber, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}
                         <div class='input-group'>
                             {{ form_widget(form.taxNumber, {'attr': {'class': 'form-control'}}) }}
@@ -33,7 +33,7 @@
                     </div>
                 </div>
                 <div class="col-sm-3">
-                    <div class="form-group"> 
+                    <div class="mb-3"> 
                         {{ form_label(form.taxable, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}
                         <div class='input-group'>
                             {{ form_widget(form.taxable, {'attr': {'class': 'form-control'}}) }}
@@ -43,7 +43,7 @@
             </div>
             <div class='row'> 
                 <div class="col-sm-4">
-                    <div class="form-group">           
+                    <div class="mb-3">           
                         {{ form_label(form.address.line1, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}
                         <div class='input-group'>
                             {{ form_widget(form.address.line1, {'attr': {'class': 'form-control'}}) }} 
@@ -51,7 +51,7 @@
                     </div>
                 </div>
                 <div class="col-sm-4">
-                    <div class="form-group">           
+                    <div class="mb-3">           
                         {{ form_label(form.address.line2, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}
                         <div class='input-group'>
                             {{ form_widget(form.address.line2, {'attr': {'class': 'form-control'}}) }} 
@@ -59,7 +59,7 @@
                     </div>
                 </div> 
                 <div class="col-sm-4">
-                    <div class="form-group">           
+                    <div class="mb-3">           
                         {{ form_label(form.address.post, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}
                         <div class='input-group'>
                             {{ form_widget(form.address.post, {'attr': {'class': 'form-control'}}) }} 
@@ -67,12 +67,64 @@
                     </div>
                 </div>
             </div>
-            
-            
+            <div class='row'>
+                <div class="col-sm-6">
+                    <div class="mb-3">
+                        {{ form_label(form.email, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}
+                        <div class='input-group'>
+                            {{ form_widget(form.email, {'attr': {'class': 'form-control'}}) }}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="mb-3">
+                        {{ form_label(form.www, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}
+                        <div class='input-group'>
+                            {{ form_widget(form.www, {'attr': {'class': 'form-control'}}) }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class='row'>
+                <div class="col-sm-6">
+                    <div class="mb-3">
+                        {{ form_label(form.phone, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}
+                        <div class='input-group'>
+                            {{ form_widget(form.phone, {'attr': {'class': 'form-control'}}) }}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="mb-3">
+                        {{ form_label(form.mobile, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}
+                        <div class='input-group'>
+                            {{ form_widget(form.mobile, {'attr': {'class': 'form-control'}}) }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class='row'>
+                <div class="col-sm-8">
+                    <div class="mb-3">
+                        {{ form_label(form.accountNumber, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}
+                        <div class='input-group'>
+                            {{ form_widget(form.accountNumber, {'attr': {'class': 'form-control'}}) }}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <div class="mb-3">
+                        {{ form_label(form.bic, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}
+                        <div class='input-group'>
+                            {{ form_widget(form.bic, {'attr': {'class': 'form-control'}}) }}
+                        </div>
+                    </div>
+                </div>
+            </div>
             
             <div class='row'> 
                 <div class="col-sm-3">
-                    <div class="form-group">            
+                    <div class="mb-3">            
                         <button type="submit" class="btn btn-primary">
                             <i class="fa fa-save" aria-hidden="true"></i> {{ ('label.save_' ~ entity)|trans }}
                         </button>
@@ -80,7 +132,7 @@
                 </div>
                 {% if include_back_to_home_link|default(false) %}
                     <div class="col-sm-3">
-                        <div class="form-group">
+                        <div class="mb-3">
                             <a href="{{ path(entity~'_index') }}" class="btn btn-primary">
                                 <i class="fa fa-list-alt" aria-hidden="true"></i> {{ 'action.back_to_list'|trans }}
                             </a>

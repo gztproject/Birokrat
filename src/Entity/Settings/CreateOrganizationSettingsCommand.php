@@ -7,6 +7,11 @@ class CreateOrganizationSettingsCommand
     public $invoicePrefix;
     public $defaultPaymentDueIn;
     public $referenceModel;
+    public $travelExpenseRate;
+    public $autoCreatePerDiem;
+    public $perDiemValue;
+    public $autoCreateLunch;
+    public $lunchValue;
     public $IssueInvoiceDebit;
     public $IssueInvoiceCredit;
     public $InvoicePaidDebit;
@@ -18,6 +23,8 @@ class CreateOrganizationSettingsCommand
     public $ReceivedHomeIncomingInvoiceCredit;
     public $ReceivedForeignIncomingInvoiceCredit;
     public $ReceivedIncomingInvoiceDebit;
+    public $PaidCashIncomingInvoiceCredit;
+    public $PaidTransactionIncomingInvoiceCredit;
     public $PaidIncomingInvoiceCredit;
     public $PaidIncomingInvoiceDebit;
     public $RefundedIncomingInvoiceCredit;

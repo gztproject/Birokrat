@@ -429,6 +429,230 @@
                 <source>rss.description</source>
                 <target>Most recent posts published on the Symfony Demo blog</target>
             </trans-unit>
+            <trans-unit id="menu.home">
+                <source>menu.home</source>
+                <target>Home</target>
+            </trans-unit>
+            <trans-unit id="theme.label">
+                <source>theme.label</source>
+                <target>Theme</target>
+            </trans-unit>
+            <trans-unit id="theme.light">
+                <source>theme.light</source>
+                <target>Light</target>
+            </trans-unit>
+            <trans-unit id="theme.dark">
+                <source>theme.dark</source>
+                <target>Dark</target>
+            </trans-unit>
+            <trans-unit id="theme.system">
+                <source>theme.system</source>
+                <target>System</target>
+            </trans-unit>
+            <trans-unit id="action.more">
+                <source>action.more</source>
+                <target>More</target>
+            </trans-unit>
+            <trans-unit id="label.issued">
+                <source>label.issued</source>
+                <target>Issued</target>
+            </trans-unit>
+            <trans-unit id="label.overdue">
+                <source>label.overdue</source>
+                <target>Overdue</target>
+            </trans-unit>
+            <trans-unit id="label.www">
+                <source>label.www</source>
+                <target>Website</target>
+            </trans-unit>
+            <trans-unit id="label.phone">
+                <source>label.phone</source>
+                <target>Phone</target>
+            </trans-unit>
+            <trans-unit id="label.mobile">
+                <source>label.mobile</source>
+                <target>Mobile</target>
+            </trans-unit>
+            <trans-unit id="label.accountNumber">
+                <source>label.accountNumber</source>
+                <target>Account number</target>
+            </trans-unit>
+            <trans-unit id="label.bic">
+                <source>label.bic</source>
+                <target>BIC</target>
+            </trans-unit>
+            <trans-unit id="label.position">
+                <source>label.position</source>
+                <target>Position</target>
+            </trans-unit>
+            <trans-unit id="label.note">
+                <source>label.note</source>
+                <target>Note</target>
+            </trans-unit>
+            <trans-unit id="label.scan">
+                <source>label.scan</source>
+                <target>Scan</target>
+            </trans-unit>
+            <trans-unit id="label.employee">
+                <source>label.employee</source>
+                <target>Employee</target>
+            </trans-unit>
+            <trans-unit id="label.settings">
+                <source>label.settings</source>
+                <target>Settings</target>
+            </trans-unit>
+            <trans-unit id="label.setting">
+                <source>label.setting</source>
+                <target>Setting</target>
+            </trans-unit>
+            <trans-unit id="label.invoicePrefix">
+                <source>label.invoicePrefix</source>
+                <target>Invoice prefix</target>
+            </trans-unit>
+            <trans-unit id="label.defaultPaymentDueIn">
+                <source>label.defaultPaymentDueIn</source>
+                <target>Default payment due (days)</target>
+            </trans-unit>
+            <trans-unit id="label.referenceModel">
+                <source>label.referenceModel</source>
+                <target>Reference model</target>
+            </trans-unit>
+            <trans-unit id="label.travelExpenseRate">
+                <source>label.travelExpenseRate</source>
+                <target>Mileage rate</target>
+            </trans-unit>
+            <trans-unit id="label.autoCreatePerDiem">
+                <source>label.autoCreatePerDiem</source>
+                <target>Auto-create per diem</target>
+            </trans-unit>
+            <trans-unit id="label.perDiemValue">
+                <source>label.perDiemValue</source>
+                <target>Per diem amount</target>
+            </trans-unit>
+            <trans-unit id="label.autoCreateLunch">
+                <source>label.autoCreateLunch</source>
+                <target>Auto-create lunch</target>
+            </trans-unit>
+            <trans-unit id="label.lunchValue">
+                <source>label.lunchValue</source>
+                <target>Lunch amount</target>
+            </trans-unit>
+            <trans-unit id="label.invoiceDefaults">
+                <source>label.invoiceDefaults</source>
+                <target>Invoice defaults</target>
+            </trans-unit>
+            <trans-unit id="label.travelAndLunch">
+                <source>label.travelAndLunch</source>
+                <target>Travel and lunch</target>
+            </trans-unit>
+            <trans-unit id="label.kontoMappings">
+                <source>label.kontoMappings</source>
+                <target>Account mappings</target>
+            </trans-unit>
+            <trans-unit id="label.yes">
+                <source>label.yes</source>
+                <target>Yes</target>
+            </trans-unit>
+            <trans-unit id="label.no">
+                <source>label.no</source>
+                <target>No</target>
+            </trans-unit>
+            <trans-unit id="label.IssueInvoiceDebit">
+                <source>label.IssueInvoiceDebit</source>
+                <target>Issue invoice debit</target>
+            </trans-unit>
+            <trans-unit id="label.IssueInvoiceCredit">
+                <source>label.IssueInvoiceCredit</source>
+                <target>Issue invoice credit</target>
+            </trans-unit>
+            <trans-unit id="label.InvoicePaidDebit">
+                <source>label.InvoicePaidDebit</source>
+                <target>Invoice paid debit</target>
+            </trans-unit>
+            <trans-unit id="label.InvoicePaidCredit">
+                <source>label.InvoicePaidCredit</source>
+                <target>Invoice paid credit</target>
+            </trans-unit>
+            <trans-unit id="label.IncurredTravelExpenseDebit">
+                <source>label.IncurredTravelExpenseDebit</source>
+                <target>Incurred travel expense debit</target>
+            </trans-unit>
+            <trans-unit id="label.IncurredTravelExpenseCredit">
+                <source>label.IncurredTravelExpenseCredit</source>
+                <target>Incurred travel expense credit</target>
+            </trans-unit>
+            <trans-unit id="label.PaidTravelExpenseDebit">
+                <source>label.PaidTravelExpenseDebit</source>
+                <target>Paid travel expense debit</target>
+            </trans-unit>
+            <trans-unit id="label.PaidTravelExpenseCredit">
+                <source>label.PaidTravelExpenseCredit</source>
+                <target>Paid travel expense credit</target>
+            </trans-unit>
+            <trans-unit id="label.ReceivedIncomingInvoiceDebit">
+                <source>label.ReceivedIncomingInvoiceDebit</source>
+                <target>Received incoming invoice debit</target>
+            </trans-unit>
+            <trans-unit id="label.ReceivedHomeIncomingInvoiceCredit">
+                <source>label.ReceivedHomeIncomingInvoiceCredit</source>
+                <target>Received domestic incoming invoice credit</target>
+            </trans-unit>
+            <trans-unit id="label.ReceivedForeignIncomingInvoiceCredit">
+                <source>label.ReceivedForeignIncomingInvoiceCredit</source>
+                <target>Received foreign incoming invoice credit</target>
+            </trans-unit>
+            <trans-unit id="label.PaidCashIncomingInvoiceCredit">
+                <source>label.PaidCashIncomingInvoiceCredit</source>
+                <target>Paid incoming invoice (cash) credit</target>
+            </trans-unit>
+            <trans-unit id="label.PaidTransactionIncomingInvoiceCredit">
+                <source>label.PaidTransactionIncomingInvoiceCredit</source>
+                <target>Paid incoming invoice (transfer) credit</target>
+            </trans-unit>
+            <trans-unit id="label.RefundedIncomingInvoiceDebit">
+                <source>label.RefundedIncomingInvoiceDebit</source>
+                <target>Refunded incoming invoice debit</target>
+            </trans-unit>
+            <trans-unit id="label.RefundedIncomingInvoiceCredit">
+                <source>label.RefundedIncomingInvoiceCredit</source>
+                <target>Refunded incoming invoice credit</target>
+            </trans-unit>
+            <trans-unit id="label.RejectedIncomingInvoiceDebit">
+                <source>label.RejectedIncomingInvoiceDebit</source>
+                <target>Rejected incoming invoice debit</target>
+            </trans-unit>
+            <trans-unit id="label.RejectedIncomingInvoiceCredit">
+                <source>label.RejectedIncomingInvoiceCredit</source>
+                <target>Rejected incoming invoice credit</target>
+            </trans-unit>
+            <trans-unit id="label.BankFeeDebit">
+                <source>label.BankFeeDebit</source>
+                <target>Bank fee debit</target>
+            </trans-unit>
+            <trans-unit id="label.BankFeeCredit">
+                <source>label.BankFeeCredit</source>
+                <target>Bank fee credit</target>
+            </trans-unit>
+            <trans-unit id="label.PaidIncomingInvoiceDebit">
+                <source>label.PaidIncomingInvoiceDebit</source>
+                <target>Paid incoming invoice debit (obsolete)</target>
+            </trans-unit>
+            <trans-unit id="label.PaidIncomingInvoiceCredit">
+                <source>label.PaidIncomingInvoiceCredit</source>
+                <target>Paid incoming invoice credit (obsolete)</target>
+            </trans-unit>
+            <trans-unit id="title.organization_settings">
+                <source>title.organization_settings</source>
+                <target>Settings: {organization}</target>
+            </trans-unit>
+            <trans-unit id="action.edit_settings">
+                <source>action.edit_settings</source>
+                <target>Edit settings</target>
+            </trans-unit>
+            <trans-unit id="organization.settings_updated_successfully">
+                <source>organization.settings_updated_successfully</source>
+                <target>Organization settings were saved.</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

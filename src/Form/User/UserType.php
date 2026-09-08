@@ -28,6 +28,10 @@ class UserType extends AbstractType
             		'label' => 'label.mobile',
             		'required' => false,
             ])
+            ->add('phone', TextType::class,[
+            		'label' => 'label.phone',
+            		'required' => false,
+            ])
             ->add('username', TextType::class,[
                 'label' => 'label.username'
             ])

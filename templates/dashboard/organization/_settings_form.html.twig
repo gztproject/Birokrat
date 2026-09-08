@@ -1,0 +1,96 @@
+{{ form_start(form) }}
+    <div class="card app-card mb-3">
+        <div class="card-header">
+            <strong>{{ 'label.invoiceDefaults'|trans }}</strong>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    {{ form_label(form.invoicePrefix) }}
+                    {{ form_widget(form.invoicePrefix, {'attr': {'class': 'form-control'}}) }}
+                </div>
+                <div class="col-md-4 mb-3">
+                    {{ form_label(form.defaultPaymentDueIn) }}
+                    {{ form_widget(form.defaultPaymentDueIn, {'attr': {'class': 'form-control'}}) }}
+                </div>
+                <div class="col-md-4 mb-3">
+                    {{ form_label(form.referenceModel) }}
+                    {{ form_widget(form.referenceModel, {'attr': {'class': 'form-control'}}) }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card app-card mb-3">
+        <div class="card-header">
+            <strong>{{ 'label.travelAndLunch'|trans }}</strong>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    {{ form_label(form.travelExpenseRate) }}
+                    {{ form_widget(form.travelExpenseRate, {'attr': {'class': 'form-control'}}) }}
+                </div>
+                <div class="col-md-4 mb-3">
+                    {{ form_label(form.perDiemValue) }}
+                    {{ form_widget(form.perDiemValue, {'attr': {'class': 'form-control'}}) }}
+                </div>
+                <div class="col-md-4 mb-3">
+                    {{ form_label(form.lunchValue) }}
+                    {{ form_widget(form.lunchValue, {'attr': {'class': 'form-control'}}) }}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <div class="form-check">
+                        {{ form_widget(form.autoCreatePerDiem, {'attr': {'class': 'form-check-input'}}) }}
+                        {{ form_label(form.autoCreatePerDiem, null, {'label_attr': {'class': 'form-check-label'}}) }}
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <div class="form-check">
+                        {{ form_widget(form.autoCreateLunch, {'attr': {'class': 'form-check-input'}}) }}
+                        {{ form_label(form.autoCreateLunch, null, {'label_attr': {'class': 'form-check-label'}}) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card app-card mb-3">
+        <div class="card-header">
+            <strong>{{ 'label.kontoMappings'|trans }}</strong>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                {% for field in [
+                    form.IssueInvoiceDebit, form.IssueInvoiceCredit,
+                    form.InvoicePaidDebit, form.InvoicePaidCredit,
+                    form.IncurredTravelExpenseDebit, form.IncurredTravelExpenseCredit,
+                    form.PaidTravelExpenseDebit, form.PaidTravelExpenseCredit,
+                    form.ReceivedIncomingInvoiceDebit,
+                    form.ReceivedHomeIncomingInvoiceCredit, form.ReceivedForeignIncomingInvoiceCredit,
+                    form.PaidCashIncomingInvoiceCredit, form.PaidTransactionIncomingInvoiceCredit,
+                    form.RefundedIncomingInvoiceDebit, form.RefundedIncomingInvoiceCredit,
+                    form.RejectedIncomingInvoiceDebit, form.RejectedIncomingInvoiceCredit,
+                    form.BankFeeDebit, form.BankFeeCredit,
+                    form.PaidIncomingInvoiceDebit, form.PaidIncomingInvoiceCredit
+                ] %}
+                    <div class="col-md-6 mb-3">
+                        {{ form_label(field) }}
+                        {{ form_widget(field, {'attr': {'class': 'form-control'}}) }}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <button type="submit" class="btn btn-primary">
+            <i class="fa fa-save" aria-hidden="true"></i> {{ 'action.save'|trans }}
+        </button>
+        <a href="{{ path('organization_show', {id: organization.id}) }}" class="btn btn-link">
+            <i class="fa fa-list-alt" aria-hidden="true"></i> {{ 'action.back_to_list'|trans }}
+        </a>
+    </div>
+{{ form_end(form) }}

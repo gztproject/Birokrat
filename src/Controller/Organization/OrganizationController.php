@@ -3,6 +3,9 @@ namespace App\Controller\Organization;
 
 use App\Form\Geography\AddressType;
 use App\Form\Organization\OrganizationType;
+use App\Form\Settings\OrganizationSettingsType;
+use App\Entity\Settings\CreateOrganizationSettingsCommand;
+use App\Entity\Settings\UpdateOrganizationSettingsCommand;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -131,14 +134,12 @@ class OrganizationController extends AbstractController
     {
     	$updateCommand = new UpdateOrganizationCommand();
     	$organization->mapTo($updateCommand);
-        $form = $this->createForm(OrganizationType::class, $updateCommand);
+    	$addressCommand = new UpdateAddressCommand();
+    	$organization->getAddress()->mapTo($addressCommand);
+    	$updateCommand->address = $addressCommand;
+        $form = $this->createForm(OrganizationType::class, $updateCommand)
+        	->add('address', AddressType::class, ['data' => $addressCommand]);
         
-        $c = new UpdateAddressCommand();
-        $c->line1 = $updateCommand->address->getLine1();
-        $c->line2 = $updateCommand->address->getLine2();
-        $c->post = $updateCommand->address->getPost();
-        
-        $addressForm = $this->createForm(AddressType::class, $c);
         $form->handleRequest($request);
         
         if ($form->isSubmitted() && $form->isValid()) 
@@ -176,14 +177,43 @@ class OrganizationController extends AbstractController
         }
         
         return $this->render('dashboard/organization/edit.html.twig', [
-            'organization' => $updateCommand,
+            'organization' => $organization,
             'form' => $form->createView(),
-        	'addressForm' => $addressForm->createView(),
         	'entity' => 'organization',
         ]);
     }    
    
     
+    #[Route(path: "/dashboard/organization/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/settings", methods: ["GET", "POST"], name: "organization_settings_edit")]
+    public function editSettings(Request $request, Organization $organization, ManagerRegistry $doctrine): Response
+    {
+    	$settings = $organization->getOrganizationSettings();
+    	if ($settings === null) {
+    		$settings = $organization->CreateOrganizationSettings(new CreateOrganizationSettingsCommand(), $this->getUser());
+    	}
+
+    	$command = new UpdateOrganizationSettingsCommand();
+    	$settings->mapTo($command);
+
+    	$form = $this->createForm(OrganizationSettingsType::class, $command);
+    	$form->handleRequest($request);
+
+    	if ($form->isSubmitted() && $form->isValid()) {
+    		$organization->updateOrganizationSettings($command, $this->getUser());
+    		$doctrine->getManager()->persist($organization);
+    		$doctrine->getManager()->flush();
+    		$this->addFlash('success', 'organization.settings_updated_successfully');
+
+    		return $this->redirectToRoute('organization_show', ['id' => $organization->getId()]);
+    	}
+
+    	return $this->render('dashboard/organization/settings.html.twig', [
+    		'organization' => $organization,
+    		'form' => $form->createView(),
+    		'entity' => 'organization',
+    	]);
+    }
+
     #[Route(path: "/dashboard/organization/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/delete", methods: ["POST"], name: "organization_delete")]
     public function delete(Request $request, Organization $organization, ManagerRegistry $doctrine): Response
     {

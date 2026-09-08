@@ -1,0 +1,25 @@
+{% extends 'dashboard/layout.html.twig' %}
+
+{% block body_id 'organization_settings_edit' %}
+
+{% block main %}
+    {{ include('components/_page_header.html.twig', { title: 'title.organization_settings'|trans({organization: organization.name}) }) }}
+    {{ include('dashboard/organization/_settings_form.html.twig', {
+        form: form,
+        organization: organization,
+    }, with_context = false) }}
+{% endblock %}
+
+{% block sidebar %}
+    <div class="section">
+        <a href="{{ path('organization_show', {id: organization.id}) }}" class="btn btn-sm w-100 btn-success">
+            <i class="fa fa-eye" aria-hidden="true"></i> {{ 'action.show_organization'|trans }}
+        </a>
+    </div>
+
+    {{ parent() }}
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+{% endblock %}

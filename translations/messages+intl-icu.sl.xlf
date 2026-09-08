@@ -923,7 +923,239 @@
         <source>action.bookVisibleLunchExpenses</source>
         <target>Knjiži vidne</target>
       </trans-unit>
-      
+      <trans-unit id="menu.toggle_nav" resname="menu.toggle_nav">
+        <source>menu.toggle_nav</source>
+        <target>Preklopi navigacijo</target>
+      </trans-unit>
+      <trans-unit id="menu.home" resname="menu.home">
+        <source>menu.home</source>
+        <target>Domov</target>
+      </trans-unit>
+      <trans-unit id="theme.label" resname="theme.label">
+        <source>theme.label</source>
+        <target>Tema</target>
+      </trans-unit>
+      <trans-unit id="theme.light" resname="theme.light">
+        <source>theme.light</source>
+        <target>Svetla</target>
+      </trans-unit>
+      <trans-unit id="theme.dark" resname="theme.dark">
+        <source>theme.dark</source>
+        <target>Temna</target>
+      </trans-unit>
+      <trans-unit id="theme.system" resname="theme.system">
+        <source>theme.system</source>
+        <target>Sistemska</target>
+      </trans-unit>
+      <trans-unit id="action.more" resname="action.more">
+        <source>action.more</source>
+        <target>Več</target>
+      </trans-unit>
+      <trans-unit id="label.issued" resname="label.issued">
+        <source>label.issued</source>
+        <target>Izdano</target>
+      </trans-unit>
+      <trans-unit id="label.overdue" resname="label.overdue">
+        <source>label.overdue</source>
+        <target>Zapadlo</target>
+      </trans-unit>
+      <trans-unit id="label.www" resname="label.www">
+        <source>label.www</source>
+        <target>Splet</target>
+      </trans-unit>
+      <trans-unit id="label.phone" resname="label.phone">
+        <source>label.phone</source>
+        <target>Telefon</target>
+      </trans-unit>
+      <trans-unit id="label.mobile" resname="label.mobile">
+        <source>label.mobile</source>
+        <target>Mobilni</target>
+      </trans-unit>
+      <trans-unit id="label.accountNumber" resname="label.accountNumber">
+        <source>label.accountNumber</source>
+        <target>TRR</target>
+      </trans-unit>
+      <trans-unit id="label.bic" resname="label.bic">
+        <source>label.bic</source>
+        <target>BIC</target>
+      </trans-unit>
+      <trans-unit id="label.position" resname="label.position">
+        <source>label.position</source>
+        <target>Delovno mesto</target>
+      </trans-unit>
+      <trans-unit id="label.note" resname="label.note">
+        <source>label.note</source>
+        <target>Opomba</target>
+      </trans-unit>
+      <trans-unit id="label.scan" resname="label.scan">
+        <source>label.scan</source>
+        <target>Sken</target>
+      </trans-unit>
+      <trans-unit id="label.employee" resname="label.employee">
+        <source>label.employee</source>
+        <target>Zaposleni</target>
+      </trans-unit>
+      <trans-unit id="label.settings" resname="label.settings">
+        <source>label.settings</source>
+        <target>Nastavitve</target>
+      </trans-unit>
+      <trans-unit id="label.setting" resname="label.setting">
+        <source>label.setting</source>
+        <target>Nastavitev</target>
+      </trans-unit>
+      <trans-unit id="label.invoicePrefix" resname="label.invoicePrefix">
+        <source>label.invoicePrefix</source>
+        <target>Predpona računa</target>
+      </trans-unit>
+      <trans-unit id="label.defaultPaymentDueIn" resname="label.defaultPaymentDueIn">
+        <source>label.defaultPaymentDueIn</source>
+        <target>Privzeti rok plačila (dni)</target>
+      </trans-unit>
+      <trans-unit id="label.referenceModel" resname="label.referenceModel">
+        <source>label.referenceModel</source>
+        <target>Model sklica</target>
+      </trans-unit>
+      <trans-unit id="label.travelExpenseRate" resname="label.travelExpenseRate">
+        <source>label.travelExpenseRate</source>
+        <target>Kilometrina</target>
+      </trans-unit>
+      <trans-unit id="label.autoCreatePerDiem" resname="label.autoCreatePerDiem">
+        <source>label.autoCreatePerDiem</source>
+        <target>Samodejno dnevnice</target>
+      </trans-unit>
+      <trans-unit id="label.perDiemValue" resname="label.perDiemValue">
+        <source>label.perDiemValue</source>
+        <target>Vrednost dnevnice</target>
+      </trans-unit>
+      <trans-unit id="label.autoCreateLunch" resname="label.autoCreateLunch">
+        <source>label.autoCreateLunch</source>
+        <target>Samodejno prehrana</target>
+      </trans-unit>
+      <trans-unit id="label.lunchValue" resname="label.lunchValue">
+        <source>label.lunchValue</source>
+        <target>Vrednost prehrane</target>
+      </trans-unit>
+      <trans-unit id="label.invoiceDefaults" resname="label.invoiceDefaults">
+        <source>label.invoiceDefaults</source>
+        <target>Privzete nastavitve računov</target>
+      </trans-unit>
+      <trans-unit id="label.travelAndLunch" resname="label.travelAndLunch">
+        <source>label.travelAndLunch</source>
+        <target>Potni stroški in prehrana</target>
+      </trans-unit>
+      <trans-unit id="label.kontoMappings" resname="label.kontoMappings">
+        <source>label.kontoMappings</source>
+        <target>Kontne povezave</target>
+      </trans-unit>
+      <trans-unit id="label.yes" resname="label.yes">
+        <source>label.yes</source>
+        <target>Da</target>
+      </trans-unit>
+      <trans-unit id="label.no" resname="label.no">
+        <source>label.no</source>
+        <target>Ne</target>
+      </trans-unit>
+      <trans-unit id="label.IssueInvoiceDebit" resname="label.IssueInvoiceDebit">
+        <source>label.IssueInvoiceDebit</source>
+        <target>Izdaja računa – breme</target>
+      </trans-unit>
+      <trans-unit id="label.IssueInvoiceCredit" resname="label.IssueInvoiceCredit">
+        <source>label.IssueInvoiceCredit</source>
+        <target>Izdaja računa – dobro</target>
+      </trans-unit>
+      <trans-unit id="label.InvoicePaidDebit" resname="label.InvoicePaidDebit">
+        <source>label.InvoicePaidDebit</source>
+        <target>Plačilo računa – breme</target>
+      </trans-unit>
+      <trans-unit id="label.InvoicePaidCredit" resname="label.InvoicePaidCredit">
+        <source>label.InvoicePaidCredit</source>
+        <target>Plačilo računa – dobro</target>
+      </trans-unit>
+      <trans-unit id="label.IncurredTravelExpenseDebit" resname="label.IncurredTravelExpenseDebit">
+        <source>label.IncurredTravelExpenseDebit</source>
+        <target>Nastanek potnega stroška – breme</target>
+      </trans-unit>
+      <trans-unit id="label.IncurredTravelExpenseCredit" resname="label.IncurredTravelExpenseCredit">
+        <source>label.IncurredTravelExpenseCredit</source>
+        <target>Nastanek potnega stroška – dobro</target>
+      </trans-unit>
+      <trans-unit id="label.PaidTravelExpenseDebit" resname="label.PaidTravelExpenseDebit">
+        <source>label.PaidTravelExpenseDebit</source>
+        <target>Izplačilo potnega stroška – breme</target>
+      </trans-unit>
+      <trans-unit id="label.PaidTravelExpenseCredit" resname="label.PaidTravelExpenseCredit">
+        <source>label.PaidTravelExpenseCredit</source>
+        <target>Izplačilo potnega stroška – dobro</target>
+      </trans-unit>
+      <trans-unit id="label.ReceivedIncomingInvoiceDebit" resname="label.ReceivedIncomingInvoiceDebit">
+        <source>label.ReceivedIncomingInvoiceDebit</source>
+        <target>Prejet račun – breme</target>
+      </trans-unit>
+      <trans-unit id="label.ReceivedHomeIncomingInvoiceCredit" resname="label.ReceivedHomeIncomingInvoiceCredit">
+        <source>label.ReceivedHomeIncomingInvoiceCredit</source>
+        <target>Prejet domači račun – dobro</target>
+      </trans-unit>
+      <trans-unit id="label.ReceivedForeignIncomingInvoiceCredit" resname="label.ReceivedForeignIncomingInvoiceCredit">
+        <source>label.ReceivedForeignIncomingInvoiceCredit</source>
+        <target>Prejet tuji račun – dobro</target>
+      </trans-unit>
+      <trans-unit id="label.PaidCashIncomingInvoiceCredit" resname="label.PaidCashIncomingInvoiceCredit">
+        <source>label.PaidCashIncomingInvoiceCredit</source>
+        <target>Plačilo prejetega računa z gotovino – dobro</target>
+      </trans-unit>
+      <trans-unit id="label.PaidTransactionIncomingInvoiceCredit" resname="label.PaidTransactionIncomingInvoiceCredit">
+        <source>label.PaidTransactionIncomingInvoiceCredit</source>
+        <target>Plačilo prejetega računa s transakcijo – dobro</target>
+      </trans-unit>
+      <trans-unit id="label.RefundedIncomingInvoiceDebit" resname="label.RefundedIncomingInvoiceDebit">
+        <source>label.RefundedIncomingInvoiceDebit</source>
+        <target>Vrnjen prejet račun – breme</target>
+      </trans-unit>
+      <trans-unit id="label.RefundedIncomingInvoiceCredit" resname="label.RefundedIncomingInvoiceCredit">
+        <source>label.RefundedIncomingInvoiceCredit</source>
+        <target>Vrnjen prejet račun – dobro</target>
+      </trans-unit>
+      <trans-unit id="label.RejectedIncomingInvoiceDebit" resname="label.RejectedIncomingInvoiceDebit">
+        <source>label.RejectedIncomingInvoiceDebit</source>
+        <target>Zavrnjen prejet račun – breme</target>
+      </trans-unit>
+      <trans-unit id="label.RejectedIncomingInvoiceCredit" resname="label.RejectedIncomingInvoiceCredit">
+        <source>label.RejectedIncomingInvoiceCredit</source>
+        <target>Zavrnjen prejet račun – dobro</target>
+      </trans-unit>
+      <trans-unit id="label.BankFeeDebit" resname="label.BankFeeDebit">
+        <source>label.BankFeeDebit</source>
+        <target>Bančni strošek – breme</target>
+      </trans-unit>
+      <trans-unit id="label.BankFeeCredit" resname="label.BankFeeCredit">
+        <source>label.BankFeeCredit</source>
+        <target>Bančni strošek – dobro</target>
+      </trans-unit>
+      <trans-unit id="label.PaidIncomingInvoiceDebit" resname="label.PaidIncomingInvoiceDebit">
+        <source>label.PaidIncomingInvoiceDebit</source>
+        <target>Plačilo prejetega računa (zastarelo) – breme</target>
+      </trans-unit>
+      <trans-unit id="label.PaidIncomingInvoiceCredit" resname="label.PaidIncomingInvoiceCredit">
+        <source>label.PaidIncomingInvoiceCredit</source>
+        <target>Plačilo prejetega računa (zastarelo) – dobro</target>
+      </trans-unit>
+      <trans-unit id="title.organization_settings" resname="title.organization_settings">
+        <source>title.organization_settings</source>
+        <target>Nastavitve: {organization}</target>
+      </trans-unit>
+      <trans-unit id="action.edit_settings" resname="action.edit_settings">
+        <source>action.edit_settings</source>
+        <target>Uredi nastavitve</target>
+      </trans-unit>
+      <trans-unit id="action.save" resname="action.save">
+        <source>action.save</source>
+        <target>Shrani</target>
+      </trans-unit>
+      <trans-unit id="organization.settings_updated_successfully" resname="organization.settings_updated_successfully">
+        <source>organization.settings_updated_successfully</source>
+        <target>Nastavitve organizacije so shranjene.</target>
+      </trans-unit>
+
     </body>
   </file>
 </xliff>

@@ -14,20 +14,20 @@
 {{ form_start(form, {attr: attr|default({})}) }}
    
     {{ form_errors(form) }}
-    <div class="form-group">
+    <div class="mb-3">
         {{ form_label(form.username) }}
         {{ form_widget(form.username, {'attr': {'class': 'form-control'}}) }}
     </div>
     {% if showChangePassword|default(false) %}
-    <div class="form-group">
+    <div class="mb-3">
         {{ form_label(form.oldPassword) }}
         {{ form_widget(form.oldPassword, {'attr': {'class': 'form-control', 'autocomplete':'new-password'}}) }}
     </div>
-    <div class="form-group">
+    <div class="mb-3">
         {{ form_label(form.password.first) }}
         {{ form_widget(form.password.first, {'attr': {'class': 'form-control', 'autocomplete':'new-password'}}) }}
     </div>
-    <div class="form-group">
+    <div class="mb-3">
         {{ form_label(form.password.second) }}
         {{ form_widget(form.password.second, {'attr': {'class': 'form-control', 'autocomplete':'new-password'}}) }}
     </div>
@@ -35,39 +35,47 @@
     
     {% if showNewPassword|default(false)%}   
     
-    <div class="form-group">
+    <div class="mb-3">
         {{ form_label(form.password.first) }}
         {{ form_widget(form.password.first, {'attr': {'class': 'form-control', 'required':'required', 'autocomplete':'new-password'}}) }}
     </div>
-    <div class="form-group">
+    <div class="mb-3">
         {{ form_label(form.password.second) }}
         {{ form_widget(form.password.second, {'attr': {'class': 'form-control', 'required':'required', 'autocomplete':'new-password'}}) }}
     </div>
     
     {% endif %}
-    <div class="form-group">
+    <div class="mb-3">
         {{ form_label(form.email) }}
         {{ form_widget(form.email, {'attr': {'class': 'form-control'}}) }}
     </div>    
-    <div class="form-group">
+    <div class="mb-3">
         {{ form_label(form.firstName) }}
         {{ form_widget(form.firstName, {'attr': {'class': 'form-control'}}) }}
     </div>
-    <div class="form-group">
+    <div class="mb-3">
         {{ form_label(form.lastName) }}
         {{ form_widget(form.lastName, {'attr': {'class': 'form-control'}}) }}
     </div>
-    <div class="form-group">
+    <div class="mb-3">
+        {{ form_label(form.position) }}
+        {{ form_widget(form.position, {'attr': {'class': 'form-control'}}) }}
+    </div>
+    <div class="mb-3">
+        {{ form_label(form.phone) }}
+        {{ form_widget(form.phone, {'attr': {'class': 'form-control'}}) }}
+    </div>
+    <div class="mb-3">
         {{ form_label(form.mobile) }}
         {{ form_widget(form.mobile, {'attr': {'class': 'form-control'}}) }}
     </div>
-    <div class="form-group">
+    <div class="mb-3">
         {{ form_label(form.signature) }}
         {{ form_widget(form.signature, {'attr': {'class': 'form-control'}}) }}
     </div>    
     
     
-    <div class="form-group">
+    <div class="mb-3">
         {{ form_label(form.isRoleAdmin, "",{'label_attr': {'class': 'form-check-label'}}) }}<br>
         {{ form_widget(form.isRoleAdmin, {'attr': {'class': 'form-check-input'}}) }}
     </div>
