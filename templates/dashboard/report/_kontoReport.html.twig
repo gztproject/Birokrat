@@ -12,9 +12,9 @@
             <tr class='table-default'>
                 <td>{{ konto.name }}</td>
                 <td>{{ konto.number }}</td>
-                <td>{{ konto.debit|number_format(2, ',', ' ') }} €</td>
-                <td>{{ konto.credit|number_format(2, ',', ' ') }} €</td>
-                <td>{{ konto.sum|number_format(2, ',', ' ') }} €</td>
+                <td>{{ konto.debit|money_amount }} €</td>
+                <td>{{ konto.credit|money_amount }} €</td>
+                <td>{{ konto.sum|money_amount }} €</td>
             </tr>
         {% endfor %}    
     </tbody>

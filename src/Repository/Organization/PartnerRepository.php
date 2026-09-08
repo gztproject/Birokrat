@@ -20,21 +20,58 @@ class PartnerRepository extends ServiceEntityRepository
     }
 
     /**
-     * @return Partner[] Returns an array of Partner objects
-     */    
-    public function GetPartnersRecentFirst()
+     * Clients/suppliers with the most recent invoice activity first, then name.
+     *
+     * @return Partner[]
+     */
+    public function findRecentFirst(bool $clients = false, bool $suppliers = false): array
     {
-        $sql = "SELECT * FROM(
-                    (SELECT 1 AS resType, pf.* FROM partner pf ORDER BY pf.created_on ASC LIMIT 0,5)
-                UNION
-                    (SELECT 2 AS resType, p.* FROM partner p)
-                ) AS res
-                ORDER BY resType, CASE resType WHEN 1 THEN created_on ELSE name END;";
-        
-        $conn = $this->getEntityManager()->getConnection();
-        $stmt = $conn->prepare($sql);
-        
-        return $stmt->execute();        
+        $qb = $this->createQueryBuilder('p');
+        $qb->leftJoin('p.invoices', 'i')
+            ->leftJoin('p.incomingInvoices', 'ii')
+            ->addSelect('MAX(i.dateOfIssue) AS HIDDEN lastOutgoing')
+            ->addSelect('MAX(ii.dateOfIssue) AS HIDDEN lastIncoming')
+            ->groupBy('p.id');
+
+        if ($clients) {
+            $qb->andWhere('p.isClient = 1');
+        }
+        if ($suppliers) {
+            $qb->andWhere('p.isSupplier = 1');
+        }
+
+        return $qb
+            ->orderBy('lastOutgoing', 'DESC')
+            ->addOrderBy('lastIncoming', 'DESC')
+            ->addOrderBy('p.name', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function clientsRecentFirstQueryBuilder()
+    {
+        $qb = $this->createQueryBuilder('p');
+        $qb->leftJoin('p.invoices', 'i')
+            ->addSelect('MAX(i.dateOfIssue) AS HIDDEN lastUsed')
+            ->andWhere('p.isClient = 1')
+            ->groupBy('p.id')
+            ->orderBy('lastUsed', 'DESC')
+            ->addOrderBy('p.name', 'ASC');
+
+        return $qb;
+    }
+
+    public function suppliersRecentFirstQueryBuilder()
+    {
+        $qb = $this->createQueryBuilder('p');
+        $qb->leftJoin('p.incomingInvoices', 'ii')
+            ->addSelect('MAX(ii.dateOfIssue) AS HIDDEN lastUsed')
+            ->andWhere('p.isSupplier = 1')
+            ->groupBy('p.id')
+            ->orderBy('lastUsed', 'DESC')
+            ->addOrderBy('p.name', 'ASC');
+
+        return $qb;
     }
     
 
