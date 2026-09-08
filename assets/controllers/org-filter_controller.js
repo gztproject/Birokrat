@@ -1,44 +1,28 @@
 import { Controller } from '@hotwired/stimulus';
-
-function unixStartOfDay(value) {
-    return Math.floor(new Date(`${value}T00:00:00`).getTime() / 1000);
-}
-
-function unixEndOfDay(value) {
-    return Math.floor(new Date(`${value}T23:59:59`).getTime() / 1000);
-}
-
-function withQuery(url, params) {
-    const parsed = new URL(url, window.location.origin);
-    Object.entries(params).forEach(([key, value]) => {
-        if (value === undefined || value === '') {
-            parsed.searchParams.delete(key);
-        } else {
-            parsed.searchParams.set(key, value);
-        }
-    });
-    parsed.searchParams.delete('page');
-    return parsed.pathname + parsed.search;
-}
+import { isoDateFromUnix, unixEndOfDay, unixStartOfDay, withQuery } from '../js/common/filters/query';
 
 export default class extends Controller {
     static targets = ['organization', 'from', 'to', 'year'];
 
     async connect() {
-        await this.loadOrganizations();
+        try {
+            await this.loadOrganizations();
+        } catch {
+            // Keep hydrating dates even if the organization list fails.
+        }
+        this.hydrate();
+    }
+
+    hydrate() {
         const params = new URLSearchParams(window.location.search);
-        if (this.hasYearTarget && params.get('year')) {
-            this.yearTarget.value = params.get('year');
+        if (this.hasYearTarget) {
+            this.yearTarget.value = params.get('year') ?? '';
         }
         if (this.hasFromTarget) {
-            this.fromTarget.value = params.get('dateFrom')
-                ? new Date(Number(params.get('dateFrom')) * 1000).toISOString().slice(0, 10)
-                : `${new Date().getFullYear()}-01-01`;
+            this.fromTarget.value = isoDateFromUnix(params.get('dateFrom'));
         }
         if (this.hasToTarget) {
-            this.toTarget.value = params.get('dateTo')
-                ? new Date(Number(params.get('dateTo')) * 1000).toISOString().slice(0, 10)
-                : new Date().toISOString().slice(0, 10);
+            this.toTarget.value = isoDateFromUnix(params.get('dateTo'));
         }
         if (this.hasOrganizationTarget && params.get('organization')) {
             this.organizationTarget.value = params.get('organization');
@@ -58,16 +42,31 @@ export default class extends Controller {
         });
     }
 
+    apply(event) {
+        event?.preventDefault();
+        if (this.hasYearTarget && this.yearTarget.value && document.activeElement === this.yearTarget) {
+            this.onYearChange();
+            return;
+        }
+        this.navigate({
+            organization: this.hasOrganizationTarget ? this.organizationTarget.value : undefined,
+            dateFrom: this.hasFromTarget ? this.unixOrClear(unixStartOfDay(this.fromTarget.value)) : undefined,
+            dateTo: this.hasToTarget ? this.unixOrClear(unixEndOfDay(this.toTarget.value)) : undefined,
+            year: this.hasYearTarget && this.yearTarget.value ? this.yearTarget.value : undefined,
+        });
+    }
+
     onOrganizationChange() {
-        window.location = withQuery(window.location.href, { organization: this.organizationTarget.value });
+        this.navigate({ organization: this.organizationTarget.value });
     }
 
     onYearChange() {
         if (!this.yearTarget.value) {
+            this.navigate({ year: undefined, dateFrom: undefined, dateTo: undefined });
             return;
         }
         const year = Number(this.yearTarget.value);
-        window.location = withQuery(window.location.href, {
+        this.navigate({
             year: String(year),
             dateFrom: String(unixStartOfDay(`${year}-01-01`)),
             dateTo: String(unixEndOfDay(`${year}-12-31`)),
@@ -75,20 +74,28 @@ export default class extends Controller {
     }
 
     onFromChange() {
-        window.location = withQuery(window.location.href, {
-            dateFrom: String(unixStartOfDay(this.fromTarget.value)),
+        this.navigate({
+            dateFrom: this.unixOrClear(unixStartOfDay(this.fromTarget.value)),
             year: undefined,
         });
     }
 
     onToChange() {
-        window.location = withQuery(window.location.href, {
-            dateTo: String(unixEndOfDay(this.toTarget.value)),
+        this.navigate({
+            dateTo: this.unixOrClear(unixEndOfDay(this.toTarget.value)),
             year: undefined,
         });
     }
 
     clear() {
         window.location = window.location.pathname;
+    }
+
+    unixOrClear(value) {
+        return value === undefined ? undefined : String(value);
+    }
+
+    navigate(params) {
+        window.location = withQuery(window.location.href, params);
     }
 }

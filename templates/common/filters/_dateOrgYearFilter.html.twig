@@ -1,4 +1,4 @@
-<form class="bs-component" data-controller="org-filter">
+<form class="bs-component" data-controller="org-filter" data-action="submit->org-filter#apply">
     <fieldset class="form-group">
          <div class="form-group">
             <label class="col-form-label-lg" for="organizationPicker">{{ 'label.organization'|trans }}</label>
@@ -7,7 +7,12 @@
     </fieldset>
     <fieldset class="form-group">
         <label class="col-form-label-lg" for="dateFieldYear">{{ 'label.year'|trans }}</label>
-        <input type="number" id="dateFieldYear" class="form-control" data-org-filter-target="year" data-action="change->org-filter#onYearChange">
+        <select id="dateFieldYear" class="form-control" data-org-filter-target="year" data-action="change->org-filter#onYearChange">
+            <option value=""></option>
+            {% for y in range('now'|date('Y') + 1, 2018) %}
+                <option value="{{ y }}">{{ y }}</option>
+            {% endfor %}
+        </select>
         <label class="col-form-label-lg" for="dateFieldFrom">{{ 'label.dateFrom'|trans }}</label>
         <input type="date" id="dateFieldFrom" class="form-control" data-org-filter-target="from" data-action="change->org-filter#onFromChange">
         <label class="col-form-label-lg" for="dateFieldTo">{{ 'label.dateTo'|trans }}</label>

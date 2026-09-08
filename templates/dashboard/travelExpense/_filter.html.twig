@@ -1,41 +1,28 @@
-<form class="bs-component">
-            
-    <fieldset class="form-group">  
-         
+<form class="bs-component" data-controller="expense-filter" data-expense-filter-table-value="travelExpensesTable" data-action="submit->expense-filter#apply">
+    <fieldset class="form-group">
         <label class="col-form-label-lg" for="dateFieldFrom">{{ 'label.dateFrom'|trans }}</label>
-        <div class="input-group date" id="filterDateFrom">
-            <input type="text" id="dateFieldFrom" class="form-control">
-            
-                <span class="input-group-text"><i class="fa fa-calendar" aria-hidden="true"></i></span>
-            </div>
-        </div>
-      
+        <input type="date" id="dateFieldFrom" class="form-control" data-expense-filter-target="from" data-action="change->expense-filter#onFromChange">
         <label class="col-form-label-lg" for="dateFieldTo">{{ 'label.dateTo'|trans }}</label>
-        <div class="input-group date" id="filterDateTo">
-            <input type="text" id="dateFieldTo" class="form-control">
-            
-                <span class="input-group-text"><i class="fa fa-calendar" aria-hidden="true"></i></span>
-            </div>
-        </div>
+        <input type="date" id="dateFieldTo" class="form-control" data-expense-filter-target="to" data-action="change->expense-filter#onToChange">
     </fieldset>
-    
+
     <fieldset class="form-group">
         <div class="form-check">
           <label class="form-check-label">
-            <input class="form-check-input" type="checkbox" id="showBooked" value="">
+            <input class="form-check-input" type="checkbox" id="showBooked" data-expense-filter-target="booked" data-action="change->expense-filter#onBookedChange">
             {{ 'label.booked' | trans }}
           </label>
         </div>
         <div class="form-check">
           <label class="form-check-label">
-            <input class="form-check-input" type="checkbox" id="showUnbooked" value="">
+            <input class="form-check-input" type="checkbox" id="showUnbooked" data-expense-filter-target="unbooked" data-action="change->expense-filter#onUnbookedChange">
             {{ 'label.unbooked' | trans }}
           </label>
         </div>
     </fieldset>
-    
+
     <fieldset class="form-group">
-        <button type="button" id="clearFilterBtn" class="btn btn-danger">{{ 'label.clear' | trans }}</button>
-        <button type="button" id="selectAllBtn" class="btn btn-info">{{ 'label.selectAll' | trans }}</button>  
+        <button type="button" id="clearFilterBtn" class="btn btn-danger" data-action="expense-filter#clear">{{ 'label.clear' | trans }}</button>
+        <button type="button" id="selectAllBtn" class="btn btn-info" data-action="expense-filter#selectAll">{{ 'label.selectAll' | trans }}</button>
     </fieldset>
 </form>

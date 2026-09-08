@@ -78,6 +78,13 @@ class ApplicationSmokeTest extends WebTestCase
 
         $this->client->request('GET', '/dashboard/transaction');
         $this->assertResponseIsSuccessful();
+
+        $this->client->request('GET', '/dashboard/report');
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorExists('[data-controller="org-filter"]');
+        $this->assertSelectorExists('#dateFieldYear');
+        $this->assertSelectorExists('#dateFieldFrom');
+        $this->assertSelectorExists('#dateFieldTo');
     }
 
     public function testAdminPages(): void
