@@ -1,0 +1,36 @@
+# Dependabot reads this file from the default branch (`master`) only.
+# Version-update PRs target `dev`. Security-update PRs always target `master`
+# and ignore target-branch.
+version: 2
+updates:
+  - package-ecosystem: composer
+    directory: /
+    target-branch: dev
+    schedule:
+      interval: weekly
+    groups:
+      composer-minor-and-patch:
+        update-types:
+          - minor
+          - patch
+
+  - package-ecosystem: npm
+    directory: /
+    target-branch: dev
+    schedule:
+      interval: weekly
+    groups:
+      npm-minor-and-patch:
+        update-types:
+          - minor
+          - patch
+
+  - package-ecosystem: github-actions
+    directory: /
+    target-branch: dev
+    schedule:
+      interval: weekly
+    groups:
+      github-actions:
+        patterns:
+          - '*'
