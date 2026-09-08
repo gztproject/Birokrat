@@ -11,41 +11,29 @@ use Symfony\Component\Routing\Attribute\Route;
 use App\Repository\LunchExpense\LunchExpenseRepository;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Entity\LunchExpense\CreateLunchExpenseCommand;
-use Psr\Log\LoggerInterface;
 use App\Entity\LunchExpense\CreateLunchExpenseBundleCommand;
 use App\Form\LunchExpense\LunchExpenseType;
 use Doctrine\Common\Collections\ArrayCollection;
 
 class LunchExpenseCommandController extends AbstractController
 {    
-	#[Route(path: "/dashboard/lunchExpense/new", methods: ["GET, POST"], name: "lunchExpense_new")]
-    public function new(Request $request, LunchExpenseRepository $lunchExpenses, LoggerInterface $logger, ManagerRegistry $doctrine): Response
+	#[Route(path: "/dashboard/lunchExpense/new", methods: ["GET", "POST"], name: "lunchExpense_new")]
+    public function new(Request $request, ManagerRegistry $doctrine): Response
     {
     	$c = new CreateLunchExpenseCommand();    	
     	    	
     	$form = $this->createForm(LunchExpenseType::class, $c)
     	->add('saveAndCreateNew', SubmitType::class);
+
+    	$form->handleRequest($request);
     	   	
     	if ($form->isSubmitted() && $form->isValid()) {
-    		
-    		$c->employee = $this->getUser();    		
-    		
-    		$te = $this->getUser()->createLunchExpense($c);  
-    		
-    		$em = $doctrine->getManager();
-    		
-    		foreach($c->lunchStopCommands as $tsc)
-    		{
-    			$ts = $te->createLunchStop($tsc);
-    			$em->persist($ts);
-    		}
-    		
+    		$te = $this->getUser()->createLunchExpense($c);
     		$transaction = $te->setNew($this->getUser());
-    		
-    		
+
+    		$em = $doctrine->getManager();
     		$em->persist($te);
-    		$em->persist($transaction);    		
-    		
+    		$em->persist($transaction);
     		$em->flush();
     		    		
     		return $this->redirectToRoute('lunchExpense_index');
