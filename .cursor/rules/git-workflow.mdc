@@ -1,0 +1,28 @@
+---
+description: Git branching, atomic commits, and SemVer tags (master releases, dev pre-releases)
+alwaysApply: true
+---
+
+# Git workflow
+
+## Branches
+
+- Long-lived: `master` (production), `dev` (integration).
+- Work only on topic branches. Never commit directly to `master` or `dev`.
+- Name: `feature/<slug>`, `bugfix/<slug>`, `hotfix/<slug>`, `chore/<slug>`.
+- Base `feature/*` and `bugfix/*` on `dev`. Base `hotfix/*` on `master`, then merge or cherry-pick into `dev`.
+- Merge topic branches into `dev`. Merge `dev` into `master` only for a release.
+
+## Atomic commits
+
+- One logical change per commit (one concern: feature slice, bugfix, chore, or docs).
+- Do not mix unrelated files or follow-up refactors into the same commit.
+- Commit only when the user asks. Message: why, not what; match recent `git log` style.
+
+## Version tags
+
+- Tag only after the adversarial release-gate review (see `adversarial-release-review` rule).
+- `master`: annotated SemVer **release** `X.Y.Z` (GitHub Release, not pre-release). Example: `0.0.6`.
+- `dev`: annotated SemVer **pre-release** `X.Y.Z-<pre>.N` (GitHub Release with `--prerelease`). Example: `0.0.6-rc.1`.
+- Tag the commit on that branch; do not move tags. Do not tag topic branches.
+- Existing style has no `v` prefix (`0.0.5-stable`); keep that unless the user asks to change it.
