@@ -262,7 +262,7 @@ class InvoicePdfFactory
    					$qrString.=" ";
    				}   				
 
-				$pdf->write2DBarcode(utf8_encode($qrString), 'QRCODE,M', 135, 242, 30, 30, $style, 'N');
+				$pdf->write2DBarcode($qrString, 'QRCODE,M', 135, 242, 30, 30, $style, 'N');
    				// ---------------------------------------------------------
    				
    				//Close and output PDF document
