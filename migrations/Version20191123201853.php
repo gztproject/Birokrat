@@ -20,7 +20,6 @@ final class Version20191123201853 extends AbstractMigration
     public function up(Schema $schema) : void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('CREATE TABLE lunch_expense_bundle (id CHAR(36) NOT NULL COMMENT \'(DC2Type:uuid)\', organization_id CHAR(36) NOT NULL COMMENT \'(DC2Type:uuid)\', created_by_id CHAR(36) NOT NULL COMMENT \'(DC2Type:uuid)\', updated_by_id CHAR(36) DEFAULT NULL COMMENT \'(DC2Type:uuid)\', created_on DATETIME NOT NULL, updated_on DATETIME DEFAULT NULL, INDEX IDX_491603EC32C8A3DE (organization_id), INDEX IDX_491603ECB03A8386 (created_by_id), INDEX IDX_491603EC896DBBDE (updated_by_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB');
         $this->addSql('ALTER TABLE lunch_expense_bundle ADD CONSTRAINT FK_491603EC32C8A3DE FOREIGN KEY (organization_id) REFERENCES organization (id)');
@@ -38,7 +37,6 @@ final class Version20191123201853 extends AbstractMigration
     public function down(Schema $schema) : void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('ALTER TABLE transaction DROP FOREIGN KEY FK_723705D119400A2F');
         $this->addSql('ALTER TABLE lunch_expense DROP FOREIGN KEY FK_C44D418019400A2F');

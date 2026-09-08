@@ -7,16 +7,13 @@ namespace DoctrineMigrations;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 use Ramsey\Uuid\Uuid;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20190923191631 extends AbstractMigration implements ContainerAwareInterface
+final class Version20190923191631 extends AbstractMigration
 {
 	
-	use ContainerAwareTrait;
 	private $dbMigratorId;
 	
     public function getDescription() : string
@@ -26,15 +23,11 @@ final class Version20190923191631 extends AbstractMigration implements Container
     
     public function preUp(Schema $schema) : void
     {
-    	//Get EntityManager
-    	$em = $this->container->get('doctrine.orm.entity_manager');
     	
     	//Check if MigrationUser already exists and create it if not. We have to do it manually as we don't have the new fields yet.
     	$sql = "SELECT * FROM `app_users` WHERE username = 'dbMigrator' ";
     	
-    	$stmt = $em->getConnection()->prepare($sql);
-    	$stmt->execute();
-    	$dbMigratorUser = $stmt->fetchAll();
+    	$dbMigratorUser = $this->connection->fetchAllAssociative($sql);
     	
     	if($dbMigratorUser==null)
     	{
@@ -42,10 +35,8 @@ final class Version20190923191631 extends AbstractMigration implements Container
     		$this->dbMigratorId = Uuid::uuid1();
     		$sql = "INSERT INTO `app_users` (`id`, `username`, `first_name`, `last_name`, `password`, `roles`, `email`, `mobile`, `phone`, `is_active`)
 				VALUES ('$this->dbMigratorId','DbMigrator','Database','Migrator','','','','','',0)";
-    		$stmt = $em->getConnection()->prepare($sql);
-    		$stmt->execute();
-    		$em->flush();
-    	}
+    		$this->connection->executeStatement($sql);
+    		    	}
     	else
     	{
     		$this->dbMigratorId = $dbMigratorUser[0]["id"];
@@ -55,7 +46,6 @@ final class Version20190923191631 extends AbstractMigration implements Container
     public function up(Schema $schema) : void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('CREATE TABLE incoming_invoice (id CHAR(36) NOT NULL COMMENT \'(DC2Type:uuid)\', issuer_id CHAR(36) NOT NULL COMMENT \'(DC2Type:uuid)\', recepient_id CHAR(36) NOT NULL COMMENT \'(DC2Type:uuid)\', created_by_id CHAR(36) NOT NULL COMMENT \'(DC2Type:uuid)\', updated_by_id CHAR(36) DEFAULT NULL COMMENT \'(DC2Type:uuid)\', date_of_issue DATE NOT NULL, number VARCHAR(255) NOT NULL, price NUMERIC(15, 2) NOT NULL, reference_number VARCHAR(50) DEFAULT NULL, state INT NOT NULL, due_date DATE NOT NULL, date_paid DATE DEFAULT NULL, date_rejected DATE DEFAULT NULL, rejected_reason VARCHAR(100) DEFAULT NULL, date_refunded DATE DEFAULT NULL, refund_reason VARCHAR(100) DEFAULT NULL, note VARCHAR(512) DEFAULT NULL, scan_filename VARCHAR(255) DEFAULT NULL, created_on DATETIME NOT NULL, updated_on DATETIME DEFAULT NULL, INDEX IDX_95B404A6BB9D6FEE (issuer_id), INDEX IDX_95B404A6F1B7C6C (recepient_id), INDEX IDX_95B404A6B03A8386 (created_by_id), INDEX IDX_95B404A6896DBBDE (updated_by_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB');
         $this->addSql('ALTER TABLE incoming_invoice ADD CONSTRAINT FK_95B404A6BB9D6FEE FOREIGN KEY (issuer_id) REFERENCES client (id)');
@@ -88,15 +78,11 @@ final class Version20190923191631 extends AbstractMigration implements Container
     
     public function postUp(Schema $schema) : void
     {
-    	$em = $this->container->get('doctrine.orm.entity_manager');
-    	$kontos = $this->getKontos([400,220,110,919]);
+    	    	$kontos = $this->getKontos([400,220,110,919]);
     	$date = date('Y-m-d H:i:s');
     	$sql = "SELECT o.* FROM organization_settings AS o WHERE 1";
-    	$stmt = $em->getConnection()->prepare($sql);
-    	$stmt->execute();
-    	$res = $stmt->fetchAll();
-    	$em->flush();
-    	if($res != null)
+    	$res = $this->connection->fetchAllAssociative($sql);
+    	    	if($res != null)
     		foreach($res as $os)
     		{   $sql = "UPDATE organization_settings SET
 						received_incoming_invoice_credit_id='".$kontos['220']."',
@@ -109,17 +95,14 @@ final class Version20190923191631 extends AbstractMigration implements Container
 						rejected_incoming_invoice_credit_id='".$kontos['400']."',
 						rejected_incoming_invoice_debit_id='".$kontos['220']."',
 						updated_by_id='$this->dbMigratorId', updated_on='$date' WHERE organization_id='".$os['organization_id']."'";
-    		$stmt = $em->getConnection()->prepare($sql);
-    		$stmt->execute();
-    		$em->flush();
-    	}
+    		$this->connection->executeStatement($sql);
+    		    	}
     	
     }
 
     public function down(Schema $schema) : void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('ALTER TABLE transaction DROP FOREIGN KEY FK_723705D113D456E6');
         $this->addSql('DROP TABLE incoming_invoice');
@@ -148,18 +131,14 @@ final class Version20190923191631 extends AbstractMigration implements Container
     
     private function getKontos(array $numbers): array
     {
-    	$em = $this->container->get('doctrine.orm.entity_manager');
-    	$kontos = [];
+    	    	$kontos = [];
     	foreach ($numbers as $number)
     	{
     		$sql = "SELECT k.id FROM konto AS k WHERE k.number = $number";
-    		$stmt = $em->getConnection()->prepare($sql);
-    		$stmt->execute();
-    		$res = $stmt->fetchAll();
+    		$res = $this->connection->fetchAllAssociative($sql);
     		if($res != null)
     			$kontos[$number] = $res[0]['id'];
-    			$em->flush();
-    	}
+    			    	}
     	return $kontos;
     }
 }

@@ -7,16 +7,13 @@ namespace DoctrineMigrations;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 use Ramsey\Uuid\Uuid;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20190903173730 extends AbstractMigration implements ContainerAwareInterface
+final class Version20190903173730 extends AbstractMigration
 {
 	
-	use ContainerAwareTrait;
 	private $dbMigratorId;
 	
 	
@@ -27,15 +24,11 @@ final class Version20190903173730 extends AbstractMigration implements Container
     
     public function preUp(Schema $schema) : void
     {
-    	//Get EntityManager
-    	$em = $this->container->get('doctrine.orm.entity_manager');
     	
     	//Check if MigrationUser already exists and create it if not. We have to do it manually as we don't have the new fields yet.
     	$sql = "SELECT * FROM `app_users` WHERE username = 'dbMigrator' ";
     	
-    	$stmt = $em->getConnection()->prepare($sql);
-    	$stmt->execute();
-    	$dbMigratorUser = $stmt->fetchAll();
+    	$dbMigratorUser = $this->connection->fetchAllAssociative($sql);
     	
     	if($dbMigratorUser==null)
     	{
@@ -43,10 +36,8 @@ final class Version20190903173730 extends AbstractMigration implements Container
     		$this->dbMigratorId = Uuid::uuid1();
     		$sql = "INSERT INTO `app_users` (`id`, `username`, `first_name`, `last_name`, `password`, `roles`, `email`, `mobile`, `phone`, `is_active`)
 				VALUES ('$this->dbMigratorId','DbMigrator','Database','Migrator','','','','','',0)";
-    		$stmt = $em->getConnection()->prepare($sql);
-    		$stmt->execute();
-    		$em->flush();
-    	}
+    		$this->connection->executeStatement($sql);
+    		    	}
     	else
     	{
     		$this->dbMigratorId = $dbMigratorUser[0]["id"];
@@ -56,7 +47,6 @@ final class Version20190903173730 extends AbstractMigration implements Container
     public function up(Schema $schema) : void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
         
         $this->addSql('DROP INDEX UNIQ_5C844C5A76ED395 ON user_settings');
         $this->addSql('DROP INDEX UNIQ_A5D626732C8A3DE ON organization_settings');
@@ -85,15 +75,11 @@ final class Version20190903173730 extends AbstractMigration implements Container
     
     public function postUp(Schema $schema) : void
     {
-    	$em = $this->container->get('doctrine.orm.entity_manager');
-    	$kontos = $this->getKontos([120,760,110,486,285,919]);
+    	    	$kontos = $this->getKontos([120,760,110,486,285,919]);
     	$date = date('Y-m-d H:i:s');
     	$sql = "SELECT o.* FROM organization_settings AS o WHERE 1";
-    	$stmt = $em->getConnection()->prepare($sql);
-    	$stmt->execute();
-    	$res = $stmt->fetchAll();
-    	$em->flush();
-    	if($res != null)
+    	$res = $this->connection->fetchAllAssociative($sql);
+    	    	if($res != null)
     		foreach($res as $os)
     		{   $sql = "UPDATE organization_settings SET 
 						issue_invoice_debit_id='".$kontos['120']."',
@@ -105,17 +91,14 @@ final class Version20190903173730 extends AbstractMigration implements Container
 						paid_travel_expense_debit_id='".$kontos['285']."',
 						paid_travel_expense_credit_id='".$kontos['919']."',
 						updated_by_id='$this->dbMigratorId', updated_on='$date' WHERE organization_id='".$os['organization_id']."'";
-    			$stmt = $em->getConnection()->prepare($sql);
-    			$stmt->execute();
-    			$em->flush();
-    		}
+    			$this->connection->executeStatement($sql);
+    			    		}
     	
     }
 
     public function down(Schema $schema) : void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('ALTER TABLE organization_settings DROP FOREIGN KEY FK_A5D62679167574');
         $this->addSql('ALTER TABLE organization_settings DROP FOREIGN KEY FK_A5D6267DE910D54');
@@ -140,18 +123,14 @@ final class Version20190903173730 extends AbstractMigration implements Container
     
     private function getKontos(array $numbers): array
     {
-    	$em = $this->container->get('doctrine.orm.entity_manager');
-    	$kontos = [];
+    	    	$kontos = [];
     	foreach ($numbers as $number)
     	{
     		$sql = "SELECT k.id FROM konto AS k WHERE k.number = $number";
-    		$stmt = $em->getConnection()->prepare($sql);
-    		$stmt->execute();
-    		$res = $stmt->fetchAll();
+    		$res = $this->connection->fetchAllAssociative($sql);
     		if($res != null)
     			$kontos[$number] = $res[0]['id'];
-    			$em->flush();
-    	}
+    			    	}
     	return $kontos;
     }
 }

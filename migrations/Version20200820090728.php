@@ -6,35 +6,24 @@ namespace DoctrineMigrations;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20200820090728 extends AbstractMigration implements ContainerAwareInterface {
-	use ContainerAwareTrait;
+final class Version20200820090728 extends AbstractMigration {
 	private $konto221id;
 	public function getDescription(): string {
 		return 'Separate credit kontos for home and foreign incoming invoices';
 	}
 	public function preUp(Schema $schema): void {
-		// Get EntityManager
-		$em = $this->container->get ( 'doctrine.orm.entity_manager' );
-
 		$sql = "SELECT k.id FROM konto AS k WHERE k.number = 221";
-		$stmt = $em->getConnection ()->prepare ( $sql );
-		$stmt->execute ();
-		$res = $stmt->fetchAll ();
+		$res = $this->connection->fetchAllAssociative($sql);
 		if ($res != null)
 			$this->konto221id = $res [0] ['id'];
-		$em->flush ();		
 	}
 	
 	public function up(Schema $schema): void {
 		// this up() migration is auto-generated, please modify it to your needs
-		$this->abortIf ( $this->connection->getDatabasePlatform ()->getName () !== 'mysql', 'Migration can only be executed safely on \'mysql\'.' );
-
 		$this->addSql ( 'ALTER TABLE organization_settings DROP FOREIGN KEY FK_A5D62675161DF40' );
 		$this->addSql ( 'DROP INDEX IDX_A5D62675161DF40 ON organization_settings' );
 		$this->addSql ( 'ALTER TABLE organization_settings ADD received_foreign_incoming_invoice_credit_id CHAR(36) DEFAULT NULL COMMENT \'(DC2Type:uuid)\', CHANGE received_incoming_invoice_credit_id received_home_incoming_invoice_credit_id CHAR(36) DEFAULT NULL COMMENT \'(DC2Type:uuid)\'' );
@@ -47,8 +36,6 @@ final class Version20200820090728 extends AbstractMigration implements Container
 	
 	public function down(Schema $schema): void {
 		// this down() migration is auto-generated, please modify it to your needs
-		$this->abortIf ( $this->connection->getDatabasePlatform ()->getName () !== 'mysql', 'Migration can only be executed safely on \'mysql\'.' );
-
 		$this->addSql ( 'ALTER TABLE organization_settings DROP FOREIGN KEY FK_A5D626740F2E438' );
 		$this->addSql ( 'ALTER TABLE organization_settings DROP FOREIGN KEY FK_A5D626786AFABE0' );
 		$this->addSql ( 'DROP INDEX IDX_A5D626740F2E438 ON organization_settings' );

@@ -7,22 +7,12 @@ namespace DoctrineMigrations;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 use Ramsey\Uuid\Uuid;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
-use App\Entity\Geography\Country;
-use App\Entity\Geography\Post;
-use App\Entity\Organization\Organization;
-use App\Entity\User\User;
-use App\Entity\Konto\KontoCategory;
-use App\Entity\Konto\KontoClass;
-use App\Entity\User\CreateUserCommand;
 
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20190616182518 extends AbstractMigration implements ContainerAwareInterface
+final class Version20190616182518 extends AbstractMigration
 {
-	use ContainerAwareTrait;
 	private $dbMigratorId;
 	
     public function getDescription() : string
@@ -32,15 +22,11 @@ final class Version20190616182518 extends AbstractMigration implements Container
     
     public function preUp(Schema $schema) : void
     {
-    	//Get EntityManager
-    	$em = $this->container->get('doctrine.orm.entity_manager');
     	
     	//Check if MigrationUser already exists and create it if not. We have to do it manually as we don't have the new fields yet.
     	$sql = "SELECT * FROM `app_users` WHERE username = 'dbMigrator' ";
     	
-    	$stmt = $em->getConnection()->prepare($sql);
-    	$stmt->execute();
-    	$dbMigratorUser = $stmt->fetchAll();    	
+    	$dbMigratorUser = $this->connection->fetchAllAssociative($sql);    	
     	 
     	if($dbMigratorUser==null)
     	{
@@ -48,10 +34,8 @@ final class Version20190616182518 extends AbstractMigration implements Container
     		$this->dbMigratorId = Uuid::uuid1();
     		$sql = "INSERT INTO `app_users` (`id`, `username`, `first_name`, `last_name`, `password`, `roles`, `email`, `mobile`, `phone`, `is_active`)
 				VALUES ('$this->dbMigratorId','DbMigrator','Database','Migrator','','','','','',0)";
-    		$stmt = $em->getConnection()->prepare($sql);
-    		$stmt->execute();
-    		$em->flush();
-    	} 
+    		$this->connection->executeStatement($sql);
+    		    	} 
     	else 
     	{    		
     		$this->dbMigratorId = $dbMigratorUser[0]["id"];
@@ -61,7 +45,6 @@ final class Version20190616182518 extends AbstractMigration implements Container
     public function up(Schema $schema) : void
     {    	
     	// this up() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('ALTER TABLE country ADD created_by_id CHAR(36) NOT NULL COMMENT \'(DC2Type:uuid)\' DEFAULT \''.$this->dbMigratorId.'\', ADD updated_by_id CHAR(36) DEFAULT NULL COMMENT \'(DC2Type:uuid)\', ADD created_on DATETIME NOT NULL DEFAULT \'1970-01-01 12:00:00\', ADD updated_on DATETIME');
         $this->addSql('ALTER TABLE country ADD CONSTRAINT FK_5373C966B03A8386 FOREIGN KEY (created_by_id) REFERENCES app_users (id)');
@@ -154,70 +137,50 @@ final class Version20190616182518 extends AbstractMigration implements Container
     
     public function postUp(Schema $schema) : void
     {
-    	//Get EntityManager
-    	$em = $this->container->get('doctrine.orm.entity_manager');
     	
     	//Drop the default values so we don't have problems later...
     	$sql = "ALTER TABLE country ALTER created_by_id DROP DEFAULT, ALTER created_on DROP DEFAULT;";
-    	$stmt = $em->getConnection()->prepare($sql);
-    	$stmt->execute();
+    	$this->connection->executeStatement($sql);
     	$sql = "ALTER TABLE post ALTER created_by_id DROP DEFAULT, ALTER created_on DROP DEFAULT;";
-    	$stmt = $em->getConnection()->prepare($sql);
-    	$stmt->execute();
+    	$this->connection->executeStatement($sql);
     	$sql = "ALTER TABLE address ALTER created_by_id DROP DEFAULT, ALTER created_on DROP DEFAULT;";
-    	$stmt = $em->getConnection()->prepare($sql);
-    	$stmt->execute();
+    	$this->connection->executeStatement($sql);
     	$sql = "ALTER TABLE transaction ALTER created_by_id DROP DEFAULT, ALTER created_on DROP DEFAULT;";
-    	$stmt = $em->getConnection()->prepare($sql);
-    	$stmt->execute();
+    	$this->connection->executeStatement($sql);
     	$sql = "ALTER TABLE user_settings ALTER created_by_id DROP DEFAULT, ALTER created_on DROP DEFAULT;";
-    	$stmt = $em->getConnection()->prepare($sql);
-    	$stmt->execute();
+    	$this->connection->executeStatement($sql);
     	$sql = "ALTER TABLE organization_settings ALTER created_by_id DROP DEFAULT, ALTER created_on DROP DEFAULT;";
-    	$stmt = $em->getConnection()->prepare($sql);
-    	$stmt->execute();
+    	$this->connection->executeStatement($sql);
     	$sql = "ALTER TABLE invoice ALTER created_by_id DROP DEFAULT, ALTER created_on DROP DEFAULT;";
-    	$stmt = $em->getConnection()->prepare($sql);
-    	$stmt->execute();
+    	$this->connection->executeStatement($sql);
     	$sql = "ALTER TABLE invoice_item ALTER created_by_id DROP DEFAULT, ALTER created_on DROP DEFAULT;";
-    	$stmt = $em->getConnection()->prepare($sql);
-    	$stmt->execute();
+    	$this->connection->executeStatement($sql);
     	$sql = "ALTER TABLE app_users ALTER created_by_id DROP DEFAULT, ALTER created_on DROP DEFAULT;";
-    	$stmt = $em->getConnection()->prepare($sql);
-    	$stmt->execute();
+    	$this->connection->executeStatement($sql);
     	$sql = "ALTER TABLE organization ALTER created_by_id DROP DEFAULT, ALTER created_on DROP DEFAULT;";
-    	$stmt = $em->getConnection()->prepare($sql);
-    	$stmt->execute();
+    	$this->connection->executeStatement($sql);
     	$sql = "ALTER TABLE client ALTER created_by_id DROP DEFAULT, ALTER created_on DROP DEFAULT;";
-    	$stmt = $em->getConnection()->prepare($sql);
-    	$stmt->execute();
+    	$this->connection->executeStatement($sql);
     	$sql = "ALTER TABLE konto_category ALTER created_by_id DROP DEFAULT, ALTER created_on DROP DEFAULT;";
-    	$stmt = $em->getConnection()->prepare($sql);
-    	$stmt->execute();
+    	$this->connection->executeStatement($sql);
     	$sql = "ALTER TABLE konto ALTER created_by_id DROP DEFAULT, ALTER created_on DROP DEFAULT;";
-    	$stmt = $em->getConnection()->prepare($sql);
-    	$stmt->execute();
+    	$this->connection->executeStatement($sql);
     	$sql = "ALTER TABLE konto_class ALTER created_by_id DROP DEFAULT, ALTER created_on DROP DEFAULT;";
-    	$stmt = $em->getConnection()->prepare($sql);
-    	$stmt->execute();
+    	$this->connection->executeStatement($sql);
     	$sql = "ALTER TABLE travel_stop ALTER created_by_id DROP DEFAULT, ALTER created_on DROP DEFAULT;";
-    	$stmt = $em->getConnection()->prepare($sql);
-    	$stmt->execute();
+    	$this->connection->executeStatement($sql);
     	$sql = "ALTER TABLE travel_expense ALTER created_by_id DROP DEFAULT, ALTER created_on DROP DEFAULT;";
-    	$stmt = $em->getConnection()->prepare($sql);
-    	$stmt->execute();
+    	$this->connection->executeStatement($sql);
     	$sql = "ALTER TABLE travel_expense_bundle ALTER created_by_id DROP DEFAULT, ALTER created_on DROP DEFAULT;";
-    	$stmt = $em->getConnection()->prepare($sql);
-    	$stmt->execute();    	
+    	$this->connection->executeStatement($sql);    	
     	
-    	$em->flush();   	
+    	   	
     	
     }
 
     public function down(Schema $schema) : void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('ALTER TABLE invoice ADD issued_by_id CHAR(36) NOT NULL COMMENT \'(DC2Type:uuid)\';');
         $this->addSql('UPDATE invoice SET issued_by_id = created_by_id;');

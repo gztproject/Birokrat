@@ -7,15 +7,12 @@ namespace DoctrineMigrations;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 use Ramsey\Uuid\Uuid;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20190903163253 extends AbstractMigration implements ContainerAwareInterface
+final class Version20190903163253 extends AbstractMigration
 {
-	use ContainerAwareTrait;
 	private $dbMigratorId;
 	private $organization;
 	
@@ -26,16 +23,12 @@ final class Version20190903163253 extends AbstractMigration implements Container
     
     public function preUp(Schema $schema) : void
     {
-    	//Get EntityManager
-    	$em = $this->container->get('doctrine.orm.entity_manager');
     	
     	{
     		//Check if MigrationUser already exists and create it if not. We have to do it manually as we don't have the new fields yet.
 	    	$sql = "SELECT * FROM `app_users` WHERE username = 'dbMigrator' ";
 	    	
-	    	$stmt = $em->getConnection()->prepare($sql);
-	    	$stmt->execute();
-	    	$dbMigratorUser = $stmt->fetchAll();
+	    	$dbMigratorUser = $this->connection->fetchAllAssociative($sql);
 	    	
 	    	if($dbMigratorUser==null)
 	    	{
@@ -43,10 +36,8 @@ final class Version20190903163253 extends AbstractMigration implements Container
 	    		$this->dbMigratorId = Uuid::uuid1();
 	    		$sql = "INSERT INTO `app_users` (`id`, `username`, `first_name`, `last_name`, `password`, `roles`, `email`, `mobile`, `phone`, `is_active`)
 					VALUES ('$this->dbMigratorId','DbMigrator','Database','Migrator','','','','','',0)";
-	    		$stmt = $em->getConnection()->prepare($sql);
-	    		$stmt->execute();
-	    		$em->flush();
-	    	}
+	    		$this->connection->executeStatement($sql);
+	    			    	}
 	    	else
 	    	{
 	    		$this->dbMigratorId = $dbMigratorUser[0]["id"];
@@ -54,9 +45,7 @@ final class Version20190903163253 extends AbstractMigration implements Container
     	}
     	{
 	    	$sql = "SELECT o.id, o.name FROM organization AS o";
-	    	$stmt = $em->getConnection()->prepare($sql);
-	    	$stmt->execute();
-	    	$res = $stmt->fetchAll();	    	
+	    	$res = $this->connection->fetchAllAssociative($sql);	    	
 	    	
 	    	if($res==null)
 	    	{
@@ -72,7 +61,6 @@ final class Version20190903163253 extends AbstractMigration implements Container
     public function up(Schema $schema) : void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('ALTER TABLE transaction ADD organization_id CHAR(36) NOT NULL COMMENT \'(DC2Type:uuid)\' DEFAULT \''.$this->organization.'\'');
         $this->addSql('ALTER TABLE transaction ADD CONSTRAINT FK_723705D132C8A3DE FOREIGN KEY (organization_id) REFERENCES organization (id)');
@@ -102,23 +90,19 @@ final class Version20190903163253 extends AbstractMigration implements Container
     
     public function postUp(Schema $schema) : void
     {	
-    	$em = $this->container->get('doctrine.orm.entity_manager');
-    	{
+    	    	{
 	    	$sql = "ALTER TABLE transaction ALTER organization_id DROP DEFAULT;";
-	    	$stmt = $em->getConnection()->prepare($sql);
-	    	$stmt->execute();
+	    	$this->connection->executeStatement($sql);
 	    	$sql = "ALTER TABLE travel_expense ALTER organization_id DROP DEFAULT;";
-	    	$stmt = $em->getConnection()->prepare($sql);
-	    	$stmt->execute();
+	    	$this->connection->executeStatement($sql);
 	    	
-	    	$em->flush(); 
+	    	 
     	}
     }
 
     public function down(Schema $schema) : void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('ALTER TABLE transaction DROP FOREIGN KEY FK_723705D132C8A3DE');
         $this->addSql('DROP INDEX IDX_723705D132C8A3DE ON transaction');

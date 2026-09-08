@@ -7,16 +7,13 @@ namespace DoctrineMigrations;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 use Ramsey\Uuid\Uuid;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20191029162237 extends AbstractMigration implements ContainerAwareInterface
+final class Version20191029162237 extends AbstractMigration
 {
 	
-	use ContainerAwareTrait;
 	private $dbMigratorId;
 	
     public function getDescription() : string
@@ -26,15 +23,11 @@ final class Version20191029162237 extends AbstractMigration implements Container
     
     public function preUp(Schema $schema) : void
     {
-    	//Get EntityManager
-    	$em = $this->container->get('doctrine.orm.entity_manager');
     	
     	//Check if MigrationUser already exists and create it if not. We have to do it manually as we don't have the new fields yet.
     	$sql = "SELECT * FROM `app_users` WHERE username = 'dbMigrator' ";
     	
-    	$stmt = $em->getConnection()->prepare($sql);
-    	$stmt->execute();
-    	$dbMigratorUser = $stmt->fetchAll();
+    	$dbMigratorUser = $this->connection->fetchAllAssociative($sql);
     	
     	if($dbMigratorUser==null)
     	{
@@ -42,10 +35,8 @@ final class Version20191029162237 extends AbstractMigration implements Container
     		$this->dbMigratorId = Uuid::uuid1();
     		$sql = "INSERT INTO `app_users` (`id`, `username`, `first_name`, `last_name`, `password`, `roles`, `email`, `mobile`, `phone`, `is_active`)
 				VALUES ('$this->dbMigratorId','DbMigrator','Database','Migrator','','','','','',0)";
-    		$stmt = $em->getConnection()->prepare($sql);
-    		$stmt->execute();
-    		$em->flush();
-    	}
+    		$this->connection->executeStatement($sql);
+    		    	}
     	else
     	{
     		$this->dbMigratorId = $dbMigratorUser[0]["id"];
@@ -55,7 +46,6 @@ final class Version20191029162237 extends AbstractMigration implements Container
     public function up(Schema $schema) : void
     {
         // this up() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('CREATE TABLE lunch_expense (id CHAR(36) NOT NULL COMMENT \'(DC2Type:uuid)\', organization_id CHAR(36) NOT NULL COMMENT \'(DC2Type:uuid)\', created_by_id CHAR(36) NOT NULL COMMENT \'(DC2Type:uuid)\', updated_by_id CHAR(36) DEFAULT NULL COMMENT \'(DC2Type:uuid)\', date DATE NOT NULL, sum NUMERIC(15, 2) NOT NULL, state INT NOT NULL, created_on DATETIME NOT NULL, updated_on DATETIME DEFAULT NULL, INDEX IDX_C44D418032C8A3DE (organization_id), INDEX IDX_C44D4180B03A8386 (created_by_id), INDEX IDX_C44D4180896DBBDE (updated_by_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ENGINE = InnoDB');
         $this->addSql('ALTER TABLE lunch_expense ADD CONSTRAINT FK_C44D418032C8A3DE FOREIGN KEY (organization_id) REFERENCES organization (id)');
@@ -78,21 +68,15 @@ final class Version20191029162237 extends AbstractMigration implements Container
     	$lunchValue = 6.12;
     	$perDiemValue = 21.39;
     	
-    	$em = $this->container->get('doctrine.orm.entity_manager');
-    	$kontos = $this->getKontos([486,285,919]);
+    	    	$kontos = $this->getKontos([486,285,919]);
     	$date = date('Y-m-d H:i:s');
     	
     	$sql = "UPDATE organization_settings SET auto_create_per_diem = 0, auto_create_lunch = 1, per_diem_value = $perDiemValue, lunch_value = $lunchValue, updated_on = '$date', updated_by_id = '$this->dbMigratorId' WHERE 1";
-    	$stmt = $em->getConnection()->prepare($sql);
-    	$stmt->execute();
-    	$em->flush();
-    	
+    	$this->connection->executeStatement($sql);
+    	    	
     	$sql = "SELECT te.date, te.organization_id FROM travel_expense AS te WHERE te.state = 10 GROUP BY te.date, te.organization_id";
-    	$stmt = $em->getConnection()->prepare($sql);
-    	$stmt->execute();
-    	$res = $stmt->fetchAll();
-    	$em->flush();
-    	if($res != null)
+    	$res = $this->connection->fetchAllAssociative($sql);
+    	    	if($res != null)
     	{
     		foreach($res as $te)
     		{   
@@ -106,27 +90,21 @@ final class Version20191029162237 extends AbstractMigration implements Container
 						 VALUES ('".Uuid::uuid1()."', '".$te['date']."', ".$lunchValue." ,'".$kontos['285']."', NULL, NULL, NULL, '".$this->dbMigratorId."', NULL, '$date', NULL, '".$kontos['486']."', '".$te['organization_id']."', NULL, NULL, '$leId');";
     		
     		
-    			$stmt = $em->getConnection()->prepare($sql);
-    			$stmt->execute();
-    			$em->flush();
-    		}
+    			$this->connection->executeStatement($sql);
+    			    		}
     	}
     }
     
     public function preDown(Schema $schema) : void
     {
-    	$em = $this->container->get('doctrine.orm.entity_manager');
-    	
+    	    	
     	$sql = "DELETE FROM transaction WHERE lunch_expense_id IS NOT NULL AND created_by_id = '".$this->dbMigratorId."'";
-    	$stmt = $em->getConnection()->prepare($sql);
-    	$stmt->execute();
-    	$em->flush();
-    }
+    	$this->connection->executeStatement($sql);
+    	    }
 
     public function down(Schema $schema) : void
     {
         // this down() migration is auto-generated, please modify it to your needs
-        $this->abortIf($this->connection->getDatabasePlatform()->getName() !== 'mysql', 'Migration can only be executed safely on \'mysql\'.');
 
         $this->addSql('ALTER TABLE transaction DROP FOREIGN KEY FK_723705D1667B9D1D');
         $this->addSql('DROP TABLE lunch_expense');
@@ -142,18 +120,14 @@ final class Version20191029162237 extends AbstractMigration implements Container
     
     private function getKontos(array $numbers): array
     {
-    	$em = $this->container->get('doctrine.orm.entity_manager');
-    	$kontos = [];
+    	    	$kontos = [];
     	foreach ($numbers as $number)
     	{
     		$sql = "SELECT k.id FROM konto AS k WHERE k.number = $number";
-    		$stmt = $em->getConnection()->prepare($sql);
-    		$stmt->execute();
-    		$res = $stmt->fetchAll();
+    		$res = $this->connection->fetchAllAssociative($sql);
     		if($res != null)
     			$kontos[$number] = $res[0]['id'];
-    			$em->flush();
-    	}
+    			    	}
     	return $kontos;
     }
 }
