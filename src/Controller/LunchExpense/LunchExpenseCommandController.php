@@ -20,8 +20,14 @@ class LunchExpenseCommandController extends AbstractController
 	#[Route(path: "/dashboard/lunchExpense/new", methods: ["GET", "POST"], name: "lunchExpense_new")]
     public function new(Request $request, ManagerRegistry $doctrine): Response
     {
-    	$c = new CreateLunchExpenseCommand();    	
-    	    	
+    	$c = new CreateLunchExpenseCommand();
+    	$c->date = new \DateTime();
+    	$organization = $this->getUser()?->getOrganizations()->first();
+    	if ($organization) {
+    		$c->organization = $organization;
+    		$c->sum = $organization->getOrganizationSettings()->getLunchValue();
+    	}
+
     	$form = $this->createForm(LunchExpenseType::class, $c)
     	->add('saveAndCreateNew', SubmitType::class);
 

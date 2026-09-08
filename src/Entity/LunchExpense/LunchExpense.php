@@ -16,7 +16,7 @@ use Symfony\Component\Validator\Constraints\Date;
 use App\Entity\Organization\Organization;
 use PhpParser\Node\Expr\Cast\Int_;
 
-#[ORM\Entity(repositoryClass: \App\Repository\TravelExpense\TravelExpenseBundleRepository::class)]
+#[ORM\Entity(repositoryClass: \App\Repository\LunchExpense\LunchExpenseRepository::class)]
 class LunchExpense extends AggregateBase implements iTransactionDocument
 {    
 	#[ORM\Column(type: "date")]

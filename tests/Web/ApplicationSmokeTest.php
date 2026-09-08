@@ -85,6 +85,23 @@ class ApplicationSmokeTest extends WebTestCase
         $this->assertSelectorExists('#dateFieldYear');
         $this->assertSelectorExists('#dateFieldFrom');
         $this->assertSelectorExists('#dateFieldTo');
+
+        $this->client->request('GET', '/dashboard/lunchExpense');
+        $this->assertResponseIsSuccessful();
+
+        $crawler = $this->client->request('GET', '/dashboard/lunchExpense/new');
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorExists('#lunch_expense_sum');
+
+        $form = $crawler->filter('form')->form();
+        $settings = $this->fixtures['organization']->getOrganizationSettings();
+        if ($settings->getIncurredTravelExpenseDebit() && $settings->getIncurredTravelExpenseCredit()) {
+            $this->client->submit($form, [
+                'lunch_expense[organization]' => $this->fixtures['organization']->getId()->toString(),
+                'lunch_expense[sum]' => '6.12',
+            ]);
+            $this->assertResponseRedirects();
+        }
     }
 
     public function testAdminPages(): void
