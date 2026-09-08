@@ -13,6 +13,7 @@ namespace App\Security;
 
 use App\Entity\User\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 /**
@@ -34,7 +35,7 @@ class UserVoter extends Voter
     /**
      * {@inheritdoc}
      */
-    protected function supports($attribute, $subject): bool
+    protected function supports(string $attribute, mixed $subject): bool
     {
         // this voter is only executed for three specific permissions on Post objects
         return $subject instanceof User && \in_array($attribute, [self::SHOW, self::EDIT, self::DELETE], true);
@@ -43,8 +44,9 @@ class UserVoter extends Voter
     /**
      * {@inheritdoc}
      */
-    protected function voteOnAttribute($attribute, $user, TokenInterface $token): bool
+    protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token, ?Vote $vote = null): bool
     {
+        $user = $subject;
         $currentUser = $token->getUser();
 
         // the user must be logged in; if not, deny permission
