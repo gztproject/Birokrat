@@ -12,7 +12,7 @@ use Symfony\Component\Form\FormInterface;
 
 class KontoFilterType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add('kontoClasses', EntityType::class, array(
                 'class' => KontoClass::class,

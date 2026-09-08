@@ -10,7 +10,7 @@ use App\Entity\Invoice\CreateInvoiceItemCommand;
 
 class InvoiceItemType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {    	
         $builder 
         ->add('code', TextType::class, array(
@@ -40,7 +40,7 @@ class InvoiceItemType extends AbstractType
         ;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults(array(
         	'data_class' => CreateInvoiceItemCommand::class,

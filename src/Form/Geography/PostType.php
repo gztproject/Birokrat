@@ -11,7 +11,7 @@ use App\Entity\Geography\Country;
 
 class PostType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('code', TextType::class,[
@@ -33,7 +33,7 @@ class PostType extends AbstractType
         ;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults(array(
         		'data_class' => CreatePostCommand::class,

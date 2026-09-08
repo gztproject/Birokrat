@@ -15,7 +15,7 @@ class AppFixtures extends Fixture
         $this->passwordHasher = $hasher;
     }
         
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {        
         //actual data
     	$kontosInitializer = new KontosInitializer($manager, "/InitData/kontos.tsv");

@@ -11,7 +11,7 @@ use Psr\Log\LoggerInterface;
 class LocaleSubscriber implements EventSubscriberInterface {
 	private $defaultLocale;
 	private $logger;
-	public function __construct($defaultLocale = 'en', LoggerInterface $logger) {
+	public function __construct(LoggerInterface $logger, $defaultLocale = 'en') {
 		$this->logger = $logger;
 		$this->defaultLocale = $defaultLocale;
 	}
@@ -35,7 +35,7 @@ class LocaleSubscriber implements EventSubscriberInterface {
 			$this->logger->debug("Settting default locale: ". $this->defaultLocale);
 		}
 	}
-	public static function getSubscribedEvents() {
+	public static function getSubscribedEvents(): array {
 		return [ 
 				// must be registered before (i.e. with a higher priority than) the default Locale listener
 				KernelEvents::REQUEST => [ 

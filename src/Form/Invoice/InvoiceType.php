@@ -17,7 +17,7 @@ use App\Entity\Invoice\CreateInvoiceCommand;
 
 class InvoiceType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
         	->add('issuer', EntityType::class, array(
@@ -94,7 +94,7 @@ class InvoiceType extends AbstractType
         ;
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults(array(
         	'data_class' => CreateInvoiceCommand::class,
