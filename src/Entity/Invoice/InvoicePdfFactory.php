@@ -265,11 +265,9 @@ class InvoicePdfFactory
    				
    				//Close and output PDF document
 				if($this->__print) $pdf->IncludeJS("print();");
-   				$pdf->Output($title.'.pdf', $this->__dest);
-   				
-   				//============================================================+
-   				// END OF FILE
-   				//============================================================+      		
+				$dest = $this->__dest === 'I' ? 'S' : $this->__dest;
+
+				return $pdf->Output($title.'.pdf', $dest);
    	}
    
 }
