@@ -78,7 +78,7 @@
     </div>
 
     <div class="section">
-        <button id="UserAddOrganization" class="btn btn-sm btn-block btn-success">
+        <button id="UserAddOrganization" class="btn btn-sm btn-block btn-success" data-controller="add-organization" data-action="add-organization#open">
             <i class="fa fa-plus" aria-hidden="true"></i> {{ 'action.user_add_organization'|trans }}
         </a>
     </div>
@@ -88,5 +88,4 @@
 
 {% block javascripts %}
     {{ parent() }}
-    {{ encore_entry_script_tags('js/user/showUser') }}
 {% endblock %}

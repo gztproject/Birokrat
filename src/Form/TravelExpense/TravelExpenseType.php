@@ -24,8 +24,6 @@ class TravelExpenseType extends AbstractType
         	))
             ->add('date', DateTimePickerType::class,[
             		'label' => 'label.date',
-            		'widget' => 'single_text',
-            		'format' => 'dd. MM. yyyy',
             ]) 
             ->add('travelStopCommands', CollectionType::class, [
             		'entry_type' => TravelStopType::class,

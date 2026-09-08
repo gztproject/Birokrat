@@ -11,7 +11,7 @@
                 <div class="card-header">
                   <a href="{{ path('invoice_index') }}"><h2>{{ 'title.invoices'|trans }}</h2></a>
                 </div>
-                <div class="card-body">
+                <div class="card-body" data-controller="document-action" data-document-action-show-prefix-value="invoice">
                 {{ include('dashboard/invoice/_table.html.twig', {invoices: invoices}, with_context = false) }}
                 </div>
             </div>
@@ -70,5 +70,4 @@
 
 {% block javascripts %}
     {{ parent() }}
-    {{ encore_entry_script_tags('js/invoice/list') }}
 {% endblock %}

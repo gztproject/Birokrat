@@ -1,16 +1,13 @@
-{% extends 'bootstrap_3_layout.html.twig' %}
-
-{# Errors #}
+{% extends 'bootstrap_5_layout.html.twig' %}
 
 {% block form_errors -%}
     {% if errors|length > 0 -%}
-        {% if form is not rootform %}<span class="help-block">{% else %}<div class="alert alert-danger">{% endif %}
-        <ul class="list-unstyled">
+        {% if form is not rootform %}<div class="invalid-feedback d-block">{% else %}<div class="alert alert-danger">{% endif %}
+        <ul class="list-unstyled mb-0">
         {%- for error in errors -%}
-            {# use font-awesome icon library #}
             <li><span class="fa fa-exclamation-triangle"></span> {{ error.message }}</li>
         {%- endfor -%}
         </ul>
-        {% if form is not rootform %}</span>{% else %}</div>{% endif %}
+        {% if form is not rootform %}</div>{% else %}</div>{% endif %}
     {%- endif %}
 {%- endblock form_errors %}

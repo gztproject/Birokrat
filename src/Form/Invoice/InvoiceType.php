@@ -46,38 +46,15 @@ class InvoiceType extends AbstractType
         	))
             ->add('dateOfIssue', DateTimePickerType::class,[
                 'label' => 'label.dateOfIssue',
-            	'widget' => 'single_text',
-            	'format' => 'dd. MM. yyyy',
-            		
-            	// prevents rendering it as type="date", to avoid HTML5 date pickers
-            	'html5' => false,            	
             ])
             ->add('dueDate', DateTimePickerType::class,[
             		'label' => 'label.dueDate',
-            		'widget' => 'single_text',
-            		'format' => 'dd. MM. yyyy',
-            		
-            		// prevents rendering it as type="date", to avoid HTML5 date pickers
-            		'html5' => false,
             ])
-            
             ->add('dateServiceRenderedFrom', DateTimePickerType::class,[
             	'label' => 'label.dateServiceRenderedFrom',
-            	'widget' => 'single_text',
-            	'format' => 'dd. MM. yyyy',
-            		
-            	// prevents rendering it as type="date", to avoid HTML5 date pickers
-            	'html5' => false,
             ])
             ->add('dateServiceRenderedTo', DateTimePickerType::class,[
             	'label' => 'label.dateServiceRenderedTo',
-            	'widget' => 'single_text',
-            	'format' => 'dd. MM. yyyy',
-            	// adds a class that can be selected in JavaScript
-            	'attr' => ['id' => 'dateServiceRenderedTo'],
-            		
-            	// prevents rendering it as type="date", to avoid HTML5 date pickers
-            	'html5' => false,
             ])
             ->add('invoiceItemCommands', CollectionType::class, [
             		'entry_type' => InvoiceItemType::class,

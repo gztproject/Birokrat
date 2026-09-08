@@ -57,15 +57,9 @@ class IncomingInvoiceType extends AbstractType
         	))
             ->add('dateOfIssue', DateTimePickerType::class,[
                 'label' => 'label.dateOfIssue',
-            	'widget' => 'single_text',
-            	'format' => 'dd. MM. yyyy',            		
-            	'html5' => false,            	
             ])
             ->add('dueDate', DateTimePickerType::class,[
             		'label' => 'label.dueDate',
-            		'widget' => 'single_text',
-            		'format' => 'dd. MM. yyyy',            		
-            		'html5' => false,
             		'required' => false,
             ])
             ->add('debitKonto', EntityType::class, array(

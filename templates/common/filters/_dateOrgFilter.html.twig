@@ -1,35 +1,17 @@
-<form class="bs-component">
-            
+<form class="bs-component" data-controller="org-filter">
     <fieldset class="form-group">
-         <div class="form-group"> 
-            <label class='col-form-label-lg' for='transaction_presets' >{{ 'label.organization'|trans }}</label> 
-            <div class='input-group'>
-                <select id="organizationPicker" class="form-control" name="organization">                    
-                </select> 
-            </div>
+         <div class="form-group">
+            <label class="col-form-label-lg" for="organizationPicker">{{ 'label.organization'|trans }}</label>
+            <select id="organizationPicker" class="form-control" name="organization" data-org-filter-target="organization" data-action="change->org-filter#onOrganizationChange"></select>
          </div>
     </fieldset>
-    
-    <fieldset class="form-group">  
-         
-        <label class="col-form-label-lg" for="dateFieldFrom">{{ 'label.dateFrom'|trans }}</label>
-        <div class="input-group date" id="filterDateFrom">
-            <input type="text" id="dateFieldFrom" class="form-control">
-            <div class="input-group-append">
-                <span class="input-group-text"><i class="fa fa-calendar" aria-hidden="true"></i></span>
-            </div>
-        </div>
-      
-        <label class="col-form-label-lg" for="dateFieldTo">{{ 'label.dateTo'|trans }}</label>
-        <div class="input-group date" id="filterDateTo">
-            <input type="text" id="dateFieldTo" class="form-control">
-            <div class="input-group-append">
-                <span class="input-group-text"><i class="fa fa-calendar" aria-hidden="true"></i></span>
-            </div>
-        </div>
-    </fieldset>
-    
     <fieldset class="form-group">
-        <button type="button" id="clearFilterBtn" class="btn btn-danger">{{ 'label.clear' | trans }}</button>  
+        <label class="col-form-label-lg" for="dateFieldFrom">{{ 'label.dateFrom'|trans }}</label>
+        <input type="date" id="dateFieldFrom" class="form-control" data-org-filter-target="from" data-action="change->org-filter#onFromChange">
+        <label class="col-form-label-lg" for="dateFieldTo">{{ 'label.dateTo'|trans }}</label>
+        <input type="date" id="dateFieldTo" class="form-control" data-org-filter-target="to" data-action="change->org-filter#onToChange">
+    </fieldset>
+    <fieldset class="form-group">
+        <button type="button" id="clearFilterBtn" class="btn btn-danger" data-action="org-filter#clear">{{ 'label.clear' | trans }}</button>
     </fieldset>
 </form>

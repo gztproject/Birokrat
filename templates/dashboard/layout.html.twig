@@ -1,10 +1,3 @@
-{#
-   This is the base template of the all backend pages. Since this layout is similar
-   to the global layout, we inherit from it to just change the contents of some
-   blocks. In practice, backend templates are using a three-level inheritance,
-   showing how powerful, yet easy to use, is Twig's inheritance mechanism.
-   See https://symfony.com/doc/current/book/templating.html#template-inheritance-and-layouts
-#}
 {% extends 'base.html.twig' %}
 
 {% block stylesheets %}
@@ -14,78 +7,90 @@
 
 {% block header_navigation_links %}
     <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-expanded="false" id="invoices">
+        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false" id="invoices">
             <i class="fa fa-receipt" aria-hidden="true"></i>
             {{ 'menu.invoices'|trans }}
         </a>
-        <ul class="dropdown-menu" role="menu" aria-labelledby="user">
-            <a class="nav-link" href="{{ path('invoice_index') }}">
-                <i class="fa fa-sign-out-alt" aria-hidden="true"></i> {{ 'menu.outgoing'|trans }}
-            </a>
-            <a class="nav-link" href="{{ path('incomingInvoice_index') }}">
-                <i class="fa fa-sign-in-alt" aria-hidden="true"></i> {{ 'menu.incoming'|trans }}
-            </a>
+        <ul class="dropdown-menu" role="menu" aria-labelledby="invoices">
+            <li>
+                <a class="dropdown-item" href="{{ path('invoice_index') }}">
+                    <i class="fa fa-sign-out-alt" aria-hidden="true"></i> {{ 'menu.outgoing'|trans }}
+                </a>
+            </li>
+            <li>
+                <a class="dropdown-item" href="{{ path('incomingInvoice_index') }}">
+                    <i class="fa fa-sign-in-alt" aria-hidden="true"></i> {{ 'menu.incoming'|trans }}
+                </a>
+            </li>
         </ul>
     </li>  
     
     <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-expanded="false" id="expenses">
+        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false" id="expenses">
             <i class="fas fa-funnel-dollar"></i>
             {{ 'menu.expenses'|trans }}
         </a>        
-        <ul class="dropdown-menu" role="menu" aria-labelledby="user">
-            <a class="nav-link" href="{{ path('travelExpense_index') }}">
-                <i class="fa fa-map-marked-alt" aria-hidden="true"></i> {{ 'menu.travelExpenses'|trans }}
-            </a>
-            <a class="nav-link" href="{{ path('lunchExpense_index') }}">
-                <i class="fa fa-utensils" aria-hidden="true"></i> {{ 'menu.lunchExpenses'|trans }}
-            </a>
+        <ul class="dropdown-menu" role="menu" aria-labelledby="expenses">
+            <li>
+                <a class="dropdown-item" href="{{ path('travelExpense_index') }}">
+                    <i class="fa fa-map-marked-alt" aria-hidden="true"></i> {{ 'menu.travelExpenses'|trans }}
+                </a>
+            </li>
+            <li>
+                <a class="dropdown-item" href="{{ path('lunchExpense_index') }}">
+                    <i class="fa fa-utensils" aria-hidden="true"></i> {{ 'menu.lunchExpenses'|trans }}
+                </a>
+            </li>
         </ul>
     </li>  
     
     <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-expanded="false" id="reports">
+        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false" id="reports">
             <i class="fa fa-file" aria-hidden="true"></i>
             {{ 'menu.reports'|trans }}
         </a>        
-        <ul class="dropdown-menu" role="menu" aria-labelledby="user">
-            <a class="nav-link" href="{{ path('report_index') }}">
-                <i class="fa fa-file" aria-hidden="true"></i> {{ 'menu.reports'|trans }}
-            </a>
-            <a class="nav-link" href="{{ path('transaction_index') }}">
-                <i class="fa fa-file" aria-hidden="true"></i> {{ 'menu.transactions'|trans }}
-            </a>
+        <ul class="dropdown-menu" role="menu" aria-labelledby="reports">
+            <li>
+                <a class="dropdown-item" href="{{ path('report_index') }}">
+                    <i class="fa fa-file" aria-hidden="true"></i> {{ 'menu.reports'|trans }}
+                </a>
+            </li>
+            <li>
+                <a class="dropdown-item" href="{{ path('transaction_index') }}">
+                    <i class="fa fa-file" aria-hidden="true"></i> {{ 'menu.transactions'|trans }}
+                </a>
+            </li>
         </ul>    
     </li>  
     <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-expanded="false" id="codesheets">
+        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false" id="codesheets">
             <i class="fa fa-user" aria-hidden="true"></i>
             {{ 'menu.codesheets'|trans }}
         </a>
-        <ul class="dropdown-menu" role="menu" aria-labelledby="user">
+        <ul class="dropdown-menu" role="menu" aria-labelledby="codesheets">
             <li>
-                <a class="nav-link" href="{{ path('organization_index')}}">
+                <a class="dropdown-item" href="{{ path('organization_index')}}">
                     <i class="fa fa-tasks" aria-hidden="true"></i> {{ 'menu.organizations'|trans }}
                 </a>
             </li>
             <li>
-                <a class="nav-link" href="{{ path('partner_index')}}">
+                <a class="dropdown-item" href="{{ path('partner_index')}}">
                     <i class="fa fa-tasks" aria-hidden="true"></i> {{ 'menu.clients'|trans }}
                 </a>
             </li>            
             <li>
-                <a class="nav-link" href="{{ path('konto_index') }}">
+                <a class="dropdown-item" href="{{ path('konto_index') }}">
                     <i class="fa fa-box" aria-hidden="true"></i> {{ 'menu.kontos'|trans }}
                 </a>
             </li>            
             <li>
-                <a class="nav-link" href="{{ path('post_index') }}">
+                <a class="dropdown-item" href="{{ path('post_index') }}">
                     <i class="fa fa-mail-bulk" aria-hidden="true"></i> {{ 'menu.posts'|trans }}
                 </a>
             </li>
-            <li class="divider"></li>
+            <li><hr class="dropdown-divider"></li>
             <li>
-                <a class="nav-link" href="{{ path('country_index') }}">
+                <a class="dropdown-item" href="{{ path('country_index') }}">
                     <i class="fa fa-flag" aria-hidden="true"></i> {{ 'menu.countries'|trans }}
                 </a>
             </li>
@@ -96,5 +101,4 @@
 
 {% block javascripts %}
     {{ parent() }}
-    {{ encore_entry_script_tags('js/dashboard') }}
 {% endblock %}

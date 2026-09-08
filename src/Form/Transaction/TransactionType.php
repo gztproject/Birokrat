@@ -29,8 +29,6 @@ class TransactionType extends AbstractType
         	])
             ->add('date', DateTimePickerType::class,[
             		'label' => 'label.date',
-            		'widget' => 'single_text',
-            		'format' => 'dd. MM. yyyy',
             ]) 
             ->add('debitKonto', EntityType::class, [
             		'class' => Konto::class,

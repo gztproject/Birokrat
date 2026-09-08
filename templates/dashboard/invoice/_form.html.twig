@@ -1,4 +1,7 @@
-{{ form_start(form) }} 
+{{ form_start(form, {attr: {
+    'data-controller': 'invoice-form',
+    'data-action': 'change->invoice-form#recalculate'
+}}) }} 
     <div class="jumbotron" id="InvoiceFormContainer"> 
         
         <div class="row">
@@ -6,7 +9,7 @@
                 <div class="form-group">                    
                         {{ form_label(form.issuer, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}
                         <div class='input-group'>
-                        {{ form_widget(form.issuer, {'attr': {'class': 'form-control'}}) }}                
+                        {{ form_widget(form.issuer, {'attr': {'class': 'form-control', 'data-invoice-form-target': 'issuer', 'data-action': 'change->invoice-form#refreshNumber change->invoice-form#refreshDueInDays'}}) }}                
                     </div>
                 </div>            
             </div>
@@ -14,7 +17,7 @@
                 <div class="form-group">                    
                         {{ form_label(form.number, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}
                         <div class='input-group'>
-                        {{ form_widget(form.number, {'attr': {'class': 'form-control'}}) }}                
+                        {{ form_widget(form.number, {'attr': {'class': 'form-control', 'data-invoice-form-target': 'number'}}) }}                
                     </div>
                 </div>
             </div>     
@@ -33,8 +36,8 @@
                 <div class="form-group">
                         <label class='col-form-label-lg' for='invoice_dueInDays'>{{ 'label.dueInDays' | trans }}</label>
                         <div id="dueInDays"  class='input-group'>
-                        <input id='invoice_dueInDays' class='form-control' type='number'>
-                        <div class="input-group-append">
+                        <input id='invoice_dueInDays' class='form-control' type='number' data-invoice-form-target="dueInDays" data-action="change->invoice-form#onDueInDaysChange">
+                        
                             <span class="input-group-text">{{ 'label.days' | trans }}</span>
                         </div>                       
                     </div>
@@ -44,8 +47,8 @@
                 <div class="form-group">                    
                         {{ form_label(form.dueDate, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}
                         <div id="dueDate" class='input-group'>
-                        {{ form_widget(form.dueDate, {'attr': {'class': 'form-control'}}) }}
-                        <div class="input-group-append">
+                        {{ form_widget(form.dueDate, {'attr': {'class': 'form-control', 'data-invoice-form-target': 'dueDate', 'data-action': 'change->invoice-form#onDueDateChange'}}) }}
+                        
                             <span class="input-group-text"><i class="fa fa-calendar" aria-hidden="true"></i></span>
                         </div>
                     </div>
@@ -59,8 +62,8 @@
                 <div class="form-group">                   
                         {{ form_label(form.dateOfIssue, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}
                          <div id="dateOfIssue" class='input-group'>
-                        {{ form_widget(form.dateOfIssue, {'attr': {'class': 'form-control'}}) }}
-                        <div class="input-group-append">
+                        {{ form_widget(form.dateOfIssue, {'attr': {'class': 'form-control', 'data-invoice-form-target': 'dateOfIssue', 'data-action': 'change->invoice-form#onIssueDateChange'}}) }}
+                        
                             <span class="input-group-text"><i class="fa fa-calendar" aria-hidden="true"></i></span>
                         </div>
                     </div>
@@ -72,8 +75,8 @@
                  <div class="form-group">                    
                         {{ form_label(form.dateServiceRenderedFrom, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}
                         <div id='dateServiceRenderedFrom' class='input-group'>
-                        {{ form_widget(form.dateServiceRenderedFrom, {'attr': {'class': 'form-control'}}) }} 
-                        <div class="input-group-append">
+                        {{ form_widget(form.dateServiceRenderedFrom, {'attr': {'class': 'form-control', 'data-invoice-form-target': 'from', 'data-action': 'change->invoice-form#onFromChange'}}) }} 
+                        
                             <span class="input-group-text"><i class="fa fa-calendar" aria-hidden="true"></i></span>
                         </div>                   
                     </div>
@@ -83,8 +86,8 @@
                  <div class="form-group">                    
                         {{ form_label(form.dateServiceRenderedTo, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}
                         <div id='dateServiceRenderedTo' class='input-group'>
-                        {{ form_widget(form.dateServiceRenderedTo, {'attr': {'class': 'form-control'}}) }}  
-                        <div class="input-group-append">
+                        {{ form_widget(form.dateServiceRenderedTo, {'attr': {'class': 'form-control', 'data-invoice-form-target': 'to'}}) }}  
+                        
                             <span class="input-group-text"><i class="fa fa-calendar" aria-hidden="true"></i></span>
                         </div>                      
                     </div>
@@ -112,10 +115,10 @@
                         <th></th>
                     </tr>
                 </thead>
-                <tbody id='tableBody' class="invoiceItems" data-prototype="{{ form_widget(form.invoiceItemCommands.vars.prototype)|e('html_attr') }}">
+                <tbody id='tableBody' class="invoiceItems" data-invoice-form-target="items" data-prototype="{{ form_widget(form.invoiceItemCommands.vars.prototype)|e('html_attr') }}">
 
                 {% for invoiceItem in form.invoiceItemCommands %}
-                    <tr class="invoice-item-tr-{{ loop.index0 }}">
+                    <tr class="invoice-item invoice-item-tr-{{ loop.index0 }}">
                         <td class="codeInputRow">{{ form_widget(invoiceItem.code)}}</td>
                         <td class="nameInput" data-item-index={{ loop.index0 }}>{{ form_widget(invoiceItem.name)}}</td>
                         <td class="quantityInput">{{ form_widget(invoiceItem.quantity)}}</td>
@@ -123,11 +126,14 @@
                         <td class="priceInput">{{ form_widget(invoiceItem.price)}}</td>
                         <td class="discountInput">{{ form_widget(invoiceItem.discount)}}</td>
                         <td class="valueInput"><input id="iiValue_{{ loop.index0 }}" class="valueInput" type="text" placeholder="0,00" value={{ ((invoiceItem.vars.value.price * invoiceItem.vars.value.quantity) * (1-invoiceItem.vars.value.discount))|number_format(2, ',', ' ') }} readonly=""></td>
-                        <td class="removeBtn"><a id="remove-invoice-item-{{ loop.index0 }}" class="btn btn-sm btn-block btn-danger removeBtn"><i class="fa fa-minus" aria-hidden="true"></i></a></td>                        
+                        <td class="removeBtn"><button type="button" class="btn btn-sm btn-danger" data-action="invoice-form#removeItem"><i class="fa fa-minus" aria-hidden="true"></i></button></td>                        
                     </tr>
                 {% endfor %}
                 </tbody>
-            </table>   
+            </table>
+            <button type="button" class="btn btn-sm btn-success mb-3" data-action="invoice-form#addItem" data-invoice-form-target="addButton">
+                <i class="fa fa-plus" aria-hidden="true"></i>
+            </button>
         </div> 
         <div class="row">
         <div class="col-sm-7">                
@@ -136,8 +142,8 @@
                 <div class="form-group">                    
                         {{ form_label(form.discount, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}
                         <div id="discount" class='input-group'>
-                        {{ form_widget(form.discount, {'attr': {'class': 'form-control', 'value': '0' }}) }}   
-                        <div class="input-group-append">
+                        {{ form_widget(form.discount, {'attr': {'class': 'form-control', 'value': '0', 'data-invoice-form-target': 'discount' }}) }}   
+                        
                             <span class="input-group-text">%</span>
                         </div>
                     </div>                 
@@ -147,8 +153,8 @@
                 <div class="form-group">                    
                         <label for="totalPrice" class="col-form-label-lg">{{ 'label.total'|trans }}</label>
                         <div class='input-group'>
-                            <input id="totalPrice" class='form-control' type="text" placeholder="0,00" readonly="">  
-                        <div class="input-group-append">
+                            <input id="totalPrice" class='form-control' type="text" placeholder="0,00" readonly="" data-invoice-form-target="total">  
+                        
                             <span class="input-group-text">€</span>
                         </div>
                     </div>                 

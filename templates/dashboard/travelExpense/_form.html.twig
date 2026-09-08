@@ -1,4 +1,4 @@
-{{ form_start(form, {'attr': {'class': 'bs-component'}}) }}   
+{{ form_start(form, {'attr': {'class': 'bs-component', 'data-controller': 'collection travel-form', 'data-collection-min-rows-value': '2'}}) }}   
      
      <div class="row">
         <div class="col-sm-6">
@@ -14,7 +14,7 @@
                 <div class='input-group date' id='TeDatePicker'>
                     {{ form_label(form.date) }}
                     {{ form_widget(form.date, {'attr': {'class': 'form-control'}}) }}
-                    <div class="input-group-append">
+                    
                         <span class="input-group-text"><i class="fa fa-calendar" aria-hidden="true"></i></span>
                     </div>
                 </div>
@@ -32,18 +32,21 @@
                         <th></th>
                     </tr>
                 </thead>
-                <tbody id='tableBody' class="travelStops" data-prototype="{{ form_widget(form.travelStopCommands.vars.prototype)|e('html_attr') }}">
+                <tbody id='tableBody' class="travelStops" data-collection-target="container" data-travel-form-target="container" data-prototype="{{ form_widget(form.travelStopCommands.vars.prototype)|e('html_attr') }}">
                 
                 {% for travelStop in form.travelStopCommands %}
-                    <tr class="form-group travel-stop-tr-{{ loop.index0 }}">
+                    <tr class="form-group travel-stop-tr-{{ loop.index0 }}" data-collection-row>
                         <td>{{ form_widget(travelStop.stopOrder, {'attr': {'class': 'form-control StopOrder'}})}}</td>
-                        <td class="post-Selector" data-stop-index="{{ loop.index0 }}">{{ form_widget(travelStop.post, {'attr': {'class': 'form-control'}})}}</td>
+                        <td class="post-Selector" data-stop-index="{{ loop.index0 }}">{{ form_widget(travelStop.post, {'attr': {'class': 'form-control', 'data-action': 'change->travel-form#fillDistance'}})}}</td>
                         <td colspan="2">{{ form_widget(travelStop.distanceFromPrevious, {'attr': {'class': 'form-control'}})}}</td>
-                        <td><a id="remove-travel-stop-{{ loop.index0 }}" class="btn btn-sm btn-block btn-danger remove-travel-stop-btn"><i class="fa fa-minus" aria-hidden="true"></i></a></td>
+                        <td><button type="button" class="btn btn-sm btn-danger" data-action="collection#remove"><i class="fa fa-minus" aria-hidden="true"></i></button></td>
                     </tr>
                 {% endfor %}
                 </tbody>
-            </table>   
+            </table>
+            <button type="button" class="btn btn-sm btn-success mb-3" data-action="collection#add">
+                <i class="fa fa-plus" aria-hidden="true"></i>
+            </button>
         </div>
         <div class="form-group">
             <button type="submit" class="btn btn-primary">

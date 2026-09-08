@@ -4,7 +4,7 @@
 
 {% block main %}
     <h1>{{ 'title.invoices'|trans }} ({{ pagination.getTotalItemCount }})</h1>
-    <div class="bs-component">
+    <div class="bs-component" data-controller="document-action" data-document-action-show-prefix-value="incomingInvoice" data-document-action-pay-url-value="/dashboard/incomingInvoice/pay">
     {{ include('dashboard/incomingInvoice/_table.html.twig', {
             invoices: pagination
         }, with_context = false) }}
@@ -23,5 +23,4 @@
 
 {% block javascripts %}
     {{ parent() }}
-    {{ encore_entry_script_tags('js/incomingInvoice/list') }}
 {% endblock %}

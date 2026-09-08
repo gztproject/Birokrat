@@ -1,0 +1,156 @@
+import { Controller } from '@hotwired/stimulus';
+import { Modal } from 'bootstrap';
+
+function today() {
+    return new Date().toISOString().slice(0, 10);
+}
+
+function notify(message) {
+    const body = document.getElementById('notificationBody');
+    const modal = document.getElementById('notificationModal');
+    if (body) {
+        body.innerHTML = `<li>${message}</li>`;
+    }
+    if (modal) {
+        Modal.getOrCreateInstance(modal).show();
+    }
+}
+
+async function postForm(url, payload) {
+    const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'X-Requested-With': 'XMLHttpRequest' },
+        body: new URLSearchParams(payload),
+    });
+    if (!response.ok) {
+        notify(`Error requesting page ${url}`);
+        throw new Error(response.statusText);
+    }
+    return response;
+}
+
+export default class extends Controller {
+    static values = {
+        issueUrl: { type: String, default: '/dashboard/invoice/issue' },
+        payUrl: { type: String, default: '/dashboard/invoice/pay' },
+        cancelUrl: { type: String, default: '/dashboard/invoice/cancel' },
+        sendUrl: { type: String, default: '/dashboard/invoice/send' },
+        showPrefix: { type: String, default: 'invoice' },
+    };
+
+    issue(event) {
+        event.stopPropagation();
+        this.openDateModal(this.issueUrlValue, { id: event.currentTarget.value });
+    }
+
+    pay(event) {
+        event.stopPropagation();
+        this.openDateModal(this.payUrlValue, { id: event.currentTarget.value });
+    }
+
+    async cancel(event) {
+        event.stopPropagation();
+        const idInput = document.getElementById('cancelId');
+        const reasonModal = document.getElementById('cancelReasonModal');
+        if (idInput) {
+            idInput.value = event.currentTarget.value;
+        }
+        if (reasonModal) {
+            Modal.getOrCreateInstance(reasonModal).show();
+        }
+        const submit = document.getElementById('submitCancel');
+        submit?.addEventListener('click', async () => {
+            const reason = document.getElementById('cancelReason')?.value ?? '';
+            if (reason === '') {
+                window.alert('You must enter a reason.');
+                return;
+            }
+            await postForm(this.cancelUrlValue, { id: idInput.value, reason });
+            Modal.getOrCreateInstance(reasonModal).hide();
+            window.location.reload();
+        }, { once: true });
+    }
+
+    reject(event) {
+        event.stopPropagation();
+        const idInput = document.getElementById('rejectId');
+        const reasonModal = document.getElementById('rejectReasonModal');
+        if (idInput) {
+            idInput.value = event.currentTarget.value;
+        }
+        if (reasonModal) {
+            Modal.getOrCreateInstance(reasonModal).show();
+        }
+        document.getElementById('submitReject')?.addEventListener('click', async () => {
+            const reason = document.getElementById('rejectReason')?.value ?? '';
+            if (reason === '') {
+                window.alert('You must enter a reason.');
+                return;
+            }
+            await postForm('/dashboard/incomingInvoice/reject', { id: idInput.value, reason });
+            Modal.getOrCreateInstance(reasonModal).hide();
+            window.location.reload();
+        }, { once: true });
+    }
+
+    send(event) {
+        const invId = event.currentTarget.id;
+        const emailModal = document.getElementById('emailModal');
+        if (emailModal) {
+            Modal.getOrCreateInstance(emailModal).show();
+        }
+        document.getElementById('sendEmailBtn')?.addEventListener('click', async () => {
+            const response = await postForm(this.sendUrlValue, {
+                id: invId,
+                email: document.getElementById('emailInput')?.value ?? '',
+                subject: document.getElementById('subjectInput')?.value ?? '',
+                body: document.getElementById('bodyInput')?.value ?? '',
+            });
+            const data = await response.json();
+            if (data?.[0]?.status !== 'ok') {
+                notify(`Error sending invoice: ${data?.[0]?.data?.[0] ?? ''}`);
+                return;
+            }
+            Modal.getOrCreateInstance(emailModal).hide();
+            notify(data[0].data[0]);
+        }, { once: true });
+    }
+
+    openRow(event) {
+        const id = event.currentTarget.dataset.id;
+        if (!id) {
+            return;
+        }
+        let url = '';
+        if (window.location.pathname.endsWith('dashboard')) {
+            url += 'dashboard/';
+        }
+        url += `${this.showPrefixValue}/${id}/show`;
+        window.location = url;
+    }
+
+    openDateModal(url, extra) {
+        const dateInput = document.getElementById('modalDate');
+        const idInput = document.getElementById('dateId');
+        const modal = document.getElementById('dateModal');
+        if (dateInput) {
+            dateInput.value = today();
+        }
+        if (idInput) {
+            idInput.value = extra.id;
+        }
+        if (modal) {
+            Modal.getOrCreateInstance(modal).show();
+        }
+        document.getElementById('submitDate')?.addEventListener('click', async () => {
+            const payload = { ...extra, date: dateInput?.value };
+            const method = document.getElementById('modalPaymentMethod');
+            if (method) {
+                payload.mode = method.value;
+            }
+            await postForm(url, payload);
+            Modal.getOrCreateInstance(modal).hide();
+            window.location.reload();
+        }, { once: true });
+    }
+}

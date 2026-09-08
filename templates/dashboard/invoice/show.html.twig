@@ -118,7 +118,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h4 class="modal-title">{{ 'label.SendInvoiceHeader' | trans }}</h4>
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal">&times;</button>
                     </div>
                     <div class="modal-body">
                         <form>
@@ -138,8 +138,8 @@
                         </form>
                     </div>
                     <div class="modal-footer">
-                        <button id="sendEmailBtn" type="button" class="btn btn-default">Send</button>
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button id="sendEmailBtn" type="button" class="btn btn-secondary">Send</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     </div>
                 </div>
             </div>
@@ -181,5 +181,4 @@
 
 {% block javascripts %}
     {{ parent() }}
-    {{ encore_entry_script_tags('js/invoice/view') }}
 {% endblock %}
