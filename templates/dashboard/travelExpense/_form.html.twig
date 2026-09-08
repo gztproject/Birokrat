@@ -2,7 +2,7 @@
      
      <div class="row">
         <div class="col-sm-6">
-            <div class="form-group">                    
+            <div class="mb-3">                    
                     {{ form_label(form.organization, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}
                     <div class='input-group'>
                     {{ form_widget(form.organization, {'attr': {'class': 'form-control'}}) }}                
@@ -10,7 +10,7 @@
             </div>            
         </div>
         <div class="col-sm-6">
-            <div class="form-group">
+            <div class="mb-3">
                 <div class='input-group date' id='TeDatePicker'>
                     {{ form_label(form.date) }}
                     {{ form_widget(form.date, {'attr': {'class': 'form-control'}}) }}
@@ -23,7 +23,7 @@
     </div>
     <div class="row">
         <div class="col-sm-8">
-            <div class="form-group">
+            <div class="mb-3">
                 {{ form_label(form.reason, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}
                 <div class='input-group'>
                     {{ form_widget(form.reason, {'attr': {'class': 'form-control'}}) }}
@@ -31,7 +31,7 @@
             </div>
         </div>
         <div class="col-sm-4">
-            <div class="form-group">
+            <div class="mb-3">
                 {{ form_label(form.advance, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}
                 <div class='input-group'>
                     {{ form_widget(form.advance, {'attr': {'class': 'form-control'}}) }}
@@ -39,6 +39,30 @@
             </div>
         </div>
     </div>
+    {% if form.employee is defined or form.rate is defined %}
+    <div class="row">
+        {% if form.employee is defined %}
+        <div class="col-sm-6">
+            <div class="mb-3">
+                {{ form_label(form.employee, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}
+                <div class='input-group'>
+                    {{ form_widget(form.employee, {'attr': {'class': 'form-control'}}) }}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        {% if form.rate is defined %}
+        <div class="col-sm-6">
+            <div class="mb-3">
+                {{ form_label(form.rate, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}
+                <div class='input-group'>
+                    {{ form_widget(form.rate, {'attr': {'class': 'form-control'}}) }}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    {% endif %}
         <div class="bs-component">            
             <table id="travel-stops-table" class="table table-hover">
                 <thead>
@@ -66,7 +90,7 @@
                 <i class="fa fa-plus" aria-hidden="true"></i>
             </button>
         </div>
-        <div class="form-group">
+        <div class="mb-3">
             <button type="submit" class="btn btn-primary">
                 <i class="fa fa-save" aria-hidden="true"></i> {{ button_label|default('label.create_travelExpense'|trans) }}
             </button>

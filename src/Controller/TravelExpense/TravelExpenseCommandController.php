@@ -31,16 +31,21 @@ class TravelExpenseCommandController extends AbstractController
 	#[Route(path: "/dashboard/travelExpense/new", methods: ["GET", "POST"], name: "travelExpense_new")]
     public function new(Request $request, TravelExpenseRepository $travelExpenses, LunchExpenseRepository $lunchExpenses, LoggerInterface $logger, ManagerRegistry $doctrine): Response
     {
-    	$c = new CreateTravelExpenseCommand();    	
+    	$c = new CreateTravelExpenseCommand();
+    	$c->employee = $this->getUser();
     	    	
-    	$form = $this->createForm(TravelExpenseType::class, $c)
+    	$form = $this->createForm(TravelExpenseType::class, $c, [
+    			'is_admin' => $this->isGranted('ROLE_ADMIN'),
+    		])
     		->add('saveAndCreateNew', SubmitType::class);
     	
     	$form->handleRequest($request);
     	
     	if ($form->isSubmitted() && $form->isValid()) {
     		
-    		$c->employee = $this->getUser();    		
+    		if (!$this->isGranted('ROLE_ADMIN') || $c->employee === null) {
+    			$c->employee = $this->getUser();
+    		}
     		
     		$te = $this->getUser()->createTravelExpense($c);  
     		
@@ -110,7 +115,9 @@ class TravelExpenseCommandController extends AbstractController
     		$updateTECommand->travelStopCommands->add($utsc);
     	}
     	
-    	$form = $this->createForm(TravelExpenseType::class, $updateTECommand)
+    	$form = $this->createForm(TravelExpenseType::class, $updateTECommand, [
+    			'is_admin' => $this->isGranted('ROLE_ADMIN'),
+    		])
     		->add('saveAndCreateNew', SubmitType::class);
     	$form->handleRequest($request);
     	
@@ -165,7 +172,9 @@ class TravelExpenseCommandController extends AbstractController
     		$updateTECommand->travelStopCommands->add($utsc);
     	}
     	
-    	$form = $this->createForm(TravelExpenseType::class, $updateTECommand)
+    	$form = $this->createForm(TravelExpenseType::class, $updateTECommand, [
+    			'is_admin' => $this->isGranted('ROLE_ADMIN'),
+    		])
     		->add('saveAndCreateNew', SubmitType::class);
     	
     	$form->handleRequest($request);
