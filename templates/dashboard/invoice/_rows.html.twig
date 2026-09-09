@@ -1,0 +1,84 @@
+{% for invoice in invoices %}
+    {% if invoice.State == 00 or invoice.State == 10 %}
+        {% set rowClass = "table-secondary" %}
+        {% set status = "draft" %}
+    {% elseif invoice.State == 20 %}
+        {% if date() > invoice.dueDate|date_modify("+1 day") %}
+            {% set rowClass = "table-warning" %}
+            {% set status = "overdue" %}
+        {% else %}
+           {% set rowClass = "table-info" %}
+           {% set status = "issued" %}
+        {% endif %}
+    {% elseif invoice.State == 30 %}
+       {% set rowClass = "table-success" %}
+       {% set status = "paid" %}
+    {% elseif invoice.State == 40 %}
+        {% set rowClass = "table-danger" %}
+        {% set status = "cancelled" %}
+    {% else %}
+        {% set rowClass = "table-primary" %}
+        {% set status = "issued" %}
+    {% endif %}
+    <tr data-id={{ invoice.id }} class="invoiceRow {{ rowClass }}" data-action="click->document-action#openRow">
+        <td class="col-number">
+            <span class="doc-number">{% if invoice.state == 10 %}{{ 'label.draft'|trans }}{% elseif invoice.state == 40 %}{{ 'label.cancelled'|trans }}{% else %}{{ invoice.number }}{% endif %}</span>
+            {{ include('components/_status_badge.html.twig', { status: status }) }}
+        </td>
+        <td class="col-date">{{ invoice.dateOfIssueString }}</td>
+        <td class="col-party">{{ invoice.Recepient.ShortName }}</td>
+        <td class="d-none d-lg-table-cell">{{ invoice.ReferenceNumber }}</td>
+        <td class="col-sum money">{{ invoice.TotalPrice | money }}</td>
+        <td class="d-none d-md-table-cell">{% if invoice.datePaid %}
+                {{ invoice.DatePaidString }}
+            {% else %}
+                 {{ invoice.DueDateString }}
+            {% endif %}
+        </td>
+        <td class="col-actions text-end">
+            {% embed 'components/_action_menu.html.twig' %}
+                {% block primary %}
+                    {% if invoice.State == 10 %}
+                        <a href="{{ path('invoice_edit', {'id': invoice.id}) }}" class="btn btn-sm btn-primary">
+                            <i class="fa fa-edit" aria-hidden="true"></i> {{ 'action.edit'|trans }}
+                        </a>
+                        <button class="set-issued btn btn-sm btn-success" type="button" name="id" value={{ invoice.id }} data-action="click->document-action#issue"><i class="fa fa-share-square" aria-hidden="true"></i>
+                                {{ 'action.setIssued'|trans }}
+                        </button>
+                    {% endif %}
+                    {% if invoice.State == 20 %}
+                        <button class="set-paid btn btn-sm btn-success" type="button" name="id" value={{ invoice.id }} data-action="click->document-action#pay"><i class="fa fa-euro-sign" aria-hidden="true"></i>
+                                {{ 'action.setPaid'|trans }}
+                        </button>
+                    {% endif %}
+                    {% if invoice.State == 00 or invoice.State == 10 %}
+                    <button class="cancel btn btn-sm btn-danger" type="button" name="id" value={{ invoice.id }} data-action="click->document-action#cancel"><i class="fa fa-times" aria-hidden="true"></i>
+                                {{ 'action.cancel'|trans }}
+                    </button>
+                    {% endif %}
+                {% endblock %}
+                {% block more %}
+                    <li>
+                        <a class="dropdown-item" href="{{ path('invoice_show', {'id': invoice.id}) }}">
+                            <i class="fa fa-eye" aria-hidden="true"></i> {{ 'action.show'|trans }}
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="{{ path('invoice_print', {'id': invoice.id}) }}" target="_blank">
+                            <i class="fa fa-print" aria-hidden="true"></i> {{ 'action.print'|trans }}
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="{{ path('invoice_clone', {'id': invoice.id}) }}">
+                            <i class="fa fa-copy" aria-hidden="true"></i> {{ 'action.clone'|trans }}
+                        </a>
+                    </li>
+                {% endblock %}
+            {% endembed %}
+        </td>
+    </tr>
+{% else %}
+    {% if empty|default(true) %}
+        {{ include('components/_empty_state.html.twig', { colspan: 7, message: 'invoice.no_invoices_found'|trans }) }}
+    {% endif %}
+{% endfor %}

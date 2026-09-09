@@ -16,18 +16,23 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use App\Entity\Invoice\InvoicePdfFactory;
+use App\Http\InfiniteListResponder;
 
 class InvoiceQueryController extends AbstractController
 {    
     #[Route(path: "/dashboard/invoice", methods: ["GET"], name: "invoice_index")]
-	public function index(InvoiceRepository $invoices, Request $request, PaginatorInterface $paginator): Response
+	public function index(InvoiceRepository $invoices, Request $request, PaginatorInterface $paginator, InfiniteListResponder $list): Response
     {   		
     	$queryBuilder = $invoices->getQuery();
-    	
-    	$pagination = $paginator->paginate($queryBuilder, $request->query->getInt('page', 1), 10);
-    	
+    	$pagination = $list->paginate($paginator, $queryBuilder, $request);
+
+    	if ($list->isPartial($request)) {
+    		return $list->json($pagination, 'dashboard/invoice/_rows.html.twig', 'dashboard/invoice/_cards.html.twig', 'invoices');
+    	}
+
     	return $this->render('dashboard/invoice/index.html.twig', [
-    			'pagination' => $pagination,    			
+    			'pagination' => $pagination,
+    			'last_page' => $list->lastPage($pagination),
     	]);
     } 
     

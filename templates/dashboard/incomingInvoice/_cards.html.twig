@@ -1,0 +1,55 @@
+{% for invoice in invoices %}
+    {% if invoice.State == 00 %}
+        {% set status = "draft" %}
+    {% elseif invoice.State == 10 %}
+        {% if date() > invoice.dueDate|date_modify("+1 day") %}
+            {% set status = "overdue" %}
+        {% else %}
+            {% set status = "issued" %}
+        {% endif %}
+    {% elseif invoice.State == 20 %}
+        {% set status = "paid" %}
+    {% elseif invoice.State >= 100 %}
+        {% set status = "rejected" %}
+    {% else %}
+        {% set status = "issued" %}
+    {% endif %}
+    <div data-id="{{ invoice.id }}" class="list-card invoiceRow" data-action="click->document-action#openRow">
+        <div>
+            <div class="list-card-title">
+                {{ invoice.number }}
+                {{ include('components/_status_badge.html.twig', { status: status }) }}
+            </div>
+            <div class="list-card-sub">{{ invoice.Issuer.ShortName }} · {{ invoice.dateOfIssueString }}</div>
+        </div>
+        <div class="list-card-amount">{{ invoice.Price | money }}</div>
+        <div class="list-card-actions">
+            {% embed 'components/_action_menu.html.twig' %}
+                {% block primary %}
+                    {% if invoice.State == 10 %}
+                        <button class="set-paid btn btn-sm btn-success" type="button" name="id" value={{ invoice.id }} data-action="click->document-action#pay">
+                            {{ 'action.setPaid'|trans }}
+                        </button>
+                    {% endif %}
+                {% endblock %}
+                {% block more %}
+                    {% if invoice.State == 10 %}
+                    <li>
+                        <button class="dropdown-item reject" type="button" name="id" value={{ invoice.id }} data-action="click->document-action#reject">{{ 'action.reject'|trans }}</button>
+                    </li>
+                    {% endif %}
+                    <li>
+                        <a class="dropdown-item" href="{{ path('incomingInvoice_show', {'id': invoice.id}) }}">{{ 'action.show'|trans }}</a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="{{ path('incomingInvoice_clone', {'id': invoice.id}) }}">{{ 'action.clone'|trans }}</a>
+                    </li>
+                {% endblock %}
+            {% endembed %}
+        </div>
+    </div>
+{% else %}
+    {% if empty|default(true) %}
+        <div class="empty-state">{{ 'invoice.no_invoices_found'|trans }}</div>
+    {% endif %}
+{% endfor %}

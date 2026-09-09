@@ -1,0 +1,36 @@
+{% for travelExpense in travelExpenses %}
+        <tr>
+            <td class="col-date">{{ travelExpense.dateString }}</td>
+            <td class="col-doc">{{ travelExpense.travelDescription }}</td>
+            <td class="tabular-nums d-none d-md-table-cell">{{ travelExpense.totalDistance | format_number({fraction_digit:2}) }} km</td>
+            <td class="col-sum money">{{ (travelExpense.totalDistance * travelExpense.rate) | money}} </td>
+            <td class="col-actions text-end">
+                {% embed 'components/_action_menu.html.twig' %}
+                    {% block primary %}
+                        <a href="{{ path('travelExpense_show', {'id': travelExpense.id}) }}" class="btn btn-sm btn-primary">
+                            <i class="fa fa-eye" aria-hidden="true"></i> {{ 'action.show'|trans }}
+                        </a>
+                        {% if ShowCBs is defined and ShowCBs == true %}
+                            <input class="form-check-input TECheckBox" type="checkbox" value={{ travelExpense.id }}>
+                        {% endif %}
+                    {% endblock %}
+                    {% block more %}
+                        <li>
+                            <a class="dropdown-item" href="{{ path('travelExpense_edit', {'id': travelExpense.id}) }}">
+                                <i class="fa fa-edit" aria-hidden="true"></i> {{ 'action.edit'|trans }}
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="{{ path('travelExpense_clone', {'id': travelExpense.id}) }}">
+                                <i class="fa fa-copy" aria-hidden="true"></i> {{ 'action.clone'|trans }}
+                            </a>
+                        </li>
+                    {% endblock %}
+                {% endembed %}
+            </td>
+        </tr>
+    {% else %}
+        {% if empty|default(true) %}
+            {{ include('components/_empty_state.html.twig', { colspan: 5, message: 'travelExpense.no_travelExpenses_found'|trans }) }}
+        {% endif %}
+    {% endfor %}

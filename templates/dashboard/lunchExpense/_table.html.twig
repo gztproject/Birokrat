@@ -1,4 +1,6 @@
-<table id="lunchExpensesTable" class="table table-hover align-middle">
+{{ include('components/_infinite_list_start.html.twig') }}
+<div class="list-table-wrap">
+    <table id="lunchExpensesTable" class="table table-hover align-middle">
         <thead>
             <tr>
                 <th scope="col"><i class="fa fa-calendar" aria-hidden="true"></i> {{ 'label.date'|trans }}</th>
@@ -8,22 +10,16 @@
                 {% endif %}
             </tr>
         </thead>
-        <tbody>
-    {% for lunchExpense in lunchExpenses %}
-            <tr>
-                <td>{{ lunchExpense.dateString }}</td>
-                <td class="money">{{ lunchExpense.sum | money}}</td>
-                {% if ShowCBs is defined and ShowCBs == true%}
-                <td class="text-center">
-                    <input class="form-check-input TECheckBox" type="checkbox" value={{ lunchExpense.id }}>
-                </td>
-                {% endif %}
-            </tr>
-        {% else %}
-            {{ include('components/_empty_state.html.twig', { colspan: 4, message: 'lunchExpense.no_lunchExpenses_found'|trans }) }}
-        {% endfor %}
-    </tbody>
-</table>
+        <tbody{% if infinite|default(false) %} data-infinite-scroll-target="tableBody"{% endif %}>
+        {{ include('dashboard/lunchExpense/_rows.html.twig') }}
+        </tbody>
+    </table>
+</div>
+
+<div class="list-cards"{% if infinite|default(false) %} data-infinite-scroll-target="cards"{% endif %}>
+    {{ include('dashboard/lunchExpense/_cards.html.twig') }}
+</div>
+{{ include('components/_infinite_list_end.html.twig') }}
 
 <div id="dateModal" class="modal fade" role="dialog" tabindex="-1">
   <div class="modal-dialog">

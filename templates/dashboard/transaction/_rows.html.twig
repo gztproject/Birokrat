@@ -1,0 +1,64 @@
+{% for transaction in transactions %}
+    {% if (transaction.debitKonto.category.class.number != 4 and transaction.debitKonto.category.class.number != 2) %}
+        <tr class="table-success">
+    {% else %}
+        <tr class="table-danger">
+    {% endif %}
+            <td class="col-date">{{ transaction.dateString }}</td>
+            <td class="d-none d-lg-table-cell">{{ transaction.organization.shortName }}</td>
+            <td class="col-doc">
+            {% if transaction.invoice != null %}
+                <div class="doc-line">
+                <a href="{{ path('invoice_show', {'id': transaction.invoice.id}) }}">
+                    <span class="doc-number">{{ transaction.invoice.number }}</span>
+                    <span class="doc-meta">{% if transaction.creditKonto == transaction.organization.organizationSettings.issueInvoiceCredit %}{{'label.invoice_issued'|trans }}{% elseif transaction.creditKonto == transaction.organization.organizationSettings.invoicePaidCredit %}{{'label.invoice_paid'|trans }}{% endif %} · {{ transaction.invoice.recepient.shortName }}</span>
+                </a>
+                </div>
+            {% elseif transaction.travelExpense != null %}
+                <a href="{{ path('travelExpense_show', {'id': transaction.travelExpense.id}) }}"><span class="doc-meta">{{'label.travelExpense'|trans }}: {{ transaction.travelExpense.TravelDescription }}</span></a>
+            {% elseif transaction.travelExpenseBundle != null %}
+                <a href="{{ path('travelExpenseBundle_show', {'id': transaction.travelExpenseBundle.id}) }}"><span class="doc-meta">{{'label.travelExpenseBundle'|trans }}: {{ transaction.travelExpenseBundle.DateRange }}</span></a>
+            {% elseif transaction.incomingInvoice != null %}
+                <div class="doc-line">
+                <a href="{{ path('incomingInvoice_show', {'id': transaction.incomingInvoice.id}) }}">
+                    <span class="doc-number">{{ transaction.incomingInvoice.number }}</span>
+                    <span class="doc-meta">{% if transaction.debitKonto.class.number == 4 %}{{'label.invoice_received'|trans }}{% elseif transaction.creditKonto.class.number == 1 or transaction.creditKonto.class.number == 9 %}{{'label.invoice_paid'|trans }}{% endif %} · {{ transaction.incomingInvoice.issuer.shortName }}</span>
+                </a>
+                </div>
+            {% elseif transaction.lunchExpense != null %}
+                <a href="{{ path('transaction_show', {'id': transaction.id}) }}"><span class="doc-meta">{{'label.lunchExpense'|trans }}: {{ transaction.lunchExpense.__toString }}</span></a>
+            {% elseif transaction.lunchExpenseBundle != null %}
+                <a href="{{ path('lunchExpenseBundle_show', {'id': transaction.lunchExpenseBundle.id}) }}"><span class="doc-meta">{{'label.lunchExpenseBundle'|trans }}: {{ transaction.lunchExpenseBundle.DateRange }}</span></a>
+            {% else %}
+                <a href="{{ path('transaction_show', {'id': transaction.id}) }}"><span class="doc-meta">{{'label.transaction'|trans }}: {{ transaction.description }}</span></a>
+            {% endif %}
+            </td>
+            <td class="col-sum money">{{ transaction.sum | money }} </td>
+            <td class="d-none d-md-table-cell">{{ transaction.debitKonto.number }}</td>
+            <td class="d-none d-md-table-cell">{{ transaction.creditKonto.number }}</td>
+            <td class="col-actions text-end">
+                {% embed 'components/_action_menu.html.twig' %}
+                    {% block primary %}
+                        {% if is_granted('ROLE_ADMIN') %}
+                        <a href="{{ path('transaction_edit', {'id': transaction.id}) }}" class="btn btn-sm btn-primary">
+                            <i class="fa fa-edit" aria-hidden="true"></i> {{ 'action.edit'|trans }}
+                        </a>
+                        {% endif %}
+                    {% endblock %}
+                    {% block more %}
+                        {% if not transaction.hasDocument %}
+                        <li>
+                            <a class="dropdown-item" href="{{ path('transaction_clone', {'id': transaction.id}) }}">
+                                <i class="fa fa-copy" aria-hidden="true"></i> {{ 'action.clone'|trans }}
+                            </a>
+                        </li>
+                        {% endif %}
+                    {% endblock %}
+                {% endembed %}
+            </td>
+        </tr>
+    {% else %}
+        {% if empty|default(true) %}
+            {{ include('components/_empty_state.html.twig', { colspan: 7, message: 'transaction.no_transactions_found'|trans }) }}
+        {% endif %}
+    {% endfor %}

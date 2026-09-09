@@ -19,22 +19,27 @@ use App\Form\Transaction\TransactionType;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use App\Service\Ledger\BankFeeFactory;
+use App\Http\InfiniteListResponder;
 use Psr\Log\LoggerInterface;
 
 class TransactionController extends AbstractController {
 	#[Route(path: "/dashboard/transaction", methods: ["GET"], name: "transaction_index")]
-	public function index(TransactionRepository $transactions, Request $request, PaginatorInterface $paginator): Response {
+	public function index(TransactionRepository $transactions, Request $request, PaginatorInterface $paginator, InfiniteListResponder $list): Response {
 		$dateFrom = $request->query->get ( 'dateFrom', null );
 		$dateTo = $request->query->get ( 'dateTo', null );
 		$orgId = $request->query->get ( 'organization', null );
 		$orgId = $orgId === "" ? null : $orgId;
 
 		$queryBuilder = $transactions->getFilteredQuery ( $dateFrom, $dateTo, $orgId );
+		$pagination = $list->paginate ( $paginator, $queryBuilder, $request );
 
-		$pagination = $paginator->paginate ( $queryBuilder, $request->query->getInt ( 'page', 1 ), $request->query->getInt ( 'results', 100 ) );
+		if ($list->isPartial ( $request )) {
+			return $list->json ( $pagination, 'dashboard/transaction/_rows.html.twig', 'dashboard/transaction/_cards.html.twig', 'transactions' );
+		}
 
 		return $this->render ( 'dashboard/transaction/index.html.twig', [ 
-				'pagination' => $pagination
+				'pagination' => $pagination,
+				'last_page' => $list->lastPage ( $pagination )
 		] );
 	}
 

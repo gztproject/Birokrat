@@ -1,0 +1,18 @@
+{% for transaction in transactions %}
+    <div class="list-card">
+        <div>
+            <div class="list-card-title">{{ transaction.dateString }} · {{ transaction.organization.shortName }}</div>
+            <div class="list-card-sub">
+                {{ transaction.debitKonto.number }} / {{ transaction.creditKonto.number }}
+            </div>
+        </div>
+        <div class="list-card-amount">{{ transaction.sum | money }}</div>
+        <div class="list-card-actions">
+            <a href="{{ path('transaction_show', {'id': transaction.id}) }}" class="btn btn-sm btn-primary">{{ 'action.show'|trans }}</a>
+        </div>
+    </div>
+{% else %}
+    {% if empty|default(true) %}
+        <div class="empty-state">{{ 'transaction.no_transactions_found'|trans }}</div>
+    {% endif %}
+{% endfor %}

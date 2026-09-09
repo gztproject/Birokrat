@@ -69,6 +69,16 @@ class ApplicationSmokeTest extends WebTestCase
 
         $this->client->request('GET', '/dashboard/invoice');
         $this->assertResponseIsSuccessful();
+        $this->assertSelectorExists('[data-controller="infinite-scroll"]');
+
+        $this->client->request('GET', '/dashboard/invoice?partial=1');
+        $this->assertResponseIsSuccessful();
+        $this->assertJson((string) $this->client->getResponse()->getContent());
+        $partial = json_decode((string) $this->client->getResponse()->getContent(), true);
+        $this->assertIsArray($partial);
+        $this->assertArrayHasKey('rows', $partial);
+        $this->assertArrayHasKey('cards', $partial);
+        $this->assertArrayHasKey('lastPage', $partial);
 
         $this->client->request('GET', '/dashboard/invoice/new');
         $this->assertResponseIsSuccessful();

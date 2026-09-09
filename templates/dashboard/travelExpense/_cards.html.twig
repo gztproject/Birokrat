@@ -1,0 +1,20 @@
+{% for travelExpense in travelExpenses %}
+    <div class="list-card">
+        <div>
+            <div class="list-card-title">{{ travelExpense.travelDescription }}</div>
+            <div class="list-card-sub">{{ travelExpense.dateString }} · {{ travelExpense.totalDistance | format_number({fraction_digit:2}) }} km</div>
+        </div>
+        <div class="list-card-amount">{{ (travelExpense.totalDistance * travelExpense.rate) | money }}</div>
+        <div class="list-card-actions">
+            {% if ShowCBs is defined and ShowCBs == true %}
+                <input class="form-check-input TECheckBox me-2" type="checkbox" value={{ travelExpense.id }}>
+            {% endif %}
+            <a href="{{ path('travelExpense_show', {'id': travelExpense.id}) }}" class="btn btn-sm btn-primary">{{ 'action.show'|trans }}</a>
+            <a href="{{ path('travelExpense_edit', {'id': travelExpense.id}) }}" class="btn btn-sm btn-outline-secondary">{{ 'action.edit'|trans }}</a>
+        </div>
+    </div>
+{% else %}
+    {% if empty|default(true) %}
+        <div class="empty-state">{{ 'travelExpense.no_travelExpenses_found'|trans }}</div>
+    {% endif %}
+{% endfor %}

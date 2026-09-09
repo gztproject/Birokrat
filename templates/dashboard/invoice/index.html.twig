@@ -2,25 +2,22 @@
 
 {% block body_id 'invoice_index' %}
 
+{% block toolbar %}
+    {{ include('components/_page_header.html.twig', {
+        title: 'title.invoices'|trans,
+        count: pagination.getTotalItemCount,
+        action_url: path('invoice_new'),
+        action_label: 'action.create_invoice'|trans
+    }) }}
+{% endblock %}
+
 {% block main %}
-    {{ include('components/_page_header.html.twig', { title: 'title.invoices'|trans, count: pagination.getTotalItemCount }) }}
     <div class="bs-component" data-controller="document-action" data-document-action-show-prefix-value="invoice">
     {{ include('dashboard/invoice/_table.html.twig', {
-            invoices: pagination
+            invoices: pagination,
+            infinite: true,
+            page: pagination.currentPageNumber,
+            last_page: last_page,
         }, with_context = false) }}
     </div>
-    {{ knp_pagination_render(pagination) }}
-{% endblock %}
-
-{% block sidebar %}
-    
-    {{ parent() }}
-    <a href="{{ path('invoice_new') }}" class="btn btn-sm w-100 btn-success">
-            <i class="fa fa-plus" aria-hidden="true"></i> {{ 'action.create_invoice'|trans }}
-    </a>
-
-{% endblock %}
-
-{% block javascripts %}
-    {{ parent() }}
 {% endblock %}

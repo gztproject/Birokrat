@@ -1,0 +1,15 @@
+{% for lunchExpense in lunchExpenses %}
+        <tr>
+            <td>{{ lunchExpense.dateString }}</td>
+            <td class="money">{{ lunchExpense.sum | money}}</td>
+            {% if ShowCBs is defined and ShowCBs == true%}
+            <td class="text-center">
+                <input class="form-check-input TECheckBox" type="checkbox" value={{ lunchExpense.id }}>
+            </td>
+            {% endif %}
+        </tr>
+    {% else %}
+        {% if empty|default(true) %}
+            {{ include('components/_empty_state.html.twig', { colspan: 4, message: 'lunchExpense.no_lunchExpenses_found'|trans }) }}
+        {% endif %}
+    {% endfor %}
