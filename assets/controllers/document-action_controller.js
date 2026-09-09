@@ -173,12 +173,7 @@ export default class extends Controller {
         if (!id) {
             return;
         }
-        let url = '';
-        if (window.location.pathname.endsWith('dashboard')) {
-            url += 'dashboard/';
-        }
-        url += `${this.showPrefixValue}/${id}/show`;
-        window.location = url;
+        window.location = `/dashboard/${this.showPrefixValue}/${id}/show`;
     }
 
     openDateModal(url, extra) {
