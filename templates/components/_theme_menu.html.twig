@@ -1,0 +1,28 @@
+{% set dropup = dropup|default(false) %}
+{% set toggle_class = toggle_class|default('nav-link dropdown-toggle') %}
+{% set menu_class = menu_class|default('dropdown-menu dropdown-menu-end') %}
+{% set static_menu = static_menu|default(false) %}
+
+<div class="{{ dropup ? 'dropup' : 'dropdown' }}" data-controller="theme">
+    <a href="#" class="{{ toggle_class }}" data-bs-toggle="dropdown"{% if static_menu %} data-bs-display="static"{% endif %} aria-expanded="false">
+        <i class="fa fa-adjust" aria-hidden="true"></i>
+        <span>{{ 'theme.label'|trans }}</span>
+    </a>
+    <ul class="{{ menu_class }}" role="menu">
+        <li>
+            <a class="dropdown-item" href="#" data-theme-target="option" data-theme-value="light" data-action="theme#light" role="menuitemradio">
+                <i class="fa fa-sun" aria-hidden="true"></i> {{ 'theme.light'|trans }}
+            </a>
+        </li>
+        <li>
+            <a class="dropdown-item" href="#" data-theme-target="option" data-theme-value="dark" data-action="theme#dark" role="menuitemradio">
+                <i class="fa fa-moon" aria-hidden="true"></i> {{ 'theme.dark'|trans }}
+            </a>
+        </li>
+        <li>
+            <a class="dropdown-item" href="#" data-theme-target="option" data-theme-value="system" data-action="theme#system" role="menuitemradio">
+                <i class="fa fa-desktop" aria-hidden="true"></i> {{ 'theme.system'|trans }}
+            </a>
+        </li>
+    </ul>
+</div>

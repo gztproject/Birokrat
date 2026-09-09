@@ -1,0 +1,23 @@
+{% set sidenav_toggle = 'app-nav-link dropdown-toggle' %}
+{% set sidenav_menu = 'dropdown-menu' %}
+
+<div class="app-sidenav-account">
+    {{ include('components/_user_menu.html.twig', {
+        dropup: true,
+        static_menu: true,
+        toggle_class: sidenav_toggle,
+        menu_class: sidenav_menu,
+    }) }}
+    {{ include('components/_theme_menu.html.twig', {
+        dropup: true,
+        static_menu: true,
+        toggle_class: sidenav_toggle,
+        menu_class: sidenav_menu,
+    }) }}
+    {{ include('components/_locale_menu.html.twig', {
+        dropup: true,
+        static_menu: true,
+        toggle_class: sidenav_toggle,
+        menu_class: sidenav_menu,
+    }) }}
+</div>

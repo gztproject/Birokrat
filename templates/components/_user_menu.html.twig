@@ -1,0 +1,26 @@
+{% set dropup = dropup|default(false) %}
+{% set toggle_class = toggle_class|default('nav-link dropdown-toggle') %}
+{% set menu_class = menu_class|default('dropdown-menu dropdown-menu-end') %}
+{% set static_menu = static_menu|default(false) %}
+
+{% if app.user %}
+    <div class="{{ dropup ? 'dropup' : 'dropdown' }}">
+        <a class="{{ toggle_class }}" href="#" data-bs-toggle="dropdown"{% if static_menu %} data-bs-display="static"{% endif %} aria-expanded="false">
+            <i class="fa fa-user" aria-hidden="true"></i>
+            <span>{{ app.user.fullname }}</span>
+        </a>
+        <ul class="{{ menu_class }}" role="menu">
+            <li>
+                <a class="dropdown-item" href="{{ path('user_show', {'id': app.user.id}) }}">
+                    <i class="fa fa-edit" aria-hidden="true"></i> {{ 'menu.user'|trans }}
+                </a>
+            </li>
+            <li><hr class="dropdown-divider"></li>
+            <li>
+                <a class="dropdown-item" href="{{ path('app_logout') }}">
+                    <i class="fa fa-sign-out-alt" aria-hidden="true"></i> {{ 'menu.logout'|trans }}
+                </a>
+            </li>
+        </ul>
+    </div>
+{% endif %}

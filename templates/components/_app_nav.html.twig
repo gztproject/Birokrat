@@ -63,11 +63,6 @@
     <a class="app-nav-link app-nav-sub{% if current_route starts with 'country_' %} active{% endif %}" href="{{ path('country_index') }}">
         {{ 'menu.countries'|trans }}
     </a>
-    {% if app.user %}
-        <a class="app-nav-link app-nav-sub{% if current_route starts with 'user_' %} active{% endif %}" href="{{ path('user_show', {'id': app.user.id}) }}">
-            {{ 'menu.user'|trans }}
-        </a>
-    {% endif %}
     {% if is_granted('ROLE_ADMIN') %}
         <a class="app-nav-link app-nav-sub{% if current_route == 'admin_index' %} active{% endif %}" href="{{ path('admin_index') }}">
             {{ 'menu.admin'|trans }}
@@ -77,3 +72,5 @@
         </a>
     {% endif %}
 </nav>
+
+{{ include('components/_account_menu.html.twig') }}

@@ -37,22 +37,24 @@
                 {% endif %}
 
                 <div class="app-content">
-                    <header class="app-topbar">
-                        {% if app.user %}
-                            <button class="btn btn-outline-secondary d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#navOffcanvas" aria-controls="navOffcanvas" aria-label="{{ 'menu.toggle_nav'|trans }}">
+                    {% if app.user %}
+                        <header class="app-topbar d-lg-none">
+                            <button class="btn btn-outline-secondary" type="button" data-bs-toggle="offcanvas" data-bs-target="#navOffcanvas" aria-controls="navOffcanvas" aria-label="{{ 'menu.toggle_nav'|trans }}">
                                 <i class="fa fa-bars" aria-hidden="true"></i>
                             </button>
-                            <a href="{{ path('dashboard_index') }}" class="app-brand d-lg-none">
+                            <a href="{{ path('dashboard_index') }}" class="app-brand">
                                 Birokrat
                                 {% if app.environment == 'dev' %}
                                     <span class="env-badge">DEV</span>
                                 {% endif %}
                             </a>
-                        {% else %}
+                        </header>
+                    {% else %}
+                        <header class="app-topbar">
                             <a href="{{ path('dashboard_index') }}" class="app-brand">Birokrat</a>
-                        {% endif %}
-                        {{ include('components/_topbar_actions.html.twig') }}
-                    </header>
+                            {{ include('components/_topbar_actions.html.twig') }}
+                        </header>
+                    {% endif %}
 
                     <main class="app-main">
                         {{ include('default/_flash_messages.html.twig') }}

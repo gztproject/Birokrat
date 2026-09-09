@@ -36,6 +36,7 @@ class ApplicationSmokeTest extends WebTestCase
     {
         $this->client->request('GET', '/login');
         $this->assertResponseIsSuccessful();
+        $this->assertSelectorExists('.app-topbar-actions [data-controller="theme"]');
     }
 
     public function testDashboardRedirectsAnonymousUsers(): void
@@ -66,6 +67,10 @@ class ApplicationSmokeTest extends WebTestCase
 
         $this->client->request('GET', '/dashboard');
         $this->assertResponseIsSuccessful();
+        $this->assertSelectorExists('.app-sidenav-account');
+        $this->assertSelectorExists('.app-sidenav-account [data-controller="theme"]');
+        $this->assertSelectorExists('.app-topbar.d-lg-none');
+        $this->assertSelectorNotExists('.app-content .app-topbar-actions');
 
         $this->client->request('GET', '/dashboard/invoice');
         $this->assertResponseIsSuccessful();
