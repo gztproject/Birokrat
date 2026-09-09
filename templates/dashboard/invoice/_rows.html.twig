@@ -57,23 +57,7 @@
                     </button>
                     {% endif %}
                 {% endblock %}
-                {% block more %}
-                    <li>
-                        <a class="dropdown-item" href="{{ path('invoice_show', {'id': invoice.id}) }}">
-                            <i class="fa fa-eye" aria-hidden="true"></i> {{ 'action.show'|trans }}
-                        </a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="{{ path('invoice_print', {'id': invoice.id}) }}" target="_blank">
-                            <i class="fa fa-print" aria-hidden="true"></i> {{ 'action.print'|trans }}
-                        </a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="{{ path('invoice_clone', {'id': invoice.id}) }}">
-                            <i class="fa fa-copy" aria-hidden="true"></i> {{ 'action.clone'|trans }}
-                        </a>
-                    </li>
-                {% endblock %}
+                {% block more %}{% endblock %}
             {% endembed %}
         </td>
     </tr>

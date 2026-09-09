@@ -42,25 +42,13 @@
                             {{ 'action.setPaid'|trans }}
                         </button>
                     {% endif %}
-                {% endblock %}
-                {% block more %}
                     {% if invoice.State == 00 or invoice.State == 10 %}
-                    <li>
-                        <button class="dropdown-item cancel" type="button" name="id" value={{ invoice.id }} data-action="click->document-action#cancel">
+                        <button class="cancel btn btn-sm btn-danger" type="button" name="id" value={{ invoice.id }} data-action="click->document-action#cancel">
                             {{ 'action.cancel'|trans }}
                         </button>
-                    </li>
                     {% endif %}
-                    <li>
-                        <a class="dropdown-item" href="{{ path('invoice_show', {'id': invoice.id}) }}">{{ 'action.show'|trans }}</a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="{{ path('invoice_print', {'id': invoice.id}) }}" target="_blank">{{ 'action.print'|trans }}</a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="{{ path('invoice_clone', {'id': invoice.id}) }}">{{ 'action.clone'|trans }}</a>
-                    </li>
                 {% endblock %}
+                {% block more %}{% endblock %}
             {% endembed %}
         </div>
     </div>
