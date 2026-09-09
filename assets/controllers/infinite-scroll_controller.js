@@ -31,7 +31,9 @@ export default class extends Controller {
     }
 
     needsMore() {
-        return this.element.scrollHeight <= this.element.clientHeight + 16;
+        const { scrollHeight, clientHeight, scrollTop } = this.element;
+        return scrollHeight <= clientHeight + 16
+            || scrollTop + clientHeight + 80 >= scrollHeight;
     }
 
     async fillViewport() {

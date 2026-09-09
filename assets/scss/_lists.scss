@@ -2,12 +2,43 @@
     -webkit-overflow-scrolling: touch;
     max-height: calc(100dvh - var(--app-topbar-height) - 8.5rem);
     overflow: auto;
+    overscroll-behavior: contain;
 }
 
 @media (min-width: 992px) {
     .list-scroll {
         max-height: calc(100dvh - var(--app-topbar-height) - 10.5rem);
     }
+}
+
+body:has(.list-scroll) .app-shell {
+    height: 100dvh;
+    overflow: hidden;
+}
+
+body:has(.list-scroll) .app-content {
+    min-height: 0;
+    overflow: hidden;
+}
+
+body:has(.list-scroll) .app-main {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow: hidden;
+}
+
+body:has(.list-scroll) .app-main > .bs-component:has(.list-scroll) {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    min-height: 0;
+}
+
+body:has(.list-scroll) .list-scroll {
+    flex: 1 1 auto;
+    max-height: none;
+    min-height: 12rem;
 }
 
 .list-scroll thead th {
