@@ -2,17 +2,16 @@
 
 namespace App\Version;
 
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
+
 final class AppVersion
 {
     private readonly string $version;
 
-    private readonly string $configuredVersion;
-
     public function __construct(
+        #[Autowire('%kernel.project_dir%')]
         private readonly string $projectDir,
-        ?string $configuredVersion = null,
     ) {
-        $this->configuredVersion = $configuredVersion ?? '';
         $this->version = $this->resolve();
     }
 
@@ -23,21 +22,20 @@ final class AppVersion
 
     private function resolve(): string
     {
-        if ($this->configuredVersion !== '') {
-            return $this->configuredVersion;
+        if (!is_dir($this->projectDir.'/.git')) {
+            return 'dev';
         }
 
-        if (is_dir($this->projectDir.'/.git')) {
-            $lines = [];
-            $code = 0;
-            exec(
-                'git -C '.escapeshellarg($this->projectDir).' describe --tags --always 2>/dev/null',
-                $lines,
-                $code
-            );
-            if ($code === 0 && isset($lines[0]) && $lines[0] !== '') {
-                return $lines[0];
-            }
+        $lines = [];
+        $code = 0;
+        exec(
+            'git -C '.escapeshellarg($this->projectDir).' describe --tags --abbrev=0 2>/dev/null',
+            $lines,
+            $code
+        );
+
+        if ($code === 0 && isset($lines[0]) && $lines[0] !== '') {
+            return $lines[0];
         }
 
         return 'dev';
