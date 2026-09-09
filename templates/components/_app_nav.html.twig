@@ -8,7 +8,7 @@
 </a>
 
 <nav class="app-nav" aria-label="{{ 'menu.toggle_nav'|trans }}">
-    <a class="app-nav-link{% if current_route == 'dashboard_index' %} active{% endif %}" href="{{ path('dashboard_index') }}">
+    <a class="app-nav-link{% if current_route in ['dashboard_index', 'homepage'] %} active{% endif %}" href="{{ path('dashboard_index') }}">
         <i class="fa fa-home" aria-hidden="true"></i> {{ 'menu.home'|trans }}
     </a>
 

@@ -13,6 +13,7 @@ use App\Repository\Transaction\TransactionRepository;
 
 class DashboardController extends AbstractController
 {    
+	#[Route(path: "/", methods: ["GET"], name: "homepage")]
 	#[Route(path: "/dashboard", methods: ["GET"], name: "dashboard_index")]
 	public function index(InvoiceRepository $invoices, IncomingInvoiceRepository $incomingInvoices, TravelExpenseRepository $travelExpenses, TransactionRepository $transactions): Response
     {     

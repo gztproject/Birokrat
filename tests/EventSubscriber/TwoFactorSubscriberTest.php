@@ -45,6 +45,35 @@ class TwoFactorSubscriberTest extends TestCase
         $this->assertSame('/2fa', $response->getTargetUrl());
     }
 
+    public function testPendingChallengeBlocksHomepage(): void
+    {
+        $user = $this->createMock(User::class);
+        $user->method('isTotpEnabled')->willReturn(true);
+
+        $security = $this->createMock(Security::class);
+        $security->method('getUser')->willReturn($user);
+
+        $urls = $this->createMock(UrlGeneratorInterface::class);
+        $urls->method('generate')->with('app_2fa')->willReturn('/2fa');
+
+        $session = new Session(new MockArraySessionStorage());
+        $session->set('2fa_pending', true);
+        $request = Request::create('/');
+        $request->setSession($session);
+
+        $event = new RequestEvent(
+            $this->createMock(HttpKernelInterface::class),
+            $request,
+            HttpKernelInterface::MAIN_REQUEST,
+        );
+
+        (new TwoFactorSubscriber($security, $urls))->onRequest($event);
+
+        $response = $event->getResponse();
+        $this->assertInstanceOf(RedirectResponse::class, $response);
+        $this->assertSame('/2fa', $response->getTargetUrl());
+    }
+
     public function testChallengePathIsAllowedWhilePending(): void
     {
         $user = $this->createMock(User::class);

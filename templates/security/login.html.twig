@@ -35,7 +35,9 @@
                                 <input class="form-check-input" type="checkbox" name="_remember_me" id="rememberMe">
                                 <label class="form-check-label" for="rememberMe">{{ 'label.rememberMe'|trans }}</label>
                             </div>
-                            <input type="hidden" name="_target_path" value="{{ app.request.query.get('redirect_to') }}"/>
+                            {% if app.request.query.get('redirect_to') %}
+                                <input type="hidden" name="_target_path" value="{{ app.request.query.get('redirect_to') }}"/>
+                            {% endif %}
                             <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}"/>
                             <button type="submit" class="btn btn-primary w-100">
                                 <i class="fa fa-sign-in-alt" aria-hidden="true"></i> {{ 'action.sign_in'|trans }}

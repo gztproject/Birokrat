@@ -43,6 +43,9 @@ class ApplicationSmokeTest extends WebTestCase
     {
         $this->client->request('GET', '/dashboard');
         $this->assertResponseRedirects();
+
+        $this->client->request('GET', '/');
+        $this->assertResponseRedirects();
     }
 
     public function testLoginSucceedsWithCsrf(): void
@@ -71,6 +74,10 @@ class ApplicationSmokeTest extends WebTestCase
         $this->assertSelectorExists('.app-sidenav-account [data-controller="theme"]');
         $this->assertSelectorExists('.app-topbar.d-lg-none');
         $this->assertSelectorNotExists('.app-content .app-topbar-actions');
+
+        $this->client->request('GET', '/');
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorExists('.app-sidenav-account');
 
         $this->client->request('GET', '/dashboard/invoice');
         $this->assertResponseIsSuccessful();
