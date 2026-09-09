@@ -41,15 +41,39 @@ class IncomingInvoiceRepository extends ServiceEntityRepository
     /**
      * @return IncomingInvoice[]
      */
-    public function findUnpaidReceived(int $limit = 5): array
+    /**
+     * @return IncomingInvoice[]
+     */
+    public function findUnpaidReceived(int $limit = 5, ?\DateTimeInterface $from = null): array
     {
-    	return $this->createQueryBuilder('i')
+    	$qb = $this->createQueryBuilder('i')
     		->andWhere('i.state = :state')
     		->setParameter('state', 10)
     		->orderBy('i.dueDate', 'ASC')
-    		->setMaxResults($limit)
-    		->getQuery()
-    		->getResult();
+    		->setMaxResults($limit);
+        if ($from !== null) {
+            $qb->andWhere('i.dateOfIssue >= :from')->setParameter('from', $from);
+        }
+
+    	return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * @return array{count: int, total: float}
+     */
+    public function summarizeUnpaid(?\DateTimeInterface $from = null): array
+    {
+        $qb = $this->createQueryBuilder('i')
+            ->select('COUNT(i.id) AS cnt', 'COALESCE(SUM(i.price), 0) AS total')
+            ->andWhere('i.state = :state')
+            ->setParameter('state', 10);
+        if ($from !== null) {
+            $qb->andWhere('i.dateOfIssue >= :from')->setParameter('from', $from);
+        }
+
+        $row = $qb->getQuery()->getSingleResult();
+
+        return ['count' => (int) $row['cnt'], 'total' => (float) $row['total']];
     }
 
     // /**

@@ -1,0 +1,23 @@
+<div class="dashboard-widget-header">
+    <button type="button"
+            class="dashboard-widget-handle"
+            draggable="true"
+            data-action="dragstart->dashboard-layout#dragStart"
+            aria-label="{{ 'dashboard.layout.drag'|trans }}">
+        <i class="fa fa-grip-vertical" aria-hidden="true"></i>
+    </button>
+    <div class="dashboard-widget-title">
+        {% if href is defined %}
+            <a href="{{ href }}"><h2>{{ title }}</h2></a>
+        {% else %}
+            <h2>{{ title }}</h2>
+        {% endif %}
+    </div>
+    <button type="button"
+            class="btn btn-sm btn-outline-secondary"
+            data-action="dashboard-layout#hide"
+            data-dashboard-layout-id-param="{{ id }}"
+            aria-label="{{ 'dashboard.layout.hide'|trans }}">
+        <i class="fa fa-eye-slash" aria-hidden="true"></i>
+    </button>
+</div>

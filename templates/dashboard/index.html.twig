@@ -2,61 +2,124 @@
 
 {% block body_id 'dashboard_index' %}
 
+{% block toolbar %}
+    {{ include('components/_page_header.html.twig', {
+        title: 'menu.home'|trans,
+        extra_actions: '
+            <a href="' ~ path('invoice_new') ~ '" class="btn btn-sm btn-success"><i class="fa fa-plus" aria-hidden="true"></i> ' ~ ('action.create_invoice'|trans) ~ '</a>
+            <a href="' ~ path('travelExpense_new') ~ '" class="btn btn-sm btn-outline-success"><i class="fa fa-plus" aria-hidden="true"></i> ' ~ ('action.create_travelExpense'|trans) ~ '</a>
+            <a href="' ~ path('transaction_new') ~ '" class="btn btn-sm btn-outline-success"><i class="fa fa-plus" aria-hidden="true"></i> ' ~ ('action.create_expense'|trans) ~ '</a>
+        '
+    }) }}
+{% endblock %}
+
 {% block main %}
-{{ include('components/_page_header.html.twig', { title: 'menu.home'|trans }) }}
-
-<div class="card app-card dashboard-section">
-    <div class="card-header">
-        <a href="{{ path('invoice_index') }}"><h2>{{ 'title.invoices'|trans }}</h2></a>
+<div class="dashboard-layout"
+     data-controller="dashboard-layout"
+     data-dashboard-layout-user-value="{{ app.user.userIdentifier }}"
+     data-dashboard-layout-show-label-value="{{ 'dashboard.layout.show'|trans }}"
+     data-action="dragend->dashboard-layout#dragEnd">
+    <div class="dashboard-layout-bar">
+        <div class="dashboard-layout-hidden" data-dashboard-layout-target="hiddenBar" hidden>
+            <span class="dashboard-layout-hidden-label">{{ 'dashboard.layout.restore'|trans }}</span>
+            <div class="dashboard-layout-hidden-list" data-dashboard-layout-target="hiddenList"></div>
+        </div>
+        <button type="button"
+                class="btn btn-sm btn-link"
+                hidden
+                data-dashboard-layout-target="reset"
+                data-action="dashboard-layout#reset">
+            {{ 'dashboard.layout.reset'|trans }}
+        </button>
     </div>
-    <div class="card-body" data-controller="document-action" data-document-action-show-prefix-value="invoice">
-        {{ include('dashboard/invoice/_table.html.twig', {invoices: invoices}, with_context = false) }}
+
+    <div class="dashboard-board"
+         data-dashboard-layout-target="board"
+         data-action="dragover->dashboard-layout#dragOver drop->dashboard-layout#drop">
+        <section class="dashboard-widget dashboard-widget-wide"
+                 data-dashboard-layout-target="widget"
+                 data-widget-id="kpis"
+                 data-widget-title="{{ 'dashboard.layout.kpis'|trans }}">
+            {{ include('dashboard/_widget_header.html.twig', {
+                id: 'kpis',
+                title: 'dashboard.layout.kpis'|trans,
+            }) }}
+            <div class="dashboard-widget-body">
+                <div class="kpi-grid">
+                    <a class="kpi-card" href="{{ path('invoice_index') }}">
+                        <div class="kpi-label">{{ 'dashboard.kpi.receivables'|trans }}</div>
+                        <div class="kpi-value">{{ receivables.total | money }}</div>
+                        <div class="kpi-meta">{{ receivables.count }} {{ 'dashboard.kpi.open'|trans }}</div>
+                    </a>
+                    <a class="kpi-card" href="{{ path('invoice_index') }}">
+                        <div class="kpi-label">{{ 'dashboard.kpi.overdue'|trans }}</div>
+                        <div class="kpi-value">{{ overdue.total | money }}</div>
+                        <div class="kpi-meta">{{ overdue.count }} {{ 'dashboard.kpi.open'|trans }}</div>
+                    </a>
+                    <a class="kpi-card" href="{{ path('incomingInvoice_index') }}">
+                        <div class="kpi-label">{{ 'dashboard.kpi.unpaidBills'|trans }}</div>
+                        <div class="kpi-value">{{ unpaidBills.total | money }}</div>
+                        <div class="kpi-meta">{{ unpaidBills.count }} {{ 'dashboard.kpi.open'|trans }}</div>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section class="dashboard-widget"
+                 data-dashboard-layout-target="widget"
+                 data-widget-id="invoices"
+                 data-widget-title="{{ 'dashboard.recent.invoices'|trans }}">
+            {{ include('dashboard/_widget_header.html.twig', {
+                id: 'invoices',
+                title: 'dashboard.recent.invoices'|trans,
+                href: path('invoice_index'),
+            }) }}
+            <div class="dashboard-widget-body" data-controller="document-action" data-document-action-show-prefix-value="invoice">
+                {{ include('dashboard/invoice/_table.html.twig', {invoices: invoices}, with_context = false) }}
+            </div>
+        </section>
+
+        <section class="dashboard-widget"
+                 data-dashboard-layout-target="widget"
+                 data-widget-id="incoming"
+                 data-widget-title="{{ 'dashboard.recent.incoming'|trans }}">
+            {{ include('dashboard/_widget_header.html.twig', {
+                id: 'incoming',
+                title: 'dashboard.recent.incoming'|trans,
+                href: path('incomingInvoice_index'),
+            }) }}
+            <div class="dashboard-widget-body" data-controller="document-action" data-document-action-show-prefix-value="incomingInvoice" data-document-action-pay-url-value="/dashboard/incomingInvoice/pay">
+                {{ include('dashboard/incomingInvoice/_table.html.twig', {invoices: incomingInvoices}, with_context = false) }}
+            </div>
+        </section>
+
+        <section class="dashboard-widget"
+                 data-dashboard-layout-target="widget"
+                 data-widget-id="travel"
+                 data-widget-title="{{ 'dashboard.recent.travel'|trans }}">
+            {{ include('dashboard/_widget_header.html.twig', {
+                id: 'travel',
+                title: 'dashboard.recent.travel'|trans,
+                href: path('travelExpense_index'),
+            }) }}
+            <div class="dashboard-widget-body">
+                {{ include('dashboard/travelExpense/_table.html.twig', {travelExpenses: travelExpenses}, with_context = false) }}
+            </div>
+        </section>
+
+        <section class="dashboard-widget"
+                 data-dashboard-layout-target="widget"
+                 data-widget-id="transactions"
+                 data-widget-title="{{ 'dashboard.recent.transactions'|trans }}">
+            {{ include('dashboard/_widget_header.html.twig', {
+                id: 'transactions',
+                title: 'dashboard.recent.transactions'|trans,
+                href: path('transaction_index'),
+            }) }}
+            <div class="dashboard-widget-body">
+                {{ include('dashboard/transaction/_table.html.twig', {transactions: transactions}, with_context = false) }}
+            </div>
+        </section>
     </div>
 </div>
-
-<div class="card app-card dashboard-section">
-    <div class="card-header">
-        <a href="{{ path('incomingInvoice_index') }}"><h2>{{ 'title.incomingInvoices'|trans }}</h2></a>
-    </div>
-    <div class="card-body" data-controller="document-action" data-document-action-show-prefix-value="incomingInvoice" data-document-action-pay-url-value="/dashboard/incomingInvoice/pay">
-        {{ include('dashboard/incomingInvoice/_table.html.twig', {invoices: incomingInvoices}, with_context = false) }}
-    </div>
-</div>
-
-<div class="card app-card dashboard-section">
-    <div class="card-header">
-        <a href="{{ path('travelExpense_index') }}"><h2>{{ 'title.travelExpenses'|trans }}</h2></a>
-    </div>
-    <div class="card-body">
-        {{ include('dashboard/travelExpense/_table.html.twig', {travelExpenses: travelExpenses}, with_context = false) }}
-    </div>
-</div>
-
-<div class="card app-card dashboard-section">
-    <div class="card-header">
-        <a href="{{ path('transaction_index') }}"><h2>{{ 'title.transactions'|trans }}</h2></a>
-    </div>
-    <div class="card-body">
-        {{ include('dashboard/transaction/_table.html.twig', {transactions: transactions}, with_context = false) }}
-    </div>
-</div>
-{% endblock %}
-
-{% block sidebar %}
-    {{ parent() }}
-    <div class="section actions">
-        <a href="{{ path('invoice_new') }}" class="btn btn-sm w-100 btn-success">
-            <i class="fa fa-plus" aria-hidden="true"></i> {{ 'action.create_invoice'|trans }}
-        </a>
-        <a href="{{ path('travelExpense_new') }}" class="btn btn-sm w-100 btn-success">
-            <i class="fa fa-plus" aria-hidden="true"></i> {{ 'action.create_travelExpense'|trans }}
-        </a>
-        <a href="{{ path('transaction_new') }}" class="btn btn-sm w-100 btn-success">
-            <i class="fa fa-plus" aria-hidden="true"></i> {{ 'action.create_expense'|trans }}
-        </a>
-    </div>
-{% endblock %}
-
-{% block javascripts %}
-    {{ parent() }}
 {% endblock %}
