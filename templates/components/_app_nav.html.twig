@@ -1,0 +1,79 @@
+{% set current_route = app.request.attributes.get('_route') %}
+
+<a href="{{ path('dashboard_index') }}" class="app-sidenav-brand">
+    Birokrat
+    {% if app.environment == 'dev' %}
+        <span class="env-badge">DEV</span>
+    {% endif %}
+</a>
+
+<nav class="app-nav" aria-label="{{ 'menu.toggle_nav'|trans }}">
+    <a class="app-nav-link{% if current_route == 'dashboard_index' %} active{% endif %}" href="{{ path('dashboard_index') }}">
+        <i class="fa fa-home" aria-hidden="true"></i> {{ 'menu.home'|trans }}
+    </a>
+
+    <div class="app-nav-section">{{ 'menu.invoices'|trans }}</div>
+    <a class="app-nav-link app-nav-sub{% if current_route starts with 'invoice_' %} active{% endif %}" href="{{ path('invoice_index') }}">
+        {{ 'menu.outgoing'|trans }}
+    </a>
+    <a class="app-nav-link app-nav-sub{% if current_route starts with 'incomingInvoice_' %} active{% endif %}" href="{{ path('incomingInvoice_index') }}">
+        {{ 'menu.incoming'|trans }}
+    </a>
+
+    <div class="app-nav-section">{{ 'menu.expenses'|trans }}</div>
+    <a class="app-nav-link app-nav-sub{% if current_route starts with 'travelExpense_' %} active{% endif %}" href="{{ path('travelExpense_index') }}">
+        {{ 'menu.travelExpenses'|trans }}
+    </a>
+    <a class="app-nav-link app-nav-sub{% if current_route starts with 'lunchExpense_' %} active{% endif %}" href="{{ path('lunchExpense_index') }}">
+        {{ 'menu.lunchExpenses'|trans }}
+    </a>
+
+    <a class="app-nav-link{% if current_route starts with 'transaction_' %} active{% endif %}" href="{{ path('transaction_index') }}">
+        <i class="fa fa-exchange-alt" aria-hidden="true"></i> {{ 'menu.transactions'|trans }}
+    </a>
+
+    <div class="app-nav-section">{{ 'menu.reports'|trans }}</div>
+    <a class="app-nav-link app-nav-sub{% if current_route == 'report_index' %} active{% endif %}" href="{{ path('report_index') }}">
+        {{ 'title.overview'|trans }}
+    </a>
+    <a class="app-nav-link app-nav-sub{% if current_route == 'report_dddddd' %} active{% endif %}" href="{{ path('report_dddddd') }}">
+        {{ 'menu.dddddd'|trans }}
+    </a>
+    <a class="app-nav-link app-nav-sub{% if current_route == 'report_bilanca' %} active{% endif %}" href="{{ path('report_bilanca') }}">
+        {{ 'menu.bilanca'|trans }}
+    </a>
+    <a class="app-nav-link app-nav-sub{% if current_route == 'report_turnout' %} active{% endif %}" href="{{ path('report_turnout') }}">
+        {{ 'menu.turnout'|trans }}
+    </a>
+
+    <a class="app-nav-link{% if current_route starts with 'partner_' %} active{% endif %}" href="{{ path('partner_index') }}">
+        <i class="fa fa-address-book" aria-hidden="true"></i> {{ 'menu.clients'|trans }}
+    </a>
+
+    <div class="app-nav-section">{{ 'menu.settings'|trans }}</div>
+    <a class="app-nav-link app-nav-sub{% if current_route starts with 'organization_' %} active{% endif %}" href="{{ path('organization_index') }}">
+        {{ 'menu.organizations'|trans }}
+    </a>
+    <a class="app-nav-link app-nav-sub{% if current_route starts with 'konto_' %} active{% endif %}" href="{{ path('konto_index') }}">
+        {{ 'menu.kontos'|trans }}
+    </a>
+    <a class="app-nav-link app-nav-sub{% if current_route starts with 'post_' %} active{% endif %}" href="{{ path('post_index') }}">
+        {{ 'menu.posts'|trans }}
+    </a>
+    <a class="app-nav-link app-nav-sub{% if current_route starts with 'country_' %} active{% endif %}" href="{{ path('country_index') }}">
+        {{ 'menu.countries'|trans }}
+    </a>
+    {% if app.user %}
+        <a class="app-nav-link app-nav-sub{% if current_route starts with 'user_' %} active{% endif %}" href="{{ path('user_show', {'id': app.user.id}) }}">
+            {{ 'menu.user'|trans }}
+        </a>
+    {% endif %}
+    {% if is_granted('ROLE_ADMIN') %}
+        <a class="app-nav-link app-nav-sub{% if current_route == 'admin_index' %} active{% endif %}" href="{{ path('admin_index') }}">
+            {{ 'menu.admin'|trans }}
+        </a>
+        <a class="app-nav-link app-nav-sub{% if current_route starts with 'admin_user_' %} active{% endif %}" href="{{ path('admin_user_index') }}">
+            {{ 'menu.users'|trans }}
+        </a>
+    {% endif %}
+</nav>

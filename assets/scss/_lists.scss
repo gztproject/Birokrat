@@ -1,0 +1,148 @@
+.list-scroll {
+    -webkit-overflow-scrolling: touch;
+    max-height: calc(100dvh - var(--app-topbar-height) - 8.5rem);
+    overflow: auto;
+}
+
+@media (min-width: 992px) {
+    .list-scroll {
+        max-height: calc(100dvh - var(--app-topbar-height) - 10.5rem);
+    }
+}
+
+.list-scroll thead th {
+    background-color: var(--app-surface);
+    position: sticky;
+    top: 0;
+    z-index: 2;
+}
+
+.list-scroll-sentinel {
+    height: 1px;
+}
+
+.list-scroll-status {
+    padding: 0.75rem 0.25rem;
+}
+
+.list-table-wrap {
+    display: none;
+}
+
+@media (min-width: 768px) {
+    .list-table-wrap {
+        display: block;
+    }
+}
+
+.list-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+@media (min-width: 768px) {
+    .list-cards {
+        display: none;
+    }
+}
+
+.list-card {
+    background-color: var(--app-surface);
+    border: 1px solid var(--app-border);
+    border-radius: $border-radius;
+    display: grid;
+    gap: 0.5rem 0.75rem;
+    grid-template-columns: 1fr auto;
+    padding: 0.85rem 1rem;
+}
+
+.list-card.invoiceRow {
+    cursor: pointer;
+}
+
+.list-card-title {
+    font-weight: 600;
+}
+
+.list-card-sub,
+.list-card-meta {
+    color: var(--bs-secondary-color);
+    font-size: 0.85rem;
+}
+
+.list-card-amount {
+    font-variant-numeric: tabular-nums;
+    font-weight: 650;
+    text-align: right;
+}
+
+.list-card-actions {
+    align-items: center;
+    display: flex;
+    grid-column: 1 / -1;
+    justify-content: flex-end;
+}
+
+@media (max-width: 767.98px) {
+    .collection-as-cards thead {
+        display: none;
+    }
+
+    .collection-as-cards tbody tr {
+        background-color: var(--app-surface);
+        border: 1px solid var(--app-border);
+        border-radius: $border-radius;
+        display: block;
+        margin-bottom: 0.75rem;
+        padding: 0.75rem;
+    }
+
+    .collection-as-cards tbody td {
+        align-items: center;
+        border: 0;
+        display: flex;
+        gap: 0.75rem;
+        justify-content: space-between;
+        padding: 0.35rem 0;
+    }
+
+    .collection-as-cards tbody td::before {
+        color: var(--bs-secondary-color);
+        content: attr(data-label);
+        flex: 0 0 36%;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+
+    .collection-as-cards tbody td.removeBtn::before {
+        content: "";
+        flex: 0;
+    }
+
+    .invoice-document {
+        font-size: 0.9rem;
+        overflow-x: auto;
+        padding: 1rem;
+    }
+}
+
+.report-scroll {
+    -webkit-overflow-scrolling: touch;
+    overflow-x: auto;
+}
+
+.report-scroll .report-table th:first-child,
+.report-scroll .report-table td:first-child {
+    background-color: var(--app-surface);
+    left: 0;
+    position: sticky;
+    z-index: 1;
+}
+
+@media (min-width: 768px) {
+    .report-nav {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+}

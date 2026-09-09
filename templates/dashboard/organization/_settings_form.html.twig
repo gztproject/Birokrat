@@ -1,9 +1,13 @@
 {{ form_start(form) }}
-    <div class="card app-card mb-3">
-        <div class="card-header">
-            <strong>{{ 'label.invoiceDefaults'|trans }}</strong>
-        </div>
-        <div class="card-body">
+    <div class="accordion mb-3" id="orgSettingsAccordion">
+    <div class="accordion-item app-card mb-2">
+        <h2 class="accordion-header">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#settingsInvoiceDefaults" aria-expanded="true">
+                {{ 'label.invoiceDefaults'|trans }}
+            </button>
+        </h2>
+        <div id="settingsInvoiceDefaults" class="accordion-collapse collapse show" data-bs-parent="#orgSettingsAccordion">
+        <div class="accordion-body">
             <div class="row">
                 <div class="col-md-4 mb-3">
                     {{ form_label(form.invoicePrefix) }}
@@ -19,13 +23,17 @@
                 </div>
             </div>
         </div>
+        </div>
     </div>
 
-    <div class="card app-card mb-3">
-        <div class="card-header">
-            <strong>{{ 'label.travelAndLunch'|trans }}</strong>
-        </div>
-        <div class="card-body">
+    <div class="accordion-item app-card mb-2">
+        <h2 class="accordion-header">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#settingsTravelLunch" aria-expanded="false">
+                {{ 'label.travelAndLunch'|trans }}
+            </button>
+        </h2>
+        <div id="settingsTravelLunch" class="accordion-collapse collapse" data-bs-parent="#orgSettingsAccordion">
+        <div class="accordion-body">
             <div class="row">
                 <div class="col-md-4 mb-3">
                     {{ form_label(form.travelExpenseRate) }}
@@ -55,13 +63,17 @@
                 </div>
             </div>
         </div>
+        </div>
     </div>
 
-    <div class="card app-card mb-3">
-        <div class="card-header">
-            <strong>{{ 'label.kontoMappings'|trans }}</strong>
-        </div>
-        <div class="card-body">
+    <div class="accordion-item app-card mb-2">
+        <h2 class="accordion-header">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#settingsKontos" aria-expanded="false">
+                {{ 'label.kontoMappings'|trans }}
+            </button>
+        </h2>
+        <div id="settingsKontos" class="accordion-collapse collapse" data-bs-parent="#orgSettingsAccordion">
+        <div class="accordion-body">
             <div class="row">
                 {% for field in [
                     form.IssueInvoiceDebit, form.IssueInvoiceCredit,
@@ -83,13 +95,15 @@
                 {% endfor %}
             </div>
         </div>
+        </div>
+    </div>
     </div>
 
-    <div class="mb-3">
+    <div class="form-actions-sticky d-flex flex-wrap gap-2">
         <button type="submit" class="btn btn-primary">
             <i class="fa fa-save" aria-hidden="true"></i> {{ 'action.save'|trans }}
         </button>
-        <a href="{{ path('organization_show', {id: organization.id}) }}" class="btn btn-link">
+        <a href="{{ path('organization_show', {id: organization.id}) }}" class="btn btn-secondary">
             <i class="fa fa-list-alt" aria-hidden="true"></i> {{ 'action.back_to_list'|trans }}
         </a>
     </div>

@@ -54,8 +54,8 @@ export default class extends Controller {
     }
 
     selectAll() {
-        const table = this.tableValue ? document.getElementById(this.tableValue) : document;
-        const boxes = [...(table?.querySelectorAll('input.TECheckBox[type="checkbox"]') ?? [])];
+        const boxes = [...document.querySelectorAll('input.TECheckBox[type="checkbox"]')]
+            .filter((box) => box.offsetParent !== null);
         const anyChecked = boxes.some((box) => box.checked);
         boxes.forEach((box) => {
             box.checked = !anyChecked;

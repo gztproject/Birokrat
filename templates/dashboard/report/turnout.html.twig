@@ -7,7 +7,17 @@
 {{ encore_entry_link_tags('css/report') }}
 {% endblock %}
 
+{% block toolbar %}
+    {{ include('components/_page_header.html.twig', { title: 'menu.turnout'|trans }) }}
+    {{ include('dashboard/report/_report_nav.html.twig') }}
+{% endblock %}
+
+{% block filters %}
+    {{ include('common/filters/_dateOrgYearFilter.html.twig') }}
+{% endblock %}
+
 {% block main %}
+<div class="report-scroll">
 
 <h2 class="report-section-title">Priloga 4</h2>
 <h3 class="report-section-title">Podatki iz izkaza poslovnega izida</h3>
@@ -636,14 +646,7 @@
 		</table>
 	</div>
 </div>
-
-{% endblock %}
-
-{% block sidebar %}
-
-{{ parent() }}
-{{ include('common/filters/_dateOrgYearFilter.html.twig') }}
-{{ include('dashboard/report/_report_nav.html.twig') }}
+</div>
 
 {% endblock %}
 

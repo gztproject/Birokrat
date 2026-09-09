@@ -165,25 +165,15 @@
             </div>
         </div>
                     
-        <div class='row'> 
-            <div class="col-sm-3">
-                <div class="mb-3">            
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fa fa-save" aria-hidden="true"></i> {{ button_label|default(('label.save_partner')|trans) }}
-                    </button>
-                </div>
-            </div>
+        <div class="form-actions-sticky d-flex flex-wrap gap-2">
+            <button type="submit" class="btn btn-primary">
+                <i class="fa fa-save" aria-hidden="true"></i> {{ button_label|default(('label.save_partner')|trans) }}
+            </button>
             {% if include_back_to_home_link|default(false) %}
-            <div class="col-sm-3">
-                <div class="mb-3">
-                    <a href="{{ path('partner_index') }}" class="btn btn-primary">
-                        <i class="fa fa-list-alt" aria-hidden="true"></i> {{ 'action.back_to_list'|trans }}
-                    </a>
-                </div>
-            </div>
+            <a href="{{ path('partner_index') }}" class="btn btn-secondary">
+                <i class="fa fa-list-alt" aria-hidden="true"></i> {{ 'action.back_to_list'|trans }}
+            </a>
             {% endif %}
-        </div>  
-
+        </div>
 {{ form_end(form) }}
-
 </div> 

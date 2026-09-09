@@ -32,7 +32,8 @@ export default class extends Controller {
     }
 
     toggleButtons() {
-        const anyChecked = [...this.element.querySelectorAll('input[type="checkbox"]:checked')].length > 0;
+        const anyChecked = [...document.querySelectorAll('input.TECheckBox[type="checkbox"]:checked')]
+            .some((box) => box.offsetParent !== null);
         const checkedBtn = document.getElementById('bookCheckedTEs');
         const visibleBtn = document.getElementById('bookVisibleTEs');
         if (checkedBtn) {

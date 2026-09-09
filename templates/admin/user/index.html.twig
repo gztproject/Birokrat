@@ -2,54 +2,59 @@
 
 {% block body_id 'admin_user_index' %}
 
-{% block main %}
-    {{ include('components/_page_header.html.twig', { title: 'title.list.user'|trans }) }}
-    
-    
-    <div class="bs-component">
-              
-    <table class="table table-hover">
-        <thead>
-            <tr>
-                <th scope="col">{{ 'label.username'|trans }}</th>
-                <th scope="col"><i class="fa fa-calendar" aria-hidden="true"></i> {{ 'label.email'|trans }}</th>
-                <th scope="col" class="text-center"><i class="fa fa-cogs" aria-hidden="true"></i> {{ 'label.actions'|trans }}</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for user in users %}
-            <tr class="table-primary">
-                <td>{{ user.username }}</td>
-                <td>{{ user.email }}</td>
-                <td class="text-end">
-                    <div class="item-actions">
-                        <a href="{{ path('admin_user_show', {'id': user.id}) }}" class="btn btn-sm btn-secondary">
-                            <i class="fa fa-eye" aria-hidden="true"></i> {{ 'action.show'|trans }}
-                        </a>
-
-                        <a href="{{ path('admin_user_edit', {'id': user.id}) }}" class="btn btn-sm btn-primary">
-                            <i class="fa fa-edit" aria-hidden="true"></i> {{ 'action.edit'|trans }}
-                        </a>
-                    </div>
-                </td>
-            </tr>
-        {% else %}
-            <tr class="table-warning">
-                <td colspan="4" align="center">{{ 'label.no_users_found'|trans }}</td>
-           </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-    </div>
+{% block toolbar %}
+    {{ include('components/_page_header.html.twig', {
+        title: 'title.list.user'|trans,
+        action_url: path('admin_user_new'),
+        action_label: 'action.create.user'|trans
+    }) }}
 {% endblock %}
 
-{% block sidebar %}
-    <div class="section actions">
-        <a href="{{ path('admin_user_new') }}" class="btn btn-sm w-100 btn-success">
-            <i class="fa fa-plus" aria-hidden="true"></i> {{ 'action.create.user'|trans }}
-        </a>
+{% block main %}
+    <div class="list-table-wrap">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead>
+                    <tr>
+                        <th scope="col">{{ 'label.username'|trans }}</th>
+                        <th scope="col">{{ 'label.email'|trans }}</th>
+                        <th scope="col" class="text-end">{{ 'label.actions'|trans }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for user in users %}
+                    <tr>
+                        <td>{{ user.username }}</td>
+                        <td>{{ user.email }}</td>
+                        <td class="text-end">
+                            <div class="item-actions">
+                                <a href="{{ path('admin_user_show', {'id': user.id}) }}" class="btn btn-sm btn-secondary">{{ 'action.show'|trans }}</a>
+                                <a href="{{ path('admin_user_edit', {'id': user.id}) }}" class="btn btn-sm btn-primary">{{ 'action.edit'|trans }}</a>
+                            </div>
+                        </td>
+                    </tr>
+                {% else %}
+                    {{ include('components/_empty_state.html.twig', { colspan: 3, message: 'label.no_users_found'|trans }) }}
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 
-    {{ parent() }}
-
+    <div class="list-cards">
+        {% for user in users %}
+            <div class="list-card">
+                <div>
+                    <div class="list-card-title">{{ user.username }}</div>
+                    <div class="list-card-sub">{{ user.email }}</div>
+                </div>
+                <div class="list-card-actions">
+                    <a href="{{ path('admin_user_show', {'id': user.id}) }}" class="btn btn-sm btn-secondary">{{ 'action.show'|trans }}</a>
+                    <a href="{{ path('admin_user_edit', {'id': user.id}) }}" class="btn btn-sm btn-primary">{{ 'action.edit'|trans }}</a>
+                </div>
+            </div>
+        {% else %}
+            <div class="empty-state">{{ 'label.no_users_found'|trans }}</div>
+        {% endfor %}
+    </div>
 {% endblock %}

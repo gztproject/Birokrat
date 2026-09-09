@@ -2,18 +2,17 @@
 
 {% block body_id 'partner_new' %}
 
-{% block main %}
+{% block toolbar %}
     {{ include('components/_page_header.html.twig', { title: 'title.partner_new'|trans }) }}
+{% endblock %}
+
+{% block main %}
     {{ include('dashboard/partner/_form.html.twig', {
         form: form,
         button_label: 'action.create'|trans,
         include_back_to_home_link: true,   
     }, with_context = false) }}
     
-{% endblock %}
-
-{% block sidebar %}
-    {{ parent() }}
 {% endblock %}
 
 {% block javascripts %}

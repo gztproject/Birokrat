@@ -2,8 +2,17 @@
 
 {% block body_id 'report_index' %}
 
+{% block toolbar %}
+    {{ include('components/_page_header.html.twig', { title: 'title.reports'|trans }) }}
+    {{ include('dashboard/report/_report_nav.html.twig') }}
+{% endblock %}
+
+{% block filters %}
+    {{ include('common/filters/_dateOrgYearFilter.html.twig') }}
+{% endblock %}
+
 {% block main %}
-{{ include('components/_page_header.html.twig', { title: 'title.reports'|trans }) }}
+<div class="report-scroll">
 
 <h2>{{ 'title.overview'|trans }}</h2>
 <div class="row">
@@ -48,14 +57,7 @@
         </div>
     </div>
 </div>
-{% endblock %}
-
-{% block sidebar %}
-    
-    {{ parent() }}
-    {{ include('common/filters/_dateOrgYearFilter.html.twig') }}
-    {{ include('dashboard/report/_report_nav.html.twig') }}
-    
+</div>
 {% endblock %}
 
 {% block javascripts %}

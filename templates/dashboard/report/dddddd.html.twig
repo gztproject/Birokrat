@@ -7,7 +7,17 @@
 {{ encore_entry_link_tags('css/report') }}
 {% endblock %}
 
+{% block toolbar %}
+    {{ include('components/_page_header.html.twig', { title: 'menu.dddddd'|trans }) }}
+    {{ include('dashboard/report/_report_nav.html.twig') }}
+{% endblock %}
+
+{% block filters %}
+    {{ include('common/filters/_dateOrgYearFilter.html.twig') }}
+{% endblock %}
+
 {% block main %}
+<div class="report-scroll">
 
 <h2 class="report-section-title">IZRAČUN AKONTACIJE DOHODNINE OD DOHODKA IZ DEJAVNOSTI
 	(DEJANSKI)</h2>
@@ -1069,14 +1079,7 @@
 		</table>
 	</div>
 </div>
-{% endblock %}
-
-{% block sidebar %}
-
-{{ parent() }}
-{{ include('common/filters/_dateOrgYearFilter.html.twig') }}
-{{ include('dashboard/report/_report_nav.html.twig') }}
-
+</div>
 {% endblock %}
 
 {% block javascripts %}

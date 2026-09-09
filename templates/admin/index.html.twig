@@ -2,13 +2,9 @@
 
 {% block body_id 'admin_index' %}
 
-{% block main %}
+{% block toolbar %}
     {{ include('components/_page_header.html.twig', { title: 'title.admin'|trans }) }}
-    
 {% endblock %}
 
-{% block sidebar %}
-    
-    {{ parent() }}
-
+{% block main %}
 {% endblock %}

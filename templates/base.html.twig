@@ -24,140 +24,66 @@
         <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
     </head>
 
-    <body id="{% block body_id %}{% endblock %}" data-controller="confirm" data-action="submit->confirm#intercept">
+    <body id="{% block body_id %}{% endblock %}" class="app-body" data-controller="confirm{% block body_controllers %}{% endblock %}" data-action="submit->confirm#intercept" {% block body_attr %}{% endblock %}>
         {% set current_route = app.request.attributes.get('_route') %}
-        {% block header %}
-            <header>
-                <nav class="navbar navbar-expand-md fixed-top app-navbar {{ app.environment }}" role="navigation">
-                    <div class="container-fluid">
-                        <a href="{{ path('dashboard_index') }}" class="navbar-brand">
-                            Birokrat
-                            {% if app.environment == 'dev' %}
-                                <span class="env-badge">DEV</span>
-                            {% endif %}
-                        </a>
-                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="{{ 'menu.toggle_nav'|trans }}">
-                            <span class="navbar-toggler-icon"></span>
-                        </button>
-                        <div class="navbar-collapse collapse" id="navbarResponsive">
-                            <ul class="navbar-nav">
-                                {% if app.user %}
-                                    <li class="nav-item">
-                                        <a class="nav-link{% if current_route == 'dashboard_index' %} active{% endif %}" href="{{ path('dashboard_index') }}">
-                                            <i class="fa fa-home" aria-hidden="true"></i> {{ 'menu.home'|trans }}
-                                        </a>
-                                    </li>
-                                {% endif %}
-                                {% block header_navigation_links %}
-                                    {% if is_granted('ROLE_ADMIN') %}
-                                        <li class="nav-item dropdown">
-                                            <a class="nav-link dropdown-toggle{% if current_route starts with 'admin_' %} active{% endif %}" data-bs-toggle="dropdown" href="{{ path('admin_index') }}">
-                                                <i class="fa fa-lock" aria-hidden="true"></i> {{ 'menu.admin'|trans }}
-                                            </a>
-                                            <div class="dropdown-menu" aria-labelledby="admin">
-                                                <a class="dropdown-item" href="{{ path('admin_index') }}">{{ 'menu.admin'|trans }}</a>
-                                                <div class="dropdown-divider"></div>
-                                                <a class="dropdown-item" href="{{ path('admin_user_index') }}">{{ 'menu.users'|trans }}</a>
-                                            </div>
-                                        </li>
-                                    {% endif %}
-                                {% endblock %}
-                            </ul>
-                            <ul class="navbar-nav ms-auto">
-                                <li class="nav-item dropdown" data-controller="theme">
-                                    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" id="themeMenu">
-                                        <i class="fa fa-adjust" aria-hidden="true"></i> {{ 'theme.label'|trans }}
-                                    </a>
-                                    <ul class="dropdown-menu dropdown-menu-end" role="menu" aria-labelledby="themeMenu">
-                                        <li>
-                                            <a class="dropdown-item" href="#" data-theme-target="option" data-theme-value="light" data-action="theme#light" role="menuitemradio">
-                                                <i class="fa fa-sun" aria-hidden="true"></i> {{ 'theme.light'|trans }}
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a class="dropdown-item" href="#" data-theme-target="option" data-theme-value="dark" data-action="theme#dark" role="menuitemradio">
-                                                <i class="fa fa-moon" aria-hidden="true"></i> {{ 'theme.dark'|trans }}
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a class="dropdown-item" href="#" data-theme-target="option" data-theme-value="system" data-action="theme#system" role="menuitemradio">
-                                                <i class="fa fa-desktop" aria-hidden="true"></i> {{ 'theme.system'|trans }}
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </li>
-                                {% if app.user %}
-                                    <li class="nav-item dropdown">
-                                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">
-                                            <i class="fa fa-user" aria-hidden="true"></i>
-                                            {{ app.user.fullname }}
-                                        </a>
-                                        <ul class="dropdown-menu dropdown-menu-end" role="menu" aria-labelledby="user">
-                                            <li>
-                                                <a class="dropdown-item" href="{{ path('user_show', {'id': app.user.id}) }}">
-                                                    <i class="fa fa-edit" aria-hidden="true"></i> {{ 'menu.user'|trans }}
-                                                </a>
-                                            </li>
-                                            <li><hr class="dropdown-divider"></li>
-                                            <li>
-                                                <a class="dropdown-item" href="{{ path('app_logout') }}">
-                                                    <i class="fa fa-sign-out-alt" aria-hidden="true"></i> {{ 'menu.logout'|trans }}
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </li>
-                                    <li class="nav-item dropdown">
-                                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" id="locales">
-                                            <i class="fa fa-globe" aria-hidden="true"></i> {{ app.request.locale }}
-                                        </a>
-                                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="locales">
-                                            {% for locale in locales|split('|') %}
-                                                <a class="dropdown-item" {% if app.request.locale == locale %}aria-checked="true"{% else %}aria-checked="false"{% endif %}
-                                                    href="{{ path(app.request.attributes.get('_route', 'dashboard_index'), app.request.attributes.get('_route_params', {})|merge({_locale: locale})) }}">
-                                                    {{ locale|locale_name|capitalize }}
-                                                </a>
-                                            {% endfor %}
-                                        </div>
-                                    </li>
-                                {% endif %}
-                            </ul>
-                        </div>
-                    </div>
-                </nav>
-            </header>
-        {% endblock %}
+        {% block header %}{% endblock %}
 
-        <div id="main_container" class="container-fluid">
-            {% block body %}
-                <div class="row g-4">
-                    <div id="main" class="col-lg-9">
+        {% block body %}
+            <div class="app-shell">
+                {% if app.user %}
+                    <aside class="app-sidenav d-none d-lg-flex" aria-label="{{ 'menu.toggle_nav'|trans }}">
+                        {{ include('components/_app_nav.html.twig') }}
+                    </aside>
+                {% endif %}
+
+                <div class="app-content">
+                    <header class="app-topbar">
+                        {% if app.user %}
+                            <button class="btn btn-outline-secondary d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#navOffcanvas" aria-controls="navOffcanvas" aria-label="{{ 'menu.toggle_nav'|trans }}">
+                                <i class="fa fa-bars" aria-hidden="true"></i>
+                            </button>
+                            <a href="{{ path('dashboard_index') }}" class="app-brand d-lg-none">
+                                Birokrat
+                                {% if app.environment == 'dev' %}
+                                    <span class="env-badge">DEV</span>
+                                {% endif %}
+                            </a>
+                        {% else %}
+                            <a href="{{ path('dashboard_index') }}" class="app-brand">Birokrat</a>
+                        {% endif %}
+                        {{ include('components/_topbar_actions.html.twig') }}
+                    </header>
+
+                    <main class="app-main">
                         {{ include('default/_flash_messages.html.twig') }}
-                        {% block main %}
-                        {% endblock %}
-                    </div>
+                        {% block toolbar %}{% endblock %}
+                        {% set filter_html %}{% block filters %}{% endblock %}{% endset %}
+                        {% if filter_html|trim is not empty %}
+                            {{ include('components/_filter_bar.html.twig', { content: filter_html }) }}
+                        {% endif %}
+                        {% block main %}{% endblock %}
+                    </main>
 
-                    <div id="sidebar" class="col-lg-3">
-                        <div class="sidebar-panel">
-                            {% block sidebar %}
-                            {% endblock %}
-                        </div>
+                    {% block footer %}
+                        {{ include('components/_footer.html.twig') }}
+                    {% endblock %}
+                </div>
+            </div>
+
+            {% if app.user %}
+                <div class="offcanvas offcanvas-start" tabindex="-1" id="navOffcanvas" aria-labelledby="navOffcanvasLabel">
+                    <div class="offcanvas-header">
+                        <h2 class="offcanvas-title h5" id="navOffcanvasLabel">Birokrat</h2>
+                        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="{{ 'label.close'|trans }}"></button>
+                    </div>
+                    <div class="offcanvas-body">
+                        {{ include('components/_app_nav.html.twig') }}
                     </div>
                 </div>
-            {% endblock %}
-        </div>
-
-        {% block footer %}
-            <footer class="app-footer">
-                <div class="container">
-                    <div class="row">
-                        <div id="footer-copyright" class="col-md-6">
-                            <p class="mb-0"><span class="copyleft">&copy;</span> 2018 - {{ 'now'|date('Y') }} GZT Project</p>
-                        </div>
-                        <div id="footer-resources" class="col-md-6"></div>
-                    </div>
-                </div>
-            </footer>
+            {% endif %}
         {% endblock %}
+
+        {% block sidebar %}{% endblock %}
 
         {{ include('_notificationModal.html.twig') }}
         {% block javascripts %}

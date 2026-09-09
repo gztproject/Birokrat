@@ -1,11 +1,13 @@
+<div class="list-table-wrap">
+<div class="table-responsive">
 <table class="table table-hover align-middle" id="country_table">
     <thead>
         <tr>
             <th scope="col">{{ 'label.countryName'|trans }}</th>
-            <th scope="col">{{ 'label.countryNameInt'|trans }}</th>
+            <th scope="col" class="d-none d-lg-table-cell">{{ 'label.countryNameInt'|trans }}</th>
             <th scope="col">{{ 'label.a2'|trans }}</th>
-            <th scope="col">{{ 'label.a3'|trans }}</th>
-            <th scope="col">{{ 'label.n3'|trans }}</th>
+            <th scope="col" class="d-none d-md-table-cell">{{ 'label.a3'|trans }}</th>
+            <th scope="col" class="d-none d-md-table-cell">{{ 'label.n3'|trans }}</th>
             <th scope="col" class="text-end"><i class="fa fa-cogs" aria-hidden="true"></i> {{ 'label.actions'|trans }}</th>
         </tr>
     </thead>
@@ -13,10 +15,10 @@
         {% for country in countries %}
         <tr>
             <td>{{ country.name }}</td>
-            <td>{{ country.nameInt }}</td>
+            <td class="d-none d-lg-table-cell">{{ country.nameInt }}</td>
             <td>{{ country.a2 }}</td>
-            <td>{{ country.a3 }}</td>
-            <td>{{ country.n3 }}</td>
+            <td class="d-none d-md-table-cell">{{ country.a3 }}</td>
+            <td class="d-none d-md-table-cell">{{ country.n3 }}</td>
             <td class="text-end">
                 <div class="item-actions">
                     <a href="{{ path('country_show', {'id': country.id}) }}" class="btn btn-sm btn-primary">
@@ -30,3 +32,20 @@
     {% endfor %}
     </tbody>
 </table>
+</div>
+</div>
+<div class="list-cards">
+    {% for country in countries %}
+        <div class="list-card">
+            <div>
+                <div class="list-card-title">{{ country.name }}</div>
+                <div class="list-card-sub">{{ country.a2 }} · {{ country.a3 }} · {{ country.n3 }}</div>
+            </div>
+            <div class="list-card-actions">
+                <a href="{{ path('country_show', {'id': country.id}) }}" class="btn btn-sm btn-primary">{{ 'action.show'|trans }}</a>
+            </div>
+        </div>
+    {% else %}
+        <div class="empty-state">{{ 'label.no_posts_found'|trans }}</div>
+    {% endfor %}
+</div>

@@ -1,0 +1,31 @@
+list:
+  loading: Loading…
+  end: End of list
+
+footer:
+  version: Version
+
+dashboard:
+  kpi:
+    receivables: Receivables
+    overdue: Overdue
+    unpaidBills: Unpaid bills
+    open: open
+  recent:
+    invoices: Recent invoices
+    incoming: Unpaid bills
+    travel: Recent travel expenses
+    transactions: Recent transactions
+  layout:
+    kpis: Overview
+    drag: Move section
+    hide: Hide section
+    show: Show
+    restore: Hidden sections
+    reset: Reset layout
+
+menu:
+  settings: Settings
+  dddddd: DDD-DDD
+  bilanca: Balance sheet
+  turnout: P&L

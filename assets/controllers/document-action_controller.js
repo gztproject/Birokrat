@@ -166,6 +166,9 @@ export default class extends Controller {
     }
 
     openRow(event) {
+        if (event.target.closest('a, button, input, .list-card-actions, .item-actions')) {
+            return;
+        }
         const id = event.currentTarget.dataset.id;
         if (!id) {
             return;

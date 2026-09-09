@@ -12,6 +12,8 @@ parameters:
     app.notifications.email_sender: anonymous@example.com
     signatures_directory: '%kernel.project_dir%/public/uploads/signatures'
     incoming_scans_directory: '%kernel.project_dir%/public/uploads/incoming-invoices'
+    env(APP_VERSION): ''
+    app.version: '%env(string:default::APP_VERSION)%'
 
 services:
     # default configuration for services in *this* file
@@ -27,13 +29,18 @@ services:
     # this creates a service per class whose id is the fully-qualified class name
     App\:
         resource: '../src/*'
-        exclude: '../src/{Entity,Migrations,Tests,Kernel.php}'
+        exclude: '../src/{Entity,Migrations,Tests,Kernel.php,Version}'
 
     # controllers are imported separately to make sure services can be injected
     # as action arguments even if you don't extend any base controller class
     App\Controller\:
         resource: '../src/Controller'
         tags: ['controller.service_arguments']
+
+    App\Version\AppVersion:
+        arguments:
+            $projectDir: '%kernel.project_dir%'
+            $configuredVersion: '%app.version%'
 
     # the `qipsius.tcpdf` service will be injected when a
     # `Qipsius\TCPDFBundle\Controller\TCPDFController` type-hint is detected

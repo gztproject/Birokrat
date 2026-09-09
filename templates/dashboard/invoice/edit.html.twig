@@ -7,19 +7,16 @@
     {{ encore_entry_link_tags('css/invoice') }}
 {% endblock %}
 
-{% block main %}
+{% block toolbar %}
     {{ include('components/_page_header.html.twig', { title: 'title.invoice_edit'|trans }) }}
+{% endblock %}
 
+{% block main %}
     {{ include('dashboard/invoice/_form.html.twig', {
         form: form,
         button_label: 'label.update_invoice'|trans,
         include_back_to_home_link: true,        
     }, with_context = false) }}
-
-{% endblock %}
-
-{% block sidebar %}
-    {{ parent() }}
 
 {% endblock %}
 

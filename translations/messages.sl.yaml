@@ -1,3 +1,29 @@
+list:
+  loading: Nalagam…
+  end: Konec seznama
+
+footer:
+  version: Verzija
+
+dashboard:
+  kpi:
+    receivables: Terjatve
+    overdue: Zapadlo
+    unpaidBills: Neplačani prejeti
+    open: odprtih
+  recent:
+    invoices: Zadnji izdani
+    incoming: Neplačani prejeti
+    travel: Zadnji potni stroški
+    transactions: Zadnje transakcije
+  layout:
+    kpis: Pregled
+    drag: Premakni razdelek
+    hide: Skrij razdelek
+    show: Prikaži
+    restore: Skriti razdelki
+    reset: Ponastavi razporeditev
+
 title:
   list:
     users: Seznam uporabnikov
@@ -101,6 +127,10 @@ menu:
   kontos: Konti
   posts: Pošte
   countries: Države
+  settings: Nastavitve
+  dddddd: DDD-DDD
+  bilanca: Bilanca
+  turnout: Izkaz
 
 help:
   recipientList: "Ime <naslov@domena.si>; drugi@domena.si"

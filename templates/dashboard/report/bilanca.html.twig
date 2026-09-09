@@ -7,7 +7,17 @@
 {{ encore_entry_link_tags('css/report') }}
 {% endblock %}
 
+{% block toolbar %}
+    {{ include('components/_page_header.html.twig', { title: 'menu.bilanca'|trans }) }}
+    {{ include('dashboard/report/_report_nav.html.twig') }}
+{% endblock %}
+
+{% block filters %}
+    {{ include('common/filters/_dateOrgYearFilter.html.twig') }}
+{% endblock %}
+
 {% block main %}
+<div class="report-scroll">
 
 <h2 class="report-section-title">Priloga 3</h2>
 <h3 class="report-section-title">Podatki iz bilance stanja</h3>
@@ -648,14 +658,7 @@
 
 	</div>
 </div>
-
-{% endblock %}
-
-{% block sidebar %}
-
-{{ parent() }}
-{{ include('common/filters/_dateOrgYearFilter.html.twig') }}
-{{ include('dashboard/report/_report_nav.html.twig') }}
+</div>
 
 {% endblock %}
 

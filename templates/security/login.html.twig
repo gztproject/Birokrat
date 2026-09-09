@@ -3,41 +3,48 @@
 {% block body_id 'login' %}
 
 {% block body %}
-    <div class="row justify-content-center">
-        <div class="col-md-5 col-lg-4">
-            {{ include('default/_flash_messages.html.twig') }}
-            {% if error %}
-                <div class="alert alert-danger">
-                    {{ error.messageKey|trans(error.messageData, 'security') }}
-                </div>
-            {% endif %}
+    <div class="auth-shell">
+        <header class="app-topbar">
+            <a href="{{ path('dashboard_index') }}" class="app-brand">Birokrat</a>
+            {{ include('components/_topbar_actions.html.twig') }}
+        </header>
+        <main class="app-main">
+            <div>
+                {{ include('default/_flash_messages.html.twig') }}
+                {% if error %}
+                    <div class="alert alert-danger">
+                        {{ error.messageKey|trans(error.messageData, 'security') }}
+                    </div>
+                {% endif %}
 
-            <div class="card auth-card mb-3">
-                <div class="card-header">
-                    <h1 class="h4 mb-0"><i class="fa fa-lock" aria-hidden="true"></i> {{ 'title.login'|trans }}</h1>
-                </div>
-                <div class="card-body">
-                    <form action="{{ path('app_login') }}" method="post">
-                        <div class="mb-3">
-                            <label class="form-label" for="inputUsername">{{ 'label.username'|trans }}</label>
-                            <input type="text" value="{{ last_username }}" name="_username" id="inputUsername" class="form-control" autocomplete="username" required autofocus>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label" for="inputPassword">{{ 'label.password'|trans }}</label>
-                            <input type="password" name="_password" id="inputPassword" class="form-control" autocomplete="current-password" required>
-                        </div>
-                        <div class="mb-3 form-check">
-                            <input class="form-check-input" type="checkbox" name="_remember_me" id="rememberMe">
-                            <label class="form-check-label" for="rememberMe">{{ 'label.rememberMe'|trans }}</label>
-                        </div>
-                        <input type="hidden" name="_target_path" value="{{ app.request.query.get('redirect_to') }}"/>
-                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}"/>
-                        <button type="submit" class="btn btn-primary w-100">
-                            <i class="fa fa-sign-in-alt" aria-hidden="true"></i> {{ 'action.sign_in'|trans }}
-                        </button>
-                    </form>
+                <div class="card auth-card mb-3">
+                    <div class="card-header">
+                        <h1 class="h4 mb-0"><i class="fa fa-lock" aria-hidden="true"></i> {{ 'title.login'|trans }}</h1>
+                    </div>
+                    <div class="card-body">
+                        <form action="{{ path('app_login') }}" method="post">
+                            <div class="mb-3">
+                                <label class="form-label" for="inputUsername">{{ 'label.username'|trans }}</label>
+                                <input type="text" value="{{ last_username }}" name="_username" id="inputUsername" class="form-control" autocomplete="username" required autofocus>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label" for="inputPassword">{{ 'label.password'|trans }}</label>
+                                <input type="password" name="_password" id="inputPassword" class="form-control" autocomplete="current-password" required>
+                            </div>
+                            <div class="mb-3 form-check">
+                                <input class="form-check-input" type="checkbox" name="_remember_me" id="rememberMe">
+                                <label class="form-check-label" for="rememberMe">{{ 'label.rememberMe'|trans }}</label>
+                            </div>
+                            <input type="hidden" name="_target_path" value="{{ app.request.query.get('redirect_to') }}"/>
+                            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}"/>
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="fa fa-sign-in-alt" aria-hidden="true"></i> {{ 'action.sign_in'|trans }}
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
-        </div>
+        </main>
+        {{ include('components/_footer.html.twig') }}
     </div>
 {% endblock %}

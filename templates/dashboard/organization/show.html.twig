@@ -2,8 +2,24 @@
 
 {% block body_id entity ~ '_show' %}
 
+{% block toolbar %}
+    <div class="page-toolbar">
+        <h1 class="page-title">{{ organization.name }}</h1>
+        <div class="page-toolbar-actions">
+            <a href="{{ path(entity ~ '_edit', {id: organization.id}) }}" class="btn btn-sm btn-success">
+                <i class="fa fa-edit" aria-hidden="true"></i> {{ 'action.edit_contents'|trans }}
+            </a>
+            {% if entity == 'organization' %}
+                <a href="{{ path('organization_settings_edit', {id: organization.id}) }}" class="btn btn-sm btn-primary">
+                    <i class="fa fa-cog" aria-hidden="true"></i> {{ 'action.edit_settings'|trans }}
+                </a>
+            {% endif %}
+            {{ include('dashboard/organization/_delete_form.html.twig', {organization: organization, entity: entity}, with_context = false) }}
+        </div>
+    </div>
+{% endblock %}
+
 {% block main %}
-    {{ include('components/_page_header.html.twig', { title: organization.name }) }}
     <div class="card app-card mb-3"> 
     <div class="card-header">
             <strong>{{ ('label.' ~ entity ~ 'Data')|trans }}</strong>
@@ -23,14 +39,10 @@
         <div class="card-header">
             <strong>{{ 'label.address'|trans }}</strong>
         </div> 
-        <div class="card-body">            
-            <div class="card border-primary mb-3" style="max-width: 15rem;">               
-                <div class="card-body">                            
-                    {% for line in organization.address.getFullFormattedAddress %}
-                        {{ line }}</br>
-                    {% endfor %}
-                </div>  
-            </div>  
+        <div class="card-body">
+            {% for line in organization.address.getFullFormattedAddress %}
+                {{ line }}</br>
+            {% endfor %}
         </div>
     </div>
     
@@ -61,23 +73,23 @@
                     <td>{{ 'label.referenceModel'|trans }}</td>
                     <td>{{ organization.organizationSettings.referenceModel | default("") }}</td>
                 </tr>
-                <tr>
+                <tr class="table-primary">
                     <td>{{ 'label.travelExpenseRate'|trans }}</td>
                     <td>{{ organization.organizationSettings.travelExpenseRate | default("") }}</td>
                 </tr>
-                <tr>
+                <tr class="table-primary">
                     <td>{{ 'label.autoCreatePerDiem'|trans }}</td>
                     <td>{{ organization.organizationSettings.autoCreatePerDiem ? 'label.yes'|trans : 'label.no'|trans }}</td>
                 </tr>
-                <tr>
+                <tr class="table-primary">
                     <td>{{ 'label.perDiemValue'|trans }}</td>
                     <td>{{ organization.organizationSettings.perDiemValue | default("") }}</td>
                 </tr>
-                <tr>
+                <tr class="table-primary">
                     <td>{{ 'label.autoCreateLunch'|trans }}</td>
                     <td>{{ organization.organizationSettings.autoCreateLunch ? 'label.yes'|trans : 'label.no'|trans }}</td>
                 </tr>
-                <tr>
+                <tr class="table-primary">
                     <td>{{ 'label.lunchValue'|trans }}</td>
                     <td>{{ organization.organizationSettings.lunchValue | default("") }}</td>
                 </tr>
@@ -88,27 +100,6 @@
     </div>
     {% endif %}
 
-{% endblock %}
-
-{% block sidebar %}
-    <div class="section">
-        <a href="{{ path(entity ~ '_edit', {id: organization.id}) }}" class="btn btn-sm w-100 btn-success">
-            <i class="fa fa-edit" aria-hidden="true"></i> {{ 'action.edit_contents'|trans }}
-        </a>
-    </div>
-    {% if entity == 'organization' %}
-    <div class="section">
-        <a href="{{ path('organization_settings_edit', {id: organization.id}) }}" class="btn btn-sm w-100 btn-primary">
-            <i class="fa fa-cog" aria-hidden="true"></i> {{ 'action.edit_settings'|trans }}
-        </a>
-    </div>
-    {% endif %}
-
-    <div class="section">
-        {{ include('dashboard/organization/_delete_form.html.twig', {organization: organization, entity: entity}, with_context = false) }}
-    </div>
-
-    {{ parent() }}
 {% endblock %}
 
 {% block javascripts %}

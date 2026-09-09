@@ -2,8 +2,19 @@
 
 {% block body_id 'partner_show' %}
 
+{% block toolbar %}
+    <div class="page-toolbar">
+        <h1 class="page-title">{{ partner.name }}</h1>
+        <div class="page-toolbar-actions">
+            <a href="{{ path('partner_edit', {id: partner.id}) }}" class="btn btn-sm btn-success">
+                <i class="fa fa-edit" aria-hidden="true"></i> {{ 'action.edit_contents'|trans }}
+            </a>
+            {{ include('dashboard/partner/_delete_form.html.twig', {partner: partner}, with_context = false) }}
+        </div>
+    </div>
+{% endblock %}
+
 {% block main %}
-    {{ include('components/_page_header.html.twig', { title: partner.name }) }}
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-4">
@@ -39,14 +50,10 @@
                     <div class="card-header">
                         <strong>{{ 'label.address'|trans }}</strong>
                     </div> 
-                    <div class="card-body">            
-                        <div class="card border-primary mb-3" style="max-width: 15rem;">               
-                            <div class="card-body">                            
-                                {% for line in partner.address.getFullFormattedAddress %}
-                                    {{ line }}</br>
-                                {% endfor %}
-                            </div>  
-                        </div>  
+                    <div class="card-body">
+                        {% for line in partner.address.getFullFormattedAddress %}
+                            {{ line }}</br>
+                        {% endfor %}
                     </div>
                 </div>
             </div>
@@ -58,14 +65,10 @@
                         <div class="card-header">
                             <strong>{{ 'label.invoices'|trans }}</strong>
                         </div>  
-                        <div class="card-body">            
-                            <div class="card border-primary mb-3">               
-                                <div class="card-body">      
-                                    {{ include('dashboard/invoice/_table.html.twig', {
-                                        invoices: partner.invoices
-                                        }, with_context = false) }}                                                                  
-                                </div>      
-                            </div>  
+                        <div class="card-body">
+                            {{ include('dashboard/invoice/_table.html.twig', {
+                                invoices: partner.invoices
+                            }, with_context = false) }}
                         </div>
                     </div>
                 </div>
@@ -78,34 +81,16 @@
                         <div class="card-header">
                             <strong>{{ 'label.incomingInvoices'|trans }}</strong>
                     </div>  
-                        <div class="card-body">            
-                            <div class="card border-primary mb-3">               
-                                <div class="card-body">      
-                                    {{ include('dashboard/incomingInvoice/_table.html.twig', {
-                                        invoices: partner.incomingInvoices
-                                        }, with_context = false) }}                                                                  
-                                </div>      
-                            </div>  
+                        <div class="card-body">
+                            {{ include('dashboard/incomingInvoice/_table.html.twig', {
+                                invoices: partner.incomingInvoices
+                            }, with_context = false) }}
                         </div>
                     </div>
                 </div>
             </div>
         {% endif %}
     </div>
-{% endblock %}
-
-{% block sidebar %}
-    <div class="section">
-        <a href="{{ path('partner_edit', {id: partner.id}) }}" class="btn btn-sm w-100 btn-success">
-            <i class="fa fa-edit" aria-hidden="true"></i> {{ 'action.edit_contents'|trans }}
-        </a>
-    </div>
-
-    <div class="section">
-        {{ include('dashboard/partner/_delete_form.html.twig', {partner: partner}, with_context = false) }}
-    </div>
-
-    {{ parent() }}
 {% endblock %}
 
 {% block javascripts %}

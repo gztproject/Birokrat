@@ -49,7 +49,7 @@
         </div>
 
         <div class="table-responsive mt-4">
-            <table id="invoice-items-table" class="table table-sm align-middle">
+            <table id="invoice-items-table" class="table table-sm align-middle collection-as-cards">
                 <thead>
                     <tr>
                         <th>{{ 'label.code'|trans }}</th>
@@ -75,16 +75,16 @@
                         {% set price = item.price|default(0) %}
                         {% set discount = item.discount|default(0) %}
                         <tr class="invoice-item invoice-item-tr-{{ loop.index0 }}">
-                            <td class="codeInput">{{ form_widget(invoiceItem.code, {attr: {class: 'form-control codeInput'}}) }}</td>
-                            <td class="nameInput">{{ form_widget(invoiceItem.name, {attr: {class: 'form-control nameInput'}}) }}</td>
-                            <td class="quantityInput">{{ form_widget(invoiceItem.quantity, {attr: {class: 'form-control quantityInput'}}) }}</td>
-                            <td class="unitInput">{{ form_widget(invoiceItem.unit, {attr: {class: 'form-control unitInput'}}) }}</td>
-                            <td class="priceInput">{{ form_widget(invoiceItem.price, {attr: {class: 'form-control priceInput'}}) }}</td>
-                            <td class="discountInput">{{ form_widget(invoiceItem.discount, {attr: {class: 'form-control discountInput'}}) }}</td>
-                            <td class="valueInput">
+                            <td class="codeInput" data-label="{{ 'label.code'|trans }}">{{ form_widget(invoiceItem.code, {attr: {class: 'form-control codeInput'}}) }}</td>
+                            <td class="nameInput" data-label="{{ 'label.name'|trans }}">{{ form_widget(invoiceItem.name, {attr: {class: 'form-control nameInput'}}) }}</td>
+                            <td class="quantityInput" data-label="{{ 'label.quantity'|trans }}">{{ form_widget(invoiceItem.quantity, {attr: {class: 'form-control quantityInput'}}) }}</td>
+                            <td class="unitInput" data-label="{{ 'label.unit'|trans }}">{{ form_widget(invoiceItem.unit, {attr: {class: 'form-control unitInput'}}) }}</td>
+                            <td class="priceInput" data-label="{{ 'label.price'|trans }}">{{ form_widget(invoiceItem.price, {attr: {class: 'form-control priceInput'}}) }}</td>
+                            <td class="discountInput" data-label="{{ 'label.discount'|trans }}">{{ form_widget(invoiceItem.discount, {attr: {class: 'form-control discountInput'}}) }}</td>
+                            <td class="valueInput" data-label="{{ 'label.value'|trans }}">
                                 <input id="iiValue_{{ loop.index0 }}" class="form-control valueInput" type="text" placeholder="0,00" value="{{ ((price * qty) * (1 - discount))|number_format(2, ',', ' ') }}" readonly>
                             </td>
-                            <td class="removeBtn">
+                            <td class="removeBtn" data-label="">
                                 <button type="button" class="btn btn-sm btn-danger" data-action="invoice-form#removeItem">
                                     <i class="fa fa-minus" aria-hidden="true"></i>
                                 </button>

@@ -2,8 +2,11 @@
 
 {% block body_id 'transaction_new' %}
 
-{% block main %}
+{% block toolbar %}
     {{ include('components/_page_header.html.twig', { title: 'title.new.transaction'|trans }) }}
+{% endblock %}
+
+{% block main %}
     {{ include('dashboard/transaction/_form.html.twig', {
         form: form,
         button_label: 'label.create.transaction'|trans,
@@ -12,11 +15,6 @@
         include_templates: true,   
         hasDocument: false,   
     }, with_context = false) }}
-
-{% endblock %}
-
-{% block sidebar %}
-    {{ parent() }}
 
 {% endblock %}
 

@@ -2,13 +2,16 @@
 
 {% block body_id 'travelExpense_show' %}
 
-{% block main %}
-    {{ include('components/_page_header.html.twig', { title: travelExpense.TravelDescription }) }}
-    {% endblock %}
+{% block toolbar %}
+    <div class="page-toolbar">
+        <h1 class="page-title">{{ travelExpense.TravelDescription }}</h1>
+        <div class="page-toolbar-actions">
+            <a href="{{ path('travelExpense_pdf', {'id': travelExpense.id}) }}" target="_blank" class="btn btn-sm btn-success">
+                <i class="fa fa-file-pdf" aria-hidden="true"></i> {{ 'action.pdf'|trans }}
+            </a>
+        </div>
+    </div>
+{% endblock %}
 
-{% block sidebar %}
-        {{ parent() }}
-        <a href="{{ path('travelExpense_pdf', {'id': travelExpense.id}) }}" target="_blank" class="btn btn-sm w-100 btn-success">
-            <i class="fa fa-file-pdf" aria-hidden="true"></i> {{ 'action.pdf'|trans }}
-        </a>
+{% block main %}
 {% endblock %}
