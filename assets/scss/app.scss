@@ -26,3 +26,49 @@
 .TECheckBox {
     margin-left: $input-padding-x;
 }
+
+.sl-date {
+    position: relative;
+    width: 100%;
+}
+
+.input-group > .sl-date {
+    flex: 1 1 auto;
+    min-width: 0;
+    width: 1%;
+}
+
+.input-group > .sl-date:not(:last-child) .sl-date-display {
+    border-bottom-right-radius: 0;
+    border-top-right-radius: 0;
+}
+
+.sl-date-display {
+    padding-right: 2.5rem;
+}
+
+.sl-date-icon {
+    color: var(--bs-secondary-color);
+    pointer-events: none;
+    position: absolute;
+    right: 0.8rem;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.sl-date-native {
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    color: transparent;
+    cursor: pointer;
+    height: 100%;
+    max-width: 2.75rem;
+    min-width: 0;
+    opacity: 0;
+    padding: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 2.75rem;
+}

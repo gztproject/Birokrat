@@ -5,9 +5,17 @@
     </div>
     <div class="mb-3">
         <label class="form-label" for="dateFieldFrom">{{ 'label.dateFrom'|trans }}</label>
-        <input type="date" id="dateFieldFrom" class="form-control" lang="sl" data-org-filter-target="from" data-action="change->org-filter#onFromChange">
+        {{ include('components/_sl_date.html.twig', { native: {
+            id: 'dateFieldFrom',
+            'data-org-filter-target': 'from',
+            'data-action': 'change->org-filter#onFromChange',
+        }}) }}
         <label class="form-label" for="dateFieldTo">{{ 'label.dateTo'|trans }}</label>
-        <input type="date" id="dateFieldTo" class="form-control" lang="sl" data-org-filter-target="to" data-action="change->org-filter#onToChange">
+        {{ include('components/_sl_date.html.twig', { native: {
+            id: 'dateFieldTo',
+            'data-org-filter-target': 'to',
+            'data-action': 'change->org-filter#onToChange',
+        }}) }}
     </div>
     <div class="mb-3">
         <button type="button" id="clearFilterBtn" class="btn btn-outline-danger w-100" data-action="org-filter#clear">{{ 'label.clear' | trans }}</button>

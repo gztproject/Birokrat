@@ -1,5 +1,28 @@
 {% extends 'bootstrap_5_layout.html.twig' %}
 
+{% block date_widget %}
+    {%- if widget == 'single_text' and type|default('date') == 'date' -%}
+        <div class="sl-date" data-controller="sl-date">
+            <input type="text"
+                   class="form-control sl-date-display"
+                   data-sl-date-target="display"
+                   data-action="input->sl-date#onDisplayInput blur->sl-date#onDisplayBlur"
+                   placeholder="d. m. llll"
+                   autocomplete="off"
+                   inputmode="decimal">
+            <span class="sl-date-icon" aria-hidden="true"><i class="fa fa-calendar"></i></span>
+            {%- set attr = attr|merge({
+                'data-sl-date-target': 'native',
+                'data-action': (attr['data-action']|default('') ~ ' input->sl-date#onNativeChange change->sl-date#onNativeChange click->sl-date#openPicker')|trim,
+                class: (attr.class|default('') ~ ' sl-date-native')|trim,
+            }) -%}
+            {{- parent() -}}
+        </div>
+    {%- else -%}
+        {{- parent() -}}
+    {%- endif -%}
+{% endblock %}
+
 {% block form_errors -%}
     {% if errors|length > 0 -%}
         {% if form is not rootform %}<div class="invalid-feedback d-block">{% else %}<div class="alert alert-danger">{% endif %}
