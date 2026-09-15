@@ -2,7 +2,7 @@
         <tr>
             <td class="col-date">{{ travelExpense.dateString }}</td>
             <td class="col-doc">{{ travelExpense.travelDescription }}</td>
-            <td class="tabular-nums d-none d-md-table-cell">{{ travelExpense.totalDistance | format_number({fraction_digit:2}) }} km</td>
+            <td class="tabular-nums d-none d-md-table-cell">{{ travelExpense.totalDistance | number }} km</td>
             <td class="col-sum money">{{ (travelExpense.totalDistance * travelExpense.rate) | money}} </td>
             <td class="col-actions text-end">
                 {% embed 'components/_action_menu.html.twig' %}

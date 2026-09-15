@@ -108,10 +108,10 @@
                                 <tr>
                                     <td>{{ ii.code }}</td>
                                     <td>{{ ii.name }}</td>
-                                    <td>{{ ii.quantity }}</td>
+                                    <td>{{ ii.quantity|number }}</td>
                                     <td>{{ ii.unit }}</td>
                                     <td class="money">{{ ii.price | money }}</td>
-                                    <td class="tabular-nums">{{ ii.discount * 100 }} %</td>
+                                    <td class="tabular-nums">{{ (ii.discount * 100)|number }} %</td>
                                     <td class="money">{{ (ii.price * (1-ii.discount) * ii.quantity) | money }}</td>
                                 </tr>
                             {% endfor %}
@@ -136,7 +136,7 @@
                             <td>Skupaj:</td><td class="money">{{ (invoice.totalValue) | money }}</td>
                         </tr>
                         <tr>
-                            <td>Popust:</td><td class="money">{{ (invoice.discount * 100)|number_format(2, ',', ' ')}} %</td>
+                            <td>Popust:</td><td class="money">{{ (invoice.discount * 100)|number }} %</td>
                         </tr>
                         <tr>
                             <td>Za plačilo:</td><td class="money">{{ invoice.totalPrice | money }}</td>

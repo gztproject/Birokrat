@@ -639,8 +639,8 @@
 						>189</span></td>
 					<td class="lbl"><span >ŠTEVILO
 							MESECEV POSLOVANJA</span></td>
-					<td class="input oddcolor">{{ turnoutReportThisYear.p189|number_format(0, ',', ' ') }}</td>
-					<td class="input evencolor">{{ turnoutReportLastYear.p189|number_format(0, ',', ' ') }}</td>
+					<td class="input oddcolor">{{ turnoutReportThisYear.p189|number(0) }}</td>
+					<td class="input evencolor">{{ turnoutReportLastYear.p189|number(0) }}</td>
 				</tr>
 							</tbody>
 		</table>

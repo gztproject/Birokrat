@@ -1,4 +1,5 @@
 {% block date_time_picker_widget %}
+    {%- set attr = attr|merge({lang: attr.lang|default('sl')}) -%}
     {{ block('date_widget') }}
 {% endblock %}
 

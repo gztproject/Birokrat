@@ -5,6 +5,7 @@ namespace App\Entity\Geography;
 use Doctrine\ORM\Mapping as ORM;
 use App\Entity\Base\AggregateBase;
 use App\Entity\User\User;
+use App\Formatting\SlovenianFormat;
 
 #[ORM\Entity(repositoryClass: \App\Repository\AddressRepository::class)]
 class Address extends AggregateBase
@@ -101,16 +102,24 @@ class Address extends AggregateBase
 
     public function getFullAddress(): string
     {
-    	$address = $this->line1;
-    	if ($this->line2)
-    		$address .= ", " . $this->line2;
-    	$address .= ", " . $this->post->getNameAndCode() . ", " . $this->post->getCountry()->getName();
-    	return $address;
+    	return SlovenianFormat::address(
+    		$this->line1,
+    		$this->line2,
+    		$this->post->getCode() ?? '',
+    		$this->post->getName() ?? '',
+    		$this->post->getCountry()->getName() ?? '',
+    	);
     }
     
     public function getFullFormattedAddress(): array
     {
-    	return explode(", ", $this->getFullAddress());    	
+    	return SlovenianFormat::addressLines(
+    		$this->line1,
+    		$this->line2,
+    		$this->post->getCode() ?? '',
+    		$this->post->getName() ?? '',
+    		$this->post->getCountry()->getName() ?? '',
+    	);
     }
     
     public function __toString(): string

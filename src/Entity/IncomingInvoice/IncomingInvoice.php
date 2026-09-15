@@ -13,6 +13,7 @@ use App\Entity\Organization\Partner;
 use App\Entity\Transaction\Transaction;
 use App\Entity\Transaction\iTransactionDocument;
 use App\Entity\Transaction\CreateTransactionCommand;
+use App\Formatting\SlovenianFormat;
 use App\Entity\Transaction\AllocationPlanner;
 use App\Entity\Transaction\TransactionRole;
 
@@ -368,7 +369,7 @@ class IncomingInvoice extends AggregateBase implements iTransactionDocument {
 		return $this->dateOfIssue;
 	}
 	public function getDateOfIssueString(): string {
-		return $this->dateOfIssue->format ( 'j. n. Y' );
+		return SlovenianFormat::date($this->dateOfIssue);
 	}
 	public function getIssuer(): Partner {
 		return $this->issuer;
@@ -398,7 +399,7 @@ class IncomingInvoice extends AggregateBase implements iTransactionDocument {
 		return $this->dueDate;
 	}
 	public function getDueDateString(): string {
-		return $this->dueDate->format ( 'j. n. Y' );
+		return SlovenianFormat::date($this->dueDate);
 	}
 	public function getDueInDays(): int {
 		return date_diff ( $this->dueDate, $this->dateOfIssue, true )->format ( "%d" );
@@ -407,7 +408,7 @@ class IncomingInvoice extends AggregateBase implements iTransactionDocument {
 		return $this->datePaid;
 	}
 	public function getDatePaidString(): ?string {
-		return $this->datePaid->format ( 'j. n. Y' );
+		return $this->datePaid ? SlovenianFormat::date($this->datePaid) : null;
 	}
 	public function __toString() {
 		return "Incoming invoice " . $this->issuer->getName () . ": " . $this->number;

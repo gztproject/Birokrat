@@ -12,6 +12,7 @@ use App\Entity\Organization\Organization;
 use App\Entity\User\User;
 use Symfony\Component\Config\Definition\Exception\Exception;
 use App\Entity\Organization\Partner;
+use App\Formatting\SlovenianFormat;
 use App\Entity\Transaction\Transaction;
 use App\Entity\Transaction\iTransactionDocument;
 use App\Entity\Transaction\CreateTransactionCommand;
@@ -443,7 +444,7 @@ class Invoice extends AggregateBase implements iTransactionDocument
     
     public function getDateServiceRenderedFromString(): string
     {
-    	return $this->dateServiceRenderedFrom->format('j. n. Y');
+    	return SlovenianFormat::date($this->dateServiceRenderedFrom);
     }
     
     public function getDateServiceRenderedTo(): \DateTimeInterface
@@ -453,14 +454,14 @@ class Invoice extends AggregateBase implements iTransactionDocument
     
     public function getDateServiceRenderedToString(): string
     {
-    	return $this->dateServiceRenderedTo->format('j. n. Y');
+    	return SlovenianFormat::date($this->dateServiceRenderedTo);
     }
     
     public function getDateServiceRenderedString(): string
     {
-    	 $string = $this->dateServiceRenderedFrom->format('j. n. Y');
+    	 $string = SlovenianFormat::date($this->dateServiceRenderedFrom);
     	 if ($this->dateServiceRenderedTo > $this->dateServiceRenderedFrom)
-    	 	$string .= " - ".$this->dateServiceRenderedTo->format('j. n. Y');
+    	 	$string .= " - ".SlovenianFormat::date($this->dateServiceRenderedTo);
     	 return $string;
     }
     
@@ -471,7 +472,7 @@ class Invoice extends AggregateBase implements iTransactionDocument
     
     public function getDateOfIssueString(): string
     {
-    	return $this->dateOfIssue->format('j. n. Y');
+    	return SlovenianFormat::date($this->dateOfIssue);
     }
     
     public function getIssuer(): Organization
@@ -596,7 +597,7 @@ class Invoice extends AggregateBase implements iTransactionDocument
     
     public function getDueDateString(): string
     {
-    	return $this->dueDate->format('j. n. Y');
+    	return SlovenianFormat::date($this->dueDate);
     }
     
     /**
@@ -625,7 +626,7 @@ class Invoice extends AggregateBase implements iTransactionDocument
     
     public function getDatePaidString(): ?string
     {
-    	return $this->datePaid->format('j. n. Y');
+    	return $this->datePaid ? SlovenianFormat::date($this->datePaid) : null;
     }
 
     public function getDateCancelled(): ?\DateTimeInterface
@@ -635,7 +636,7 @@ class Invoice extends AggregateBase implements iTransactionDocument
     
     public function getDateCancelledString(): ?string
     {
-    	return $this->dateCancelled->format('j. n. Y');
+    	return $this->dateCancelled ? SlovenianFormat::date($this->dateCancelled) : null;
     }
     
     public function getCancelReason(): ?string

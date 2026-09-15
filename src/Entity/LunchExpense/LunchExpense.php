@@ -14,6 +14,7 @@ use App\Entity\User\User;
 use App\Entity\Transaction\CreateTransactionCommand;
 use Symfony\Component\Validator\Constraints\Date;
 use App\Entity\Organization\Organization;
+use App\Formatting\SlovenianFormat;
 use PhpParser\Node\Expr\Cast\Int_;
 
 #[ORM\Entity(repositoryClass: \App\Repository\LunchExpense\LunchExpenseRepository::class)]
@@ -156,7 +157,7 @@ class LunchExpense extends AggregateBase implements iTransactionDocument
     
     public function getDateString(): ?string
     {
-    	return $this->date->format('d. m. Y');
+    	return $this->date ? SlovenianFormat::date($this->date) : null;
     }    
     
     public function getSum(): float

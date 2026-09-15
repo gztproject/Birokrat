@@ -1,4 +1,5 @@
 import { Controller } from '@hotwired/stimulus';
+import { formatDecimal } from '../js/common/format';
 
 export default class extends Controller {
     static targets = ['container'];
@@ -18,7 +19,7 @@ export default class extends Controller {
         const distance = await this.lookupDistance(originCity, destinationCity);
         const distanceInput = rows[index].querySelector('[id$="_distanceFromPrevious"]');
         if (distanceInput && distance != null) {
-            distanceInput.value = distance / 1000;
+            distanceInput.value = formatDecimal(distance / 1000);
         }
     }
 

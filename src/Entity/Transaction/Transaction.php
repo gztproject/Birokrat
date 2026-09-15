@@ -13,6 +13,7 @@ use App\Entity\User\User;
 use App\Entity\LunchExpense\LunchExpense;
 use App\Entity\LunchExpense\LunchExpenseBundle;
 use App\Entity\LunchExpense\UpdateLunchExpenseCommand;
+use App\Formatting\SlovenianFormat;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -325,7 +326,7 @@ class Transaction extends AggregateBase
 
     public function getDateString(): ?string
     {
-        return $this->date->format('d. m. Y');
+        return $this->date ? SlovenianFormat::date($this->date) : null;
     }
 
     public function getInvoice(): ?Invoice

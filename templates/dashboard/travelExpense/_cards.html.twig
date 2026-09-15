@@ -2,7 +2,7 @@
     <div class="list-card">
         <div>
             <div class="list-card-title">{{ travelExpense.travelDescription }}</div>
-            <div class="list-card-sub">{{ travelExpense.dateString }} · {{ travelExpense.totalDistance | format_number({fraction_digit:2}) }} km</div>
+            <div class="list-card-sub">{{ travelExpense.dateString }} · {{ travelExpense.totalDistance | number }} km</div>
         </div>
         <div class="list-card-amount">{{ (travelExpense.totalDistance * travelExpense.rate) | money }}</div>
         <div class="list-card-actions">

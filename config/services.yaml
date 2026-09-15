@@ -5,6 +5,8 @@
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
     locale: 'sl'
+    # Numbers, dates, currency and addresses stay Slovenian even when the UI language is not.
+    format_locale: 'sl_SI'
     env(MAILER_DSN): 'null://null'
     env(MAILER_OVERRIDE_TO): 'gasper@sensware.si'
     # This parameter defines the codes of the locales (languages) enabled in the application
@@ -21,6 +23,7 @@ services:
         bind:               # defines the scalar arguments once and apply them to any service defined/created in this file
             $locales: '%app_locales%'
             $defaultLocale: '%locale%'
+            $formatLocale: '%format_locale%'
             #$emailSender: '%app.notifications.email_sender%'
 
     # makes classes in src/ available to be used as services

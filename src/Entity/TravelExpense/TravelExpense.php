@@ -14,6 +14,7 @@ use App\Entity\Transaction\Transaction;
 use App\Entity\Transaction\CreateTransactionCommand;
 use App\Entity\Transaction\iTransactionDocument;
 use App\Entity\TravelExpense\Enumerators\States;
+use App\Formatting\SlovenianFormat;
 
 #[ORM\Entity(repositoryClass: \App\Repository\TravelExpense\TravelExpenseRepository::class)]
 class TravelExpense extends AggregateBase implements iTransactionDocument
@@ -395,7 +396,7 @@ class TravelExpense extends AggregateBase implements iTransactionDocument
    	
     public function getDateString(): ?string
     {
-    	return $this->date->format('d. m. Y');
+    	return $this->date ? SlovenianFormat::date($this->date) : null;
     }    
     
     public function getEmployee(): User

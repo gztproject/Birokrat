@@ -4,6 +4,7 @@ namespace App\Entity\Base;
 
 use Doctrine\ORM\Mapping as ORM;
 use App\Entity\User\User;
+use App\Formatting\SlovenianFormat;
 use DateTime;
 
 abstract class Base
@@ -60,7 +61,7 @@ abstract class Base
      */
     public function getCreatedOnString(): string
     {
-    	return $this->createdOn->format('j. n. Y');
+    	return SlovenianFormat::date($this->createdOn);
     }
     
     /**
@@ -87,7 +88,7 @@ abstract class Base
      */
     public function getUpdatedOnString(): ?string
     {
-    	return $this->createdOn->format('j. n. Y');
+    	return SlovenianFormat::date($this->createdOn);
     }
     
     /**

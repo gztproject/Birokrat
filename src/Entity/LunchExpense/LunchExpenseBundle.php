@@ -10,6 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 use App\Entity\Transaction\iTransactionDocument;
 use App\Entity\User\User;
 use App\Entity\Transaction\CreateTransactionCommand;
+use App\Formatting\SlovenianFormat;
 
 #[ORM\Entity(repositoryClass: \App\Repository\LunchExpense\LunchExpenseBundleRepository::class)]
 class LunchExpenseBundle extends AggregateBase implements iTransactionDocument
@@ -98,7 +99,7 @@ class LunchExpenseBundle extends AggregateBase implements iTransactionDocument
     
     public function getMinDateString():string
     {
-    	return $this->getMinDate()->format('d. m. Y');
+    	return SlovenianFormat::date($this->getMinDate());
     }
     
     public function getMaxDate(): \DateTimeInterface
@@ -114,7 +115,7 @@ class LunchExpenseBundle extends AggregateBase implements iTransactionDocument
     
     public function getMaxDateString():string
     {
-    	return $this->getMaxDate()->format('d. m. Y');
+    	return SlovenianFormat::date($this->getMaxDate());
     }
     
     public function getDateRange():string
