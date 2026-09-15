@@ -10,6 +10,7 @@
     {% set native = native|merge({
         class: ((native.class|default('')) ~ ' form-control sl-date-native')|trim,
         'data-sl-date-target': 'native',
+        tabindex: '-1',
         'data-action': ((native['data-action']|default('')) ~ ' input->sl-date#onNativeChange change->sl-date#onNativeChange click->sl-date#openPicker')|trim
     }) %}
     <input type="date"{% for name, value in native %} {{ name }}="{{ value|e('html_attr') }}"{% endfor %}>

@@ -57,6 +57,10 @@ export default class extends Controller {
     onDisplayBlur() {
         const typed = this.displayTarget.value.trim();
         const iso = slDateToIso(typed);
+        if (typed !== '' && iso === '') {
+            this.syncFromNative();
+            return;
+        }
         this.updatingFromDisplay = true;
         this.nativeTarget.value = iso;
         this.updatingFromDisplay = false;

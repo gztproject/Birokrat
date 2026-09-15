@@ -13,6 +13,7 @@
             <span class="sl-date-icon" aria-hidden="true"><i class="fa fa-calendar"></i></span>
             {%- set attr = attr|merge({
                 'data-sl-date-target': 'native',
+                tabindex: '-1',
                 'data-action': (attr['data-action']|default('') ~ ' input->sl-date#onNativeChange change->sl-date#onNativeChange click->sl-date#openPicker')|trim,
                 class: (attr.class|default('') ~ ' sl-date-native')|trim,
             }) -%}
