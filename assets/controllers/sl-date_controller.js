@@ -8,6 +8,7 @@ export default class extends Controller {
         this.updatingFromDisplay = false;
         this.hookNativeValue();
         this.syncFromNative();
+        this.isoAtFocus = this.nativeTarget.value;
     }
 
     hookNativeValue() {
@@ -39,6 +40,10 @@ export default class extends Controller {
         this.displayTarget.readOnly = this.nativeTarget.readOnly;
     }
 
+    onDisplayFocus() {
+        this.isoAtFocus = this.nativeTarget.value;
+    }
+
     onDisplayInput() {
         const iso = slDateToIso(this.displayTarget.value);
         if (!iso || iso === this.nativeTarget.value) {
@@ -56,6 +61,9 @@ export default class extends Controller {
         this.nativeTarget.value = iso;
         this.updatingFromDisplay = false;
         this.syncFromNative();
+        if (iso === this.isoAtFocus) {
+            return;
+        }
         this.nativeTarget.dispatchEvent(new Event('input', { bubbles: true }));
         this.nativeTarget.dispatchEvent(new Event('change', { bubbles: true }));
     }
