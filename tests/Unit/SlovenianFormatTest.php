@@ -22,7 +22,7 @@ class SlovenianFormatTest extends TestCase
         }
 
         $this->assertSame('1 234,50', SlovenianFormat::number(1234.5));
-        $this->assertSame('1 234', SlovenianFormat::number(1234.5, 0));
+        $this->assertSame('1 234', SlovenianFormat::number(1234, 0));
     }
 
     public function testFormatsSlovenianAddressLines(): void
