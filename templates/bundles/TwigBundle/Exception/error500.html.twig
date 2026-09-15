@@ -17,8 +17,11 @@
 
 {% block body_id 'error' %}
 
+{% block toolbar %}
+    <h1 class="page-title text-danger">{{ 'http_error.name'|trans({ '%status_code%': 500 }) }}</h1>
+{% endblock %}
+
 {% block main %}
-    <h1 class="text-danger">{{ 'http_error.name'|trans({ '%status_code%': 500 }) }}</h1>
 
     <p class="lead">
         {{ 'http_error_500.description'|trans }}
@@ -28,6 +31,3 @@
     </p>
 {% endblock %}
 
-{% block sidebar %}
-    {{ parent() }}
-{% endblock %}

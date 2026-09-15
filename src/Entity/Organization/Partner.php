@@ -21,9 +21,11 @@ class Partner extends LegalEntityBase
 	private $isClient;
 	
 	#[ORM\OneToMany(targetEntity: \App\Entity\Invoice\Invoice::class, mappedBy: "recepient", orphanRemoval: false)]
+	#[ORM\OrderBy(["dateOfIssue" => "DESC", "number" => "DESC"])]
 	private $invoices;
 	
 	#[ORM\OneToMany(targetEntity: \App\Entity\IncomingInvoice\IncomingInvoice::class, mappedBy: "issuer", orphanRemoval: false)]
+	#[ORM\OrderBy(["dateOfIssue" => "DESC", "number" => "DESC"])]
 	private $incomingInvoices;
 
 	#[ORM\OneToMany(targetEntity: PartnerEmail::class, mappedBy: 'partner', cascade: ['persist', 'remove'], orphanRemoval: true)]

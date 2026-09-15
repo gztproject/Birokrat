@@ -19,6 +19,9 @@
     --bs-link-color: #8bb4e3;
     --bs-link-hover-color: #b7d0ef;
     --bs-emphasis-color: #{$text-dark};
+    --bs-card-bg: #{$surface-card-dark};
+    --bs-card-border-color: #{$border-dark};
+    --bs-card-color: #{$text-dark};
     --app-surface: #{$surface-card-dark};
     --app-border: #{$border-dark};
     --app-navbar-bg: #{$surface-card-dark};
@@ -63,15 +66,6 @@
     }
 }
 
-body {
-    min-height: 100vh;
-}
-
-#main_container {
-    margin-top: 4.5rem;
-    min-height: calc(100vh - 8rem);
-}
-
 .app-navbar {
     --bs-navbar-brand-color: var(--app-navbar-color);
     --bs-navbar-brand-hover-color: var(--app-navbar-color);
@@ -113,13 +107,6 @@ body {
 
 .app-navbar .nav-link.active {
     font-weight: 600;
-}
-
-.app-footer {
-    border-top: 1px solid var(--app-border);
-    color: var(--bs-secondary-color);
-    font-size: 0.875rem;
-    padding-block: 1.25rem;
 }
 
 .app-card {

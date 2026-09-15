@@ -1,49 +1,34 @@
 {% extends 'dashboard/layout.html.twig' %}
 
 {% block body_id 'lunchExpense_index' %}
+{% block body_controllers %} expense-bundle{% endblock %}
+{% block body_attr %}data-expense-bundle-url-value="/dashboard/lunchExpense/bookInBundle/withFilter"{% endblock %}
+
+{% block toolbar %}
+    {{ include('components/_page_header.html.twig', {
+        title: 'title.lunchExpenses'|trans,
+        count: pagination.getTotalItemCount,
+        action_url: path('lunchExpense_new'),
+        action_label: 'action.create_lunchExpense'|trans,
+        extra_actions: '
+            <button type="button" id="bookCheckedTEs" class="btn btn-sm btn-info">' ~ ('action.bookSelectedLunchExpenses'|trans) ~ '</button>
+            <button type="button" id="bookVisibleTEs" class="btn btn-sm btn-info" data-action="expense-bundle#bookVisible">' ~ ('action.bookVisibleLunchExpenses'|trans) ~ '</button>
+        '
+    }) }}
+{% endblock %}
+
+{% block filters %}
+    {{ include('dashboard/lunchExpense/_filter.html.twig') }}
+{% endblock %}
 
 {% block main %}
-    {{ include('components/_page_header.html.twig', { title: 'title.lunchExpenses'|trans, count: pagination.getTotalItemCount }) }}
-    <div class="bs-component" data-controller="expense-bundle" data-expense-bundle-url-value="/dashboard/lunchExpense/bookInBundle/withFilter">
+    <div class="bs-component">
     {{ include('dashboard/lunchExpense/_table.html.twig', {
             lunchExpenses: pagination,
-            ShowCBs: true                
+            ShowCBs: true,
+            infinite: true,
+            page: pagination.currentPageNumber,
+            last_page: last_page,
         }, with_context = false) }}
     </div>
-    {{ knp_pagination_render(pagination) }}
-{% endblock %}
-
-{% block sidebar %}
-    
-    {{ parent() }}
-    <div class="bs-component" data-controller="expense-bundle" data-expense-bundle-url-value="/dashboard/lunchExpense/bookInBundle/withFilter">
-        <div class="list-group">
-            <div class="list-group-item list-group-item-action flex-column align-items-start">
-                <div class="d-flex w-100 justify-content-between">
-                    <h5 class="mb-1">{{ "label.actions" | trans }}</h5>
-                </div>
-                <div id="actions" class="row">
-                    <a href="{{ path('lunchExpense_new') }}" class="btn w-100 btn-success">
-                        <i class="fa fa-plus" aria-hidden="true"></i> {{ 'action.create_lunchExpense'|trans }}
-                    </a>
-                    <button type="button" id="bookCheckedTEs" class="btn btn-info w-100">{{ 'action.bookSelectedLunchExpenses' | trans }}</button>
-                    <button type="button" id="bookVisibleTEs" class="btn btn-info w-100" data-action="expense-bundle#bookVisible">{{ 'action.bookVisibleLunchExpenses' | trans }}</button>
-                </div>
-            </div>
-            </br>
-            <div class="list-group-item list-group-item-action flex-column align-items-start">
-                <div class="d-flex w-100 justify-content-between">
-                    <h5 class="mb-1">{{ "label.filter" | trans }}</h5>
-                </div>
-                <div id="filter" class="row">
-                    {{ include('dashboard/lunchExpense/_filter.html.twig') }}
-                </div>
-            </div>   
-        </div>
-    </div>
-{% endblock %}
-
-{% block javascripts %}
-    {{ parent() }}
-
 {% endblock %}

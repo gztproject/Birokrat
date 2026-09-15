@@ -2,20 +2,14 @@
 
 {% block body_id 'post_index' %}
 
-{% block main %}
+{% block toolbar %}
     {{ include('components/_page_header.html.twig', { title: 'title.post'|trans }) }}
+{% endblock %}
+
+{% block main %}
     <div class="bs-component">
     {{ include('dashboard/codesheets/post/_table.html.twig', {
-                posts: posts                
-            }, with_context = false) }}        
+                posts: posts
+            }, with_context = false) }}
     </div>
-{% endblock %}
-
-{% block sidebar %}
-    
-    {{ parent() }}    
-{% endblock %}
-
-{% block javascripts %}
-    {{ parent() }}
 {% endblock %}

@@ -2,9 +2,12 @@
 
 {% block body_id 'admin_user_new' %}
 
-{% block main %}
+{% block toolbar %}
     {{ include('components/_page_header.html.twig', { title: 'title.user_new'|trans }) }}
-   {{ include('admin/user/_form.html.twig', {
+{% endblock %}
+
+{% block main %}
+    {{ include('admin/user/_form.html.twig', {
         form: form,
         button_label: 'action.save'|trans,
         include_back_to_home_link: true,
@@ -13,7 +16,3 @@
     
 {% endblock %}
 
-{% block sidebar %}
-    {{ parent() }}
-
-{% endblock %}

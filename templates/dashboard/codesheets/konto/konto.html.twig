@@ -2,23 +2,18 @@
 
 {% block body_id 'konto_index' %}
 
-{% block main %}
+{% block toolbar %}
     {{ include('components/_page_header.html.twig', { title: 'title.konto'|trans }) }}
+{% endblock %}
+
+{% block filters %}
+    {{ include('dashboard/codesheets/konto/_filter.html.twig', {form: form}) }}
+{% endblock %}
+
+{% block main %}
     <div class="bs-component">
     {{ include('dashboard/codesheets/konto/_table.html.twig', {
-                kontos: kontos                
-            }, with_context = false) }}        
+                kontos: kontos
+            }, with_context = false) }}
     </div>
-{% endblock %}
-
-{% block sidebar %}
-    
-    {{ parent() }}
-    <div id="filter" class="row">
-        {{ include('dashboard/codesheets/konto/_filter.html.twig', {form: form}) }}
-    </div>
-{% endblock %}
-
-{% block javascripts %}
-    {{ parent() }}
 {% endblock %}

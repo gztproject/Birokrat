@@ -2,58 +2,64 @@
 
 {% block body_id entity ~ '_index' %}
 
-{% block main %}
-    {{ include('components/_page_header.html.twig', { title: 'title.organization_list'|trans }) }}
-    
-    
-    <div class="bs-component">
-              
-    <table class="table table-hover">
-        <thead>
-            <tr>
-                <th scope="col">{{ 'label.name'|trans }}</th>
-                <th scope="col"><i class="fa fa-envelope" aria-hidden="true"></i> {{ 'label.address'|trans }}</th>
-                <th scope="col"><i class="fa fa-money-check-alt" aria-hidden="true"></i> {{ 'label.taxNumber'|trans }}</th>
-                <th scope="col"><i class="fa fa-gavel" aria-hidden="true"></i> {{ 'label.taxable'|trans }}</th>
-                <th scope="col" class="text-center"><i class="fa fa-cogs" aria-hidden="true"></i> {{ 'label.actions'|trans }}</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for organization in organizations %}
-            <tr class="table-primary">
-                <td>{{ organization.name }}</td>
-                <td>{{ organization.address.fullAddress }}</td>
-                <td>{{ organization.fullTaxNumber }}</td>
-                <td>{{ organization.taxable ? '<i class="fa fa-check" aria-hidden="true"></i>' : ''}}</td>
-                <td class="text-end">
-                    <div class="item-actions">
-                        <a href="{{ path(entity ~ '_show', {'id': organization.id}) }}" class="btn btn-sm btn-secondary">
-                            <i class="fa fa-eye" aria-hidden="true"></i> {{ 'action.show'|trans }}
-                        </a>
-
-                        <a href="{{ path(entity ~ '_edit', {'id': organization.id}) }}" class="btn btn-sm btn-primary">
-                            <i class="fa fa-edit" aria-hidden="true"></i> {{ 'action.edit'|trans }}
-                        </a>
-                    </div>
-                </td>
-            </tr>
-        {% else %}
-            <tr class="table-warning">
-                <td colspan="4" align="center">{{ entity ~ '.no_' ~ entity ~ 's_found'|trans }}</td>
-           </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-    </div>
+{% block toolbar %}
+    {{ include('components/_page_header.html.twig', {
+        title: 'title.organization_list'|trans,
+        action_url: path(entity ~ '_new'),
+        action_label: ('action.create_' ~ entity)|trans
+    }) }}
 {% endblock %}
 
-{% block sidebar %}
-    <div class="section actions">
-        <a href="{{ path(entity ~ '_new') }}" class="btn btn-sm w-100 btn-success">
-            <i class="fa fa-plus" aria-hidden="true"></i> {{ 'action.create_' ~ entity|trans }}
-        </a>
+{% block main %}
+    <div class="list-table-wrap">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead>
+                    <tr>
+                        <th scope="col">{{ 'label.name'|trans }}</th>
+                        <th scope="col" class="d-none d-lg-table-cell">{{ 'label.address'|trans }}</th>
+                        <th scope="col">{{ 'label.taxNumber'|trans }}</th>
+                        <th scope="col" class="d-none d-md-table-cell">{{ 'label.taxable'|trans }}</th>
+                        <th scope="col" class="text-end">{{ 'label.actions'|trans }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for organization in organizations %}
+                    <tr>
+                        <td>{{ organization.name }}</td>
+                        <td class="d-none d-lg-table-cell">{{ organization.address.fullAddress }}</td>
+                        <td>{{ organization.fullTaxNumber }}</td>
+                        <td class="d-none d-md-table-cell">{% if organization.taxable %}<i class="fa fa-check" aria-hidden="true"></i>{% endif %}</td>
+                        <td class="text-end">
+                            <div class="item-actions">
+                                <a href="{{ path(entity ~ '_show', {'id': organization.id}) }}" class="btn btn-sm btn-secondary">{{ 'action.show'|trans }}</a>
+                                <a href="{{ path(entity ~ '_edit', {'id': organization.id}) }}" class="btn btn-sm btn-primary">{{ 'action.edit'|trans }}</a>
+                            </div>
+                        </td>
+                    </tr>
+                {% else %}
+                    {{ include('components/_empty_state.html.twig', { colspan: 5, message: (entity ~ '.no_' ~ entity ~ 's_found')|trans }) }}
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 
-    {{ parent() }}
-
+    <div class="list-cards">
+        {% for organization in organizations %}
+            <div class="list-card">
+                <div>
+                    <div class="list-card-title">{{ organization.name }}</div>
+                    <div class="list-card-sub">{{ organization.fullTaxNumber }}</div>
+                    <div class="list-card-meta">{{ organization.address.fullAddress }}</div>
+                </div>
+                <div class="list-card-actions">
+                    <a href="{{ path(entity ~ '_show', {'id': organization.id}) }}" class="btn btn-sm btn-secondary">{{ 'action.show'|trans }}</a>
+                    <a href="{{ path(entity ~ '_edit', {'id': organization.id}) }}" class="btn btn-sm btn-primary">{{ 'action.edit'|trans }}</a>
+                </div>
+            </div>
+        {% else %}
+            <div class="empty-state">{{ (entity ~ '.no_' ~ entity ~ 's_found')|trans }}</div>
+        {% endfor %}
+    </div>
 {% endblock %}

@@ -166,16 +166,14 @@ export default class extends Controller {
     }
 
     openRow(event) {
+        if (event.target.closest('a, button, input, .list-card-actions, .item-actions')) {
+            return;
+        }
         const id = event.currentTarget.dataset.id;
         if (!id) {
             return;
         }
-        let url = '';
-        if (window.location.pathname.endsWith('dashboard')) {
-            url += 'dashboard/';
-        }
-        url += `${this.showPrefixValue}/${id}/show`;
-        window.location = url;
+        window.location = `/dashboard/${this.showPrefixValue}/${id}/show`;
     }
 
     openDateModal(url, extra) {

@@ -1,100 +1,27 @@
-<table class="table table-hover align-middle">
+{{ include('components/_infinite_list_start.html.twig') }}
+<div class="list-table-wrap">
+    <table class="table table-hover align-middle">
         <thead>
             <tr>
-                <th scope="col">{{ 'label.invoiceNumber'|trans }}</th>
-                <th scope="col"><i class="fa fa-calendar" aria-hidden="true"></i> {{ 'label.dateOfIssue'|trans }}</th>
-                <th scope="col">{{ 'label.recepient'|trans }}</th>
-                <th scope="col">{{ 'label.reference'|trans }}</th>
-                <th scope="col" class="text-end">{{ 'label.sum'|trans }}</th>
-                <th scope="col">{{ 'label.dueDate'|trans }}/{{ 'label.paid'|trans }}</th>
-                <th scope="col" class="text-end">{{ 'label.actions'|trans }}</th>
+                <th scope="col" class="col-number">{{ 'label.invoiceNumber'|trans }}</th>
+                <th scope="col" class="col-date"><i class="fa fa-calendar" aria-hidden="true"></i> {{ 'label.dateOfIssue'|trans }}</th>
+                <th scope="col" class="col-party">{{ 'label.recepient'|trans }}</th>
+                <th scope="col" class="d-none d-lg-table-cell">{{ 'label.reference'|trans }}</th>
+                <th scope="col" class="col-sum text-end">{{ 'label.sum'|trans }}</th>
+                <th scope="col" class="d-none d-md-table-cell">{{ 'label.dueDate'|trans }}/{{ 'label.paid'|trans }}</th>
+                <th scope="col" class="col-actions text-end">{{ 'label.actions'|trans }}</th>
             </tr>
         </thead>
-        <tbody>
-        {% for invoice in invoices %}
-            {% if invoice.State == 00 or invoice.State == 10 %}
-                {% set rowClass = "table-secondary" %}
-                {% set status = "draft" %}
-            {% elseif invoice.State == 20 %}
-                {% if date() > invoice.dueDate|date_modify("+1 day") %}
-                    {% set rowClass = "table-warning" %}
-                    {% set status = "overdue" %}
-                {% else %}
-                   {% set rowClass = "table-info" %}
-                   {% set status = "issued" %}
-                {% endif %}
-            {% elseif invoice.State == 30 %}
-               {% set rowClass = "table-success" %}
-               {% set status = "paid" %}
-            {% elseif invoice.State == 40 %}
-                {% set rowClass = "table-danger" %}
-                {% set status = "cancelled" %}
-            {% else %}
-                {% set rowClass = "table-primary" %}
-                {% set status = "issued" %}
-            {% endif %}
-            <tr data-id={{ invoice.id }} class="invoiceRow {{ rowClass }}" data-action="click->document-action#openRow">
-                <td>
-                    {% if invoice.state == 10 %} {{ 'label.draft'|trans }} {% elseif invoice.state == 40 %} {{ 'label.cancelled'|trans }} {% else %} {{ invoice.number }} {%  endif %}
-                    {{ include('components/_status_badge.html.twig', { status: status }) }}
-                </td>
-                <td>{{ invoice.dateOfIssueString }}</td>
-                <td>{{ invoice.Recepient.ShortName }}</td>
-                <td>{{ invoice.ReferenceNumber }}</td>
-                <td class="money">{{ invoice.TotalPrice | money }}</td>
-                <td>{% if invoice.datePaid %}
-                        {{ invoice.DatePaidString }}
-                    {% else %}
-                         {{ invoice.DueDateString }}
-                    {% endif %}
-                </td>
-                <td class="text-end">
-                    {% embed 'components/_action_menu.html.twig' %}
-                        {% block primary %}
-                            {% if invoice.State == 10 %}
-                                <a href="{{ path('invoice_edit', {'id': invoice.id}) }}" class="btn btn-sm btn-primary">
-                                    <i class="fa fa-edit" aria-hidden="true"></i> {{ 'action.edit'|trans }}
-                                </a>
-                                <button class="set-issued btn btn-sm btn-success" type="button" name="id" value={{ invoice.id }} data-action="click->document-action#issue"><i class="fa fa-share-square" aria-hidden="true"></i>
-                                        {{ 'action.setIssued'|trans }}
-                                </button>
-                            {% endif %}
-                            {% if invoice.State == 20 %}
-                                <button class="set-paid btn btn-sm btn-success" type="button" name="id" value={{ invoice.id }} data-action="click->document-action#pay"><i class="fa fa-euro-sign" aria-hidden="true"></i>
-                                        {{ 'action.setPaid'|trans }}
-                                </button>
-                            {% endif %}
-                            {% if invoice.State == 00 or invoice.State == 10 %}
-                            <button class="cancel btn btn-sm btn-danger" type="button" name="id" value={{ invoice.id }} data-action="click->document-action#cancel"><i class="fa fa-times" aria-hidden="true"></i>
-                                        {{ 'action.cancel'|trans }}
-                            </button>
-                            {% endif %}
-                        {% endblock %}
-                        {% block more %}
-                            <li>
-                                <a class="dropdown-item" href="{{ path('invoice_show', {'id': invoice.id}) }}">
-                                    <i class="fa fa-eye" aria-hidden="true"></i> {{ 'action.show'|trans }}
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="{{ path('invoice_print', {'id': invoice.id}) }}" target="_blank">
-                                    <i class="fa fa-print" aria-hidden="true"></i> {{ 'action.print'|trans }}
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="{{ path('invoice_clone', {'id': invoice.id}) }}">
-                                    <i class="fa fa-copy" aria-hidden="true"></i> {{ 'action.clone'|trans }}
-                                </a>
-                            </li>
-                        {% endblock %}
-                    {% endembed %}
-                </td>
-            </tr>
-        {% else %}
-            {{ include('components/_empty_state.html.twig', { colspan: 7, message: 'invoice.no_invoices_found'|trans }) }}
-        {% endfor %}
-    </tbody>
+        <tbody{% if infinite|default(false) %} data-infinite-scroll-target="tableBody"{% endif %}>
+            {{ include('dashboard/invoice/_rows.html.twig') }}
+        </tbody>
     </table>
+</div>
+
+<div class="list-cards"{% if infinite|default(false) %} data-infinite-scroll-target="cards"{% endif %}>
+    {{ include('dashboard/invoice/_cards.html.twig') }}
+</div>
+{{ include('components/_infinite_list_end.html.twig') }}
 
 {{ include('dashboard/invoice/_dateModal.html.twig')}}
 {{ include('dashboard/invoice/_cancelReasonModal.html.twig')}}

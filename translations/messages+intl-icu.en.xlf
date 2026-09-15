@@ -697,6 +697,90 @@
                 <source>action.editPartnerEmails</source>
                 <target>Edit partner</target>
             </trans-unit>
+            <trans-unit id="menu.settings">
+                <source>menu.settings</source>
+                <target>Settings</target>
+            </trans-unit>
+            <trans-unit id="menu.dddddd">
+                <source>menu.dddddd</source>
+                <target>DDD-DDD</target>
+            </trans-unit>
+            <trans-unit id="menu.bilanca">
+                <source>menu.bilanca</source>
+                <target>Balance sheet</target>
+            </trans-unit>
+            <trans-unit id="menu.turnout">
+                <source>menu.turnout</source>
+                <target>P&amp;L</target>
+            </trans-unit>
+            <trans-unit id="dashboard.kpi.receivables">
+                <source>dashboard.kpi.receivables</source>
+                <target>Receivables</target>
+            </trans-unit>
+            <trans-unit id="dashboard.kpi.overdue">
+                <source>dashboard.kpi.overdue</source>
+                <target>Overdue</target>
+            </trans-unit>
+            <trans-unit id="dashboard.kpi.unpaidBills">
+                <source>dashboard.kpi.unpaidBills</source>
+                <target>Unpaid bills</target>
+            </trans-unit>
+            <trans-unit id="dashboard.kpi.open">
+                <source>dashboard.kpi.open</source>
+                <target>open</target>
+            </trans-unit>
+            <trans-unit id="dashboard.recent.invoices">
+                <source>dashboard.recent.invoices</source>
+                <target>Recent invoices</target>
+            </trans-unit>
+            <trans-unit id="dashboard.recent.incoming">
+                <source>dashboard.recent.incoming</source>
+                <target>Unpaid bills</target>
+            </trans-unit>
+            <trans-unit id="dashboard.recent.travel">
+                <source>dashboard.recent.travel</source>
+                <target>Recent travel expenses</target>
+            </trans-unit>
+            <trans-unit id="dashboard.recent.transactions">
+                <source>dashboard.recent.transactions</source>
+                <target>Recent transactions</target>
+            </trans-unit>
+            <trans-unit id="dashboard.layout.kpis">
+                <source>dashboard.layout.kpis</source>
+                <target>Overview</target>
+            </trans-unit>
+            <trans-unit id="dashboard.layout.drag">
+                <source>dashboard.layout.drag</source>
+                <target>Move section</target>
+            </trans-unit>
+            <trans-unit id="dashboard.layout.hide">
+                <source>dashboard.layout.hide</source>
+                <target>Hide section</target>
+            </trans-unit>
+            <trans-unit id="dashboard.layout.show">
+                <source>dashboard.layout.show</source>
+                <target>Show</target>
+            </trans-unit>
+            <trans-unit id="dashboard.layout.restore">
+                <source>dashboard.layout.restore</source>
+                <target>Hidden sections</target>
+            </trans-unit>
+            <trans-unit id="dashboard.layout.reset">
+                <source>dashboard.layout.reset</source>
+                <target>Reset layout</target>
+            </trans-unit>
+            <trans-unit id="footer.version">
+                <source>footer.version</source>
+                <target>Version</target>
+            </trans-unit>
+            <trans-unit id="list.loading">
+                <source>list.loading</source>
+                <target>Loading…</target>
+            </trans-unit>
+            <trans-unit id="list.end">
+                <source>list.end</source>
+                <target>End of list</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

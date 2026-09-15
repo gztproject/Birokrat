@@ -1,4 +1,5 @@
 import { Controller } from '@hotwired/stimulus';
+import { formatPrice, parseAmount } from '../js/common/format';
 
 function daysBetween(fromValue, toValue) {
     if (!fromValue || !toValue) {
@@ -20,20 +21,6 @@ function addDays(dateValue, days) {
     const date = new Date(`${dateValue}T00:00:00`);
     date.setDate(date.getDate() + Number(days || 0));
     return toIsoDate(date);
-}
-
-function parseAmount(value) {
-    if (value === '' || value == null) {
-        return 0;
-    }
-    return Number(String(value).replace(',', '.').replace(/\s/g, '').replace('€', '')) || 0;
-}
-
-function formatPrice(value) {
-    const number = Number(value);
-    const [intPart, frac = '00'] = number.toFixed(2).split('.');
-    const grouped = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
-    return `${grouped},${frac}`;
 }
 
 export default class extends Controller {

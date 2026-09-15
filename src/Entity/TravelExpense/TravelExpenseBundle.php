@@ -11,6 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
 use App\Entity\Transaction\iTransactionDocument;
 use App\Entity\User\User;
 use App\Entity\Transaction\CreateTransactionCommand;
+use App\Formatting\SlovenianFormat;
 use Symfony\Component\Validator\Constraints\Date;
 
 #[ORM\Entity(repositoryClass: \App\Repository\TravelExpense\TravelExpenseBundleRepository::class)]
@@ -118,7 +119,7 @@ class TravelExpenseBundle extends AggregateBase implements iTransactionDocument
     
     public function getMinDateString():string
     {
-    	return $this->getMinDate()->format('d. m. Y');
+    	return SlovenianFormat::date($this->getMinDate());
     }
     
     public function getMaxDate(): \DateTimeInterface
@@ -134,7 +135,7 @@ class TravelExpenseBundle extends AggregateBase implements iTransactionDocument
     
     public function getMaxDateString():string
     {
-    	return $this->getMaxDate()->format('d. m. Y');
+    	return SlovenianFormat::date($this->getMaxDate());
     }
     
     public function getDateRange():string

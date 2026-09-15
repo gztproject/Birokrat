@@ -1,14 +1,12 @@
-<div class="row g-2 mt-3">
-    <div class="col-auto">
+<div class="form-actions-sticky">
+    <div class="d-flex flex-wrap gap-2">
         <button type="submit" class="btn btn-primary">
             <i class="fa fa-save" aria-hidden="true"></i> {{ button_label|default(('label.save_invoice')|trans) }}
         </button>
-    </div>
-    {% if include_back_to_home_link|default(false) %}
-        <div class="col-auto">
+        {% if include_back_to_home_link|default(false) %}
             <a href="{{ path('invoice_index') }}" class="btn btn-secondary">
                 <i class="fa fa-list-alt" aria-hidden="true"></i> {{ 'action.back_to_list'|trans }}
             </a>
-        </div>
-    {% endif %}
+        {% endif %}
+    </div>
 </div>

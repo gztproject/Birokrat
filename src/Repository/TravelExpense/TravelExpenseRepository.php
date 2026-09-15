@@ -62,6 +62,20 @@ class TravelExpenseRepository extends ServiceEntityRepository
     	return $qb->orderBy('te.date', 'DESC');
     }
 
+    /**
+     * @return TravelExpense[]
+     */
+    public function findRecent(int $limit, \DateTimeInterface $from): array
+    {
+        return $this->createQueryBuilder('te')
+            ->andWhere('te.date >= :from')
+            ->setParameter('from', $from)
+            ->orderBy('te.date', 'DESC')
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+    }
+
     // /**
     //  * @return TravelExpense[] Returns an array of TravelExpense objects
     //  */

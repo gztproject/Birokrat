@@ -36,11 +36,15 @@ class ApplicationSmokeTest extends WebTestCase
     {
         $this->client->request('GET', '/login');
         $this->assertResponseIsSuccessful();
+        $this->assertSelectorExists('.app-topbar-actions [data-controller="theme"]');
     }
 
     public function testDashboardRedirectsAnonymousUsers(): void
     {
         $this->client->request('GET', '/dashboard');
+        $this->assertResponseRedirects();
+
+        $this->client->request('GET', '/');
         $this->assertResponseRedirects();
     }
 
@@ -66,9 +70,27 @@ class ApplicationSmokeTest extends WebTestCase
 
         $this->client->request('GET', '/dashboard');
         $this->assertResponseIsSuccessful();
+        $this->assertSelectorExists('.app-sidenav-account');
+        $this->assertSelectorExists('.app-sidenav-account [data-controller="theme"]');
+        $this->assertSelectorExists('.app-topbar.d-lg-none');
+        $this->assertSelectorNotExists('.app-content .app-topbar-actions');
+
+        $this->client->request('GET', '/');
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorExists('.app-sidenav-account');
 
         $this->client->request('GET', '/dashboard/invoice');
         $this->assertResponseIsSuccessful();
+        $this->assertSelectorExists('[data-controller="infinite-scroll"]');
+
+        $this->client->request('GET', '/dashboard/invoice?partial=1');
+        $this->assertResponseIsSuccessful();
+        $this->assertJson((string) $this->client->getResponse()->getContent());
+        $partial = json_decode((string) $this->client->getResponse()->getContent(), true);
+        $this->assertIsArray($partial);
+        $this->assertArrayHasKey('rows', $partial);
+        $this->assertArrayHasKey('cards', $partial);
+        $this->assertArrayHasKey('lastPage', $partial);
 
         $this->client->request('GET', '/dashboard/invoice/new');
         $this->assertResponseIsSuccessful();

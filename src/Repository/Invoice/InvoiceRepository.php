@@ -38,6 +38,75 @@ class InvoiceRepository extends ServiceEntityRepository
     	->setParameter('states', '10,20,30');
     }
 
+    /**
+     * @param int[] $states
+     * @return Invoice[]
+     */
+    public function findRecent(array $states, int $limit, \DateTimeInterface $from): array
+    {
+        return $this->createQueryBuilder('i')
+            ->andWhere('i.state IN (:states)')
+            ->andWhere('i.dateOfIssue >= :from')
+            ->setParameter('states', $states)
+            ->setParameter('from', $from)
+            ->orderBy('i.dateOfIssue', 'DESC')
+            ->addOrderBy('i.number', 'DESC')
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * @return array{count: int, total: float}
+     */
+    public function summarizeIssued(?\DateTimeInterface $from = null): array
+    {
+        return $this->summarizeByState(20, $from);
+    }
+
+    /**
+     * @return array{count: int, total: float}
+     */
+    public function summarizeOverdue(?\DateTimeInterface $from = null): array
+    {
+        $qb = $this->createQueryBuilder('i')
+            ->select('COUNT(i.id) AS cnt', 'COALESCE(SUM(i.totalPrice), 0) AS total')
+            ->andWhere('i.state = :state')
+            ->andWhere('i.dueDate < :today')
+            ->setParameter('state', 20)
+            ->setParameter('today', new \DateTimeImmutable('today'));
+        $this->applyIssuedFrom($qb, $from);
+
+        $row = $qb->getQuery()->getSingleResult();
+
+        return ['count' => (int) $row['cnt'], 'total' => (float) $row['total']];
+    }
+
+    /**
+     * @return array{count: int, total: float}
+     */
+    private function summarizeByState(int $state, ?\DateTimeInterface $from = null): array
+    {
+        $qb = $this->createQueryBuilder('i')
+            ->select('COUNT(i.id) AS cnt', 'COALESCE(SUM(i.totalPrice), 0) AS total')
+            ->andWhere('i.state = :state')
+            ->setParameter('state', $state);
+        $this->applyIssuedFrom($qb, $from);
+
+        $row = $qb->getQuery()->getSingleResult();
+
+        return ['count' => (int) $row['cnt'], 'total' => (float) $row['total']];
+    }
+
+    private function applyIssuedFrom(QueryBuilder $qb, ?\DateTimeInterface $from): void
+    {
+        if ($from === null) {
+            return;
+        }
+
+        $qb->andWhere('i.dateOfIssue >= :from')->setParameter('from', $from);
+    }
+
     // /**
     //  * @return Invoice[] Returns an array of Invoice objects
     //  */

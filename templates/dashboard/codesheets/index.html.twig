@@ -1,15 +1,10 @@
 {% extends 'dashboard/layout.html.twig' %}
 
-{% block body_id 'invoice_index' %}
+{% block body_id 'codesheets_index' %}
 
-{% block main %}
-    <h1>{{ 'title.invoice'|trans }}</h1>
-       
-    
+{% block toolbar %}
+    {{ include('components/_page_header.html.twig', { title: 'menu.settings'|trans }) }}
 {% endblock %}
 
-{% block sidebar %}
-    
-    {{ parent() }}
-
+{% block main %}
 {% endblock %}

@@ -8,19 +8,23 @@ use Symfony\Component\Routing\Attribute\Route;
 use App\Entity\IncomingInvoice\IncomingInvoice;
 use App\Repository\IncomingInvoice\IncomingInvoiceRepository;
 use Knp\Component\Pager\PaginatorInterface;
+use App\Http\InfiniteListResponder;
 
 class IncomingInvoiceQueryController extends AbstractController
 {    
     #[Route(path: "/dashboard/incomingInvoice", methods: ["GET"], name: "incomingInvoice_index")]
-	public function index(IncomingInvoiceRepository $incomingInvoices, Request $request, PaginatorInterface $paginator): Response
+	public function index(IncomingInvoiceRepository $incomingInvoices, Request $request, PaginatorInterface $paginator, InfiniteListResponder $list): Response
     {   		
     	$queryBuilder = $incomingInvoices->getQuery();
-    	
-    	$pagination = $paginator->paginate($queryBuilder, $request->query->getInt('page', 1), 10);
-    	
-    	//$myInvoices = $invoices->findBy([], ['number' => 'DESC']);
+    	$pagination = $list->paginate($paginator, $queryBuilder, $request);
+
+    	if ($list->isPartial($request)) {
+    		return $list->json($pagination, 'dashboard/incomingInvoice/_rows.html.twig', 'dashboard/incomingInvoice/_cards.html.twig', 'invoices');
+    	}
+
     	return $this->render('dashboard/incomingInvoice/index.html.twig', [
-    			'pagination' => $pagination,    			
+    			'pagination' => $pagination,
+    			'last_page' => $list->lastPage($pagination),
     	]);
     }
     

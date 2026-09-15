@@ -1199,6 +1199,90 @@
         <source>action.editPartnerEmails</source>
         <target>Uredi partnerja</target>
       </trans-unit>
+      <trans-unit id="menu.settings" resname="menu.settings">
+        <source>menu.settings</source>
+        <target>Nastavitve</target>
+      </trans-unit>
+      <trans-unit id="menu.dddddd" resname="menu.dddddd">
+        <source>menu.dddddd</source>
+        <target>DDD-DDD</target>
+      </trans-unit>
+      <trans-unit id="menu.bilanca" resname="menu.bilanca">
+        <source>menu.bilanca</source>
+        <target>Bilanca</target>
+      </trans-unit>
+      <trans-unit id="menu.turnout" resname="menu.turnout">
+        <source>menu.turnout</source>
+        <target>Izkaz</target>
+      </trans-unit>
+      <trans-unit id="dashboard.kpi.receivables" resname="dashboard.kpi.receivables">
+        <source>dashboard.kpi.receivables</source>
+        <target>Terjatve</target>
+      </trans-unit>
+      <trans-unit id="dashboard.kpi.overdue" resname="dashboard.kpi.overdue">
+        <source>dashboard.kpi.overdue</source>
+        <target>Zapadlo</target>
+      </trans-unit>
+      <trans-unit id="dashboard.kpi.unpaidBills" resname="dashboard.kpi.unpaidBills">
+        <source>dashboard.kpi.unpaidBills</source>
+        <target>Neplačani prejeti</target>
+      </trans-unit>
+      <trans-unit id="dashboard.kpi.open" resname="dashboard.kpi.open">
+        <source>dashboard.kpi.open</source>
+        <target>odprtih</target>
+      </trans-unit>
+      <trans-unit id="dashboard.recent.invoices" resname="dashboard.recent.invoices">
+        <source>dashboard.recent.invoices</source>
+        <target>Zadnji izdani</target>
+      </trans-unit>
+      <trans-unit id="dashboard.recent.incoming" resname="dashboard.recent.incoming">
+        <source>dashboard.recent.incoming</source>
+        <target>Neplačani prejeti</target>
+      </trans-unit>
+      <trans-unit id="dashboard.recent.travel" resname="dashboard.recent.travel">
+        <source>dashboard.recent.travel</source>
+        <target>Zadnji potni stroški</target>
+      </trans-unit>
+      <trans-unit id="dashboard.recent.transactions" resname="dashboard.recent.transactions">
+        <source>dashboard.recent.transactions</source>
+        <target>Zadnje transakcije</target>
+      </trans-unit>
+      <trans-unit id="dashboard.layout.kpis" resname="dashboard.layout.kpis">
+        <source>dashboard.layout.kpis</source>
+        <target>Pregled</target>
+      </trans-unit>
+      <trans-unit id="dashboard.layout.drag" resname="dashboard.layout.drag">
+        <source>dashboard.layout.drag</source>
+        <target>Premakni razdelek</target>
+      </trans-unit>
+      <trans-unit id="dashboard.layout.hide" resname="dashboard.layout.hide">
+        <source>dashboard.layout.hide</source>
+        <target>Skrij razdelek</target>
+      </trans-unit>
+      <trans-unit id="dashboard.layout.show" resname="dashboard.layout.show">
+        <source>dashboard.layout.show</source>
+        <target>Prikaži</target>
+      </trans-unit>
+      <trans-unit id="dashboard.layout.restore" resname="dashboard.layout.restore">
+        <source>dashboard.layout.restore</source>
+        <target>Skriti razdelki</target>
+      </trans-unit>
+      <trans-unit id="dashboard.layout.reset" resname="dashboard.layout.reset">
+        <source>dashboard.layout.reset</source>
+        <target>Ponastavi razporeditev</target>
+      </trans-unit>
+      <trans-unit id="footer.version" resname="footer.version">
+        <source>footer.version</source>
+        <target>Verzija</target>
+      </trans-unit>
+      <trans-unit id="list.loading" resname="list.loading">
+        <source>list.loading</source>
+        <target>Nalagam…</target>
+      </trans-unit>
+      <trans-unit id="list.end" resname="list.end">
+        <source>list.end</source>
+        <target>Konec seznama</target>
+      </trans-unit>
 
     </body>
   </file>

@@ -2,31 +2,22 @@
 
 {% block body_id 'partner_edit' %}
 
+{% block toolbar %}
+    <div class="page-toolbar">
+        <h1 class="page-title">{{ 'title.partner_edit'|trans({'%partner%': partner.name}) }}</h1>
+        <div class="page-toolbar-actions">
+            <a href="{{ path('partner_show', {id: partner.id}) }}" class="btn btn-sm btn-outline-secondary">
+                <i class="fa fa-eye" aria-hidden="true"></i> {{ 'action.show_partner'|trans }}
+            </a>
+            {{ include('dashboard/partner/_delete_form.html.twig', {partner: partner}, with_context = false) }}
+        </div>
+    </div>
+{% endblock %}
+
 {% block main %}
-    {{ include('components/_page_header.html.twig', { title: 'title.partner_edit'|trans({'%partner%': partner.name}) }) }}
     {{ include('dashboard/partner/_form.html.twig', {
-        form: form,        
+        form: form,
         button_label: 'action.save'|trans,
-        include_back_to_home_link: true,        
-    }, with_context = false) }}    
-    
+        include_back_to_home_link: true,
+    }, with_context = false) }}
 {% endblock %}
-
-{% block sidebar %}
-    <div class="section">
-        <a href="{{ path('partner_show', {id: partner.id}) }}" class="btn btn-sm w-100 btn-success">
-            <i class="fa fa-eye" aria-hidden="true"></i> {{ 'action.show_partner'|trans }}
-        </a>
-    </div>
-
-    <div class="section actions">
-        {{ include('dashboard/partner/_delete_form.html.twig', {partner: partner}, with_context = false) }}
-    </div>
-
-    {{ parent() }}
-
-{% endblock %}
-
-{% block javascripts %}
-    {{ parent() }}
-{% endblock %} 

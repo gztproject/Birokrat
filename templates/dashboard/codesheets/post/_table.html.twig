@@ -1,9 +1,11 @@
+<div class="list-table-wrap">
+<div class="table-responsive">
 <table class="table table-hover align-middle" id="post_table">
     <thead>
         <tr>
             <th scope="col">{{ 'label.postName'|trans }}</th>
             <th scope="col">{{ 'label.postCode'|trans }}</th>
-            <th scope="col">{{ 'label.postCodeInternational'|trans }}</th>
+                    <th scope="col" class="d-none d-md-table-cell">{{ 'label.postCodeInternational'|trans }}</th>
             <th scope="col" class="text-end"><i class="fa fa-cogs" aria-hidden="true"></i> {{ 'label.actions'|trans }}</th>
         </tr>
     </thead>
@@ -12,7 +14,7 @@
         <tr>
             <td>{{ post.name }}</td>
             <td>{{ post.code }}</td>
-            <td>{{ post.codeInternational }}</td>
+            <td class="d-none d-md-table-cell">{{ post.codeInternational }}</td>
             <td class="text-end">
                 <div class="item-actions">
                     <a href="#{#{{ path('admin_user_edit', {'id': post.id}) }}#}" class="btn btn-sm btn-primary">
@@ -26,3 +28,17 @@
     {% endfor %}
     </tbody>
 </table>
+</div>
+</div>
+<div class="list-cards">
+    {% for post in posts %}
+        <div class="list-card">
+            <div>
+                <div class="list-card-title">{{ post.name }}</div>
+                <div class="list-card-sub">{{ post.code }} · {{ post.codeInternational }}</div>
+            </div>
+        </div>
+    {% else %}
+        <div class="empty-state">{{ 'label.no_posts_found'|trans }}</div>
+    {% endfor %}
+</div>

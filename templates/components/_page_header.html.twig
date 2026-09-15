@@ -1,13 +1,18 @@
-<div class="page-header">
+<div class="page-toolbar">
     <h1 class="page-title">
         {{ title }}
         {% if count is defined %}
             <span class="page-count">({{ count }})</span>
         {% endif %}
     </h1>
-    {% if action_url is defined and action_label is defined %}
-        <a href="{{ action_url }}" class="btn btn-sm btn-success d-lg-none">
-            <i class="fa fa-plus" aria-hidden="true"></i> {{ action_label }}
-        </a>
-    {% endif %}
+    <div class="page-toolbar-actions">
+        {% if action_url is defined and action_label is defined %}
+            <a href="{{ action_url }}" class="btn btn-sm btn-success">
+                <i class="fa fa-plus" aria-hidden="true"></i> {{ action_label }}
+            </a>
+        {% endif %}
+        {% if extra_actions is defined %}
+            {{ extra_actions|raw }}
+        {% endif %}
+    </div>
 </div>

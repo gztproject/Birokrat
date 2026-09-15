@@ -2,8 +2,18 @@
 
 {% block body_id 'country_show' %}
 
+{% block toolbar %}
+    <div class="page-toolbar">
+        <h1 class="page-title" id="country_name">{{ country.name }}</h1>
+        <div class="page-toolbar-actions">
+            <button type="button" id="addPostBtn" class="btn btn-sm btn-success" data-controller="add-post" data-action="add-post#open">
+                <i class="fa fa-plus" aria-hidden="true"></i> {{ 'label.addPost'|trans }}
+            </button>
+        </div>
+    </div>
+{% endblock %}
+
 {% block main %}
-    <h1 id='country_name'>{{ country.name }}</h1>
     <div class='row'>
         <div class='col-sm-2'>
             {{ 'label.nameInt'|trans }}: <b>{{ country.nameInt }}</b>
@@ -31,13 +41,6 @@
     
     {{ include('dashboard/codesheets/country/addPostModal.html.twig', { form: postForm }) }}   
     
-{% endblock %}
-
-{% block sidebar %}
-    <div class='input-group'>
-        <button type='button' id='addPostBtn' class='btn btn-sm w-100 btn-success' data-controller="add-post" data-action="add-post#open"><i class="fa fa-plus" aria-hidden="true"></i> {{ 'label.addPost'|trans }}</button>
-    </div>   
-    {{ parent() }}    
 {% endblock %}
 
 {% block javascripts %}

@@ -2,19 +2,17 @@
 
 {% block body_id 'travelExpense_new' %}
 
-{% block main %}
+{% block toolbar %}
     {{ include('components/_page_header.html.twig', { title: 'title.travelExpense_new'|trans }) }}
+{% endblock %}
+
+{% block main %}
     {{ include('dashboard/travelExpense/_form.html.twig', {
         form: form,
         button_label: 'label.update_travelExpense'|trans,
         include_back_to_home_link: true,  
         include_save_and_create_new: true,      
     }, with_context = false) }}
-
-{% endblock %}
-
-{% block sidebar %}
-    {{ parent() }}
 
 {% endblock %}
 

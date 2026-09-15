@@ -2,32 +2,23 @@
 
 {% block body_id 'organization_edit' %}
 
+{% block toolbar %}
+    <div class="page-toolbar">
+        <h1 class="page-title">{{ 'title.organization_edit'|trans({'%organization%': organization.name}) }}</h1>
+        <div class="page-toolbar-actions">
+            <a href="{{ path('organization_show', {id: organization.id}) }}" class="btn btn-sm btn-outline-secondary">
+                <i class="fa fa-eye" aria-hidden="true"></i> {{ 'action.show_organization'|trans }}
+            </a>
+            {{ include('dashboard/organization/_delete_form.html.twig', {organization: organization, entity: entity}, with_context = false) }}
+        </div>
+    </div>
+{% endblock %}
+
 {% block main %}
-    {{ include('components/_page_header.html.twig', { title: 'title.organization_edit'|trans({'%organization%': organization.name}) }) }}
     {{ include('dashboard/organization/_form.html.twig', {
         form: form,
         entity: entity,
         button_label: 'action.save'|trans,
-        include_back_to_home_link: true,        
-    }, with_context = false) }}    
-    
+        include_back_to_home_link: true,
+    }, with_context = false) }}
 {% endblock %}
-
-{% block sidebar %}
-    <div class="section">
-        <a href="{{ path('organization_show', {id: organization.id}) }}" class="btn btn-sm w-100 btn-success">
-            <i class="fa fa-eye" aria-hidden="true"></i> {{ 'action.show_organization'|trans }}
-        </a>
-    </div>
-
-    <div class="section actions">
-        {{ include('dashboard/organization/_delete_form.html.twig', {organization: organization, entity: entity}, with_context = false) }}
-    </div>
-
-    {{ parent() }}
-
-{% endblock %}
-
-{% block javascripts %}
-    {{ parent() }}
-{% endblock %} 

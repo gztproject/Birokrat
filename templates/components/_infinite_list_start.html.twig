@@ -1,0 +1,9 @@
+{% set infinite = infinite|default(false) %}
+{% if infinite %}
+<div class="list-scroll"
+     data-controller="infinite-scroll"
+     data-infinite-scroll-page-value="{{ page|default(1) }}"
+     data-infinite-scroll-last-page-value="{{ last_page|default(1) }}"
+     data-infinite-scroll-loading-label-value="{{ 'list.loading'|trans }}"
+     data-infinite-scroll-end-label-value="{{ 'list.end'|trans }}">
+{% endif %}

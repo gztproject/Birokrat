@@ -1,8 +1,9 @@
 .report-nav {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    flex-wrap: wrap;
     gap: 0.35rem;
-    margin-bottom: 1rem;
+    margin-bottom: 0;
 }
 
 .report-table {

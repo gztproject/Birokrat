@@ -2,27 +2,31 @@
 
 {% block body_id 'transaction_index' %}
 
-{% block main %}
-{{ include('components/_page_header.html.twig', { title: 'title.transactions'|trans }) }}
-    <div class="bs-component">
-        {{ include('dashboard/transaction/_table.html.twig', {
-                transactions: pagination                
-            }, with_context = false) }}
-    </div>
-    {{ knp_pagination_render(pagination) }}
+{% block toolbar %}
+    {{ include('components/_page_header.html.twig', {
+        title: 'title.transactions'|trans,
+        action_url: path('transaction_new'),
+        action_label: 'action.create_transaction'|trans,
+        extra_actions: '<a href="' ~ path('transaction_export', {
+            'dateFrom': app.request.query.get('dateFrom'),
+            'dateTo': app.request.query.get('dateTo'),
+            'year': app.request.query.get('year'),
+            'orgId': app.request.query.get('organization')
+        }) ~ '" class="btn btn-sm btn-outline-success"><i class="fa fa-file-excel" aria-hidden="true"></i> ' ~ ('action.exportXlsx'|trans) ~ '</a>'
+    }) }}
 {% endblock %}
 
-{% block sidebar %}
-    
-    {{ parent() }}
-    <a href="{{ path('transaction_new') }}" class="btn btn-sm w-100 btn-success">
-        <i class="fa fa-plus" aria-hidden="true"></i> {{ 'action.create_transaction'|trans }}
-    </a>
-    
+{% block filters %}
     {{ include('common/filters/_dateOrgYearFilter.html.twig') }}
-    
-    <a href="{{ path('transaction_export', {'dateFrom': app.request.query.get('dateFrom'), 'dateTo': app.request.query.get('dateTo'), 'year': app.request.query.get('year'), 'orgId': app.request.query.get('organization')}) }}" class="btn btn-sm w-100 btn-success">
-        <i class="fa fa-file-excel" aria-hidden="true"></i> {{ 'action.exportXlsx'|trans }}
-    </a>
-            
+{% endblock %}
+
+{% block main %}
+    <div class="bs-component">
+        {{ include('dashboard/transaction/_table.html.twig', {
+                transactions: pagination,
+                infinite: true,
+                page: pagination.currentPageNumber,
+                last_page: last_page,
+            }, with_context = false) }}
+    </div>
 {% endblock %}

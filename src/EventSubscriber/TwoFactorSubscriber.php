@@ -45,7 +45,7 @@ final class TwoFactorSubscriber implements EventSubscriberInterface
         }
         $request = $event->getRequest();
         $path = $request->getPathInfo();
-        if (str_starts_with($path, '/2fa') || $path === '/login' || $path === '/logout' || $path === '/') {
+        if (str_starts_with($path, '/2fa') || $path === '/login' || $path === '/logout') {
             return;
         }
         $user = $this->security->getUser();

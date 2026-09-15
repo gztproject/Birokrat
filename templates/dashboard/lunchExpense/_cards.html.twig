@@ -1,0 +1,17 @@
+{% for lunchExpense in lunchExpenses %}
+    <div class="list-card">
+        <div>
+            <div class="list-card-title">{{ lunchExpense.dateString }}</div>
+        </div>
+        <div class="list-card-amount">{{ lunchExpense.sum | money }}</div>
+        {% if ShowCBs is defined and ShowCBs == true %}
+        <div class="list-card-actions">
+            <input class="form-check-input TECheckBox" type="checkbox" value={{ lunchExpense.id }}>
+        </div>
+        {% endif %}
+    </div>
+{% else %}
+    {% if empty|default(true) %}
+        <div class="empty-state">{{ 'lunchExpense.no_lunchExpenses_found'|trans }}</div>
+    {% endif %}
+{% endfor %}

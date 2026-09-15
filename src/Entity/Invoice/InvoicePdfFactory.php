@@ -3,6 +3,7 @@
 namespace App\Entity\Invoice;
 
 use App\Money\MoneyFormatter;
+use App\Formatting\SlovenianFormat;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Qipsius\TCPDFBundle\Controller\TCPDFController;
 
@@ -180,14 +181,14 @@ class InvoicePdfFactory
    				//$pdf->Cell( $tableWidths[1], 0, $ii->getName(), 0, 0, '', $fill, '', 0, false, 'T', 'M' );
    				$pdf->MultiCell($tableWidths[1], 0, $ii->getName(), 0, '', $fill, 0, '', '', false, 0, false, true, 0);
    				//$pdf->Cell( $tableWidths[2], 0, number_format($ii->getQuantity(), 2, ',', '.'), 0, 0, 'R', $fill, '', 0, false, 'T', 'M' );
-   				$pdf->MultiCell($tableWidths[2], 0, number_format($ii->getQuantity(), 2, ',', '.'), 0, '', $fill, 0, '', '', false, 0, false, true, 0);
+   				$pdf->MultiCell($tableWidths[2], 0, SlovenianFormat::number($ii->getQuantity()), 0, '', $fill, 0, '', '', false, 0, false, true, 0);
    				//$pdf->Cell( $tableWidths[3], 0, $ii->getUnit(), 0, 0, '', $fill, 'C', 0, false, 'T', 'M' );
    				$pdf->MultiCell($tableWidths[3], 0, $ii->getUnit(), 0, '', $fill, 0, '', '', false, 0, false, true, 0);
    				//$pdf->Cell( $tableWidths[4], 0, number_format($ii->getPrice(), 2, ',', '.').' €', 0, 0, 'R', $fill, '', 0, false, 'T', 'M' );
    				$pdf->MultiCell($tableWidths[4], 0, MoneyFormatter::format($ii->getPrice()), 0, '', $fill, 0, '', '', false, 0, false, true, 0);
    				if($discount)   						
    					//$pdf->Cell( $tableWidths[5], 0, number_format($ii->getDiscount()*100, 2, ',', '.').' %', 0, 0, '', $fill, '', 0, false, 'T', 'M' );
-   					$pdf->MultiCell($tableWidths[5], 0, number_format($ii->getDiscount()*100, 2, ',', '.').' %', 0, '', $fill, 0, '', '', false, 0, false, true, 0);
+   					$pdf->MultiCell($tableWidths[5], 0, SlovenianFormat::number($ii->getDiscount()*100).' %', 0, '', $fill, 0, '', '', false, 0, false, true, 0);
    				//$pdf->Cell( $tableWidths[6], 0, number_format($ii->getPrice()*$ii->getQuantity()*(1-$ii->getDiscount()), 2, ',', '.').' €', 0, 1, 'R', $fill, '', 0, false, 'T', 'M' );
    					$pdf->MultiCell($tableWidths[6], 0, MoneyFormatter::format($ii->getPrice()*$ii->getQuantity()*(1-$ii->getDiscount())), 0, '', $fill, 1, '', '', false, 0, false, true, 0);
    				}
@@ -205,7 +206,7 @@ class InvoicePdfFactory
    					
    					$pdf->Cell( 120, 0, '', 0, 0, '', 0, '', 0, false, 'T', 'B' );
    					$pdf->Cell( 20, 0, $this->__translator->trans('label.discount').":", 0, 0, '', 0, '', 0, false, 'T', 'B' );
-   					$pdf->Cell( 20, 0, number_format($this->__invoice->getDiscount()*100, 2, ',', '.') . " %", 0, 0, 'C', 0, '', 0, false, 'T', 'B' );
+   					$pdf->Cell( 20, 0, SlovenianFormat::number($this->__invoice->getDiscount()*100) . " %", 0, 0, 'C', 0, '', 0, false, 'T', 'B' );
    					$pdf->Cell( 20, 0, MoneyFormatter::format($this->__invoice->getTotalValue()*$this->__invoice->getDiscount()), 0, 1, 'R', 0, '', 0, false, 'T', 'B' );
    				}
    				

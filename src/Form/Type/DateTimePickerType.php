@@ -17,6 +17,7 @@ class DateTimePickerType extends AbstractType
             'widget' => 'single_text',
             'html5' => true,
             'input' => 'datetime',
+            'attr' => ['lang' => 'sl'],
         ]);
     }
 

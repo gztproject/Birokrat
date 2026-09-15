@@ -1,16 +1,16 @@
 {% set q = app.request.query.all %}
 {% set route = app.request.attributes.get('_route') %}
-<nav class="report-nav nav nav-pills flex-column" aria-label="{{ 'menu.reports'|trans }}">
+<nav class="report-nav nav nav-pills flex-row flex-wrap gap-1" aria-label="{{ 'menu.reports'|trans }}">
     <a href="{{ path('report_index', q) }}" class="nav-link{% if route == 'report_index' %} active{% endif %}">
         {{ 'title.overview'|trans }}
     </a>
     <a href="{{ path('report_dddddd', q) }}" class="nav-link{% if route == 'report_dddddd' %} active{% endif %}">
-        Obračun akontacije dohodnine (DDD-DDD)
+        {{ 'menu.dddddd'|trans }}
     </a>
     <a href="{{ path('report_bilanca', q) }}" class="nav-link{% if route == 'report_bilanca' %} active{% endif %}">
-        Bilanca
+        {{ 'menu.bilanca'|trans }}
     </a>
     <a href="{{ path('report_turnout', q) }}" class="nav-link{% if route == 'report_turnout' %} active{% endif %}">
-        Izkaz poslovnega izida
+        {{ 'menu.turnout'|trans }}
     </a>
 </nav>

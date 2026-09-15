@@ -1,11 +1,10 @@
 {% extends 'dashboard/layout.html.twig' %}
 
-{% block body_id 'travelExpense_show' %}
+{% block body_id 'transaction_show' %}
+
+{% block toolbar %}
+    {{ include('components/_page_header.html.twig', { title: 'title.transactions'|trans }) }}
+{% endblock %}
 
 {% block main %}
-    {{ include('components/_page_header.html.twig', { title: travelExpense.TravelDescription }) }}
-    {% endblock %}
-
-{% block sidebar %}
-        {{ parent() }}
 {% endblock %}

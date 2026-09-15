@@ -12,8 +12,11 @@
 
 {% block body_id 'error' %}
 
+{% block toolbar %}
+    <h1 class="page-title text-danger"><i class="fa fa-unlock-alt" aria-hidden="true"></i> {{ 'http_error.name'|trans({ '%status_code%': 403 }) }}</h1>
+{% endblock %}
+
 {% block main %}
-    <h1 class="text-danger"><i class="fa fa-unlock-alt" aria-hidden="true"></i> {{ 'http_error.name'|trans({ '%status_code%': 403 }) }}</h1>
 
     <p class="lead">
         {{ 'http_error_403.description'|trans }}
@@ -23,6 +26,3 @@
     </p>
 {% endblock %}
 
-{% block sidebar %}
-    {{ parent() }}
-{% endblock %}

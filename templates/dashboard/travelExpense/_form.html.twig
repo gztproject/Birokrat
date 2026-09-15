@@ -64,7 +64,7 @@
     </div>
     {% endif %}
         <div class="bs-component">            
-            <table id="travel-stops-table" class="table table-hover">
+            <table id="travel-stops-table" class="table table-hover collection-as-cards">
                 <thead>
                     <tr>
                         <th>{{ 'label.stop_number'|trans }}</th>
@@ -78,10 +78,10 @@
                 
                 {% for travelStop in form.travelStopCommands %}
                     <tr class="form-group travel-stop-tr-{{ loop.index0 }}" data-collection-row>
-                        <td>{{ form_widget(travelStop.stopOrder, {'attr': {'class': 'form-control StopOrder'}})}}</td>
-                        <td class="post-Selector" data-stop-index="{{ loop.index0 }}">{{ form_widget(travelStop.post, {'attr': {'class': 'form-control', 'data-action': 'change->travel-form#fillDistance'}})}}</td>
-                        <td colspan="2">{{ form_widget(travelStop.distanceFromPrevious, {'attr': {'class': 'form-control'}})}}</td>
-                        <td><button type="button" class="btn btn-sm btn-danger" data-action="collection#remove"><i class="fa fa-minus" aria-hidden="true"></i></button></td>
+                        <td data-label="{{ 'label.stop_number'|trans }}">{{ form_widget(travelStop.stopOrder, {'attr': {'class': 'form-control StopOrder'}})}}</td>
+                        <td class="post-Selector" data-stop-index="{{ loop.index0 }}" data-label="{{ 'label.post'|trans }}">{{ form_widget(travelStop.post, {'attr': {'class': 'form-control', 'data-action': 'change->travel-form#fillDistance'}})}}</td>
+                        <td colspan="2" data-label="{{ 'label.distance'|trans }}">{{ form_widget(travelStop.distanceFromPrevious, {'attr': {'class': 'form-control'}})}}</td>
+                        <td class="removeBtn" data-label=""><button type="button" class="btn btn-sm btn-danger" data-action="collection#remove"><i class="fa fa-minus" aria-hidden="true"></i></button></td>
                     </tr>
                 {% endfor %}
                 </tbody>
@@ -90,7 +90,7 @@
                 <i class="fa fa-plus" aria-hidden="true"></i>
             </button>
         </div>
-        <div class="mb-3">
+        <div class="form-actions-sticky d-flex flex-wrap gap-2">
             <button type="submit" class="btn btn-primary">
                 <i class="fa fa-save" aria-hidden="true"></i> {{ button_label|default('label.create_travelExpense'|trans) }}
             </button>
@@ -98,7 +98,7 @@
                 {{ form_widget(form.saveAndCreateNew, {label: 'label.save_and_create_new', attr: {class: 'btn btn-primary'}}) }}
             {% endif %}
             {% if include_back_to_home_link %}
-                <a href="{{ path('travelExpense_index') }}" class="btn btn-link">
+                <a href="{{ path('travelExpense_index') }}" class="btn btn-secondary">
                     <i class="fa fa-list-alt" aria-hidden="true"></i> {{ 'action.back_to_list'|trans }}
                 </a>
             {% endif %}

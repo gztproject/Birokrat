@@ -1,0 +1,8 @@
+<button class="btn btn-sm btn-outline-secondary d-lg-none mb-3" type="button" data-bs-toggle="collapse" data-bs-target="#filterBar" aria-expanded="false" aria-controls="filterBar">
+    <i class="fa fa-filter" aria-hidden="true"></i> {{ 'label.filter'|trans }}
+</button>
+<div class="collapse d-lg-block mb-3" id="filterBar">
+    <div class="filter-bar">
+        {{ content|raw }}
+    </div>
+</div>

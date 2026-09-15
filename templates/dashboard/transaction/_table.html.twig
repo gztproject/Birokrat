@@ -1,79 +1,24 @@
-<table class="table table-hover align-middle">
-        <thead>
-            <tr>
-                <th scope="col"><i class="fa fa-calendar" aria-hidden="true"></i> {{ 'label.date'|trans }}</th>
-                <th scope="col"><i class="fa fa-user" aria-hidden="true"></i> {{ 'label.organization'|trans }}</th>
-                <th scope="col"><i class="fa fa-file" aria-hidden="true"></i> {{ 'label.document'|trans }}</th>
-                <th scope="col" class="text-end"><i class="fa fa-euro-sign" aria-hidden="true"></i> {{ 'label.sum'|trans }}</th>
-                <th scope="col"><i class="fa fa-list-alt " aria-hidden="true"></i> {{ 'label.debit'|trans }}</th>
-                <th scope="col"><i class="fa fa-list-alt " aria-hidden="true"></i> {{ 'label.credit'|trans }}</th>
-                <th scope="col" class="text-end"><i class="fa fa-cog" aria-hidden="true"></i> {{ 'label.actions'|trans }}</th>
-            </tr>
-        </thead>
-        <tbody>
-    {% for transaction in transactions %}
-        {% if (transaction.debitKonto.category.class.number != 4 and transaction.debitKonto.category.class.number != 2) %}
-            <tr class="table-success">
-        {% else %}
-            <tr class="table-danger">
-        {% endif %}
-                <td>{{ transaction.dateString }}</td>
-                <td>{{ transaction.organization.shortName }}</td>
-                <td>
-                {% if transaction.invoice != null %}
-                    <a href="{{ path('invoice_show', {'id': transaction.invoice.id}) }}">
-                    {% if transaction.creditKonto == transaction.organization.organizationSettings.issueInvoiceCredit %}
-                        {{'label.invoice_issued'|trans }}
-                    {% elseif transaction.creditKonto == transaction.organization.organizationSettings.invoicePaidCredit %}
-                        {{'label.invoice_paid'|trans }}
-                    {% endif %}
-                    : {{ transaction.invoice.number }} ({{ transaction.invoice.recepient.shortName }})</a>
-                {% elseif transaction.travelExpense != null %}
-                    <a href="{{ path('travelExpense_show', {'id': transaction.travelExpense.id}) }}">{{'label.travelExpense'|trans }}: {{ transaction.travelExpense.TravelDescription }}</a>
-                {% elseif transaction.travelExpenseBundle != null %}
-                    <a href="{{ path('travelExpenseBundle_show', {'id': transaction.travelExpenseBundle.id}) }}">{{'label.travelExpenseBundle'|trans }}: {{ transaction.travelExpenseBundle.DateRange }}</a>
-                {% elseif transaction.incomingInvoice != null %}
-                    <a href="{{ path('incomingInvoice_show', {'id': transaction.incomingInvoice.id}) }}">
-                    {% if transaction.debitKonto.class.number == 4 %}
-                        {{'label.invoice_received'|trans }}
-                    {% elseif transaction.creditKonto.class.number == 1 or transaction.creditKonto.class.number == 9 %}
-                        {{'label.invoice_paid'|trans }}
-                    {% endif %}
-                    : {{ transaction.incomingInvoice.number }} ({{ transaction.incomingInvoice.issuer.shortName }})</a>
-                {% elseif transaction.lunchExpense != null %}
-                    <a href="{{ path('transaction_show', {'id': transaction.id}) }}">{{'label.lunchExpense'|trans }}: {{ transaction.lunchExpense.__toString }}</a>
-                {% elseif transaction.lunchExpenseBundle != null %}
-                    <a href="{{ path('lunchExpenseBundle_show', {'id': transaction.lunchExpenseBundle.id}) }}">{{'label.lunchExpenseBundle'|trans }}: {{ transaction.lunchExpenseBundle.DateRange }}</a>
-                {% else %}
-                    <a href="{{ path('transaction_show', {'id': transaction.id}) }}">{{'label.transaction'|trans }}: {{ transaction.description }}</a>
-                {% endif %}
-                </td>
-                <td class="money">{{ transaction.sum | money }} </td>
-                <td>{{ transaction.debitKonto.number }}</td>
-                <td>{{ transaction.creditKonto.number }}</td>
-                <td class="text-end">
-                    {% embed 'components/_action_menu.html.twig' %}
-                        {% block primary %}
-                            {% if is_granted('ROLE_ADMIN') %}
-                            <a href="{{ path('transaction_edit', {'id': transaction.id}) }}" class="btn btn-sm btn-primary">
-                                <i class="fa fa-edit" aria-hidden="true"></i> {{ 'action.edit'|trans }}
-                            </a>
-                            {% endif %}
-                        {% endblock %}
-                        {% block more %}
-                            {% if not transaction.hasDocument %}
-                            <li>
-                                <a class="dropdown-item" href="{{ path('transaction_clone', {'id': transaction.id}) }}">
-                                    <i class="fa fa-copy" aria-hidden="true"></i> {{ 'action.clone'|trans }}
-                                </a>
-                            </li>
-                            {% endif %}
-                        {% endblock %}
-                    {% endembed %}
-                </td>
-            </tr>
-        {% else %}
-            {{ include('components/_empty_state.html.twig', { colspan: 7, message: 'transaction.no_transactions_found'|trans }) }}
-        {% endfor %}
+{{ include('components/_infinite_list_start.html.twig') }}
+<div class="list-table-wrap">
+    <table class="table table-hover align-middle">
+    <thead>
+        <tr>
+            <th scope="col" class="col-date"><i class="fa fa-calendar" aria-hidden="true"></i> {{ 'label.date'|trans }}</th>
+            <th scope="col" class="d-none d-lg-table-cell"><i class="fa fa-user" aria-hidden="true"></i> {{ 'label.organization'|trans }}</th>
+            <th scope="col" class="col-doc"><i class="fa fa-file" aria-hidden="true"></i> {{ 'label.document'|trans }}</th>
+            <th scope="col" class="col-sum text-end"><i class="fa fa-euro-sign" aria-hidden="true"></i> {{ 'label.sum'|trans }}</th>
+            <th scope="col" class="d-none d-md-table-cell"><i class="fa fa-list-alt " aria-hidden="true"></i> {{ 'label.debit'|trans }}</th>
+            <th scope="col" class="d-none d-md-table-cell"><i class="fa fa-list-alt " aria-hidden="true"></i> {{ 'label.credit'|trans }}</th>
+            <th scope="col" class="col-actions text-end">{{ 'label.actions'|trans }}</th>
+        </tr>
+    </thead>
+    <tbody{% if infinite|default(false) %} data-infinite-scroll-target="tableBody"{% endif %}>
+{{ include('dashboard/transaction/_rows.html.twig') }}
     </tbody>
     </table>
+</div>
+
+<div class="list-cards"{% if infinite|default(false) %} data-infinite-scroll-target="cards"{% endif %}>
+    {{ include('dashboard/transaction/_cards.html.twig') }}
+</div>
+{{ include('components/_infinite_list_end.html.twig') }}
