@@ -9,7 +9,10 @@
         <div class="row">
             <form>
                 {{ 'label.date'|trans }}:<br>
-                <input id="modalDate" class="form-control" type="date" lang="sl" name="date">
+                {{ include('components/_sl_date.html.twig', { native: {
+                    id: 'modalDate',
+                    name: 'date',
+                }}) }}
                 <input id="dateId" type="hidden" name="id">
                 {{ 'label.bankCost'|trans }}:<br>
                 <input id="modalBankCost" class="form-control" type="number" step="0.01" lang="sl" name="bankCost" value="0">
