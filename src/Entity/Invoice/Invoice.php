@@ -234,6 +234,7 @@ class Invoice extends AggregateBase implements iTransactionDocument
     	$this->calculateReference();
     	$this->dateOfIssue = $date;
     	$this->calculateTotals();
+    	$this->setRedundantData();
     	
     	$c = new CreateTransactionCommand();
     	$c->organization = $this->issuer;

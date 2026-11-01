@@ -76,9 +76,39 @@ class InvoiceTest extends TestCase
 		$this->assertEquals(760, $transaction->getCreditKonto()->getNumber());
 		$this->assertEquals(120, $transaction->getDebitKonto()->getNumber());
 		$this->assertEquals(20, $inv->getState());
+		$this->assertEquals('Partner d.o.o.', $inv->getRecepientName());
 
 		$this->expectException(\Exception::class);
 		$inv->setIssued(new \DateTime(), 'TST-2019-0002', $user);
+	}
+
+	public function testIssueRefreshesDenormalizedRecepient(): void
+	{
+		$user = $this->createMock(User::class);
+		$original = $this->stubPartner();
+		$replacement = $this->createMock(Partner::class);
+		$replacement->method('getName')->willReturn('Petan');
+		$replacement->method('getAddress')->willReturn($this->stubAddress());
+		$replacement->method('getFullTaxNumber')->willReturn('SI 11111111');
+
+		$cc = $this->getMockBuilder(Konto::class)->disableOriginalConstructor()->getMock();
+		$dc = $this->getMockBuilder(Konto::class)->disableOriginalConstructor()->getMock();
+		$os = $this->createMock(OrganizationSettings::class);
+		$os->method('getIssueInvoiceCredit')->willReturn($cc);
+		$os->method('getIssueInvoiceDebit')->willReturn($dc);
+
+		$inv = $this->createInvoice($user, $this->stubIssuer($os), $original);
+		$this->assertEquals('Partner d.o.o.', $inv->getRecepientName());
+
+		$recepient = new \ReflectionProperty(Invoice::class, 'recepient');
+		$recepient->setValue($inv, $replacement);
+
+		$inv->setIssued(new \DateTime(), 'TST-2019-0001', $user);
+
+		$this->assertSame($replacement, $inv->getRecepient());
+		$this->assertEquals('Petan', $inv->getRecepientName());
+		$this->assertEquals('SI 11111111', $inv->getRecepientTaxNumber());
+		$this->assertEquals('Trg 1, 1000 Ljubljana', $inv->getRecepientAddress());
 	}
 
 	public function testPayInvoice()
