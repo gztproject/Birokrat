@@ -26,5 +26,4 @@ Encore
     .enableSingleRuntimeChunk()
 ;
 
-const config = await Encore.getWebpackConfig();
-export default config;
+export default Encore.getWebpackConfig();

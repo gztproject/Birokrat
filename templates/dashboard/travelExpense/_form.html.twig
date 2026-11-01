@@ -11,12 +11,9 @@
         </div>
         <div class="col-sm-6">
             <div class="mb-3">
-                <div class='input-group date' id='TeDatePicker'>
-                    {{ form_label(form.date) }}
+                {{ form_label(form.date, null, {'label_attr': {'class': 'col-form-label-lg'}} ) }}
+                <div class="input-group">
                     {{ form_widget(form.date, {'attr': {'class': 'form-control'}}) }}
-                    
-                        <span class="input-group-text"><i class="fa fa-calendar" aria-hidden="true"></i></span>
-                    </div>
                 </div>
             </div>
         </div>

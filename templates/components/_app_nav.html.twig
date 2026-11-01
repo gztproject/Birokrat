@@ -70,6 +70,10 @@
         <a class="app-nav-link app-nav-sub{% if current_route starts with 'admin_user_' %} active{% endif %}" href="{{ path('admin_user_index') }}">
             {{ 'menu.users'|trans }}
         </a>
+        <a class="app-nav-link app-nav-sub{% if current_route starts with 'admin_update' %} active{% endif %}" href="{{ path('admin_update') }}" data-controller="update-badge" data-update-badge-status-url-value="{{ path('admin_update_status') }}">
+            {{ 'menu.updates'|trans }}
+            <span class="update-nav-badge" data-update-badge-target="badge" hidden></span>
+        </a>
     {% endif %}
 </nav>
 

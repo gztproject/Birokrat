@@ -1,0 +1,18 @@
+{# Shared Slovenian date field. native_input is the real input type="date". #}
+<div class="sl-date" data-controller="sl-date">
+    <input type="text"
+           class="form-control sl-date-display"
+           data-sl-date-target="display"
+           data-action="focus->sl-date#onDisplayFocus input->sl-date#onDisplayInput blur->sl-date#onDisplayBlur keydown->sl-date#onDisplayKeydown"
+           placeholder="d. m. llll"
+           autocomplete="off"
+           inputmode="decimal">
+    <button type="button"
+            class="sl-date-icon"
+            data-sl-date-target="icon"
+            data-action="click->sl-date#openPicker"
+            aria-label="{{ 'label.date'|trans }}">
+        <i class="fa fa-calendar" aria-hidden="true"></i>
+    </button>
+    {{ native_input|raw }}
+</div>

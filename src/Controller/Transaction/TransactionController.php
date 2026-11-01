@@ -82,7 +82,7 @@ class TransactionController extends AbstractController {
 		}
 
 		$sheet->getStyle ( 'B' )->getNumberFormat ()->setFormatCode ( 'dd. mm. yyyy' );
-		$sheet->getStyle ( 'C' )->getNumberFormat ()->setFormatCode ( \PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_CURRENCY_EUR_SIMPLE );
+		$sheet->getStyle ( 'C' )->getNumberFormat ()->setFormatCode ( \PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_CURRENCY_EUR );
 
 		$sheet->getColumnDimension ( 'A' )->setAutoSize ( true );
 		$sheet->getColumnDimension ( 'B' )->setAutoSize ( true );
@@ -119,7 +119,7 @@ class TransactionController extends AbstractController {
 		 * }
 		 *
 		 * $sheet->getStyle ( 'B' )->getNumberFormat ()->setFormatCode ( 'dd. mm. yyyy' );
-		 * $sheet->getStyle ( 'C' )->getNumberFormat ()->setFormatCode ( \PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_CURRENCY_EUR_SIMPLE );
+		 * $sheet->getStyle ( 'C' )->getNumberFormat ()->setFormatCode ( \PhpOffice\PhpSpreadsheet\Style\NumberFormat::FORMAT_CURRENCY_EUR );
 		 *
 		 * $sheet->getColumnDimension ( 'A' )->setAutoSize ( true );
 		 * $sheet->getColumnDimension ( 'B' )->setAutoSize ( true );

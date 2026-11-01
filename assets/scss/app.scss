@@ -48,27 +48,60 @@
 }
 
 .sl-date-icon {
+    align-items: center;
+    appearance: none;
+    background: transparent;
+    border: 0;
+    box-shadow: none;
     color: var(--bs-secondary-color);
-    pointer-events: none;
-    position: absolute;
-    right: 0.8rem;
-    top: 50%;
-    transform: translateY(-50%);
-}
-
-.sl-date-native {
-    background: transparent !important;
-    border: 0 !important;
-    box-shadow: none !important;
-    color: transparent;
     cursor: pointer;
+    display: inline-flex;
     height: 100%;
-    max-width: 2.75rem;
-    min-width: 0;
-    opacity: 0;
+    justify-content: center;
+    margin: 0;
     padding: 0;
     position: absolute;
     right: 0;
     top: 0;
-    width: 2.75rem;
+    width: 2.5rem;
+    z-index: 2;
+}
+
+.sl-date-icon:hover:not(:disabled),
+.sl-date-icon:focus-visible:not(:disabled) {
+    color: var(--bs-body-color);
+}
+
+.sl-date-icon:focus-visible {
+    outline: 2px solid var(--bs-primary);
+    outline-offset: -2px;
+}
+
+.sl-date-icon:disabled {
+    cursor: default;
+}
+
+.sl-date > .sl-date-native {
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    color: transparent;
+    height: 100% !important;
+    margin: 0 !important;
+    max-width: 2.5rem;
+    min-width: 0;
+    opacity: 0 !important;
+    padding: 0 !important;
+    pointer-events: none !important;
+    position: absolute !important;
+    right: 0;
+    top: 0;
+    width: 2.5rem !important;
+    z-index: 1;
+}
+
+.sl-date > .sl-date-native::-webkit-calendar-picker-indicator {
+    display: none;
+    opacity: 0;
+    pointer-events: none;
 }

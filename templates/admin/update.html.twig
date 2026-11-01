@@ -1,0 +1,106 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block body_id 'admin_update' %}
+
+{% block toolbar %}
+    {{ include('components/_page_header.html.twig', { title: 'title.updates'|trans }) }}
+{% endblock %}
+
+{% block main %}
+<section
+    class="update-page"
+    data-controller="update"
+    data-update-status-url-value="{{ path('admin_update_status') }}"
+    data-update-channel-url-value="{{ path('admin_update_channel') }}"
+    data-update-run-url-value="{{ path('admin_update_run') }}"
+    data-update-token-value="{{ csrf_token('admin_update') }}"
+    data-update-check-failed-value="{{ 'update.checkFailed'|trans }}"
+    data-update-start-failed-value="{{ 'update.startFailed'|trans }}"
+    data-update-up-to-date-value="{{ 'update.upToDate'|trans }}"
+    data-update-none-value="{{ 'update.none'|trans }}"
+    data-update-available-value="{{ 'update.available'|trans({'%version%': '__VERSION__'}) }}"
+>
+    <div class="update-card">
+        <div class="update-channel">
+            <span class="update-label" id="update-channel-label">{{ 'update.channel.label'|trans }}</span>
+            <div class="btn-group" role="group" aria-labelledby="update-channel-label">
+                <button type="button" class="btn btn-outline-primary" data-update-target="channelButton" data-channel="stable" data-action="update#choose" data-update-channel-param="stable" aria-pressed="false">
+                    {{ 'update.channel.stable'|trans }}
+                </button>
+                <button type="button" class="btn btn-outline-primary" data-update-target="channelButton" data-channel="prerelease" data-action="update#choose" data-update-channel-param="prerelease" aria-pressed="false">
+                    {{ 'update.channel.prerelease'|trans }}
+                </button>
+            </div>
+        </div>
+        <p class="update-warning" data-update-target="channelWarning" hidden>{{ 'update.prereleaseWarning'|trans }}</p>
+    </div>
+
+    <div class="update-card">
+        <div data-update-target="checking">
+            <span class="spinner-border spinner-border-sm text-primary" role="status" aria-hidden="true"></span>
+            {{ 'update.checking'|trans }}
+        </div>
+
+        <div data-update-target="summary" hidden>
+            <div class="update-metrics">
+                <div>
+                    <span class="update-label">{{ 'update.current'|trans }}</span>
+                    <strong data-update-target="currentVersion"></strong>
+                </div>
+                <div>
+                    <span class="update-label">{{ 'update.latest'|trans }}</span>
+                    <strong data-update-target="latestVersion"></strong>
+                    <a data-update-target="releaseLink" target="_blank" rel="noopener noreferrer" hidden></a>
+                </div>
+            </div>
+            <p data-update-target="summaryText"></p>
+            <p class="update-warning" data-update-target="discardWarning" hidden>{{ 'update.discardWarning'|trans }}</p>
+            <p class="update-warning" data-update-target="targetWarning" hidden>{{ 'update.prereleaseWarning'|trans }}</p>
+            <p class="update-warning" data-update-target="prodWarning" hidden>{{ 'update.prodOnly'|trans }}</p>
+        </div>
+
+        <div class="alert alert-danger mb-0" data-update-target="error" hidden></div>
+
+        <div class="update-actions">
+            <button type="button" class="btn btn-outline-primary" data-update-target="checkButton" data-action="update#check">
+                <i class="fa fa-sync-alt" aria-hidden="true"></i> {{ 'update.checkAgain'|trans }}
+            </button>
+            <button type="button" class="btn btn-success" data-update-target="startButton" data-action="update#start" disabled>
+                <i class="fa fa-download" aria-hidden="true"></i> {{ 'update.start'|trans }}
+            </button>
+        </div>
+    </div>
+
+    <div class="update-card" data-update-target="notesCard" hidden>
+        <h2 class="h6">{{ 'update.notes'|trans }}</h2>
+        <div class="update-notes" data-update-target="notes"></div>
+    </div>
+
+    <div class="update-card" data-update-target="progressCard" hidden>
+        <div class="update-progress-header">
+            <span>{{ 'update.progress'|trans }}</span>
+            <strong data-update-target="progressValue">0%</strong>
+        </div>
+        <div class="progress">
+            <div class="progress-bar progress-bar-striped progress-bar-animated" data-update-target="progressBar" role="progressbar" style="width: 0%" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">0%</div>
+        </div>
+        <p data-update-target="progressLabel"></p>
+        <p data-update-target="runningNotice">{{ 'update.running'|trans }}</p>
+        <ol class="update-steps">
+            <li data-step="requirements" data-state="pending">{{ 'update.step.requirements'|trans }}</li>
+            <li data-step="fetch" data-state="pending">{{ 'update.step.fetch'|trans }}</li>
+            <li data-step="checkout" data-state="pending">{{ 'update.step.checkout'|trans }}</li>
+            <li data-step="composer" data-state="pending">{{ 'update.step.composer'|trans }}</li>
+            <li data-step="frontend" data-state="pending">{{ 'update.step.frontend'|trans }}</li>
+            <li data-step="migrate" data-state="pending">{{ 'update.step.migrate'|trans }}</li>
+            <li data-step="cache" data-state="pending">{{ 'update.step.cache'|trans }}</li>
+        </ol>
+        <h2 class="h6">{{ 'update.log'|trans }}</h2>
+        <pre class="update-log" data-update-target="log"></pre>
+        <div class="update-actions">
+            <button type="button" class="btn btn-primary" data-update-target="reloadButton" data-action="update#reload" hidden>{{ 'update.reload'|trans }}</button>
+            <button type="button" class="btn btn-outline-primary" data-update-target="retryButton" data-action="update#retry" hidden>{{ 'update.retry'|trans }}</button>
+        </div>
+    </div>
+</section>
+{% endblock %}

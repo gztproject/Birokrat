@@ -1,6 +1,19 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+VER=""
+while getopts ":v:" opt; do
+	case "$opt" in
+		v) VER="$OPTARG" ;;
+		\?) echo "Invalid option -$OPTARG" >&2
+			exit 1
+			;;
+		:) echo "Option -$OPTARG requires an argument." >&2
+			exit 1
+			;;
+	esac
+done
+
 cd "$(dirname "$(readlink -f "$0")")"
 
 export APP_ENV=prod
@@ -62,6 +75,84 @@ need_cmd() {
 		exit 1
 	fi
 }
+
+progress() {
+	local percent="$1"
+	local step="$2"
+	shift 2
+	printf '__BK_PROGRESS__|%s|%s|%s\n' "$percent" "$step" "$*"
+}
+
+log() {
+	printf '%s\n' "$*"
+}
+
+version_ok() {
+	[[ "$1" =~ ^v?[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.]+)?$ ]]
+}
+
+run_unattended() {
+	if [[ -z "$VER" ]] || ! version_ok "$VER"; then
+		echo "Invalid version." >&2
+		exit 1
+	fi
+
+	if [[ "$(id -u)" -eq 0 ]]; then
+		echo "Do not run as root. Use the web user, for example: sudo -u www-data -H bash $0 -v $VER" >&2
+		exit 1
+	fi
+
+	setup_path
+	progress 10 requirements "Checking update requirements."
+	need_cmd git
+	need_cmd php
+	need_cmd composer
+	need_cmd npm
+	need_cmd node
+	log "Using node $(command -v node) ($(node -v)), npm $(command -v npm)"
+
+	progress 25 fetch "Fetching tags from origin."
+	git fetch origin --tags --prune
+
+	if ! git rev-parse -q --verify "refs/tags/${VER}" >/dev/null; then
+		log "Unknown tag: ${VER}"
+		exit 1
+	fi
+
+	if is_prerelease "$VER"; then
+		log "Warning: ${VER} is a pre-release."
+	fi
+
+	if [[ -n "$(git status --porcelain)" ]]; then
+		log "Working tree has local changes. Tracked changes will be discarded. Untracked files such as .env.local are kept."
+	fi
+
+	progress 40 checkout "Checking out the release."
+	git checkout --detach --force "$VER"
+
+	progress 60 composer "Installing PHP dependencies."
+	composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
+	composer dump-env prod
+
+	progress 80 frontend "Building the frontend."
+	# Encore and webpack live in devDependencies; do not use --omit=dev.
+	npm ci
+	npm run build
+
+	progress 90 migrate "Running database migrations."
+	php bin/console doctrine:migrations:migrate --no-interaction --env=prod
+
+	progress 97 cache "Clearing application cache."
+	php bin/console cache:clear --env=prod
+
+	progress 100 done "Update completed."
+	log "Done. Running $(current_version)."
+}
+
+if [[ -n "$VER" ]]; then
+	run_unattended
+	exit 0
+fi
 
 echo "Birokrat update"
 echo "---------------"
