@@ -39,6 +39,7 @@ title:
   user_list: Seznam uporabnikov
   partners: Pregled po dobaviteljih
   incomingInvoices: Prejeti računi
+  updates: Posodobitve
 
 label:
   create:
@@ -117,6 +118,7 @@ menu:
     invoices: Seznam računov
   home: Domov
   admin: Administrator
+  updates: Posodobitve
   POC: POC
   user: Uporabnik
   logout: Odjava
@@ -140,3 +142,36 @@ help:
   login: Prijava
 
 Save: Shrani
+
+update:
+  channel:
+    label: Kanal
+    stable: Stabilno
+    prerelease: Predizdaja
+  prereleaseWarning: Predizdaja ni namenjena produkciji, razen če jo namerno preizkušate.
+  current: Nameščena različica
+  latest: Najnovejša različica
+  checking: Preverjam posodobitve…
+  upToDate: Nameščena je najnovejša različica.
+  available: "Na voljo je različica %version%."
+  none: Objavljene različice ni bilo mogoče najti.
+  checkFailed: Posodobitev ni bilo mogoče preveriti.
+  checkAgain: Preveri znova
+  start: Začni posodobitev
+  startFailed: Posodobitve ni bilo mogoče začeti.
+  notes: Spremembe
+  progress: Napredek
+  log: Dnevnik
+  running: Posodobitev teče. Pustite to stran odprto. Birokrat do konca ne bo na voljo.
+  discardWarning: Posodobitev zavrže sledene lokalne spremembe. Nesledene datoteke, na primer .env.local, ostanejo.
+  prodOnly: Posodobitev lahko zaženete samo v produkcijskem okolju.
+  reload: Naloži novo različico
+  retry: Poskusi znova
+  step:
+    requirements: Preverjanje zahtev
+    fetch: Pridobivanje oznak
+    checkout: Prevzem različice
+    composer: Namestitev PHP odvisnosti
+    frontend: Izgradnja vmesnika
+    migrate: Migracije podatkovne baze
+    cache: Čiščenje predpomnilnika

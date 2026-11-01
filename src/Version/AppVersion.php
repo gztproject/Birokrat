@@ -4,7 +4,7 @@ namespace App\Version;
 
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
-final class AppVersion
+final class AppVersion implements VersionSource
 {
     private readonly string $version;
 
