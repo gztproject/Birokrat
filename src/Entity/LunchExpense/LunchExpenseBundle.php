@@ -3,6 +3,7 @@
 namespace App\Entity\LunchExpense;
 
 use App\Entity\Base\AggregateBase;
+use App\Entity\Organization\Organization;
 use App\Entity\Transaction\Transaction;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -39,6 +40,11 @@ class LunchExpenseBundle extends AggregateBase implements iTransactionDocument
     public function getLunchExpenses(): Collection
     {
         return $this->lunchExpenses;
+    }
+
+    public function getOrganization(): Organization
+    {
+        return $this->organization;
     }
 
     private function addLunchExpense(LunchExpense $lunchExpense, User $user): self

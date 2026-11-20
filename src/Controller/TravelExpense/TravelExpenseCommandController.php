@@ -25,6 +25,7 @@ use App\Entity\LunchExpense\LunchExpense;
 use App\Entity\LunchExpense\CreateLunchExpenseCommand;
 use App\Repository\Transaction\TransactionRepository;
 use App\Entity\Transaction\UpdateTransactionCommand;
+use App\Security\OrganizationMemberVoter;
 
 class TravelExpenseCommandController extends AbstractController
 {    
@@ -36,12 +37,13 @@ class TravelExpenseCommandController extends AbstractController
     	    	
     	$form = $this->createForm(TravelExpenseType::class, $c, [
     			'is_admin' => $this->isGranted('ROLE_ADMIN'),
+    			'organizations' => $this->getUser()->getOrganizations(),
     		])
     		->add('saveAndCreateNew', SubmitType::class);
     	
-    	$form->handleRequest($request);
-    	
+    	$form->handleRequest($request);    	
     	if ($form->isSubmitted() && $form->isValid()) {
+    		$this->denyAccessUnlessGranted(OrganizationMemberVoter::MEMBER, $c->organization);
     		
     		if (!$this->isGranted('ROLE_ADMIN') || $c->employee === null) {
     			$c->employee = $this->getUser();
@@ -60,7 +62,7 @@ class TravelExpenseCommandController extends AbstractController
     		$transaction = $te->setNew($this->getUser());
     		
     		//If this is the first lunchExpense of the day:
-    		$query = $lunchExpenses->getFilteredQuery($c->date->getTimestamp(), $c->date->getTimestamp(), true, true)->getQuery();
+    		$query = $lunchExpenses->getFilteredQuery($this->getUser()->getOrganizations(), $c->date->getTimestamp(), $c->date->getTimestamp(), true, true)->getQuery();
     		$query->execute();
     		$logger->debug("Found ".count($query->getResult())." existing LunchExpenses on ".date("r",$c->date->getTimestamp()));
     		if(count($query->getResult()) == 0)
@@ -105,6 +107,8 @@ class TravelExpenseCommandController extends AbstractController
     #[Route(path: "/dashboard/travelExpense/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/edit", methods: ["GET", "POST"], name: "travelExpense_edit")]
     public function edit(Request $request, TravelExpense $te, LoggerInterface $logger, TransactionRepository $transactions, ManagerRegistry $doctrine): Response
     {
+    	$this->denyAccessUnlessGranted(OrganizationMemberVoter::MEMBER, $te);
+
     	$updateTECommand = new UpdateTravelExpenseCommand();
     	$te->mapTo($updateTECommand);
     	
@@ -117,6 +121,7 @@ class TravelExpenseCommandController extends AbstractController
     	
     	$form = $this->createForm(TravelExpenseType::class, $updateTECommand, [
     			'is_admin' => $this->isGranted('ROLE_ADMIN'),
+    			'organizations' => $this->getUser()->getOrganizations(),
     		])
     		->add('saveAndCreateNew', SubmitType::class);
     	$form->handleRequest($request);
@@ -160,6 +165,8 @@ class TravelExpenseCommandController extends AbstractController
     public function clone(Request $request, TravelExpense $te, TravelExpenseRepository $travelExpenses, LunchExpenseRepository $lunchExpenses, 
         LoggerInterface $logger, ManagerRegistry $doctrine): Response
     {
+    	$this->denyAccessUnlessGranted(OrganizationMemberVoter::MEMBER, $te);
+
     	$clone = $te->clone($this->getUser());
     	
     	$updateTECommand = new UpdateTravelExpenseCommand();
@@ -174,6 +181,7 @@ class TravelExpenseCommandController extends AbstractController
     	
     	$form = $this->createForm(TravelExpenseType::class, $updateTECommand, [
     			'is_admin' => $this->isGranted('ROLE_ADMIN'),
+    			'organizations' => $this->getUser()->getOrganizations(),
     		])
     		->add('saveAndCreateNew', SubmitType::class);
     	
@@ -191,7 +199,7 @@ class TravelExpenseCommandController extends AbstractController
     		    		
     		$transaction = $clone->setNew($this->getUser());
     		//If there's no lunch expense for the day yet:
-    		$query = $lunchExpenses->getFilteredQuery($updateTECommand->date->getTimestamp(), $updateTECommand->date->getTimestamp(), true, true)->getQuery();
+    		$query = $lunchExpenses->getFilteredQuery($this->getUser()->getOrganizations(), $updateTECommand->date->getTimestamp(), $updateTECommand->date->getTimestamp(), true, true)->getQuery();
     		$query->execute();
     		$logger->debug("Found ".count($query->getResult())." existing LunchExpenses on ".date("r",$updateTECommand->date->getTimestamp()));
     		if(count($query->getResult()) == 0)
@@ -239,7 +247,7 @@ class TravelExpenseCommandController extends AbstractController
     {
     	$dateFrom = $request->request->get('dateFrom', 0);
     	$dateTo = $request->request->get('dateTo', 0);
-    	$queryBuilder = $repo->getFilteredQuery($dateFrom, $dateTo, true, false);
+    	$queryBuilder = $repo->getFilteredQuery($this->getUser()->getOrganizations(), $dateFrom, $dateTo, true, false);
     	
     	$travelExpenses = $queryBuilder->getQuery()->getResult();
     	
