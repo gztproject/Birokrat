@@ -27,6 +27,7 @@ use App\Entity\Invoice\UpdateInvoiceItemCommand;
 use App\Entity\Invoice\Enumerators\States;
 use App\Mailer\MailerSettings;
 use App\Mailer\RecipientListParser;
+use App\Security\PartnerVoter;
 use App\Service\Ledger\BankFeeFactory;
 
 
@@ -260,7 +261,7 @@ class InvoiceCommandController extends AbstractController
     		$payload = [
     			'status' => $status,
     			'data' => [$data],
-    			'partnerNeedsUpdate' => $partner->emailsDifferFrom($toAddresses, $ccAddresses),
+    			'partnerNeedsUpdate' => $this->isGranted(PartnerVoter::MANAGE, $partner) && $partner->emailsDifferFrom($toAddresses, $ccAddresses),
     			'mergeUrl' => $this->generateUrl('partner_emails_merge', ['id' => $partner->getId()]),
     			'editUrl' => $this->generateUrl('partner_edit', [
     				'id' => $partner->getId(),
