@@ -34,9 +34,7 @@ class TravelExpenseCommandController extends AbstractController
     	$c = new CreateTravelExpenseCommand();
     	$c->employee = $this->getUser();
     	    	
-    	$form = $this->createForm(TravelExpenseType::class, $c, [
-    			'is_admin' => $this->isGranted('ROLE_ADMIN'),
-    		])
+    	$form = $this->createForm(TravelExpenseType::class, $c, $this->formOptions())
     		->add('saveAndCreateNew', SubmitType::class);
     	
     	$form->handleRequest($request);
@@ -105,6 +103,9 @@ class TravelExpenseCommandController extends AbstractController
     #[Route(path: "/dashboard/travelExpense/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/edit", methods: ["GET", "POST"], name: "travelExpense_edit")]
     public function edit(Request $request, TravelExpense $te, LoggerInterface $logger, TransactionRepository $transactions, ManagerRegistry $doctrine): Response
     {
+    	if (!$this->getUser()->belongsTo($te->getOrganization()))
+    		throw $this->createNotFoundException();
+
     	$updateTECommand = new UpdateTravelExpenseCommand();
     	$te->mapTo($updateTECommand);
     	
@@ -115,9 +116,7 @@ class TravelExpenseCommandController extends AbstractController
     		$updateTECommand->travelStopCommands->add($utsc);
     	}
     	
-    	$form = $this->createForm(TravelExpenseType::class, $updateTECommand, [
-    			'is_admin' => $this->isGranted('ROLE_ADMIN'),
-    		])
+    	$form = $this->createForm(TravelExpenseType::class, $updateTECommand, $this->formOptions())
     		->add('saveAndCreateNew', SubmitType::class);
     	$form->handleRequest($request);
     	
@@ -160,6 +159,9 @@ class TravelExpenseCommandController extends AbstractController
     public function clone(Request $request, TravelExpense $te, TravelExpenseRepository $travelExpenses, LunchExpenseRepository $lunchExpenses, 
         LoggerInterface $logger, ManagerRegistry $doctrine): Response
     {
+    	if (!$this->getUser()->belongsTo($te->getOrganization()))
+    		throw $this->createNotFoundException();
+
     	$clone = $te->clone($this->getUser());
     	
     	$updateTECommand = new UpdateTravelExpenseCommand();
@@ -172,9 +174,7 @@ class TravelExpenseCommandController extends AbstractController
     		$updateTECommand->travelStopCommands->add($utsc);
     	}
     	
-    	$form = $this->createForm(TravelExpenseType::class, $updateTECommand, [
-    			'is_admin' => $this->isGranted('ROLE_ADMIN'),
-    		])
+    	$form = $this->createForm(TravelExpenseType::class, $updateTECommand, $this->formOptions())
     		->add('saveAndCreateNew', SubmitType::class);
     	
     	$form->handleRequest($request);
@@ -241,7 +241,8 @@ class TravelExpenseCommandController extends AbstractController
     	$dateTo = $request->request->get('dateTo', 0);
     	$queryBuilder = $repo->getFilteredQuery($dateFrom, $dateTo, true, false);
     	
-    	$travelExpenses = $queryBuilder->getQuery()->getResult();
+    	$user = $this->getUser();
+    	$travelExpenses = array_values(array_filter($queryBuilder->getQuery()->getResult(), fn ($te) => $user->belongsTo($te->getOrganization())));
     	
     	$organizations = new ArrayCollection();
     	
@@ -275,6 +276,14 @@ class TravelExpenseCommandController extends AbstractController
     	}
     	
     	return new JsonResponse($travelExpenses);
+    }
+
+    private function formOptions(): array
+    {
+    	return [
+    			'is_admin' => $this->isGranted('ROLE_ADMIN'),
+    			'organizations' => array_values($this->getUser()->getOrganizations()->toArray()),
+    	];
     }
     
 }

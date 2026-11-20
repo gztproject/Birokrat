@@ -28,8 +28,10 @@ class TransactionRepository extends ServiceEntityRepository
     	->orderBy('t.date', 'DESC');
     }
     
-//    public function getFilteredQuery($from, $to, $orgId, $order = "DESC"): QueryBuilder
-    public function getFilteredQuery($from, $to, $orgId, ?string $order = "DESC", ?int $limit = null): QueryBuilder
+    /**
+     * @param string[] $organizationIds only rows of these organizations are returned; an empty list returns none
+     */
+    public function getFilteredQuery($from, $to, array $organizationIds, ?string $order = "DESC", ?int $limit = null): QueryBuilder
     {
     	$qb = $this
     	->createQueryBuilder('t')
@@ -37,7 +39,7 @@ class TransactionRepository extends ServiceEntityRepository
     	if($from)
     	{
     		$qb
-    		->where('t.date >= :from')
+    		->andWhere('t.date >= :from')
     		->setParameter('from', date('Y-m-d G:i:s', $from));
     	}
     	
@@ -48,10 +50,13 @@ class TransactionRepository extends ServiceEntityRepository
     		->setParameter('to', date('Y-m-d G:i:s', $to));
     	}
     	
-    	if($orgId)
+    	if($organizationIds === [])
     	{
-    		
-    		$qb->andWhere('t.organization = :orgid')->setParameter('orgid', $orgId);
+    		$qb->andWhere('1 = 0');
+    	}
+    	else
+    	{
+    		$qb->andWhere('t.organization IN (:orgIds)')->setParameter('orgIds', array_values($organizationIds));
     	}
 	
 	if($limit)
