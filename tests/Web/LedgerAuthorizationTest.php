@@ -67,6 +67,7 @@ class LedgerAuthorizationTest extends WebTestCase
     private const FOREIGN_BILL_TOTAL = 33333.0;
 
     private static bool $ready = false;
+    private static ?string $originalDatabaseUrl = null;
     private static string $storedOwnOrgId = '';
     private static string $storedForeignOrgId = '';
     private static string $storedOwnTxId = '';
@@ -105,6 +106,17 @@ class LedgerAuthorizationTest extends WebTestCase
             $this->restoreLedger();
         }
         parent::tearDown();
+    }
+
+    public static function tearDownAfterClass(): void
+    {
+        if (self::$originalDatabaseUrl !== null) {
+            putenv('DATABASE_URL='.self::$originalDatabaseUrl);
+            $_ENV['DATABASE_URL'] = self::$originalDatabaseUrl;
+            $_SERVER['DATABASE_URL'] = self::$originalDatabaseUrl;
+            self::ensureKernelShutdown();
+        }
+        parent::tearDownAfterClass();
     }
 
     public function testJournalListStaysInsideTheUsersCompanies(): void
@@ -400,11 +412,18 @@ class LedgerAuthorizationTest extends WebTestCase
 
     private function pointAtIsolatedDatabase(bool $recreate): void
     {
+        if (self::$originalDatabaseUrl === null) {
+            self::$originalDatabaseUrl = (string) (getenv('DATABASE_URL') ?: ($_ENV['DATABASE_URL'] ?? ''));
+        }
         $env = (string) file_get_contents(dirname(__DIR__, 2).'/.env.test');
         if (!preg_match('/DATABASE_URL="([^"]+)"/', $env, $matches)) {
             self::fail('DATABASE_URL is missing from .env.test');
         }
         $url = $matches[1];
+        // Prefer the process DATABASE_URL (CI) when present so host/credentials match the job.
+        if (self::$originalDatabaseUrl !== '' && str_starts_with(self::$originalDatabaseUrl, 'mysql://')) {
+            $url = self::$originalDatabaseUrl;
+        }
         $parts = parse_url($url);
         if ($parts === false || !isset($parts['host'], $parts['user'])) {
             self::fail('DATABASE_URL in .env.test could not be parsed');

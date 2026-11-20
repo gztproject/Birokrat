@@ -156,6 +156,7 @@ class InvoicePdfExportPathTest extends TestCase
 		$user->method('getFullname')->willReturn('Test User');
 		$user->method('getSignatureFilename')->willReturn('');
 		$user->method('getEmail')->willReturn('user@example.com');
+		$user->method('belongsTo')->willReturn(true);
 
 		$credit = $this->createMock(Konto::class);
 		$credit->method('getNumber')->willReturn(760);

@@ -66,7 +66,8 @@ final class InvoiceAuthorizationWorld
     public function load(): self
     {
         $this->suffix = bin2hex(random_bytes(4));
-        $this->password = 'p'.random_int(0, 9).'!'.bin2hex(random_bytes(4));
+        // Digit + special + enough hex to clear User::MIN_PASSWORD_LENGTH (12).
+        $this->password = 'p'.random_int(0, 9).'!'.bin2hex(random_bytes(5));
         $serial = sprintf('%04d', random_int(1000, 9999));
 
         $maker = $this->bootstrap('maker'.$this->suffix, true);

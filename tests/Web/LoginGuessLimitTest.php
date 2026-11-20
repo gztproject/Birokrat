@@ -39,16 +39,20 @@ class LoginGuessLimitTest extends WebTestCase
 
     private string $databasePath;
 
+    private string $previousDatabaseUrl;
+
     protected function setUp(): void
     {
         parent::setUp();
 
+        $this->previousDatabaseUrl = (string) (getenv('DATABASE_URL') ?: ($_ENV['DATABASE_URL'] ?? ''));
         $this->databasePath = sys_get_temp_dir().'/birokrat-login-guess-'.bin2hex(random_bytes(4)).'.db';
         $url = 'sqlite:///'.$this->databasePath;
         putenv('DATABASE_URL='.$url);
         $_ENV['DATABASE_URL'] = $url;
         $_SERVER['DATABASE_URL'] = $url;
 
+        self::ensureKernelShutdown();
         $this->client = static::createClient();
         $this->em = static::getContainer()->get(EntityManagerInterface::class);
         $this->hasher = static::getContainer()->get(UserPasswordHasherInterface::class);
@@ -62,6 +66,15 @@ class LoginGuessLimitTest extends WebTestCase
     protected function tearDown(): void
     {
         parent::tearDown();
+        if ($this->previousDatabaseUrl !== '') {
+            putenv('DATABASE_URL='.$this->previousDatabaseUrl);
+            $_ENV['DATABASE_URL'] = $this->previousDatabaseUrl;
+            $_SERVER['DATABASE_URL'] = $this->previousDatabaseUrl;
+        } else {
+            putenv('DATABASE_URL');
+            unset($_ENV['DATABASE_URL'], $_SERVER['DATABASE_URL']);
+        }
+        self::ensureKernelShutdown();
         if (isset($this->databasePath) && is_file($this->databasePath)) {
             unlink($this->databasePath);
         }

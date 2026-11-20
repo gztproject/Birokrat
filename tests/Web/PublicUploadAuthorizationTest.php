@@ -29,10 +29,16 @@ class PublicUploadAuthorizationTest extends WebTestCase
     /** @var array<string, mixed>|null */
     private static ?array $documents = null;
 
+    private static ?string $skipReason = null;
+
     public static function setUpBeforeClass(): void
     {
         $projectDir = dirname(__DIR__, 2);
-        self::$server = PublicWebServer::start($projectDir.'/public');
+        try {
+            self::$server = PublicWebServer::start($projectDir.'/public');
+        } catch (\Throwable $e) {
+            self::$skipReason = 'Apache public web server unavailable: '.$e->getMessage();
+        }
     }
 
     public static function tearDownAfterClass(): void
@@ -45,6 +51,9 @@ class PublicUploadAuthorizationTest extends WebTestCase
     protected function setUp(): void
     {
         parent::setUp();
+        if (self::$skipReason !== null) {
+            $this->markTestSkipped(self::$skipReason);
+        }
         if (self::$documents === null) {
             self::$documents = $this->seedDocuments();
         }

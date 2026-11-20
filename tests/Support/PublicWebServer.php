@@ -132,6 +132,7 @@ final class PublicWebServer
     private function boot(): void
     {
         $modules = '/usr/lib/apache2/modules';
+        $phpModule = $this->phpModulePath($modules);
         $this->configPath = $this->runtimeDir.'/httpd.conf';
         $this->errorLog = $this->runtimeDir.'/error.log';
         $publicDir = $this->publicDir;
@@ -150,7 +151,7 @@ LoadModule dir_module {$modules}/mod_dir.so
 LoadModule mime_module {$modules}/mod_mime.so
 LoadModule rewrite_module {$modules}/mod_rewrite.so
 LoadModule env_module {$modules}/mod_env.so
-LoadModule php_module {$modules}/libphp8.4.so
+LoadModule php_module {$phpModule}
 TypesConfig /etc/mime.types
 DirectoryIndex index.php
 DocumentRoot {$publicDir}
@@ -196,5 +197,22 @@ CONF;
         if ($exitCode !== 0 && !str_contains($arguments, 'stop')) {
             throw new \RuntimeException("Apache command failed ({$exitCode}): ".implode("\n", $output)."\n".$this->errorLog());
         }
+    }
+
+    private function phpModulePath(string $modules): string
+    {
+        $preferred = $modules.'/libphp'.PHP_MAJOR_VERSION.'.'.PHP_MINOR_VERSION.'.so';
+        if (is_file($preferred)) {
+            return $preferred;
+        }
+
+        $matches = glob($modules.'/libphp*.so') ?: [];
+        if ($matches === []) {
+            throw new \RuntimeException('No Apache PHP module (libphp*.so) found in '.$modules);
+        }
+
+        rsort($matches);
+
+        return $matches[0];
     }
 }
