@@ -8,10 +8,16 @@ use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\RateLimiter\RateLimiterFactoryInterface;
 use Symfony\Component\Routing\Attribute\Route;
 
 class TwoFactorController extends AbstractController
 {
+    public function __construct(
+        private readonly RateLimiterFactoryInterface $twoFactorCodeLimiter,
+    ) {
+    }
+
     #[Route(path: '/2fa', name: 'app_2fa', methods: ['GET', 'POST'])]
     public function challenge(Request $request): Response
     {
@@ -26,12 +32,12 @@ class TwoFactorController extends AbstractController
         $error = null;
         if ($request->isMethod('POST')) {
             $code = (string) $request->request->get('code', '');
-            if (Totp::verify((string) $user->getTotpSecret(), $code)) {
+            $error = $this->verifyStoredCode($user, $code);
+            if (null === $error) {
                 $request->getSession()->remove('2fa_pending');
 
                 return $this->redirectToRoute('dashboard_index');
             }
-            $error = 'Invalid authentication code.';
         }
 
         return $this->render('security/2fa.html.twig', ['error' => $error]);
@@ -50,9 +56,8 @@ class TwoFactorController extends AbstractController
         $error = null;
         if ($request->isMethod('POST') && $request->request->get('disable')) {
             $code = (string) $request->request->get('code', '');
-            if (!$user->isTotpEnabled() || !Totp::verify((string) $user->getTotpSecret(), $code)) {
-                $error = 'Invalid authentication code.';
-            } else {
+            $error = $user->isTotpEnabled() ? $this->verifyStoredCode($user, $code) : 'Invalid authentication code.';
+            if (null === $error) {
                 $user->disableTotp();
                 $doctrine->getManager()->flush();
                 $session->remove('2fa_setup_secret');
@@ -89,5 +94,25 @@ class TwoFactorController extends AbstractController
             'qr' => Totp::qrCodeDataUri($uri),
             'error' => $error,
         ]);
+    }
+
+    /**
+     * Checks a code against the user's stored secret. The attempt is counted before
+     * the check so concurrent guesses cannot exceed the limit.
+     *
+     * @return string|null Error message, or null when the code is valid
+     */
+    private function verifyStoredCode(User $user, string $code): ?string
+    {
+        $limiter = $this->twoFactorCodeLimiter->create($user->getUserIdentifier());
+        if (!$limiter->consume(1)->isAccepted()) {
+            return 'Too many authentication code attempts. Try again later.';
+        }
+        if (!Totp::verify((string) $user->getTotpSecret(), $code)) {
+            return 'Invalid authentication code.';
+        }
+        $limiter->reset();
+
+        return null;
     }
 }

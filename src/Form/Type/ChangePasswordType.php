@@ -11,6 +11,7 @@
 
 namespace App\Form\Type;
 
+use App\Entity\User\User;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
@@ -47,7 +48,7 @@ class ChangePasswordType extends AbstractType
                 'constraints' => [
                     new NotBlank(),
                     new Length(
-                        min: 5,
+                        min: User::MIN_PASSWORD_LENGTH,
                         max: BCryptPasswordEncoder::MAX_PASSWORD_LENGTH,
                     ),
                 ],

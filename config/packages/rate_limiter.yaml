@@ -1,0 +1,16 @@
+framework:
+    rate_limiter:
+        # Used by App\Security\LoginRateLimiter (security.yaml login_throttling).
+        login_local:
+            policy: fixed_window
+            limit: 5
+            interval: '15 minutes'
+        login_global:
+            policy: fixed_window
+            limit: 25
+            interval: '15 minutes'
+        # Second-factor code checks, keyed by user.
+        two_factor_code:
+            policy: fixed_window
+            limit: 5
+            interval: '15 minutes'

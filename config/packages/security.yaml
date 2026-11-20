@@ -32,6 +32,9 @@ security:
                 login_path: app_login
                 check_path: app_login
                 default_target_path: dashboard_index
+            # Limits are configured in rate_limiter.yaml (login_local, login_global).
+            login_throttling:
+                limiter: App\Security\LoginRateLimiter
             logout:
                 # The route name the user can go to in order to logout
                 path: app_logout

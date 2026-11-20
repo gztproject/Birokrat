@@ -39,6 +39,8 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 #[ORM\Entity(repositoryClass: \App\Repository\UserRepository::class)]
 class User extends AggregateBase implements UserInterface, PasswordAuthenticatedUserInterface
 {
+    public const MIN_PASSWORD_LENGTH = 12;
+
     #[ORM\Column(type: "string", length: 255)]
     private $username;
     
@@ -144,12 +146,12 @@ class User extends AggregateBase implements UserInterface, PasswordAuthenticated
     private function checkPasswordRequirements(string $password)
     {
     	//ToDo: Read this from application settings?
-    	$minPasswordLength = 4;
+    	$minPasswordLength = self::MIN_PASSWORD_LENGTH;
     	$passwordMustHaveNumbers = true;
     	$passwordMustHaveSpecials = true;
     	
-    	if(strlen($password) < $minPasswordLength)
-    		throw new \Exception("The password is too short.");
+    	if(mb_strlen($password, 'UTF-8') < $minPasswordLength)
+    		throw new \Exception(sprintf("The password is too short. It must be at least %d characters long.", $minPasswordLength));
     	
     	if($passwordMustHaveNumbers && preg_match('/\\d/', $password) === 0)
     		throw new \Exception("The password must contain at least one number.");
