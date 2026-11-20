@@ -140,3 +140,6 @@ help:
   login: Prijava
 
 Save: Shrani
+
+report:
+  choose_organization: Za prikaz poročil izberite eno od svojih organizacij.

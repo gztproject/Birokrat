@@ -102,6 +102,12 @@ class ApplicationSmokeTest extends WebTestCase
         $this->assertResponseIsSuccessful();
 
         $this->client->request('GET', '/dashboard/report');
+        $this->assertResponseStatusCodeSame(400);
+        $this->assertSelectorExists('[data-controller="org-filter"]');
+
+        $this->client->request('GET', '/dashboard/report', [
+            'organization' => $this->fixtures['user']->getOrganizations()->first()->getId()->toString(),
+        ]);
         $this->assertResponseIsSuccessful();
         $this->assertSelectorExists('[data-controller="org-filter"]');
         $this->assertSelectorExists('#dateFieldYear');
