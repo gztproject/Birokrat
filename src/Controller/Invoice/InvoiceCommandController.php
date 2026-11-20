@@ -213,7 +213,7 @@ class InvoiceCommandController extends AbstractController
     	$email = $request->request->get('email', null);
     	$ccRaw = (string) $request->request->get('cc', '');
     	$subject = $request->request->get('subject', null);
-    	$body = $request->request->get('body', null);
+    	$body = (string) $request->request->get('body', '');
     	try {
     		$parser = new RecipientListParser();
     		$toAddresses = $parser->parse((string) $email);
@@ -236,7 +236,8 @@ class InvoiceCommandController extends AbstractController
     		->from('birokrat@gzt.si')
     			->to(...$toAddresses)
     			->subject($subject)
-    			->html('<p>'.$body.'</p>')
+    			->text($body)
+    			->html('<p>'.nl2br(htmlspecialchars($body, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML5, 'UTF-8')).'</p>')
     			->attachFromPath($path.$title);
     		if ($ccAddresses !== []) {
     			$emailObject->cc(...$ccAddresses);
