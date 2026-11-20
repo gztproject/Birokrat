@@ -21,6 +21,7 @@ use App\Entity\Organization\CreateOrganizationCommand;
 use App\Entity\Geography\Address;
 use App\Entity\Geography\CreateAddressCommand;
 use App\Entity\Geography\UpdateAddressCommand;
+use App\Security\OrganizationVoter;
 
 class OrganizationController extends AbstractController
 {
@@ -43,7 +44,11 @@ class OrganizationController extends AbstractController
     #[Route(path: "/dashboard/organization/list", methods: ["GET"], name: "organization_list")]
     public function list(OrganizationRepository $organizations): Response
     {
-    	$myOrganizations = $organizations->findBy([], ['name' => 'DESC']);
+    	if ($this->isGranted('ROLE_ADMIN')) {
+    		$myOrganizations = $organizations->findBy([], ['name' => 'DESC']);
+    	} else {
+    		$myOrganizations = $organizations->findByMember($this->getUser(), ['name' => 'DESC']);
+    	}
     	
     	$orgDataArray = array();
     	
@@ -103,6 +108,7 @@ class OrganizationController extends AbstractController
         	$c->address = $address;
         	
         	$organization = $this->getUser()->createOrganization($c);
+        	$this->getUser()->addOrganization($organization, $this->getUser());
         	
         	$entityManager = $doctrine->getManager();
         	
@@ -122,7 +128,9 @@ class OrganizationController extends AbstractController
     
     #[Route(path: "/dashboard/organization/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}", methods: ["GET"], name: "organization_show")]
     public function show(Organization $organization): Response
-    {           
+    {
+        $this->denyAccessUnlessGranted(OrganizationVoter::SHOW, $organization);
+
         return $this->render('dashboard/organization/show.html.twig', [
         		'organization' => $organization,
         		"entity" => 'organization',
@@ -132,6 +140,8 @@ class OrganizationController extends AbstractController
     #[Route(path: "/dashboard/organization/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/edit", methods: ["GET", "POST"], name: "organization_edit")]
     public function edit(Request $request, Organization $organization, ManagerRegistry $doctrine): Response
     {
+    	$this->denyAccessUnlessGranted(OrganizationVoter::EDIT, $organization);
+
     	$updateCommand = new UpdateOrganizationCommand();
     	$organization->mapTo($updateCommand);
     	$addressCommand = new UpdateAddressCommand();
@@ -187,6 +197,8 @@ class OrganizationController extends AbstractController
     #[Route(path: "/dashboard/organization/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/settings", methods: ["GET", "POST"], name: "organization_settings_edit")]
     public function editSettings(Request $request, Organization $organization, ManagerRegistry $doctrine): Response
     {
+    	$this->denyAccessUnlessGranted(OrganizationVoter::EDIT, $organization);
+
     	$settings = $organization->getOrganizationSettings();
     	if ($settings === null) {
     		$settings = $organization->CreateOrganizationSettings(new CreateOrganizationSettingsCommand(), $this->getUser());
@@ -217,7 +229,9 @@ class OrganizationController extends AbstractController
     #[Route(path: "/dashboard/organization/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/delete", methods: ["POST"], name: "organization_delete")]
     public function delete(Request $request, Organization $organization, ManagerRegistry $doctrine): Response
     {
-        if (!$this->isCsrfTokenValid('delete', $request->request->get('token'))) {
+        $this->denyAccessUnlessGranted(OrganizationVoter::DELETE, $organization);
+
+        if (!$this->isCsrfTokenValid('delete_organization_'.$organization->getId()->toString(), $request->request->get('token'))) {
             return $this->redirectToRoute('organization_index');
         }
                         
