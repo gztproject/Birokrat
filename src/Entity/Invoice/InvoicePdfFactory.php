@@ -89,12 +89,13 @@ class InvoicePdfFactory
    		//$pdf->Image('@'.$imgdata, '', '', 20, 20, 'png', '', 'T');
    		$pdf->Image('@'.$imgdata, '', '', 11, 25, 'png', '', 'T');
    		
-   		$name = $this->__invoice->getIssuerName();
+   		// TCPDF fetches remote resources referenced by markup, so stored values must never become tags.
+   		$name = self::escapeHtml($this->__invoice->getIssuerName());
    		$address = "";
    		for($i = 0; $i<count($this->__invoice->getIssuerFormattedAddress())-1; $i++)
    		{
    			if($address != "")	$address.= '<br>';
-   			$address .= $this->__invoice->getIssuerFormattedAddress()[$i];
+   			$address .= self::escapeHtml($this->__invoice->getIssuerFormattedAddress()[$i]);
    		}
    		$html = "<h2>$name</h2></br><b>$address</b>";
    		$pdf->writeHTMLCell(80,'','','',$html, 0);
@@ -269,6 +270,11 @@ class InvoicePdfFactory
 				$dest = $this->__dest === 'I' ? 'S' : $this->__dest;
 
 				return $pdf->Output($title.'.pdf', $dest);
+   	}
+
+   	private static function escapeHtml(?string $text): string
+   	{
+   		return htmlspecialchars($text ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
    	}
    
 }
