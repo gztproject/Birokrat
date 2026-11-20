@@ -2,8 +2,10 @@
 
 namespace App\Repository\Transaction;
 
+use App\Entity\Organization\Organization;
 use App\Entity\Transaction\Transaction;
 use App\Entity\TravelExpense\TravelExpense;
+use App\Repository\OrganizationScope;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -16,6 +18,8 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class TransactionRepository extends ServiceEntityRepository
 {
+    use OrganizationScope;
+
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Transaction::class);
@@ -28,16 +32,16 @@ class TransactionRepository extends ServiceEntityRepository
     	->orderBy('t.date', 'DESC');
     }
     
-//    public function getFilteredQuery($from, $to, $orgId, $order = "DESC"): QueryBuilder
-    public function getFilteredQuery($from, $to, $orgId, ?string $order = "DESC", ?int $limit = null): QueryBuilder
+    /**
+     * @param iterable<Organization> $organizations companies the caller may read; $orgId only narrows within them
+     */
+    public function getFilteredQuery(iterable $organizations, $from, $to, $orgId, ?string $order = "DESC", ?int $limit = null): QueryBuilder
     {
-    	$qb = $this
-    	->createQueryBuilder('t')
-    	->addSelect('t');
+    	$qb = $this->restrictToOrganizations($this->createQueryBuilder('t')->addSelect('t'), 't.organization', $organizations);
     	if($from)
     	{
     		$qb
-    		->where('t.date >= :from')
+    		->andWhere('t.date >= :from')
     		->setParameter('from', date('Y-m-d G:i:s', $from));
     	}
     	

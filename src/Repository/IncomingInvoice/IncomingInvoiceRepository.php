@@ -3,6 +3,8 @@
 namespace App\Repository\IncomingInvoice;
 
 use App\Entity\IncomingInvoice\IncomingInvoice;
+use App\Entity\Organization\Organization;
+use App\Repository\OrganizationScope;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -15,6 +17,8 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class IncomingInvoiceRepository extends ServiceEntityRepository
 {
+    use OrganizationScope;
+
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, IncomingInvoice::class);
@@ -39,14 +43,12 @@ class IncomingInvoiceRepository extends ServiceEntityRepository
     }
 
     /**
+     * @param iterable<Organization> $recipients
      * @return IncomingInvoice[]
      */
-    /**
-     * @return IncomingInvoice[]
-     */
-    public function findUnpaidReceived(int $limit = 5, ?\DateTimeInterface $from = null): array
+    public function findUnpaidReceived(iterable $recipients, int $limit = 5, ?\DateTimeInterface $from = null): array
     {
-    	$qb = $this->createQueryBuilder('i')
+    	$qb = $this->restrictToOrganizations($this->createQueryBuilder('i'), 'i.recepient', $recipients)
     		->andWhere('i.state = :state')
     		->setParameter('state', 10)
     		->orderBy('i.dueDate', 'ASC')
@@ -59,11 +61,12 @@ class IncomingInvoiceRepository extends ServiceEntityRepository
     }
 
     /**
+     * @param iterable<Organization> $recipients
      * @return array{count: int, total: float}
      */
-    public function summarizeUnpaid(?\DateTimeInterface $from = null): array
+    public function summarizeUnpaid(iterable $recipients, ?\DateTimeInterface $from = null): array
     {
-        $qb = $this->createQueryBuilder('i')
+        $qb = $this->restrictToOrganizations($this->createQueryBuilder('i'), 'i.recepient', $recipients)
             ->select('COUNT(i.id) AS cnt', 'COALESCE(SUM(i.price), 0) AS total')
             ->andWhere('i.state = :state')
             ->setParameter('state', 10);

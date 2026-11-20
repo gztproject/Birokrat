@@ -3,6 +3,8 @@
 namespace App\Repository\Invoice;
 
 use App\Entity\Invoice\Invoice;
+use App\Entity\Organization\Organization;
+use App\Repository\OrganizationScope;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -15,6 +17,8 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class InvoiceRepository extends ServiceEntityRepository
 {
+    use OrganizationScope;
+
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Invoice::class);
@@ -39,12 +43,13 @@ class InvoiceRepository extends ServiceEntityRepository
     }
 
     /**
+     * @param iterable<Organization> $issuers
      * @param int[] $states
      * @return Invoice[]
      */
-    public function findRecent(array $states, int $limit, \DateTimeInterface $from): array
+    public function findRecent(iterable $issuers, array $states, int $limit, \DateTimeInterface $from): array
     {
-        return $this->createQueryBuilder('i')
+        return $this->restrictToOrganizations($this->createQueryBuilder('i'), 'i.issuer', $issuers)
             ->andWhere('i.state IN (:states)')
             ->andWhere('i.dateOfIssue >= :from')
             ->setParameter('states', $states)
@@ -57,19 +62,21 @@ class InvoiceRepository extends ServiceEntityRepository
     }
 
     /**
+     * @param iterable<Organization> $issuers
      * @return array{count: int, total: float}
      */
-    public function summarizeIssued(?\DateTimeInterface $from = null): array
+    public function summarizeIssued(iterable $issuers, ?\DateTimeInterface $from = null): array
     {
-        return $this->summarizeByState(20, $from);
+        return $this->summarizeByState($issuers, 20, $from);
     }
 
     /**
+     * @param iterable<Organization> $issuers
      * @return array{count: int, total: float}
      */
-    public function summarizeOverdue(?\DateTimeInterface $from = null): array
+    public function summarizeOverdue(iterable $issuers, ?\DateTimeInterface $from = null): array
     {
-        $qb = $this->createQueryBuilder('i')
+        $qb = $this->restrictToOrganizations($this->createQueryBuilder('i'), 'i.issuer', $issuers)
             ->select('COUNT(i.id) AS cnt', 'COALESCE(SUM(i.totalPrice), 0) AS total')
             ->andWhere('i.state = :state')
             ->andWhere('i.dueDate < :today')
@@ -83,11 +90,12 @@ class InvoiceRepository extends ServiceEntityRepository
     }
 
     /**
+     * @param iterable<Organization> $issuers
      * @return array{count: int, total: float}
      */
-    private function summarizeByState(int $state, ?\DateTimeInterface $from = null): array
+    private function summarizeByState(iterable $issuers, int $state, ?\DateTimeInterface $from = null): array
     {
-        $qb = $this->createQueryBuilder('i')
+        $qb = $this->restrictToOrganizations($this->createQueryBuilder('i'), 'i.issuer', $issuers)
             ->select('COUNT(i.id) AS cnt', 'COALESCE(SUM(i.totalPrice), 0) AS total')
             ->andWhere('i.state = :state')
             ->setParameter('state', $state);

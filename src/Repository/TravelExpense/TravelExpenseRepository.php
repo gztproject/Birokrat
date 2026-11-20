@@ -2,7 +2,9 @@
 
 namespace App\Repository\TravelExpense;
 
+use App\Entity\Organization\Organization;
 use App\Entity\TravelExpense\TravelExpense;
+use App\Repository\OrganizationScope;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -15,6 +17,8 @@ use Doctrine\Common\Collections\Criteria;
  */
 class TravelExpenseRepository extends ServiceEntityRepository
 {
+    use OrganizationScope;
+
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, TravelExpense::class);
@@ -63,11 +67,12 @@ class TravelExpenseRepository extends ServiceEntityRepository
     }
 
     /**
+     * @param iterable<Organization> $organizations
      * @return TravelExpense[]
      */
-    public function findRecent(int $limit, \DateTimeInterface $from): array
+    public function findRecent(iterable $organizations, int $limit, \DateTimeInterface $from): array
     {
-        return $this->createQueryBuilder('te')
+        return $this->restrictToOrganizations($this->createQueryBuilder('te'), 'te.organization', $organizations)
             ->andWhere('te.date >= :from')
             ->setParameter('from', $from)
             ->orderBy('te.date', 'DESC')
