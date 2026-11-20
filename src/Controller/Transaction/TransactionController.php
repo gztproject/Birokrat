@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Attribute\Route;
 use App\Entity\Konto\Konto;
 use App\Entity\Transaction\Transaction;
+use App\Entity\User\User;
 use App\Repository\Transaction\TransactionRepository;
 use App\Entity\Transaction\UpdateTransactionCommand;
 use App\Entity\Transaction\CreateTransactionCommand;
@@ -30,7 +31,7 @@ class TransactionController extends AbstractController {
 		$orgId = $request->query->get ( 'organization', null );
 		$orgId = $orgId === "" ? null : $orgId;
 
-		$queryBuilder = $transactions->getFilteredQuery ( $dateFrom, $dateTo, $orgId );
+		$queryBuilder = $transactions->getFilteredQuery ( $this->linkedOrganizations (), $dateFrom, $dateTo, $orgId );
 		$pagination = $list->paginate ( $paginator, $queryBuilder, $request );
 
 		if ($list->isPartial ( $request )) {
@@ -50,7 +51,7 @@ class TransactionController extends AbstractController {
 		$orgId = $request->query->get ( 'organization', null );
 		$orgId = $orgId === "" ? null : $orgId;
 
-		$queryBuilder = $transactions->getFilteredQuery ( $dateFrom, $dateTo, $orgId, "ASC" );
+		$queryBuilder = $transactions->getFilteredQuery ( $this->linkedOrganizations (), $dateFrom, $dateTo, $orgId, "ASC" );
 
 		$result = $queryBuilder->getQuery ()->getResult ();
 
@@ -254,5 +255,14 @@ class TransactionController extends AbstractController {
 	        'transaction' => $clone,
 	        'form' => $form->createView(),
 	    ]);
+	}
+
+	private function linkedOrganizations(): array {
+		$user = $this->getUser ();
+		if (! $user instanceof User) {
+			throw $this->createAccessDeniedException ();
+		}
+
+		return $user->getOrganizations ()->toArray ();
 	}
 }
