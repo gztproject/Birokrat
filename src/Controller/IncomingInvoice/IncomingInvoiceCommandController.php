@@ -10,7 +10,11 @@ use App\Entity\IncomingInvoice\IncomingInvoice;
 use App\Form\IncomingInvoice\IncomingInvoiceType;
 use App\Entity\IncomingInvoice\CreateIncomingInvoiceCommand;
 use App\Entity\IncomingInvoice\UpdateIncomingInvoiceCommand;
+use App\Entity\Organization\Organization;
+use App\Security\OrganizationMemberVoter;
 use App\Service\Ledger\BankFeeFactory;
+use Ramsey\Uuid\Uuid;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
@@ -27,6 +31,10 @@ class IncomingInvoiceCommandController extends AbstractController
     	
     	$form->handleRequest($request);
     	
+    	if ($form->isSubmitted()) {
+    		$this->denyUnlessRecipientAllowed($form, $c->recepient);
+    	}
+
     	if ($form->isSubmitted() && $form->isValid()) {
     		$c->scanFilename = $this->storeIncomingInvoiceScan($form->get('scan')->getData());
     		$invoice = $this->getUser()->createIncomingInvoice($c);
@@ -56,6 +64,8 @@ class IncomingInvoiceCommandController extends AbstractController
     #[Route(path: "/dashboard/incomingInvoice/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/clone", methods: ["GET", "POST"], name: "incomingInvoice_clone")]
     public function clone(Request $request, IncomingInvoice $invoice, ManagerRegistry $doctrine): Response
     {
+    	$this->denyAccessUnlessGranted(OrganizationMemberVoter::MEMBER, $invoice);
+
     	$clone = $invoice->clone($this->getUser());
     	
     	$c = new UpdateIncomingInvoiceCommand();
@@ -66,6 +76,10 @@ class IncomingInvoiceCommandController extends AbstractController
     	
     	$form->handleRequest($request);
     	
+    	if ($form->isSubmitted()) {
+    		$this->denyUnlessRecipientAllowed($form, $c->recepient);
+    	}
+
     	if ($form->isSubmitted() && $form->isValid()) {
     		$uploaded = $this->storeIncomingInvoiceScan($form->get('scan')->getData());
     		if ($uploaded) {
@@ -86,6 +100,29 @@ class IncomingInvoiceCommandController extends AbstractController
     			'invoice' => $clone,
     			'form' => $form->createView(),
     	]);
+    }
+
+    private function denyUnlessRecipientAllowed(FormInterface $form, ?Organization $recipient): void
+    {
+    	if (!$form->get('recepient')->isSynchronized()
+    		|| $recipient === null
+    		|| !$this->isGranted(OrganizationMemberVoter::MEMBER, $recipient)) {
+    		throw $this->createAccessDeniedException('Supplier bills can only be booked to your own organizations.');
+    	}
+    }
+
+    private function loadPostedInvoice(Request $request, ManagerRegistry $doctrine): IncomingInvoice
+    {
+    	$id = $request->request->get('id');
+    	$invoice = is_string($id) && Uuid::isValid($id)
+    		? $doctrine->getRepository(IncomingInvoice::class)->find($id)
+    		: null;
+    	if (!$invoice instanceof IncomingInvoice) {
+    		throw $this->createNotFoundException();
+    	}
+    	$this->denyAccessUnlessGranted(OrganizationMemberVoter::MEMBER, $invoice);
+
+    	return $invoice;
     }
 
     private function storeIncomingInvoiceScan(?UploadedFile $scanFile): ?string
@@ -119,7 +156,7 @@ class IncomingInvoiceCommandController extends AbstractController
     #[Route(path: "/dashboard/incomingInvoice/pay", methods: ["POST"], name: "incomingInvoice_pay")]
     public function pay(Request $request, ManagerRegistry $doctrine, BankFeeFactory $bankFees): Response
     {
-    	$invoice = $doctrine->getRepository(IncomingInvoice::class)->findOneBy(['id'=>$request->request->get('id', null)]);
+    	$invoice = $this->loadPostedInvoice($request, $doctrine);
     	$date = new \DateTime($request->request->get('date', null));    	
     	$entityManager = $doctrine->getManager();
     	
@@ -140,7 +177,7 @@ class IncomingInvoiceCommandController extends AbstractController
     #[Route(path: "/dashboard/incomingInvoice/reject", methods: ["POST"], name: "incomingInvoice_reject")]
     public function reject(Request $request, ManagerRegistry $doctrine): Response
     {
-    	$invoice = $doctrine->getRepository(IncomingInvoice::class)->findOneBy(['id'=>$request->request->get('id', null)]);
+    	$invoice = $this->loadPostedInvoice($request, $doctrine);
     	$entityManager = $doctrine->getManager();
     	
     	$invoice->reject($request->request->get('reason', ""));
