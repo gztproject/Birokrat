@@ -17,13 +17,15 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use App\Entity\Invoice\InvoicePdfFactory;
 use App\Http\InfiniteListResponder;
+use App\Security\OrganizationMemberVoter;
+use Ramsey\Uuid\Uuid;
 
 class InvoiceQueryController extends AbstractController
 {    
     #[Route(path: "/dashboard/invoice", methods: ["GET"], name: "invoice_index")]
 	public function index(InvoiceRepository $invoices, Request $request, PaginatorInterface $paginator, InfiniteListResponder $list): Response
     {   		
-    	$queryBuilder = $invoices->getQuery();
+    	$queryBuilder = $invoices->getQuery($this->getUser());
     	$pagination = $list->paginate($paginator, $queryBuilder, $request);
 
     	if ($list->isPartial($request)) {
@@ -39,7 +41,7 @@ class InvoiceQueryController extends AbstractController
     #[Route(path: "/dashboard/invoice/getNewNumber", methods: ["POST"], name: "invoice_getNewNumber")]
     public function getNewNumber(Request $request, ManagerRegistry $doctrine): JsonResponse
     {   
-    	$issuer = $doctrine->getRepository(Organization::class)->findOneBy(['id'=>$request->request->get('issuerId', null)]);
+    	$issuer = $this->memberIssuer($request, $doctrine);
     	$dateOfIssue = new \Datetime($request->request->get('dateOfIssue', 'now'));
     	$state = $request->request->get('state', 10);
     	try {
@@ -67,7 +69,7 @@ class InvoiceQueryController extends AbstractController
     #[Route(path: "/dashboard/invoice/getDefaultDueInDays", methods: ["POST"], name: "invoice_getDefaultDueInDays")]
     public function getDefaultDueInDays(Request $request, ManagerRegistry $doctrine): JsonResponse
     {    	
-    	$issuer = $doctrine->getRepository(Organization::class)->findOneBy(['id'=>$request->request->get('issuerId', null)]);
+    	$issuer = $this->memberIssuer($request, $doctrine);
     	try {
     		$data = $issuer->getOrganizationSettings()!=null?$issuer->getOrganizationSettings()->getDefaultPaymentDueIn():15;
     		$status = "ok";
@@ -93,6 +95,8 @@ class InvoiceQueryController extends AbstractController
     #[Route(path: "/dashboard/invoice/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/pdf", methods: ["GET"], name: "invoice_pdf")]
     public function getPdf(Invoice $invoice, TCPDFController $tcpdf, TranslatorInterface $translator): Response
     {
+    	$this->denyAccessUnlessGranted(OrganizationMemberVoter::MEMBER, $invoice);
+    	
     	$content = InvoicePdfFactory::factory($invoice, $translator, $tcpdf, 'S')->generate();
 
     	return new Response((string) $content, 200, [
@@ -104,6 +108,8 @@ class InvoiceQueryController extends AbstractController
     #[Route(path: "/dashboard/invoice/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/print", methods: ["GET"], name: "invoice_print")]
     public function print(Invoice $invoice, TCPDFController $tcpdf, TranslatorInterface $translator): Response
     {
+    	$this->denyAccessUnlessGranted(OrganizationMemberVoter::MEMBER, $invoice);
+    	
     	$content = InvoicePdfFactory::factory($invoice, $translator, $tcpdf, 'S', null, true)->generate();
 
     	return new Response((string) $content, 200, [
@@ -115,8 +121,23 @@ class InvoiceQueryController extends AbstractController
     #[Route(path: "/dashboard/invoice/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/show", methods: ["GET"], name: "invoice_show")]
     public function show(Invoice $invoice): Response
     {
+    	$this->denyAccessUnlessGranted(OrganizationMemberVoter::MEMBER, $invoice);
+    	
     	return $this->render('dashboard/invoice/show.html.twig', [
     			'invoice' => $invoice
     	]);    	    	
+    }
+    
+    private function memberIssuer(Request $request, ManagerRegistry $doctrine): Organization
+    {
+    	$id = $request->request->get('issuerId');
+    	if (!is_string($id) || !Uuid::isValid($id))
+    		throw $this->createNotFoundException();
+    	$issuer = $doctrine->getRepository(Organization::class)->find($id);
+    	if (!$issuer instanceof Organization)
+    		throw $this->createNotFoundException();
+    	$this->denyAccessUnlessGranted(OrganizationMemberVoter::MEMBER, $issuer);
+    	
+    	return $issuer;
     }
 }

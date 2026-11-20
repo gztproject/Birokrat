@@ -11,6 +11,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use App\Entity\Organization\Partner;
 use App\Repository\Organization\PartnerRepository;
+use App\Repository\Invoice\InvoiceRepository;
 use App\Entity\Organization\OrganizationCodeFactory;
 use App\Entity\Organization\CreatePartnerCommand;
 use App\Entity\Geography\Address;
@@ -87,10 +88,11 @@ class PartnerController extends AbstractController
     }
     
     #[Route(path: "/dashboard/partner/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}", methods: ["GET"], name: "partner_show")]
-    public function show(Partner $partner): Response
+    public function show(Partner $partner, InvoiceRepository $invoices): Response
     {       	
         return $this->render('dashboard/partner/show.html.twig', [
         		'partner' => $partner,
+        		'invoices' => $invoices->findByRecepientForMember($partner, $this->getUser()),
         ]);
     }
     

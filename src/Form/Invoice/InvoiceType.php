@@ -9,7 +9,10 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use App\Form\Type\DateTimePickerType;
+use App\Repository\Organization\OrganizationRepository;
 use App\Repository\Organization\PartnerRepository;
+use App\Entity\User\User;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use App\Entity\Organization\Partner;
 use App\Entity\Organization\Organization;
@@ -17,11 +20,21 @@ use App\Entity\Invoice\CreateInvoiceCommand;
 
 class InvoiceType extends AbstractType
 {
+    public function __construct(private readonly Security $security)
+    {
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $member = $this->security->getUser();
+        $member = $member instanceof User ? $member : null;
+
         $builder
         	->add('issuer', EntityType::class, array(
         		'class' => Organization::class,
+        		'query_builder' => function(OrganizationRepository $repository) use ($member) {
+        			return $repository->memberQueryBuilder($member);
+        		},
         		'choice_label' => 'name',
         		'expanded'=>false,
         		'multiple'=>false,
