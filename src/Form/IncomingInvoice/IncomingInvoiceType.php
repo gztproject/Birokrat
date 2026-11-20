@@ -3,6 +3,8 @@
 namespace App\Form\IncomingInvoice;
 
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Bundle\SecurityBundle\Security;
+use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -26,6 +28,10 @@ use Symfony\Component\Validator\Constraints\File;
 
 class IncomingInvoiceType extends AbstractType
 {
+    public function __construct(private readonly Security $security)
+    {
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -51,6 +57,11 @@ class IncomingInvoiceType extends AbstractType
         	]) 
         	->add('recepient', EntityType::class, array(
         			'class' => Organization::class,
+        			'query_builder' => function(EntityRepository $repository) {
+        				return $repository->createQueryBuilder('o')
+        					->andWhere(':member MEMBER OF o.users')
+        					->setParameter('member', $this->security->getUser());
+        			},
         			'choice_label' => 'name',
         			'expanded'=>false,
         			'multiple'=>false,
