@@ -13,14 +13,16 @@ class TravelExpensePdfFactory
 	private $__tcpdf = null;
 	private $__dest = null;
 	private $__print = false;
+	private $__signaturesDirectory = null;
 
-	public function __construct(TravelExpense $travelExpense, TranslatorInterface $translator, TCPDFController $tcpdf, string $dest, bool $print = false)
+	public function __construct(TravelExpense $travelExpense, TranslatorInterface $translator, TCPDFController $tcpdf, string $dest, bool $print = false, ?string $signaturesDirectory = null)
    	{
    		$this->__travelExpense = $travelExpense;
    		$this->__translator = $translator;
    		$this->__tcpdf = $tcpdf;
    		$this->__dest = $dest;
    		$this->__print = $print;
+   		$this->__signaturesDirectory = $signaturesDirectory;
    	}
 
    	/**
@@ -31,10 +33,10 @@ class TravelExpensePdfFactory
    	 * @param string $dest (Inline, Download, String, Email); file destinations are not supported
    	 * @return TravelExpensePdfFactory
    	 */
-   	public static function factory(TravelExpense $travelExpense, TranslatorInterface $translator, TCPDFController $tcpdf, string $dest = "I", bool $print = false): TravelExpensePdfFactory
+   	public static function factory(TravelExpense $travelExpense, TranslatorInterface $translator, TCPDFController $tcpdf, string $dest = "I", bool $print = false, ?string $signaturesDirectory = null): TravelExpensePdfFactory
    	{
    		$validDests = array('I', 'D', 'S', 'E');
-   		return new TravelExpensePdfFactory($travelExpense, $translator, $tcpdf, in_array($dest, $validDests) ? $dest : 'I', $print);
+   		return new TravelExpensePdfFactory($travelExpense, $translator, $tcpdf, in_array($dest, $validDests) ? $dest : 'I', $print, $signaturesDirectory);
    	}
 
    	public function generate()
@@ -164,10 +166,13 @@ class TravelExpensePdfFactory
    		$pdf->SetTextColor($purple[0], $purple[1], $purple[2]);
    		$pdf->MultiCell(50, $height, "Podpis nalogodajalca",									$border, 'L', 0, 0, 14, 	$start + (15*$height), true, 0, false, true, 40, 'T');
    		
-   		if(substr($this->__travelExpense->getCreatedBy()->getSignatureFilename(), -4) === "jpeg")
-   			$pdf->Image('uploads/signatures/'.$this->__travelExpense->getCreatedBy()->getSignatureFilename(), 14+50, $start + (15*$height), 0, 18, 'JPG', 'signature', '', true, 150, '', false, false, $border, false, false, false);
-   		elseif(substr($this->__travelExpense->getCreatedBy()->getSignatureFilename(), -3) === "png")
-   			$pdf->Image('uploads/signatures/'.$this->__travelExpense->getCreatedBy()->getSignatureFilename(), 14+50, $start + (15*$height), 0, 18, 'PNG', 'signature', '', true, 150, '', false, false, $border, false, false, false);
+   		if($this->__signaturesDirectory !== null)
+   		{
+   			if(substr($this->__travelExpense->getCreatedBy()->getSignatureFilename(), -4) === "jpeg")
+   				$pdf->Image($this->__signaturesDirectory.'/'.$this->__travelExpense->getCreatedBy()->getSignatureFilename(), 14+50, $start + (15*$height), 0, 18, 'JPG', 'signature', '', true, 150, '', false, false, $border, false, false, false);
+   			elseif(substr($this->__travelExpense->getCreatedBy()->getSignatureFilename(), -3) === "png")
+   				$pdf->Image($this->__signaturesDirectory.'/'.$this->__travelExpense->getCreatedBy()->getSignatureFilename(), 14+50, $start + (15*$height), 0, 18, 'PNG', 'signature', '', true, 150, '', false, false, $border, false, false, false);
+   		}
    		
    		
    		

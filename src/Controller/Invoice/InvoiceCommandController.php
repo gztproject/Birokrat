@@ -235,7 +235,7 @@ class InvoiceCommandController extends AbstractController
     		}
     		$ccAddresses = $parser->parse($ccRaw);
     		
-    		$content = (string) InvoicePdfFactory::factory($invoice, $translator, $tcpdf, 'S')->generate();
+    		$content = (string) InvoicePdfFactory::factory($invoice, $translator, $tcpdf, 'S', false, $this->getParameter('signatures_directory'))->generate();
     		$title = str_replace(['/', '\\'], '-', $translator->trans('title.invoice').' '.$invoice->getNumber()).'.pdf';
     		
     		$emailObject = (new Email())

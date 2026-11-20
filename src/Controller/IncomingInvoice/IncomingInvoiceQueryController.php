@@ -9,6 +9,7 @@ use App\Entity\IncomingInvoice\IncomingInvoice;
 use App\Repository\IncomingInvoice\IncomingInvoiceRepository;
 use Knp\Component\Pager\PaginatorInterface;
 use App\Http\InfiniteListResponder;
+use App\Http\StoredFileResponder;
 
 class IncomingInvoiceQueryController extends AbstractController
 {    
@@ -34,5 +35,13 @@ class IncomingInvoiceQueryController extends AbstractController
     	return $this->render('dashboard/incomingInvoice/show.html.twig', [
     			'invoice' => $invoice
     	]);    	    	
+    }
+
+    #[Route(path: "/dashboard/incomingInvoice/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/scan", methods: ["GET"], name: "incomingInvoice_scan")]
+    public function scan(IncomingInvoice $invoice, StoredFileResponder $files): Response
+    {
+    	$this->denyAccessUnlessGranted('ROLE_USER');
+
+    	return $files->attachment($this->getParameter('incoming_scans_directory'), $invoice->getScanFilename());
     }
 }

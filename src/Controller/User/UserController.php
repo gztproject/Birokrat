@@ -2,6 +2,7 @@
 namespace App\Controller\User;
 
 use App\Form\User\UserType;
+use App\Http\StoredFileResponder;
 use App\Entity\User\User;
 use App\Repository\UserRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -104,6 +105,14 @@ class UserController extends AbstractController
         return $this->render('admin/user/show.html.twig', [
             'user' => $user,
         ]);
+    }
+
+    #[Route(path: "/user/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/signature", methods: ["GET"], name: "user_signature")]
+    public function signature(User $user, StoredFileResponder $files): Response
+    {
+        $this->denyAccessUnlessGranted('show', $user);
+
+        return $files->attachment($this->getParameter('signatures_directory'), $user->getSignatureFilename());
     }
     
     #[Route(path: "/user/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/edit", methods: ["GET", "POST"], name: "user_edit")]
