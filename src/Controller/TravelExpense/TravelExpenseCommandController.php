@@ -25,6 +25,7 @@ use App\Entity\LunchExpense\LunchExpense;
 use App\Entity\LunchExpense\CreateLunchExpenseCommand;
 use App\Repository\Transaction\TransactionRepository;
 use App\Entity\Transaction\UpdateTransactionCommand;
+use App\Entity\Organization\Organization;
 
 class TravelExpenseCommandController extends AbstractController
 {    
@@ -36,12 +37,14 @@ class TravelExpenseCommandController extends AbstractController
     	    	
     	$form = $this->createForm(TravelExpenseType::class, $c, [
     			'is_admin' => $this->isGranted('ROLE_ADMIN'),
+    			'organizations' => $this->getUser()->getOrganizations()->toArray(),
     		])
     		->add('saveAndCreateNew', SubmitType::class);
     	
     	$form->handleRequest($request);
     	
     	if ($form->isSubmitted() && $form->isValid()) {
+    		$this->denyUnlessMember($c->organization);
     		
     		if (!$this->isGranted('ROLE_ADMIN') || $c->employee === null) {
     			$c->employee = $this->getUser();
@@ -105,6 +108,8 @@ class TravelExpenseCommandController extends AbstractController
     #[Route(path: "/dashboard/travelExpense/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/edit", methods: ["GET", "POST"], name: "travelExpense_edit")]
     public function edit(Request $request, TravelExpense $te, LoggerInterface $logger, TransactionRepository $transactions, ManagerRegistry $doctrine): Response
     {
+    	$this->denyUnlessMember($te->getOrganization());
+    	
     	$updateTECommand = new UpdateTravelExpenseCommand();
     	$te->mapTo($updateTECommand);
     	
@@ -117,6 +122,7 @@ class TravelExpenseCommandController extends AbstractController
     	
     	$form = $this->createForm(TravelExpenseType::class, $updateTECommand, [
     			'is_admin' => $this->isGranted('ROLE_ADMIN'),
+    			'organizations' => $this->getUser()->getOrganizations()->toArray(),
     		])
     		->add('saveAndCreateNew', SubmitType::class);
     	$form->handleRequest($request);
@@ -160,6 +166,8 @@ class TravelExpenseCommandController extends AbstractController
     public function clone(Request $request, TravelExpense $te, TravelExpenseRepository $travelExpenses, LunchExpenseRepository $lunchExpenses, 
         LoggerInterface $logger, ManagerRegistry $doctrine): Response
     {
+    	$this->denyUnlessMember($te->getOrganization());
+    	
     	$clone = $te->clone($this->getUser());
     	
     	$updateTECommand = new UpdateTravelExpenseCommand();
@@ -174,6 +182,7 @@ class TravelExpenseCommandController extends AbstractController
     	
     	$form = $this->createForm(TravelExpenseType::class, $updateTECommand, [
     			'is_admin' => $this->isGranted('ROLE_ADMIN'),
+    			'organizations' => $this->getUser()->getOrganizations()->toArray(),
     		])
     		->add('saveAndCreateNew', SubmitType::class);
     	
@@ -196,13 +205,14 @@ class TravelExpenseCommandController extends AbstractController
     		$logger->debug("Found ".count($query->getResult())." existing LunchExpenses on ".date("r",$updateTECommand->date->getTimestamp()));
     		if(count($query->getResult()) == 0)
     		{
-    			$logger->debug("Auto renerating lunch transaction is set to ".$updateTECommand->organization->getOrganizationSettings()->getAutoCreateLunch());
-    			if($updateTECommand->organization->getOrganizationSettings()->getAutoCreateLunch())
+    			$organization = $clone->getOrganization();
+    			$logger->debug("Auto renerating lunch transaction is set to ".$organization->getOrganizationSettings()->getAutoCreateLunch());
+    			if($organization->getOrganizationSettings()->getAutoCreateLunch())
     			{
     				$clec = new CreateLunchExpenseCommand();
     				$clec->date = $updateTECommand->date;
-    				$clec->organization = $updateTECommand->organization;
-    				$clec->sum = $updateTECommand->organization->getOrganizationSettings()->getLunchValue();
+    				$clec->organization = $organization;
+    				$clec->sum = $organization->getOrganizationSettings()->getLunchValue();
     				$lunchExpense = $this->getUser()->createLunchExpense($clec);
     				
     				$lunchTransaction =  $lunchExpense->setNew($this->getUser());
@@ -239,7 +249,7 @@ class TravelExpenseCommandController extends AbstractController
     {
     	$dateFrom = $request->request->get('dateFrom', 0);
     	$dateTo = $request->request->get('dateTo', 0);
-    	$queryBuilder = $repo->getFilteredQuery($dateFrom, $dateTo, true, false);
+    	$queryBuilder = $repo->getFilteredQuery($dateFrom, $dateTo, true, false, $this->getUser()->getOrganizations()->toArray());
     	
     	$travelExpenses = $queryBuilder->getQuery()->getResult();
     	
@@ -275,6 +285,13 @@ class TravelExpenseCommandController extends AbstractController
     	}
     	
     	return new JsonResponse($travelExpenses);
+    }
+    
+    private function denyUnlessMember(?Organization $organization): void
+    {
+    	if ($organization === null || !$this->getUser()->getOrganizations()->contains($organization)) {
+    		throw $this->createNotFoundException();
+    	}
     }
     
 }

@@ -21,6 +21,7 @@ class TravelExpenseType extends AbstractType
         $builder
         	->add('organization', EntityType::class, array(
         		'class' => Organization::class,
+        		'choices' => $options['organizations'],
         		'choice_label' => 'name',
         		'expanded'=>false,
         		'multiple'=>false,
@@ -84,5 +85,8 @@ class TravelExpenseType extends AbstractType
         	'is_admin' => false,
         ));
         $resolver->setAllowedTypes('is_admin', 'bool');
+        // Companies the current user belongs to; nothing else may be chosen or posted.
+        $resolver->setRequired('organizations');
+        $resolver->setAllowedTypes('organizations', Organization::class.'[]');
     }
 }
