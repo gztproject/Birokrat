@@ -22,6 +22,7 @@ class TransactionType extends AbstractType
         $builder
         	->add('organization', EntityType::class, [
         			'class' => Organization::class,
+        			'choices' => $options['organizations'],
         			'choice_label' => 'name',
         			'expanded'=>false,
         			'multiple'=>false,
@@ -71,5 +72,7 @@ class TransactionType extends AbstractType
         	'data_class' => CreateTransactionCommand::class,
         	'allow_extra_fields' => true,
         ));
+        $resolver->setRequired('organizations');
+        $resolver->setAllowedTypes('organizations', Organization::class.'[]');
     }
 }
