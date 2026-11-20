@@ -5,11 +5,13 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use App\Repository\KontoRepository;
 use App\Repository\KontoClassRepository;
 use App\Repository\KontoCategoryRepository;
 use App\Form\KontoFilterType;
 
+#[IsGranted('ROLE_USER')]
 class KontoController extends AbstractController
 {    
     #[Route(path: "/codesheets/konto", methods: ["GET", "POST"], name: "konto_index")]
