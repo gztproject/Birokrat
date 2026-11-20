@@ -15,7 +15,9 @@ use App\Entity\IncomingInvoice\CreateIncomingInvoiceCommand;
 use App\Entity\IncomingInvoice\Enumerators\PaymentMethods;
 use App\Entity\Konto\Konto;
 use App\Repository\KontoRepository;
+use App\Repository\Organization\OrganizationRepository;
 use App\Repository\Organization\PartnerRepository;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use App\Form\Transaction\AllocationType;
@@ -26,6 +28,10 @@ use Symfony\Component\Validator\Constraints\File;
 
 class IncomingInvoiceType extends AbstractType
 {
+    public function __construct(private readonly Security $security)
+    {
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -51,6 +57,11 @@ class IncomingInvoiceType extends AbstractType
         	]) 
         	->add('recepient', EntityType::class, array(
         			'class' => Organization::class,
+        			'query_builder' => function(OrganizationRepository $repository) {
+        				return $repository->createQueryBuilder('o')
+        					->andWhere(':member MEMBER OF o.users')
+        					->setParameter('member', $this->security->getUser());
+        			},
         			'choice_label' => 'name',
         			'expanded'=>false,
         			'multiple'=>false,
