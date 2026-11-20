@@ -10,8 +10,10 @@ parameters:
     # This parameter defines the codes of the locales (languages) enabled in the application
     app_locales: en|sl
     app.notifications.email_sender: anonymous@example.com
-    signatures_directory: '%kernel.project_dir%/public/uploads/signatures'
-    incoming_scans_directory: '%kernel.project_dir%/public/uploads/incoming-invoices'
+    # Uploaded documents must stay outside public/: they are only served through
+    # controllers that check the viewer may see the owning invoice or user.
+    signatures_directory: '%kernel.project_dir%/uploads/signatures'
+    incoming_scans_directory: '%kernel.project_dir%/uploads/incoming-invoices'
 
 services:
     # default configuration for services in *this* file

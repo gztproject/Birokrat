@@ -14,8 +14,9 @@ class InvoicePdfFactory
 	private $__dest = null;
 	private $__path = null;
 	private $__print = false;
+	private $__signaturesDirectory = null;
 
-	public function __construct(Invoice $invoice, TranslatorInterface $translator, TCPDFController $tcpdf, string $dest, ?string $path, bool $print = false)
+	public function __construct(Invoice $invoice, TranslatorInterface $translator, TCPDFController $tcpdf, string $dest, ?string $path, bool $print = false, ?string $signaturesDirectory = null)
    	{
    		$this->__invoice = $invoice;
    		$this->__translator = $translator;
@@ -23,6 +24,7 @@ class InvoicePdfFactory
    		$this->__dest = $dest;
    		$this->__path = $path;
    		$this->__print = $print;
+   		$this->__signaturesDirectory = $signaturesDirectory;
    	}
 
    	/**
@@ -33,12 +35,12 @@ class InvoicePdfFactory
    	 * @param string $dest (Inline, Download, File, String, F + I, F + D, Email)
    	 * @return InvoicePdfFactory
    	 */
-   	public static function factory(Invoice $invoice, TranslatorInterface $translator, TCPDFController $tcpdf, string $dest = "I", ?string $path = null, bool $print = false): InvoicePdfFactory
+   	public static function factory(Invoice $invoice, TranslatorInterface $translator, TCPDFController $tcpdf, string $dest = "I", ?string $path = null, bool $print = false, ?string $signaturesDirectory = null): InvoicePdfFactory
    	{
    		$validDests = array('I', 'D', 'F', 'S', 'FI', 'FD', 'E');  
    		if($dest == 'F' && $path == null)
    			throw new \Exception('No path provided for the file.');
-   		return new InvoicePdfFactory($invoice, $translator, $tcpdf, in_array($dest, $validDests) ? $dest : 'I', $dest == 'F' ? $path : null, $print);
+   		return new InvoicePdfFactory($invoice, $translator, $tcpdf, in_array($dest, $validDests) ? $dest : 'I', $dest == 'F' ? $path : null, $print, $signaturesDirectory);
    	}
 
    	public function generate()
@@ -218,12 +220,12 @@ class InvoicePdfFactory
    				$pdf->Ln(7);
    				$pdf->Cell( 120, 0, $this->__translator->trans('label.preparedBy').':', 0, 1, '', 0, '', 0, false, 'T', 'B' );
    				$pdf->Cell( 120, 0, $this->__invoice->getCreatedBy()->getFullname(), 0, 0, '', 0, '', 0, false, 'T', 'B' );
-   				if($this->__invoice->getState() === 20 || $this->__invoice->getState() === 30)
+   				if($this->__signaturesDirectory !== null && ($this->__invoice->getState() === 20 || $this->__invoice->getState() === 30))
    				{
    					if(substr($this->__invoice->getCreatedBy()->getSignatureFilename(), -4) === "jpeg")
-   						$pdf->Image('uploads/signatures/'.$this->__invoice->getCreatedBy()->getSignatureFilename(), 40, 250, 0, 22, 'JPG', 'signature', '', true, 150, '', false, false, 0, false, false, false);
+   						$pdf->Image($this->__signaturesDirectory.'/'.$this->__invoice->getCreatedBy()->getSignatureFilename(), 40, 250, 0, 22, 'JPG', 'signature', '', true, 150, '', false, false, 0, false, false, false);
    					elseif(substr($this->__invoice->getCreatedBy()->getSignatureFilename(), -3) === "png")
-   						$pdf->Image('uploads/signatures/'.$this->__invoice->getCreatedBy()->getSignatureFilename(), 40, 250, 0, 22, 'PNG', 'signature', '', true, 150, '', false, false, 0, false, false, false);
+   						$pdf->Image($this->__signaturesDirectory.'/'.$this->__invoice->getCreatedBy()->getSignatureFilename(), 40, 250, 0, 22, 'PNG', 'signature', '', true, 150, '', false, false, 0, false, false, false);
    				}
    				// set style for barcode
    				$style = array(

@@ -23,6 +23,7 @@ CHEATSHEET\.txt
 
 public/uploads/signatures/
 public/uploads/incoming-invoices/
+/uploads/
 
 src/DataFixtures/InitData/clients.tsv
 

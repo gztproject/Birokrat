@@ -14,8 +14,9 @@ class TravelExpensePdfFactory
 	private $__dest = null;
 	private $__path = null;
 	private $__print = false;
+	private $__signaturesDirectory = null;
 
-	public function __construct(TravelExpense $travelExpense, TranslatorInterface $translator, TCPDFController $tcpdf, string $dest, ?string $path, bool $print = false)
+	public function __construct(TravelExpense $travelExpense, TranslatorInterface $translator, TCPDFController $tcpdf, string $dest, ?string $path, bool $print = false, ?string $signaturesDirectory = null)
    	{
    		$this->__travelExpense = $travelExpense;
    		$this->__translator = $translator;
@@ -23,6 +24,7 @@ class TravelExpensePdfFactory
    		$this->__dest = $dest;
    		$this->__path = $path;
    		$this->__print = $print;
+   		$this->__signaturesDirectory = $signaturesDirectory;
    	}
 
    	/**
@@ -33,12 +35,12 @@ class TravelExpensePdfFactory
    	 * @param string $dest (Inline, Download, File, String, F + I, F + D, Email)
    	 * @return TravelExpensePdfFactory
    	 */
-   	public static function factory(TravelExpense $travelExpense, TranslatorInterface $translator, TCPDFController $tcpdf, string $dest = "I", ?string $path = null, bool $print = false): TravelExpensePdfFactory
+   	public static function factory(TravelExpense $travelExpense, TranslatorInterface $translator, TCPDFController $tcpdf, string $dest = "I", ?string $path = null, bool $print = false, ?string $signaturesDirectory = null): TravelExpensePdfFactory
    	{
    		$validDests = array('I', 'D', 'F', 'S', 'FI', 'FD', 'E');  
    		if($dest == 'F' && $path == null)
    			throw new \Exception('No path provided for the file.');
-   			return new TravelExpensePdfFactory($travelExpense, $translator, $tcpdf, in_array($dest, $validDests) ? $dest : 'I', $dest == 'F' ? $path : null, $print);
+   			return new TravelExpensePdfFactory($travelExpense, $translator, $tcpdf, in_array($dest, $validDests) ? $dest : 'I', $dest == 'F' ? $path : null, $print, $signaturesDirectory);
    	}
 
    	public function generate()
@@ -171,10 +173,13 @@ class TravelExpensePdfFactory
    		$pdf->SetTextColor($purple[0], $purple[1], $purple[2]);
    		$pdf->MultiCell(50, $height, "Podpis nalogodajalca",									$border, 'L', 0, 0, 14, 	$start + (15*$height), true, 0, false, true, 40, 'T');
    		
-   		if(substr($this->__travelExpense->getCreatedBy()->getSignatureFilename(), -4) === "jpeg")
-   			$pdf->Image('uploads/signatures/'.$this->__travelExpense->getCreatedBy()->getSignatureFilename(), 14+50, $start + (15*$height), 0, 18, 'JPG', 'signature', '', true, 150, '', false, false, $border, false, false, false);
-   		elseif(substr($this->__travelExpense->getCreatedBy()->getSignatureFilename(), -3) === "png")
-   			$pdf->Image('uploads/signatures/'.$this->__travelExpense->getCreatedBy()->getSignatureFilename(), 14+50, $start + (15*$height), 0, 18, 'PNG', 'signature', '', true, 150, '', false, false, $border, false, false, false);
+   		if($this->__signaturesDirectory !== null)
+   		{
+   			if(substr($this->__travelExpense->getCreatedBy()->getSignatureFilename(), -4) === "jpeg")
+   				$pdf->Image($this->__signaturesDirectory.'/'.$this->__travelExpense->getCreatedBy()->getSignatureFilename(), 14+50, $start + (15*$height), 0, 18, 'JPG', 'signature', '', true, 150, '', false, false, $border, false, false, false);
+   			elseif(substr($this->__travelExpense->getCreatedBy()->getSignatureFilename(), -3) === "png")
+   				$pdf->Image($this->__signaturesDirectory.'/'.$this->__travelExpense->getCreatedBy()->getSignatureFilename(), 14+50, $start + (15*$height), 0, 18, 'PNG', 'signature', '', true, 150, '', false, false, $border, false, false, false);
+   		}
    		
    		
    		
