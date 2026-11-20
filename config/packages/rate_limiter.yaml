@@ -9,3 +9,8 @@ framework:
             policy: fixed_window
             limit: 25
             interval: '15 minutes'
+        # Second-factor code checks, keyed by user.
+        two_factor_code:
+            policy: fixed_window
+            limit: 5
+            interval: '15 minutes'
