@@ -7,7 +7,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use App\Form\Type\DateTimePickerType;
-use App\Entity\Organization\Organization;
+use App\Form\Organization\MemberOrganizationType;
 use App\Entity\TravelExpense\CreateTravelExpenseCommand;
 use App\Entity\User\User;
 use App\Repository\UserRepository;
@@ -19,13 +19,9 @@ class TravelExpenseType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-        	->add('organization', EntityType::class, array(
-        		'class' => Organization::class,
-        		'choice_label' => 'name',
-        		'expanded'=>false,
-        		'multiple'=>false,
+        	->add('organization', MemberOrganizationType::class, [
         		'label' => 'label.organization',
-        	))
+        	])
             ->add('date', DateTimePickerType::class,[
             		'label' => 'label.date',
             ])
