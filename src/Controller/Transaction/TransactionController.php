@@ -31,7 +31,7 @@ class TransactionController extends AbstractController {
 		$orgId = $request->query->get ( 'organization', null );
 		$orgId = $orgId === "" ? null : $orgId;
 
-		$queryBuilder = $transactions->getFilteredQuery ( $dateFrom, $dateTo, $orgId );
+		$queryBuilder = $transactions->getFilteredQuery ( $dateFrom, $dateTo, $this->getUser ()->getOrganizationIdsFilteredBy ( $orgId ) );
 		$pagination = $list->paginate ( $paginator, $queryBuilder, $request );
 
 		if ($list->isPartial ( $request )) {
@@ -51,7 +51,7 @@ class TransactionController extends AbstractController {
 		$orgId = $request->query->get ( 'organization', null );
 		$orgId = $orgId === "" ? null : $orgId;
 
-		$queryBuilder = $transactions->getFilteredQuery ( $dateFrom, $dateTo, $orgId, "ASC" );
+		$queryBuilder = $transactions->getFilteredQuery ( $dateFrom, $dateTo, $this->getUser ()->getOrganizationIdsFilteredBy ( $orgId ), "ASC" );
 
 		$result = $queryBuilder->getQuery ()->getResult ();
 
@@ -163,6 +163,8 @@ class TransactionController extends AbstractController {
 
 	#[Route(path: "/dashboard/transaction/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/show", methods: ["GET"], name: "transaction_show")]
 	public function show(Transaction $transaction, PaginatorInterface $paginator): Response {
+		$this->denyUnlessOwnOrganization ( $transaction );
+
 		return $this->render ( 'dashboard/transaction/index.html.twig', [ 
 				'pagination' => $paginator->paginate ( [ 
 						$transaction
@@ -175,7 +177,7 @@ class TransactionController extends AbstractController {
 		$createTransactionCommand = new CreateTransactionCommand ();
 		$createTransactionCommand->hidden = false;
 
-		$form = $this->createForm ( TransactionType::class, $createTransactionCommand )->add ( 'saveAndCreateNew', SubmitType::class );
+		$form = $this->createForm ( TransactionType::class, $createTransactionCommand, $this->formOptions () )->add ( 'saveAndCreateNew', SubmitType::class );
 
 		$form->handleRequest ( $request );
 
@@ -206,11 +208,13 @@ class TransactionController extends AbstractController {
 	#[IsGranted('ROLE_ADMIN', message: 'Only administrators can edit ledger transactions.')]
 	public function edit(Request $request, Transaction $transaction, LoggerInterface $logger, ManagerRegistry $doctrine): Response
 	{
+	    $this->denyUnlessOwnOrganization($transaction);
+
 	    $updateTransactionCommand = new UpdateTransactionCommand();
 	    $transaction->mapTo($updateTransactionCommand);
 	    $doc = $transaction->getDocument();
 	    
-	    $form = $this->createForm(TransactionType::class, $updateTransactionCommand);
+	    $form = $this->createForm(TransactionType::class, $updateTransactionCommand, $this->formOptions());
 	    $form->handleRequest($request);
 	    
 	    if ($form->isSubmitted() && $form->isValid()) {
@@ -232,12 +236,14 @@ class TransactionController extends AbstractController {
 	#[Route(path: "/dashboard/transaction/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/clone", methods: ["GET", "POST"], name: "transaction_clone")]
 	public function clone(Request $request, Transaction $transaction, LoggerInterface $logger, ManagerRegistry $doctrine): Response
 	{
+	    $this->denyUnlessOwnOrganization($transaction);
+
 	    $clone = $transaction->clone($this->getUser());
 	    
 	    $updateTransactionCommand = new UpdateTransactionCommand();
 	    $clone->mapTo($updateTransactionCommand);
 	    	    	    
-	    $form = $this->createForm(TransactionType::class, $updateTransactionCommand);
+	    $form = $this->createForm(TransactionType::class, $updateTransactionCommand, $this->formOptions());
 	    
 	    $form->handleRequest($request);
 	    
@@ -256,5 +262,17 @@ class TransactionController extends AbstractController {
 	        'transaction' => $clone,
 	        'form' => $form->createView(),
 	    ]);
+	}
+
+	private function denyUnlessOwnOrganization(Transaction $transaction): void
+	{
+	    if (!$this->getUser()->belongsTo($transaction->getOrganization())) {
+	        throw $this->createNotFoundException();
+	    }
+	}
+
+	private function formOptions(): array
+	{
+	    return ['organizations' => array_values($this->getUser()->getOrganizations()->toArray())];
 	}
 }

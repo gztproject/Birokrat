@@ -525,6 +525,40 @@ class User extends AggregateBase implements UserInterface, PasswordAuthenticated
     {
         return $this->organizations;
     }
+
+    public function belongsTo(?Organization $organization): bool
+    {
+        if ($organization === null) {
+            return false;
+        }
+        $id = $organization->getId()->toString();
+        foreach ($this->organizations as $own) {
+            if ($own->getId()->toString() === $id) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Ids of the user's organizations, narrowed to $requestedId when the user belongs to it.
+     * An id the user does not belong to is ignored rather than trusted.
+     *
+     * @return string[]
+     */
+    public function getOrganizationIdsFilteredBy(?string $requestedId): array
+    {
+        $ids = [];
+        foreach ($this->organizations as $own) {
+            $ids[] = $own->getId()->toString();
+        }
+        if ($requestedId !== null && in_array(strtolower($requestedId), $ids, true)) {
+            return [strtolower($requestedId)];
+        }
+
+        return $ids;
+    }
     
 
     public function getUserSettings(): ?UserSettings
