@@ -4,6 +4,7 @@ namespace App\Repository\Transaction;
 
 use App\Entity\Transaction\Transaction;
 use App\Entity\TravelExpense\TravelExpense;
+use App\Entity\User\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -29,15 +30,18 @@ class TransactionRepository extends ServiceEntityRepository
     }
     
 //    public function getFilteredQuery($from, $to, $orgId, $order = "DESC"): QueryBuilder
-    public function getFilteredQuery($from, $to, $orgId, ?string $order = "DESC", ?int $limit = null): QueryBuilder
+    public function getFilteredQuery(User $member, $from, $to, $orgId, ?string $order = "DESC", ?int $limit = null): QueryBuilder
     {
     	$qb = $this
     	->createQueryBuilder('t')
-    	->addSelect('t');
+    	->addSelect('t')
+    	->innerJoin('t.organization', 't_organization')
+    	->andWhere(':member MEMBER OF t_organization.users')
+    	->setParameter('member', $member);
     	if($from)
     	{
     		$qb
-    		->where('t.date >= :from')
+    		->andWhere('t.date >= :from')
     		->setParameter('from', date('Y-m-d G:i:s', $from));
     	}
     	
