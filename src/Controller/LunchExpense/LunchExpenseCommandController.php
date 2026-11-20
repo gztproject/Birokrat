@@ -28,7 +28,9 @@ class LunchExpenseCommandController extends AbstractController
     		$c->sum = $organization->getOrganizationSettings()->getLunchValue();
     	}
 
-    	$form = $this->createForm(LunchExpenseType::class, $c)
+    	$form = $this->createForm(LunchExpenseType::class, $c, [
+    			'organizations' => array_values($this->getUser()->getOrganizations()->toArray()),
+    		])
     	->add('saveAndCreateNew', SubmitType::class);
 
     	$form->handleRequest($request);
@@ -58,7 +60,8 @@ class LunchExpenseCommandController extends AbstractController
     	$dateTo = $request->request->get('dateTo', 0);
     	$queryBuilder = $repo->getFilteredQuery($dateFrom, $dateTo, true, false);
     	
-    	$lunchExpenses = $queryBuilder->getQuery()->getResult();
+    	$user = $this->getUser();
+    	$lunchExpenses = array_values(array_filter($queryBuilder->getQuery()->getResult(), fn ($le) => $user->belongsTo($le->getOrganization())));
     	
     	$organizations = new ArrayCollection();
     	
