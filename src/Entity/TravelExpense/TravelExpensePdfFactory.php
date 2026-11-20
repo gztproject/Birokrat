@@ -12,16 +12,14 @@ class TravelExpensePdfFactory
 	private $__translator = null;
 	private $__tcpdf = null;
 	private $__dest = null;
-	private $__path = null;
 	private $__print = false;
 
-	public function __construct(TravelExpense $travelExpense, TranslatorInterface $translator, TCPDFController $tcpdf, string $dest, ?string $path, bool $print = false)
+	public function __construct(TravelExpense $travelExpense, TranslatorInterface $translator, TCPDFController $tcpdf, string $dest, bool $print = false)
    	{
    		$this->__travelExpense = $travelExpense;
    		$this->__translator = $translator;
    		$this->__tcpdf = $tcpdf;
    		$this->__dest = $dest;
-   		$this->__path = $path;
    		$this->__print = $print;
    	}
 
@@ -30,23 +28,18 @@ class TravelExpensePdfFactory
    	 * @param TravelExpense $travelExpense
    	 * @param TranslatorInterface $translator
    	 * @param TCPDFController $tcpdf
-   	 * @param string $dest (Inline, Download, File, String, F + I, F + D, Email)
+   	 * @param string $dest (Inline, Download, String, Email); file destinations are not supported
    	 * @return TravelExpensePdfFactory
    	 */
-   	public static function factory(TravelExpense $travelExpense, TranslatorInterface $translator, TCPDFController $tcpdf, string $dest = "I", ?string $path = null, bool $print = false): TravelExpensePdfFactory
+   	public static function factory(TravelExpense $travelExpense, TranslatorInterface $translator, TCPDFController $tcpdf, string $dest = "I", bool $print = false): TravelExpensePdfFactory
    	{
-   		$validDests = array('I', 'D', 'F', 'S', 'FI', 'FD', 'E');  
-   		if($dest == 'F' && $path == null)
-   			throw new \Exception('No path provided for the file.');
-   			return new TravelExpensePdfFactory($travelExpense, $translator, $tcpdf, in_array($dest, $validDests) ? $dest : 'I', $dest == 'F' ? $path : null, $print);
+   		$validDests = array('I', 'D', 'S', 'E');
+   		return new TravelExpensePdfFactory($travelExpense, $translator, $tcpdf, in_array($dest, $validDests) ? $dest : 'I', $print);
    	}
 
    	public function generate()
    	{
-   		$title = "";
-   		if($this->__path != null)
-   			$title .= $this->__path;
-   		$title .= $this->__translator->trans('title.travelExpense').' '.$this->__travelExpense->getNumber();
+   		$title = $this->__translator->trans('title.travelExpense').' '.$this->__travelExpense->getNumber();
    		
    		$pdf = $this->__tcpdf->create('L', PDF_UNIT, PDF_PAGE_FORMAT, true, 'utf-8', false);
    		

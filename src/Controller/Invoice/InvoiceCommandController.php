@@ -222,15 +222,9 @@ class InvoiceCommandController extends AbstractController
     			throw new \Exception("Client has no e-mail addres.");
     		}
     		$ccAddresses = $parser->parse($ccRaw);
-    		$path = __DIR__."/../../../tmp/";
-    		//Check if the directory already exists.
-    		if(!is_dir($path)){
-    			//Directory does not exist, so lets create it.
-    			mkdir($path, 0755);
-    		}
     		
-    		InvoicePdfFactory::factory($invoice, $translator, $tcpdf, 'F', $path)->generate();
-    		$title = $translator->trans('title.invoice').' '.$invoice->getNumber().'.pdf';
+    		$content = (string) InvoicePdfFactory::factory($invoice, $translator, $tcpdf, 'S')->generate();
+    		$title = str_replace(['/', '\\'], '-', $translator->trans('title.invoice').' '.$invoice->getNumber()).'.pdf';
     		
     		$emailObject = (new Email())
     		->from('birokrat@gzt.si')
@@ -238,7 +232,7 @@ class InvoiceCommandController extends AbstractController
     			->subject($subject)
     			->text($body)
     			->html('<p>'.nl2br(htmlspecialchars($body, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML5, 'UTF-8')).'</p>')
-    			->attachFromPath($path.$title);
+    			->attach($content, $title, 'application/pdf');
     		if ($ccAddresses !== []) {
     			$emailObject->cc(...$ccAddresses);
     		}
@@ -248,8 +242,6 @@ class InvoiceCommandController extends AbstractController
     		}    		
     		
     		$mailer->send($emailObject);
-    		
-    		unlink($path.$title);
     		
     		$partner = $invoice->getRecepient();
     		$data = $mailerSettings->describeDelivery((string) $email, $ccRaw);
