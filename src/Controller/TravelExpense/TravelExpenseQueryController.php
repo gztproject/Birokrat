@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\Response;
 use App\Repository\TravelExpense\TravelExpenseRepository;
 use App\Entity\TravelExpense\TravelExpense;
 use App\Entity\TravelExpense\TravelExpenseBundle;
+use App\Entity\User\User;
 use Knp\Component\Pager\PaginatorInterface;
 use App\Http\InfiniteListResponder;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -24,7 +25,11 @@ class TravelExpenseQueryController extends AbstractController
 		$dateTo = $request->query->get('dateTo', 0);
 		$booked = $request->query->get('booked', 'false') == 'true';
 		$unbooked = $request->query->get('unbooked', 'true') == 'true';
-		$queryBuilder = $travelExpenses->getFilteredQuery($dateFrom, $dateTo, $unbooked, $booked);
+		$user = $this->getUser();
+		if (!$user instanceof User) {
+			throw $this->createAccessDeniedException();
+		}
+		$queryBuilder = $travelExpenses->getFilteredQuery($dateFrom, $dateTo, $unbooked, $booked, $user);
 		$pagination = $list->paginate($paginator, $queryBuilder, $request);
 
 		if ($list->isPartial($request)) {

@@ -12,6 +12,7 @@ use App\Repository\LunchExpense\LunchExpenseRepository;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Entity\LunchExpense\CreateLunchExpenseCommand;
 use App\Entity\LunchExpense\CreateLunchExpenseBundleCommand;
+use App\Entity\User\User;
 use App\Form\LunchExpense\LunchExpenseType;
 use Doctrine\Common\Collections\ArrayCollection;
 
@@ -20,22 +21,29 @@ class LunchExpenseCommandController extends AbstractController
 	#[Route(path: "/dashboard/lunchExpense/new", methods: ["GET", "POST"], name: "lunchExpense_new")]
     public function new(Request $request, ManagerRegistry $doctrine): Response
     {
+    	$user = $this->getUser();
+    	if (!$user instanceof User) {
+    		throw $this->createAccessDeniedException();
+    	}
+
     	$c = new CreateLunchExpenseCommand();
     	$c->date = new \DateTime();
-    	$organization = $this->getUser()?->getOrganizations()->first();
+    	$organization = $user->getOrganizations()->first();
     	if ($organization) {
     		$c->organization = $organization;
     		$c->sum = $organization->getOrganizationSettings()->getLunchValue();
     	}
 
-    	$form = $this->createForm(LunchExpenseType::class, $c)
+    	$form = $this->createForm(LunchExpenseType::class, $c, [
+    			'organizations' => $user->getOrganizations()->toArray(),
+    		])
     	->add('saveAndCreateNew', SubmitType::class);
 
     	$form->handleRequest($request);
     	   	
     	if ($form->isSubmitted() && $form->isValid()) {
-    		$te = $this->getUser()->createLunchExpense($c);
-    		$transaction = $te->setNew($this->getUser());
+    		$te = $user->createLunchExpense($c);
+    		$transaction = $te->setNew($user);
 
     		$em = $doctrine->getManager();
     		$em->persist($te);
@@ -54,9 +62,14 @@ class LunchExpenseCommandController extends AbstractController
     #[Route(path: "/dashboard/lunchExpense/bookInBundle/withFilter", methods: ["POST"], name: "lunchExpense_bookinBundle_withFilter")]
     public function book(LunchExpenseRepository $repo, Request $request, ManagerRegistry $doctrine): JsonResponse
     {
+    	$user = $this->getUser();
+    	if (!$user instanceof User) {
+    		throw $this->createAccessDeniedException();
+    	}
+
     	$dateFrom = $request->request->get('dateFrom', 0);
     	$dateTo = $request->request->get('dateTo', 0);
-    	$queryBuilder = $repo->getFilteredQuery($dateFrom, $dateTo, true, false);
+    	$queryBuilder = $repo->getFilteredQuery($dateFrom, $dateTo, true, false, $user);
     	
     	$lunchExpenses = $queryBuilder->getQuery()->getResult();
     	
@@ -64,6 +77,8 @@ class LunchExpenseCommandController extends AbstractController
     	
     	foreach($lunchExpenses as $te)
     	{
+    		if(!$user->getOrganizations()->contains($te->getOrganization()))
+    			throw $this->createAccessDeniedException();
     		if(!$organizations->contains($te->getOrganization()))
     			$organizations->add($te->getOrganization());    		
     	}
@@ -75,12 +90,12 @@ class LunchExpenseCommandController extends AbstractController
     		$c->lunchExpenses = $myTes;
     		$c->organization = $org;
     		
-    		$bundle = $this->getUser()->createLunchExpenseBundle($c);      	
+    		$bundle = $user->createLunchExpenseBundle($c);      	
 	    	
     		$date = new \DateTime($request->request->get('date', null));
     		$entityManager = $doctrine->getManager();
 	    	
-    		$transaction = $bundle->setBooked($date, $this->getUser());
+    		$transaction = $bundle->setBooked($date, $user);
 	    	
     		foreach($myTes as $te)
     		{

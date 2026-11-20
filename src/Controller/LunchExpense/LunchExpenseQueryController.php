@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\Response;
 use App\Repository\LunchExpense\LunchExpenseRepository;
 use App\Entity\LunchExpense\LunchExpense;
 use App\Entity\LunchExpense\LunchExpenseBundle;
+use App\Entity\User\User;
 use Knp\Component\Pager\PaginatorInterface;
 use App\Http\InfiniteListResponder;
 
@@ -21,7 +22,11 @@ class LunchExpenseQueryController extends AbstractController
 		$dateTo = $request->query->get('dateTo', 0);
 		$booked = $request->query->get('booked', 'false') == 'true';
 		$unbooked = $request->query->get('unbooked', 'true') == 'true';
-		$queryBuilder = $lunchExpenses->getFilteredQuery($dateFrom, $dateTo, $unbooked, $booked);
+		$user = $this->getUser();
+		if (!$user instanceof User) {
+			throw $this->createAccessDeniedException();
+		}
+		$queryBuilder = $lunchExpenses->getFilteredQuery($dateFrom, $dateTo, $unbooked, $booked, $user);
 		$pagination = $list->paginate($paginator, $queryBuilder, $request);
 
 		if ($list->isPartial($request)) {
@@ -39,6 +44,11 @@ class LunchExpenseQueryController extends AbstractController
     #[Route(path: "/dashboard/lunchExpense/bundle/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}", methods: ["GET"], name: "lunchExpenseBundle_show")]
     public function showBundle(LunchExpenseBundle $lunchExpenseBundle, Request $request, PaginatorInterface $paginator, InfiniteListResponder $list): Response
     {
+    	$user = $this->getUser();
+    	if (!$user instanceof User || !$user->getOrganizations()->contains($lunchExpenseBundle->getOrganization())) {
+    		throw $this->createNotFoundException();
+    	}
+
     	$pagination = $list->paginate($paginator, $lunchExpenseBundle->getLunchExpenses(), $request);
 
     	if ($list->isPartial($request)) {
