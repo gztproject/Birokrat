@@ -7,7 +7,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use App\Form\Type\DateTimePickerType;
 use App\Entity\LunchExpense\CreateLunchExpenseCommand;
-use App\Entity\Organization\Organization;
+use App\Form\Organization\MemberOrganizationType;
 use App\Entity\Transaction\CreateTransactionCommand;
 use Doctrine\DBAL\Types\DecimalType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -20,12 +20,8 @@ class TransactionType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-        	->add('organization', EntityType::class, [
-        			'class' => Organization::class,
-        			'choice_label' => 'name',
-        			'expanded'=>false,
-        			'multiple'=>false,
-        			'label' => 'label.organization',
+        	->add('organization', MemberOrganizationType::class, [
+        		'label' => 'label.organization',
         	])
             ->add('date', DateTimePickerType::class,[
             		'label' => 'label.date',

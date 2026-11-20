@@ -10,7 +10,7 @@ use App\Form\Type\DateTimePickerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use App\Entity\Organization\Partner;
-use App\Entity\Organization\Organization;
+use App\Form\Organization\MemberOrganizationType;
 use App\Entity\IncomingInvoice\CreateIncomingInvoiceCommand;
 use App\Entity\IncomingInvoice\Enumerators\PaymentMethods;
 use App\Entity\Konto\Konto;
@@ -49,13 +49,9 @@ class IncomingInvoiceType extends AbstractType
         	->add('price', NumberType::class,[
         			'label' => 'label.price'
         	]) 
-        	->add('recepient', EntityType::class, array(
-        			'class' => Organization::class,
-        			'choice_label' => 'name',
-        			'expanded'=>false,
-        			'multiple'=>false,
-        			'label' => 'label.recepient',
-        	))
+        	->add('recepient', MemberOrganizationType::class, [
+        		'label' => 'label.recepient',
+        	])
             ->add('dateOfIssue', DateTimePickerType::class,[
                 'label' => 'label.dateOfIssue',
             ])
