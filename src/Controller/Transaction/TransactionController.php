@@ -11,7 +11,9 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Attribute\Route;
 use App\Entity\Konto\Konto;
+use App\Entity\Organization\Organization;
 use App\Entity\Transaction\Transaction;
+use App\Entity\User\User;
 use App\Repository\Transaction\TransactionRepository;
 use App\Entity\Transaction\UpdateTransactionCommand;
 use App\Entity\Transaction\CreateTransactionCommand;
@@ -27,10 +29,8 @@ class TransactionController extends AbstractController {
 	public function index(TransactionRepository $transactions, Request $request, PaginatorInterface $paginator, InfiniteListResponder $list): Response {
 		$dateFrom = $request->query->get ( 'dateFrom', null );
 		$dateTo = $request->query->get ( 'dateTo', null );
-		$orgId = $request->query->get ( 'organization', null );
-		$orgId = $orgId === "" ? null : $orgId;
 
-		$queryBuilder = $transactions->getFilteredQuery ( $dateFrom, $dateTo, $orgId );
+		$queryBuilder = $transactions->getFilteredQuery ( $dateFrom, $dateTo, $this->visibleOrganizations ( $request ) );
 		$pagination = $list->paginate ( $paginator, $queryBuilder, $request );
 
 		if ($list->isPartial ( $request )) {
@@ -47,10 +47,8 @@ class TransactionController extends AbstractController {
 	public function export(TransactionRepository $transactions, Request $request, PaginatorInterface $paginator): Response {
 		$dateFrom = $request->query->get ( 'dateFrom', null );
 		$dateTo = $request->query->get ( 'dateTo', null );
-		$orgId = $request->query->get ( 'organization', null );
-		$orgId = $orgId === "" ? null : $orgId;
 
-		$queryBuilder = $transactions->getFilteredQuery ( $dateFrom, $dateTo, $orgId, "ASC" );
+		$queryBuilder = $transactions->getFilteredQuery ( $dateFrom, $dateTo, $this->visibleOrganizations ( $request ), "ASC" );
 
 		$result = $queryBuilder->getQuery ()->getResult ();
 
@@ -158,6 +156,28 @@ class TransactionController extends AbstractController {
 		// return - 1;
 
 		return 0;
+	}
+
+	/**
+	 * @return Organization[]
+	 */
+	private function visibleOrganizations(Request $request): array {
+		$user = $this->getUser ();
+		if (! $user instanceof User) {
+			return [ ];
+		}
+
+		$id = $request->query->get ( 'organization' );
+		if (! is_string ( $id ) || $id === '') {
+			return $user->getOrganizations ()->toArray ();
+		}
+
+		$organization = $user->findOrganization ( $id );
+		if ($organization === null) {
+			throw $this->createNotFoundException ();
+		}
+
+		return [ $organization ];
 	}
 
 	#[Route(path: "/dashboard/transaction/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/show", methods: ["GET"], name: "transaction_show")]

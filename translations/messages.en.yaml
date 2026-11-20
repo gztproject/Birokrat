@@ -29,3 +29,6 @@ menu:
   dddddd: DDD-DDD
   bilanca: Balance sheet
   turnout: P&L
+
+report:
+  choose_organization: Choose one of your organizations to see its reports.

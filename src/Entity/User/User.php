@@ -476,6 +476,17 @@ class User extends AggregateBase implements UserInterface, PasswordAuthenticated
     {
         return $this->organizations;
     }
+
+    public function findOrganization(string $id): ?Organization
+    {
+        foreach ($this->organizations as $organization) {
+            if (strcasecmp($organization->getId()->toString(), $id) === 0) {
+                return $organization;
+            }
+        }
+
+        return null;
+    }
     
 
     public function getUserSettings(): ?UserSettings
