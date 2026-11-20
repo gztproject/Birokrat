@@ -3,7 +3,9 @@
 namespace App\Repository\Organization;
 
 use App\Entity\Organization\Organization;
+use App\Entity\User\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -17,6 +19,16 @@ class OrganizationRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Organization::class);
+    }
+
+    public function memberQueryBuilder(?User $member): QueryBuilder
+    {
+        $qb = $this->createQueryBuilder('o')->orderBy('o.name', 'ASC');
+        if ($member === null) {
+            return $qb->andWhere('1 = 0');
+        }
+
+        return $qb->andWhere(':member MEMBER OF o.users')->setParameter('member', $member);
     }
 
     // /**

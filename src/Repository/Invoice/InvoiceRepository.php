@@ -3,6 +3,8 @@
 namespace App\Repository\Invoice;
 
 use App\Entity\Invoice\Invoice;
+use App\Entity\Organization\Partner;
+use App\Entity\User\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -20,12 +22,30 @@ class InvoiceRepository extends ServiceEntityRepository
         parent::__construct($registry, Invoice::class);
     }
     
-    public function getQuery(): QueryBuilder
+    public function getQuery(User $member): QueryBuilder
     {
-    	return $this->createQueryBuilder('i')
+    	$qb = $this->createQueryBuilder('i')
     		->addSelect('i')
     		->orderBy('i.dateOfIssue', 'DESC')
-    		->addOrderBy('i.number', 'DESC');    	 
+    		->addOrderBy('i.number', 'DESC');
+    	$this->restrictToMember($qb, $member);
+
+    	return $qb;
+    }
+
+    /**
+     * @return Invoice[]
+     */
+    public function findByRecepientForMember(Partner $recepient, User $member): array
+    {
+        $qb = $this->createQueryBuilder('i')
+            ->andWhere('i.recepient = :recepient')
+            ->setParameter('recepient', $recepient)
+            ->orderBy('i.dateOfIssue', 'DESC')
+            ->addOrderBy('i.number', 'DESC');
+        $this->restrictToMember($qb, $member);
+
+        return $qb->getQuery()->getResult();
     }
     
     public function getActive(): QueryBuilder
@@ -42,32 +62,33 @@ class InvoiceRepository extends ServiceEntityRepository
      * @param int[] $states
      * @return Invoice[]
      */
-    public function findRecent(array $states, int $limit, \DateTimeInterface $from): array
+    public function findRecent(array $states, int $limit, \DateTimeInterface $from, User $member): array
     {
-        return $this->createQueryBuilder('i')
+        $qb = $this->createQueryBuilder('i')
             ->andWhere('i.state IN (:states)')
             ->andWhere('i.dateOfIssue >= :from')
             ->setParameter('states', $states)
             ->setParameter('from', $from)
             ->orderBy('i.dateOfIssue', 'DESC')
             ->addOrderBy('i.number', 'DESC')
-            ->setMaxResults($limit)
-            ->getQuery()
-            ->getResult();
+            ->setMaxResults($limit);
+        $this->restrictToMember($qb, $member);
+
+        return $qb->getQuery()->getResult();
     }
 
     /**
      * @return array{count: int, total: float}
      */
-    public function summarizeIssued(?\DateTimeInterface $from = null): array
+    public function summarizeIssued(User $member, ?\DateTimeInterface $from = null): array
     {
-        return $this->summarizeByState(20, $from);
+        return $this->summarizeByState(20, $member, $from);
     }
 
     /**
      * @return array{count: int, total: float}
      */
-    public function summarizeOverdue(?\DateTimeInterface $from = null): array
+    public function summarizeOverdue(User $member, ?\DateTimeInterface $from = null): array
     {
         $qb = $this->createQueryBuilder('i')
             ->select('COUNT(i.id) AS cnt', 'COALESCE(SUM(i.totalPrice), 0) AS total')
@@ -76,6 +97,7 @@ class InvoiceRepository extends ServiceEntityRepository
             ->setParameter('state', 20)
             ->setParameter('today', new \DateTimeImmutable('today'));
         $this->applyIssuedFrom($qb, $from);
+        $this->restrictToMember($qb, $member);
 
         $row = $qb->getQuery()->getSingleResult();
 
@@ -85,17 +107,25 @@ class InvoiceRepository extends ServiceEntityRepository
     /**
      * @return array{count: int, total: float}
      */
-    private function summarizeByState(int $state, ?\DateTimeInterface $from = null): array
+    private function summarizeByState(int $state, User $member, ?\DateTimeInterface $from = null): array
     {
         $qb = $this->createQueryBuilder('i')
             ->select('COUNT(i.id) AS cnt', 'COALESCE(SUM(i.totalPrice), 0) AS total')
             ->andWhere('i.state = :state')
             ->setParameter('state', $state);
         $this->applyIssuedFrom($qb, $from);
+        $this->restrictToMember($qb, $member);
 
         $row = $qb->getQuery()->getSingleResult();
 
         return ['count' => (int) $row['cnt'], 'total' => (float) $row['total']];
+    }
+
+    private function restrictToMember(QueryBuilder $qb, User $member): void
+    {
+        $qb->innerJoin('i.issuer', 'memberIssuer')
+            ->andWhere(':member MEMBER OF memberIssuer.users')
+            ->setParameter('member', $member);
     }
 
     private function applyIssuedFrom(QueryBuilder $qb, ?\DateTimeInterface $from): void
