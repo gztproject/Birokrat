@@ -89,6 +89,15 @@ class User extends AggregateBase implements UserInterface, PasswordAuthenticated
 
     #[ORM\Column(type: "boolean")]
     private $totpEnabled = false;
+
+    #[ORM\Column(type: "integer", nullable: true)]
+    private $totpLastUsedSlice;
+
+    #[ORM\Column(type: "integer", options: ["default" => 0])]
+    private $totpFailedAttempts = 0;
+
+    #[ORM\Column(type: "datetime_immutable", nullable: true)]
+    private $totpLastFailureAt;
     
     /**
      * 
@@ -437,16 +446,54 @@ class User extends AggregateBase implements UserInterface, PasswordAuthenticated
     	return $this->totpSecret;
     }
 
-    public function enableTotp(string $secret): void
+    public function enableTotp(string $secret, int $usedSlice): void
     {
     	$this->totpSecret = $secret;
     	$this->totpEnabled = true;
+    	$this->totpLastUsedSlice = $usedSlice;
+    	$this->totpFailedAttempts = 0;
+    	$this->totpLastFailureAt = null;
     }
 
     public function disableTotp(): void
     {
     	$this->totpSecret = null;
     	$this->totpEnabled = false;
+    	$this->totpLastUsedSlice = null;
+    	$this->totpFailedAttempts = 0;
+    	$this->totpLastFailureAt = null;
+    }
+
+    public function getTotpFailedAttempts(): int
+    {
+    	return (int) $this->totpFailedAttempts;
+    }
+
+    public function getTotpLastFailureAt(): ?\DateTimeImmutable
+    {
+    	return $this->totpLastFailureAt;
+    }
+
+    /**
+     * Marks the time slice of an accepted code as used. Returns false when that
+     * slice, or a later one, was already used.
+     */
+    public function consumeTotpSlice(int $slice): bool
+    {
+    	if ($this->totpLastUsedSlice !== null && $slice <= (int) $this->totpLastUsedSlice) {
+    		return false;
+    	}
+    	$this->totpLastUsedSlice = $slice;
+    	$this->totpFailedAttempts = 0;
+    	$this->totpLastFailureAt = null;
+
+    	return true;
+    }
+
+    public function recordTotpFailure(\DateTimeImmutable $at): void
+    {
+    	$this->totpFailedAttempts = $this->getTotpFailedAttempts() + 1;
+    	$this->totpLastFailureAt = $at;
     }
 
     public function getIsActive(): ?bool

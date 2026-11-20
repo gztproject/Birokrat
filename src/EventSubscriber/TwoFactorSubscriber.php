@@ -3,6 +3,7 @@
 namespace App\EventSubscriber;
 
 use App\Entity\User\User;
+use App\Security\TotpVerifier;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -29,13 +30,15 @@ final class TwoFactorSubscriber implements EventSubscriberInterface
 
     public function onLoginSuccess(LoginSuccessEvent $event): void
     {
+        $session = $event->getRequest()->getSession();
+        $session->remove(TotpVerifier::FAILED_ATTEMPTS_SESSION_KEY);
         $user = $event->getUser();
         if (!$user instanceof User || !$user->isTotpEnabled()) {
-            $event->getRequest()->getSession()->remove('2fa_pending');
+            $session->remove('2fa_pending');
 
             return;
         }
-        $event->getRequest()->getSession()->set('2fa_pending', true);
+        $session->set('2fa_pending', true);
     }
 
     public function onRequest(RequestEvent $event): void

@@ -11,18 +11,29 @@ final class Totp
 
     public static function verify(string $secret, string $code, int $window = 1): bool
     {
+        return self::matchingSlice($secret, $code, $window) !== null;
+    }
+
+    /**
+     * Returns the latest time slice inside the window whose code matches, or
+     * null. Callers that accept a code must remember the slice so the same
+     * code cannot be accepted twice.
+     */
+    public static function matchingSlice(string $secret, string $code, int $window = 1, ?int $now = null): ?int
+    {
         $code = preg_replace('/\s+/', '', $code) ?? '';
         if (!preg_match('/^\d{6}$/', $code)) {
-            return false;
+            return null;
         }
-        $timeSlice = (int) floor(time() / 30);
+        $timeSlice = (int) floor(($now ?? time()) / 30);
+        $matched = null;
         for ($i = -$window; $i <= $window; ++$i) {
             if (hash_equals(self::at($secret, $timeSlice + $i), $code)) {
-                return true;
+                $matched = $timeSlice + $i;
             }
         }
 
-        return false;
+        return $matched;
     }
 
     public static function provisioningUri(string $secret, string $account, string $issuer = 'Birokrat'): string
