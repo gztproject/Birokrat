@@ -6,6 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use App\Entity\User\User;
 use App\Entity\Invoice\Invoice;
 use App\Repository\Invoice\InvoiceRepository;
 use App\Entity\Invoice\InvoiceNumberFactory;
@@ -23,7 +24,8 @@ class InvoiceQueryController extends AbstractController
     #[Route(path: "/dashboard/invoice", methods: ["GET"], name: "invoice_index")]
 	public function index(InvoiceRepository $invoices, Request $request, PaginatorInterface $paginator, InfiniteListResponder $list): Response
     {   		
-    	$queryBuilder = $invoices->getQuery();
+    	$user = $this->getUser();
+    	$queryBuilder = $invoices->getQuery($user instanceof User ? $user->getOrganizations()->toArray() : []);
     	$pagination = $list->paginate($paginator, $queryBuilder, $request);
 
     	if ($list->isPartial($request)) {

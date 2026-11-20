@@ -5,6 +5,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use App\Entity\User\User;
 use App\Entity\IncomingInvoice\IncomingInvoice;
 use App\Repository\IncomingInvoice\IncomingInvoiceRepository;
 use Knp\Component\Pager\PaginatorInterface;
@@ -15,7 +16,8 @@ class IncomingInvoiceQueryController extends AbstractController
     #[Route(path: "/dashboard/incomingInvoice", methods: ["GET"], name: "incomingInvoice_index")]
 	public function index(IncomingInvoiceRepository $incomingInvoices, Request $request, PaginatorInterface $paginator, InfiniteListResponder $list): Response
     {   		
-    	$queryBuilder = $incomingInvoices->getQuery();
+    	$user = $this->getUser();
+    	$queryBuilder = $incomingInvoices->getQuery($user instanceof User ? $user->getOrganizations()->toArray() : []);
     	$pagination = $list->paginate($paginator, $queryBuilder, $request);
 
     	if ($list->isPartial($request)) {

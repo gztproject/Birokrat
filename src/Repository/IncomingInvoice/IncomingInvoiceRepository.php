@@ -3,6 +3,7 @@
 namespace App\Repository\IncomingInvoice;
 
 use App\Entity\IncomingInvoice\IncomingInvoice;
+use App\Entity\Organization\Organization;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -20,10 +21,15 @@ class IncomingInvoiceRepository extends ServiceEntityRepository
         parent::__construct($registry, IncomingInvoice::class);
     }
     
-    public function getQuery(): QueryBuilder
+    /**
+     * @param Organization[] $recipients
+     */
+    public function getQuery(array $recipients): QueryBuilder
     {
     	return $this->createQueryBuilder('i')
     		->addSelect('i')
+    		->andWhere('i.recepient IN (:recipients)')
+    		->setParameter('recipients', $recipients)
     		->orderBy('i.dateOfIssue', 'DESC')
     		->addOrderBy('i.number', 'DESC');    	 
     }
@@ -39,14 +45,14 @@ class IncomingInvoiceRepository extends ServiceEntityRepository
     }
 
     /**
+     * @param Organization[] $recipients
      * @return IncomingInvoice[]
      */
-    /**
-     * @return IncomingInvoice[]
-     */
-    public function findUnpaidReceived(int $limit = 5, ?\DateTimeInterface $from = null): array
+    public function findUnpaidReceived(array $recipients, int $limit = 5, ?\DateTimeInterface $from = null): array
     {
     	$qb = $this->createQueryBuilder('i')
+    		->andWhere('i.recepient IN (:recipients)')
+    		->setParameter('recipients', $recipients)
     		->andWhere('i.state = :state')
     		->setParameter('state', 10)
     		->orderBy('i.dueDate', 'ASC')
@@ -59,12 +65,15 @@ class IncomingInvoiceRepository extends ServiceEntityRepository
     }
 
     /**
+     * @param Organization[] $recipients
      * @return array{count: int, total: float}
      */
-    public function summarizeUnpaid(?\DateTimeInterface $from = null): array
+    public function summarizeUnpaid(array $recipients, ?\DateTimeInterface $from = null): array
     {
         $qb = $this->createQueryBuilder('i')
             ->select('COUNT(i.id) AS cnt', 'COALESCE(SUM(i.price), 0) AS total')
+            ->andWhere('i.recepient IN (:recipients)')
+            ->setParameter('recipients', $recipients)
             ->andWhere('i.state = :state')
             ->setParameter('state', 10);
         if ($from !== null) {

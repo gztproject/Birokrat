@@ -2,6 +2,7 @@
 
 namespace App\Repository\Transaction;
 
+use App\Entity\Organization\Organization;
 use App\Entity\Transaction\Transaction;
 use App\Entity\TravelExpense\TravelExpense;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -28,16 +29,20 @@ class TransactionRepository extends ServiceEntityRepository
     	->orderBy('t.date', 'DESC');
     }
     
-//    public function getFilteredQuery($from, $to, $orgId, $order = "DESC"): QueryBuilder
-    public function getFilteredQuery($from, $to, $orgId, ?string $order = "DESC", ?int $limit = null): QueryBuilder
+    /**
+     * @param Organization[] $organizations the only organizations whose transactions may be returned
+     */
+    public function getFilteredQuery($from, $to, array $organizations, ?string $order = "DESC", ?int $limit = null): QueryBuilder
     {
     	$qb = $this
     	->createQueryBuilder('t')
-    	->addSelect('t');
+    	->addSelect('t')
+    	->andWhere('t.organization IN (:organizations)')
+    	->setParameter('organizations', $organizations);
     	if($from)
     	{
     		$qb
-    		->where('t.date >= :from')
+    		->andWhere('t.date >= :from')
     		->setParameter('from', date('Y-m-d G:i:s', $from));
     	}
     	
@@ -46,12 +51,6 @@ class TransactionRepository extends ServiceEntityRepository
     		$qb
     		->andWhere('t.date <= :to')
     		->setParameter('to', date('Y-m-d G:i:s', $to));
-    	}
-    	
-    	if($orgId)
-    	{
-    		
-    		$qb->andWhere('t.organization = :orgid')->setParameter('orgid', $orgId);
     	}
 	
 	if($limit)

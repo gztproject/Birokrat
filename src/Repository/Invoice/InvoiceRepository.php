@@ -3,6 +3,7 @@
 namespace App\Repository\Invoice;
 
 use App\Entity\Invoice\Invoice;
+use App\Entity\Organization\Organization;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -20,10 +21,15 @@ class InvoiceRepository extends ServiceEntityRepository
         parent::__construct($registry, Invoice::class);
     }
     
-    public function getQuery(): QueryBuilder
+    /**
+     * @param Organization[] $issuers
+     */
+    public function getQuery(array $issuers): QueryBuilder
     {
     	return $this->createQueryBuilder('i')
     		->addSelect('i')
+    		->andWhere('i.issuer IN (:issuers)')
+    		->setParameter('issuers', $issuers)
     		->orderBy('i.dateOfIssue', 'DESC')
     		->addOrderBy('i.number', 'DESC');    	 
     }
@@ -39,12 +45,15 @@ class InvoiceRepository extends ServiceEntityRepository
     }
 
     /**
+     * @param Organization[] $issuers
      * @param int[] $states
      * @return Invoice[]
      */
-    public function findRecent(array $states, int $limit, \DateTimeInterface $from): array
+    public function findRecent(array $issuers, array $states, int $limit, \DateTimeInterface $from): array
     {
         return $this->createQueryBuilder('i')
+            ->andWhere('i.issuer IN (:issuers)')
+            ->setParameter('issuers', $issuers)
             ->andWhere('i.state IN (:states)')
             ->andWhere('i.dateOfIssue >= :from')
             ->setParameter('states', $states)
@@ -57,20 +66,24 @@ class InvoiceRepository extends ServiceEntityRepository
     }
 
     /**
+     * @param Organization[] $issuers
      * @return array{count: int, total: float}
      */
-    public function summarizeIssued(?\DateTimeInterface $from = null): array
+    public function summarizeIssued(array $issuers, ?\DateTimeInterface $from = null): array
     {
-        return $this->summarizeByState(20, $from);
+        return $this->summarizeByState($issuers, 20, $from);
     }
 
     /**
+     * @param Organization[] $issuers
      * @return array{count: int, total: float}
      */
-    public function summarizeOverdue(?\DateTimeInterface $from = null): array
+    public function summarizeOverdue(array $issuers, ?\DateTimeInterface $from = null): array
     {
         $qb = $this->createQueryBuilder('i')
             ->select('COUNT(i.id) AS cnt', 'COALESCE(SUM(i.totalPrice), 0) AS total')
+            ->andWhere('i.issuer IN (:issuers)')
+            ->setParameter('issuers', $issuers)
             ->andWhere('i.state = :state')
             ->andWhere('i.dueDate < :today')
             ->setParameter('state', 20)
@@ -83,12 +96,15 @@ class InvoiceRepository extends ServiceEntityRepository
     }
 
     /**
+     * @param Organization[] $issuers
      * @return array{count: int, total: float}
      */
-    private function summarizeByState(int $state, ?\DateTimeInterface $from = null): array
+    private function summarizeByState(array $issuers, int $state, ?\DateTimeInterface $from = null): array
     {
         $qb = $this->createQueryBuilder('i')
             ->select('COUNT(i.id) AS cnt', 'COALESCE(SUM(i.totalPrice), 0) AS total')
+            ->andWhere('i.issuer IN (:issuers)')
+            ->setParameter('issuers', $issuers)
             ->andWhere('i.state = :state')
             ->setParameter('state', $state);
         $this->applyIssuedFrom($qb, $from);

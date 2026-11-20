@@ -2,6 +2,7 @@
 
 namespace App\Repository\TravelExpense;
 
+use App\Entity\Organization\Organization;
 use App\Entity\TravelExpense\TravelExpense;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
@@ -63,11 +64,14 @@ class TravelExpenseRepository extends ServiceEntityRepository
     }
 
     /**
+     * @param Organization[] $organizations
      * @return TravelExpense[]
      */
-    public function findRecent(int $limit, \DateTimeInterface $from): array
+    public function findRecent(array $organizations, int $limit, \DateTimeInterface $from): array
     {
         return $this->createQueryBuilder('te')
+            ->andWhere('te.organization IN (:organizations)')
+            ->setParameter('organizations', $organizations)
             ->andWhere('te.date >= :from')
             ->setParameter('from', $from)
             ->orderBy('te.date', 'DESC')

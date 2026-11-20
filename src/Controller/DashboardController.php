@@ -10,6 +10,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use App\Dashboard\DashboardPeriod;
 use App\Repository\TravelExpense\TravelExpenseRepository;
 use App\Repository\Transaction\TransactionRepository;
+use App\Entity\User\User;
 
 class DashboardController extends AbstractController
 {    
@@ -18,18 +19,20 @@ class DashboardController extends AbstractController
 	public function index(InvoiceRepository $invoices, IncomingInvoiceRepository $incomingInvoices, TravelExpenseRepository $travelExpenses, TransactionRepository $transactions): Response
     {     
         $from = DashboardPeriod::current()->from();
-    	$myInvoices = $invoices->findRecent([10, 20, 30], 5, $from);
-    	$unpaidIncoming = $incomingInvoices->findUnpaidReceived(5, $from);
-    	$myTEs = $travelExpenses->findRecent(5, $from);
-	$myTransactions = $transactions->getFilteredQuery($from->getTimestamp(), date('U'), null, 'DESC', 5)->getQuery()->getResult();
+        $user = $this->getUser();
+        $organizations = $user instanceof User ? $user->getOrganizations()->toArray() : [];
+    	$myInvoices = $invoices->findRecent($organizations, [10, 20, 30], 5, $from);
+    	$unpaidIncoming = $incomingInvoices->findUnpaidReceived($organizations, 5, $from);
+    	$myTEs = $travelExpenses->findRecent($organizations, 5, $from);
+	$myTransactions = $transactions->getFilteredQuery($from->getTimestamp(), date('U'), $organizations, 'DESC', 5)->getQuery()->getResult();
     	return $this->render('dashboard/index.html.twig', [
             'invoices' => $myInvoices,
             'incomingInvoices' => $unpaidIncoming,
             'travelExpenses' => $myTEs,
             'transactions'=>$myTransactions,
-            'receivables' => $invoices->summarizeIssued($from),
-            'overdue' => $invoices->summarizeOverdue($from),
-            'unpaidBills' => $incomingInvoices->summarizeUnpaid($from),
+            'receivables' => $invoices->summarizeIssued($organizations, $from),
+            'overdue' => $invoices->summarizeOverdue($organizations, $from),
+            'unpaidBills' => $incomingInvoices->summarizeUnpaid($organizations, $from),
         ]);
     }    
     
