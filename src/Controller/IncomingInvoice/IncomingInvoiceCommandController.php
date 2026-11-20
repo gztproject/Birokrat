@@ -10,6 +10,7 @@ use App\Entity\IncomingInvoice\IncomingInvoice;
 use App\Form\IncomingInvoice\IncomingInvoiceType;
 use App\Entity\IncomingInvoice\CreateIncomingInvoiceCommand;
 use App\Entity\IncomingInvoice\UpdateIncomingInvoiceCommand;
+use App\Repository\IncomingInvoice\IncomingInvoiceRepository;
 use App\Service\Ledger\BankFeeFactory;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -54,8 +55,9 @@ class IncomingInvoiceCommandController extends AbstractController
     }
     
     #[Route(path: "/dashboard/incomingInvoice/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/clone", methods: ["GET", "POST"], name: "incomingInvoice_clone")]
-    public function clone(Request $request, IncomingInvoice $invoice, ManagerRegistry $doctrine): Response
+    public function clone(Request $request, string $id, IncomingInvoiceRepository $incomingInvoices, ManagerRegistry $doctrine): Response
     {
+    	$invoice = $this->findMemberInvoice($incomingInvoices, $id);
     	$clone = $invoice->clone($this->getUser());
     	
     	$c = new UpdateIncomingInvoiceCommand();
@@ -117,9 +119,9 @@ class IncomingInvoiceCommandController extends AbstractController
     
        
     #[Route(path: "/dashboard/incomingInvoice/pay", methods: ["POST"], name: "incomingInvoice_pay")]
-    public function pay(Request $request, ManagerRegistry $doctrine, BankFeeFactory $bankFees): Response
+    public function pay(Request $request, IncomingInvoiceRepository $incomingInvoices, ManagerRegistry $doctrine, BankFeeFactory $bankFees): Response
     {
-    	$invoice = $doctrine->getRepository(IncomingInvoice::class)->findOneBy(['id'=>$request->request->get('id', null)]);
+    	$invoice = $this->findMemberInvoice($incomingInvoices, $request->request->get('id', null));
     	$date = new \DateTime($request->request->get('date', null));    	
     	$entityManager = $doctrine->getManager();
     	
@@ -138,9 +140,9 @@ class IncomingInvoiceCommandController extends AbstractController
     }    
     	
     #[Route(path: "/dashboard/incomingInvoice/reject", methods: ["POST"], name: "incomingInvoice_reject")]
-    public function reject(Request $request, ManagerRegistry $doctrine): Response
+    public function reject(Request $request, IncomingInvoiceRepository $incomingInvoices, ManagerRegistry $doctrine): Response
     {
-    	$invoice = $doctrine->getRepository(IncomingInvoice::class)->findOneBy(['id'=>$request->request->get('id', null)]);
+    	$invoice = $this->findMemberInvoice($incomingInvoices, $request->request->get('id', null));
     	$entityManager = $doctrine->getManager();
     	
     	$invoice->reject($request->request->get('reason', ""));
@@ -151,5 +153,15 @@ class IncomingInvoiceCommandController extends AbstractController
     	return $this->redirectToRoute('incomingInvoice_index');
     }
     
+    private function findMemberInvoice(IncomingInvoiceRepository $incomingInvoices, mixed $id): IncomingInvoice
+    {
+    	$invoice = $incomingInvoices->findOneForMember($id, $this->getUser());
+    	if ($invoice === null) {
+    		throw $this->createNotFoundException();
+    	}
+
+    	return $invoice;
+    }
+
     //ToDo: Add a refund handler...
 }

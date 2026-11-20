@@ -30,7 +30,7 @@ class TransactionController extends AbstractController {
 		$orgId = $request->query->get ( 'organization', null );
 		$orgId = $orgId === "" ? null : $orgId;
 
-		$queryBuilder = $transactions->getFilteredQuery ( $dateFrom, $dateTo, $orgId );
+		$queryBuilder = $transactions->getFilteredQuery ( $this->getUser (), $dateFrom, $dateTo, $orgId );
 		$pagination = $list->paginate ( $paginator, $queryBuilder, $request );
 
 		if ($list->isPartial ( $request )) {
@@ -50,7 +50,7 @@ class TransactionController extends AbstractController {
 		$orgId = $request->query->get ( 'organization', null );
 		$orgId = $orgId === "" ? null : $orgId;
 
-		$queryBuilder = $transactions->getFilteredQuery ( $dateFrom, $dateTo, $orgId, "ASC" );
+		$queryBuilder = $transactions->getFilteredQuery ( $this->getUser (), $dateFrom, $dateTo, $orgId, "ASC" );
 
 		$result = $queryBuilder->getQuery ()->getResult ();
 
