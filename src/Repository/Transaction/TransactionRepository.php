@@ -4,6 +4,8 @@ namespace App\Repository\Transaction;
 
 use App\Entity\Transaction\Transaction;
 use App\Entity\TravelExpense\TravelExpense;
+use App\Entity\User\User;
+use App\Repository\Organization\OrganizationRepository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -21,23 +23,22 @@ class TransactionRepository extends ServiceEntityRepository
         parent::__construct($registry, Transaction::class);
     }
     
-    public function getQuery(): QueryBuilder
+    public function getQuery(?User $member): QueryBuilder
     {
-    	return $this->createQueryBuilder('t')
+    	return OrganizationRepository::restrictToMember($this->createQueryBuilder('t'), 't.organization', $member)
     	->addSelect('t')
     	->orderBy('t.date', 'DESC');
     }
     
 //    public function getFilteredQuery($from, $to, $orgId, $order = "DESC"): QueryBuilder
-    public function getFilteredQuery($from, $to, $orgId, ?string $order = "DESC", ?int $limit = null): QueryBuilder
+    public function getFilteredQuery(?User $member, $from, $to, $orgId, ?string $order = "DESC", ?int $limit = null): QueryBuilder
     {
-    	$qb = $this
-    	->createQueryBuilder('t')
+    	$qb = OrganizationRepository::restrictToMember($this->createQueryBuilder('t'), 't.organization', $member)
     	->addSelect('t');
     	if($from)
     	{
     		$qb
-    		->where('t.date >= :from')
+    		->andWhere('t.date >= :from')
     		->setParameter('from', date('Y-m-d G:i:s', $from));
     	}
     	

@@ -8,6 +8,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use App\Form\Type\DateTimePickerType;
 use App\Entity\LunchExpense\CreateLunchExpenseCommand;
 use App\Entity\Organization\Organization;
+use App\Entity\User\User;
+use App\Repository\Organization\OrganizationRepository;
+use Symfony\Bundle\SecurityBundle\Security;
 use App\Entity\Transaction\CreateTransactionCommand;
 use Doctrine\DBAL\Types\DecimalType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -17,11 +20,21 @@ use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 
 class TransactionType extends AbstractType
 {
+    public function __construct(private readonly Security $security)
+    {
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $user = $this->security->getUser();
+        $member = $user instanceof User ? $user : null;
+
         $builder
         	->add('organization', EntityType::class, [
         			'class' => Organization::class,
+        			'query_builder' => function(OrganizationRepository $repository) use ($member) {
+        				return $repository->memberQueryBuilder($member);
+        			},
         			'choice_label' => 'name',
         			'expanded'=>false,
         			'multiple'=>false,

@@ -20,6 +20,7 @@ use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use App\Service\Ledger\BankFeeFactory;
 use App\Http\InfiniteListResponder;
+use App\Security\OrganizationMemberVoter;
 use Psr\Log\LoggerInterface;
 
 class TransactionController extends AbstractController {
@@ -30,7 +31,7 @@ class TransactionController extends AbstractController {
 		$orgId = $request->query->get ( 'organization', null );
 		$orgId = $orgId === "" ? null : $orgId;
 
-		$queryBuilder = $transactions->getFilteredQuery ( $dateFrom, $dateTo, $orgId );
+		$queryBuilder = $transactions->getFilteredQuery ( $this->getUser (), $dateFrom, $dateTo, $orgId );
 		$pagination = $list->paginate ( $paginator, $queryBuilder, $request );
 
 		if ($list->isPartial ( $request )) {
@@ -50,7 +51,7 @@ class TransactionController extends AbstractController {
 		$orgId = $request->query->get ( 'organization', null );
 		$orgId = $orgId === "" ? null : $orgId;
 
-		$queryBuilder = $transactions->getFilteredQuery ( $dateFrom, $dateTo, $orgId, "ASC" );
+		$queryBuilder = $transactions->getFilteredQuery ( $this->getUser (), $dateFrom, $dateTo, $orgId, "ASC" );
 
 		$result = $queryBuilder->getQuery ()->getResult ();
 
@@ -162,6 +163,8 @@ class TransactionController extends AbstractController {
 
 	#[Route(path: "/dashboard/transaction/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/show", methods: ["GET"], name: "transaction_show")]
 	public function show(Transaction $transaction, PaginatorInterface $paginator): Response {
+		$this->denyAccessUnlessGranted ( OrganizationMemberVoter::MEMBER, $transaction );
+
 		return $this->render ( 'dashboard/transaction/index.html.twig', [ 
 				'pagination' => $paginator->paginate ( [ 
 						$transaction
@@ -204,6 +207,8 @@ class TransactionController extends AbstractController {
 	#[Route(path: "/dashboard/transaction/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/edit", methods: ["GET", "POST"], name: "transaction_edit")]
 	public function edit(Request $request, Transaction $transaction, LoggerInterface $logger, ManagerRegistry $doctrine): Response
 	{
+	    $this->denyAccessUnlessGranted(OrganizationMemberVoter::MEMBER, $transaction);
+
 	    $updateTransactionCommand = new UpdateTransactionCommand();
 	    $transaction->mapTo($updateTransactionCommand);
 	    $doc = $transaction->getDocument();
@@ -230,6 +235,8 @@ class TransactionController extends AbstractController {
 	#[Route(path: "/dashboard/transaction/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/clone", methods: ["GET", "POST"], name: "transaction_clone")]
 	public function clone(Request $request, Transaction $transaction, LoggerInterface $logger, ManagerRegistry $doctrine): Response
 	{
+	    $this->denyAccessUnlessGranted(OrganizationMemberVoter::MEMBER, $transaction);
+
 	    $clone = $transaction->clone($this->getUser());
 	    
 	    $updateTransactionCommand = new UpdateTransactionCommand();

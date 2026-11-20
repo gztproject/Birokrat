@@ -17,13 +17,15 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use App\Entity\Invoice\InvoicePdfFactory;
 use App\Http\InfiniteListResponder;
+use App\Security\OrganizationMemberVoter;
+use Ramsey\Uuid\Uuid;
 
 class InvoiceQueryController extends AbstractController
 {    
     #[Route(path: "/dashboard/invoice", methods: ["GET"], name: "invoice_index")]
 	public function index(InvoiceRepository $invoices, Request $request, PaginatorInterface $paginator, InfiniteListResponder $list): Response
     {   		
-    	$queryBuilder = $invoices->getQuery();
+    	$queryBuilder = $invoices->getQuery($this->getUser());
     	$pagination = $list->paginate($paginator, $queryBuilder, $request);
 
     	if ($list->isPartial($request)) {
@@ -39,7 +41,9 @@ class InvoiceQueryController extends AbstractController
     #[Route(path: "/dashboard/invoice/getNewNumber", methods: ["POST"], name: "invoice_getNewNumber")]
     public function getNewNumber(Request $request, ManagerRegistry $doctrine): JsonResponse
     {   
-    	$issuer = $doctrine->getRepository(Organization::class)->findOneBy(['id'=>$request->request->get('issuerId', null)]);
+    	$issuer = $this->findIssuerForMember($request, $doctrine);
+    	if ($issuer === null)
+    		return $this->issuerNotFound();
     	$dateOfIssue = new \Datetime($request->request->get('dateOfIssue', 'now'));
     	$state = $request->request->get('state', 10);
     	try {
@@ -67,7 +71,9 @@ class InvoiceQueryController extends AbstractController
     #[Route(path: "/dashboard/invoice/getDefaultDueInDays", methods: ["POST"], name: "invoice_getDefaultDueInDays")]
     public function getDefaultDueInDays(Request $request, ManagerRegistry $doctrine): JsonResponse
     {    	
-    	$issuer = $doctrine->getRepository(Organization::class)->findOneBy(['id'=>$request->request->get('issuerId', null)]);
+    	$issuer = $this->findIssuerForMember($request, $doctrine);
+    	if ($issuer === null)
+    		return $this->issuerNotFound();
     	try {
     		$data = $issuer->getOrganizationSettings()!=null?$issuer->getOrganizationSettings()->getDefaultPaymentDueIn():15;
     		$status = "ok";
@@ -93,6 +99,8 @@ class InvoiceQueryController extends AbstractController
     #[Route(path: "/dashboard/invoice/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/pdf", methods: ["GET"], name: "invoice_pdf")]
     public function getPdf(Invoice $invoice, TCPDFController $tcpdf, TranslatorInterface $translator): Response
     {
+    	$this->denyAccessUnlessGranted(OrganizationMemberVoter::MEMBER, $invoice);
+
     	$content = InvoicePdfFactory::factory($invoice, $translator, $tcpdf, 'S')->generate();
 
     	return new Response((string) $content, 200, [
@@ -104,6 +112,8 @@ class InvoiceQueryController extends AbstractController
     #[Route(path: "/dashboard/invoice/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/print", methods: ["GET"], name: "invoice_print")]
     public function print(Invoice $invoice, TCPDFController $tcpdf, TranslatorInterface $translator): Response
     {
+    	$this->denyAccessUnlessGranted(OrganizationMemberVoter::MEMBER, $invoice);
+
     	$content = InvoicePdfFactory::factory($invoice, $translator, $tcpdf, 'S', null, true)->generate();
 
     	return new Response((string) $content, 200, [
@@ -115,8 +125,30 @@ class InvoiceQueryController extends AbstractController
     #[Route(path: "/dashboard/invoice/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/show", methods: ["GET"], name: "invoice_show")]
     public function show(Invoice $invoice): Response
     {
+    	$this->denyAccessUnlessGranted(OrganizationMemberVoter::MEMBER, $invoice);
+
     	return $this->render('dashboard/invoice/show.html.twig', [
     			'invoice' => $invoice
     	]);    	    	
+    }
+
+    /**
+     * Companies the user is not a member of are reported as missing, like unknown ids.
+     */
+    private function findIssuerForMember(Request $request, ManagerRegistry $doctrine): ?Organization
+    {
+    	$issuerId = (string) $request->request->get('issuerId', '');
+    	if (!Uuid::isValid($issuerId))
+    		return null;
+    	$issuer = $doctrine->getRepository(Organization::class)->findOneBy(['id'=>$issuerId]);
+    	if ($issuer === null || !$this->isGranted(OrganizationMemberVoter::MEMBER, $issuer))
+    		return null;
+
+    	return $issuer;
+    }
+
+    private function issuerNotFound(): JsonResponse
+    {
+    	return new JsonResponse([['status' => 'error', 'data' => ['Issuer not found.']]], Response::HTTP_NOT_FOUND);
     }
 }

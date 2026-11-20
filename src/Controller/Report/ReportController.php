@@ -16,55 +16,61 @@ use Doctrine\ORM\EntityManagerInterface;
 use Ramsey\Uuid\Uuid;
 use App\Entity\Report\Turnout;
 use App\Entity\Konto\Enumerators\KontoTypes;
+use App\Entity\User\User;
+use App\Repository\Organization\OrganizationRepository;
 
 class ReportController extends AbstractController
 {
     #[Route(path: "/dashboard/report", methods: ["GET"], name: "report_index")]
     public function index(Request $request, EntityManagerInterface $em): Response
     {
+        $member = $this->getUser();
         $dateFrom = $request->query->get('dateFrom', null);
         $dateTo = $request->query->get('dateTo', null);
         $orgId = $request->query->get('organization', null);
         $orgId = $orgId === "" ? null : $orgId;
 
         return $this->render('dashboard/report/index.html.twig', [            
-            'overviewReport' => $this->getOverviewReport($orgId, $dateFrom, $dateTo, $em),
-            'kontoReport' => $this->getKontoReport($orgId, $dateFrom, $dateTo, $em),
-            'clientReport' => $this->getClientReport($orgId, $dateFrom, $dateTo, $em),
-            'partnerReport' => $this->getPartnerReport($orgId, $dateFrom, $dateTo, $em)
+            'overviewReport' => $this->getOverviewReport($member, $orgId, $dateFrom, $dateTo, $em),
+            'kontoReport' => $this->getKontoReport($member, $orgId, $dateFrom, $dateTo, $em),
+            'clientReport' => $this->getClientReport($member, $orgId, $dateFrom, $dateTo, $em),
+            'partnerReport' => $this->getPartnerReport($member, $orgId, $dateFrom, $dateTo, $em)
         ]);
     }
 
     #[Route(path: "/dashboard/report/dddddd", methods: ["GET"], name: "report_dddddd")]
     public function ddddddReport(Request $request, EntityManagerInterface $em): Response
     {
+        $member = $this->getUser();
         $dateFrom = $request->query->get('dateFrom', null);
         $dateTo = $request->query->get('dateTo', null);
         $orgId = $request->query->get('organization', null);
         $orgId = $orgId === "" ? null : $orgId;
 
         return $this->render('dashboard/report/dddddd.html.twig', [
-            'dddReport' => $this->getDDDReport($orgId, $dateFrom, $dateTo, $em)
+            'dddReport' => $this->getDDDReport($member, $orgId, $dateFrom, $dateTo, $em)
         ]);
     }
 
     #[Route(path: "/dashboard/report/blianca", methods: ["GET"], name: "report_bilanca")]
     public function bilancaReport(Request $request, EntityManagerInterface $em): Response
     {
+        $member = $this->getUser();
         $dateTo = $request->query->get('dateTo', null);
         $dateToLY = strtotime(date("c", $dateTo) . "-1 year");
         $orgId = $request->query->get('organization', null);
         $orgId = $orgId === "" ? null : $orgId;
 
         return $this->render('dashboard/report/bilanca.html.twig', [
-            'bilancaReportThisYear' => $this->getBilancaReport($orgId, $dateTo, $em),
-            'bilancaReportLastYear' => $this->getBilancaReport($orgId, $dateToLY, $em)
+            'bilancaReportThisYear' => $this->getBilancaReport($member, $orgId, $dateTo, $em),
+            'bilancaReportLastYear' => $this->getBilancaReport($member, $orgId, $dateToLY, $em)
         ]);
     }
 
     #[Route(path: "/dashboard/report/turnout", methods: ["GET"], name: "report_turnout")]
     public function izkazIzidaReport(Request $request, EntityManagerInterface $em): Response
     {
+        $member = $this->getUser();
         $dateFrom = $request->query->get('dateFrom', null);
         $dateFromLY = strtotime(date("c", $dateFrom) . "-1 year");
         $dateTo = $request->query->get('dateTo', null);
@@ -73,12 +79,12 @@ class ReportController extends AbstractController
         $orgId = $orgId === "" ? null : $orgId;
 
         return $this->render('dashboard/report/turnout.html.twig', [
-            'turnoutReportThisYear' => $this->getTurnoutReport($orgId, $dateFrom, $dateTo, $em),
-            'turnoutReportLastYear' => $this->getTurnoutReport($orgId, $dateFromLY, $dateToLY, $em)
+            'turnoutReportThisYear' => $this->getTurnoutReport($member, $orgId, $dateFrom, $dateTo, $em),
+            'turnoutReportLastYear' => $this->getTurnoutReport($member, $orgId, $dateFromLY, $dateToLY, $em)
         ]);
     }
 
-    private function getOverviewReport(?String $organizationId, ?String $dateFrom, ?String $dateTo, EntityManagerInterface $em): array
+    private function getOverviewReport(?User $member, ?String $organizationId, ?String $dateFrom, ?String $dateTo, EntityManagerInterface $em): array
     {
         $invoices = 0;
         $invoicesKontos = [];
@@ -118,6 +124,7 @@ class ReportController extends AbstractController
             ->leftJoin('App\Entity\Konto\KontoCategory', 'kc', 'WITH', 'k.category = kc.id')
             ->leftJoin('App\Entity\Transaction\Transaction', 't', 'WITH', '(t.debitKonto = k.id OR t.creditKonto = k.id)')
             ->where('t.hidden = 0');
+        OrganizationRepository::restrictToMember($qb, 't.organization', $member);
         if ($organizationId !== null)
             $qb->andWhere('t.organization = :orgId');
         if ($dateFrom !== null)
@@ -240,7 +247,7 @@ class ReportController extends AbstractController
         ];
     }
 
-    private function getKontoReport(?String $organizationId, ?String $dateFrom, ?String $dateTo, EntityManagerInterface $em): array
+    private function getKontoReport(?User $member, ?String $organizationId, ?String $dateFrom, ?String $dateTo, EntityManagerInterface $em): array
     {
         $qb = $em->createQueryBuilder();
         $qb->select([
@@ -254,6 +261,7 @@ class ReportController extends AbstractController
             ->from('App\Entity\Konto\Konto', 'k', 'k.id')
             ->leftJoin('App\Entity\Transaction\Transaction', 't', 'WITH', '(t.debitKonto = k.id OR t.creditKonto = k.id)')
             ->where('t.id IS NOT NULL'); // ->andWhere ( 't.hidden = 0' );
+        OrganizationRepository::restrictToMember($qb, 't.organization', $member);
         if ($organizationId !== null)
             $qb->andWhere('t.organization = :orgId');
         if ($dateFrom !== null)
@@ -280,7 +288,7 @@ class ReportController extends AbstractController
         return $report;
     }
 
-    private function getClientReport(?String $organizationId, ?String $dateFrom, ?String $dateTo, EntityManagerInterface $em): array
+    private function getClientReport(?User $member, ?String $organizationId, ?String $dateFrom, ?String $dateTo, EntityManagerInterface $em): array
     {
         // $sql = 'SELECT c.id, c.name, COUNT(i.id), SUM(i.total_price) AS total, SUM(CASE WHEN i.state=30 THEN i.total_price ELSE 0 END) AS paid,
         // SUM(CASE WHEN i.state=20 THEN i.total_price ELSE 0 END) AS open
@@ -302,6 +310,7 @@ class ReportController extends AbstractController
             ->from('App\Entity\Organization\Partner', 'c', 'c.id')
             ->leftJoin('App\Entity\Invoice\Invoice', 'i', 'WITH', 'i.recepient = c.id AND i.state IN (20, 30)')
             ->where('c.isClient = 1');
+        OrganizationRepository::restrictToMember($qb, 'i.issuer', $member);
         if ($organizationId !== null)
             $qb->andWhere('i.issuer = :orgId');
         if ($dateFrom !== null)
@@ -352,7 +361,7 @@ class ReportController extends AbstractController
         return $report;
     }
 
-    private function getPartnerReport(?String $organizationId, ?String $dateFrom, ?String $dateTo, EntityManagerInterface $em): array
+    private function getPartnerReport(?User $member, ?String $organizationId, ?String $dateFrom, ?String $dateTo, EntityManagerInterface $em): array
     {
         // $sql = 'SELECT c.id, c.name, COUNT(i.id), SUM(i.total_price) AS total, SUM(CASE WHEN i.state=30 THEN i.total_price ELSE 0 END) AS paid,
         // SUM(CASE WHEN i.state=20 THEN i.total_price ELSE 0 END) AS open
@@ -374,6 +383,7 @@ class ReportController extends AbstractController
             ->from('App\Entity\Organization\Partner', 'c', 'c.id')
             ->leftJoin('App\Entity\IncomingInvoice\IncomingInvoice', 'i', 'WITH', 'i.issuer = c.id AND i.state IN (20, 30)')
             ->where('c.isSupplier = 1');
+        OrganizationRepository::restrictToMember($qb, 'i.recepient', $member);
         if ($organizationId !== null)
             $qb->andWhere('i.recepient = :orgId');
         if ($dateFrom !== null)
@@ -424,7 +434,7 @@ class ReportController extends AbstractController
         return $report;
     }
 
-    private function getDDDReport(?String $organizationId, ?String $dateFrom, ?String $dateTo, EntityManagerInterface $em): DDDDDD
+    private function getDDDReport(?User $member, ?String $organizationId, ?String $dateFrom, ?String $dateTo, EntityManagerInterface $em): DDDDDD
     {
         $report = new DDDDDD();
         $qb = $em->createQueryBuilder();
@@ -441,6 +451,7 @@ class ReportController extends AbstractController
             ->leftJoin('App\Entity\Konto\KontoCategory', 'kc', 'WITH', 'k.category = kc.id')
             ->leftJoin('App\Entity\Transaction\Transaction', 't', 'WITH', '(t.debitKonto = k.id OR t.creditKonto = k.id)')
             ->Where('t.hidden = 0');
+        OrganizationRepository::restrictToMember($qb, 't.organization', $member);
         if ($organizationId !== null)
             $qb->andWhere('t.organization = :orgId');
         if ($dateFrom !== null)
@@ -512,7 +523,7 @@ class ReportController extends AbstractController
         return $report;
     }
 
-    private function getBilancaReport(?String $organizationId, ?String $date, EntityManagerInterface $em): Bilanca
+    private function getBilancaReport(?User $member, ?String $organizationId, ?String $date, EntityManagerInterface $em): Bilanca
     {
         $report = new Bilanca();
         $qb = $em->createQueryBuilder();
@@ -529,6 +540,7 @@ class ReportController extends AbstractController
             ->leftJoin('App\Entity\Konto\KontoCategory', 'kc', 'WITH', 'k.category = kc.id')
             ->leftJoin('App\Entity\Transaction\Transaction', 't', 'WITH', 't.debitKonto = k.id OR t.creditKonto = k.id')
             ->Where('t.hidden = 0');
+        OrganizationRepository::restrictToMember($qb, 't.organization', $member);
         if ($organizationId !== null)
             $qb->andWhere('t.organization = :orgId');
         if ($date !== null)
@@ -726,7 +738,7 @@ class ReportController extends AbstractController
         return $report;
     }
 
-    private function getTurnoutReport(?String $organizationId, ?String $dateFrom, ?String $dateTo, EntityManagerInterface $em): Turnout
+    private function getTurnoutReport(?User $member, ?String $organizationId, ?String $dateFrom, ?String $dateTo, EntityManagerInterface $em): Turnout
     {
         $report = new Turnout();
         $qb = $em->createQueryBuilder();
@@ -743,6 +755,7 @@ class ReportController extends AbstractController
             ->leftJoin('App\Entity\Konto\KontoCategory', 'kc', 'WITH', 'k.category = kc.id')
             ->leftJoin('App\Entity\Transaction\Transaction', 't', 'WITH', 't.sum >= 0 AND (t.debitKonto = k.id OR t.creditKonto = k.id)')
             ->Where('t.hidden = 0');
+        OrganizationRepository::restrictToMember($qb, 't.organization', $member);
         if ($organizationId !== null)
             $qb->andWhere('t.organization = :orgId');
         if ($dateFrom !== null)
