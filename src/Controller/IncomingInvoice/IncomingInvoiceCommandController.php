@@ -150,6 +150,9 @@ class IncomingInvoiceCommandController extends AbstractController
     public function reject(Request $request, ManagerRegistry $doctrine): Response
     {
     	$invoice = $doctrine->getRepository(IncomingInvoice::class)->findOneBy(['id'=>$request->request->get('id', null)]);
+    	if ($invoice === null || !$this->getUser()->belongsTo($invoice->getRecepient())) {
+    		throw $this->createNotFoundException();
+    	}
     	$entityManager = $doctrine->getManager();
     	
     	$invoice->reject($request->request->get('reason', ""));

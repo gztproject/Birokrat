@@ -14,6 +14,7 @@ use App\Entity\LunchExpense\CreateLunchExpenseCommand;
 use App\Entity\LunchExpense\CreateLunchExpenseBundleCommand;
 use App\Form\LunchExpense\LunchExpenseType;
 use Doctrine\Common\Collections\ArrayCollection;
+use App\Security\OrganizationMemberVoter;
 
 class LunchExpenseCommandController extends AbstractController
 {    
@@ -36,6 +37,7 @@ class LunchExpenseCommandController extends AbstractController
     	$form->handleRequest($request);
     	   	
     	if ($form->isSubmitted() && $form->isValid()) {
+    		$this->denyAccessUnlessGranted(OrganizationMemberVoter::MEMBER, $c->organization);
     		$te = $this->getUser()->createLunchExpense($c);
     		$transaction = $te->setNew($this->getUser());
 
@@ -58,10 +60,9 @@ class LunchExpenseCommandController extends AbstractController
     {
     	$dateFrom = $request->request->get('dateFrom', 0);
     	$dateTo = $request->request->get('dateTo', 0);
-    	$queryBuilder = $repo->getFilteredQuery($dateFrom, $dateTo, true, false);
+    	$queryBuilder = $repo->getFilteredQuery($this->getUser()->getOrganizations(), $dateFrom, $dateTo, true, false);
     	
-    	$user = $this->getUser();
-    	$lunchExpenses = array_values(array_filter($queryBuilder->getQuery()->getResult(), fn ($le) => $user->belongsTo($le->getOrganization())));
+    	$lunchExpenses = $queryBuilder->getQuery()->getResult();
     	
     	$organizations = new ArrayCollection();
     	

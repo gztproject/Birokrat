@@ -20,8 +20,8 @@ class DashboardController extends AbstractController
         $from = DashboardPeriod::current()->from();
     	$user = $this->getUser();
     	$myInvoices = $invoices->findRecent($user, [10, 20, 30], 5, $from);
-    	$unpaidIncoming = $incomingInvoices->findUnpaidReceived(5, $from);
-    	$myTEs = $travelExpenses->findRecent(5, $from);
+    	$unpaidIncoming = $incomingInvoices->findUnpaidReceived($user, 5, $from);
+    	$myTEs = $travelExpenses->findRecent($user->getOrganizations(), 5, $from);
 	$myTransactions = $transactions->getFilteredQuery($from->getTimestamp(), date('U'), $user->getOrganizationIdsFilteredBy(null), 'DESC', 5)->getQuery()->getResult();
     	return $this->render('dashboard/index.html.twig', [
             'invoices' => $myInvoices,
@@ -30,7 +30,7 @@ class DashboardController extends AbstractController
             'transactions'=>$myTransactions,
             'receivables' => $invoices->summarizeIssued($user, $from),
             'overdue' => $invoices->summarizeOverdue($user, $from),
-            'unpaidBills' => $incomingInvoices->summarizeUnpaid($from),
+            'unpaidBills' => $incomingInvoices->summarizeUnpaid($user, $from),
         ]);
     }    
     

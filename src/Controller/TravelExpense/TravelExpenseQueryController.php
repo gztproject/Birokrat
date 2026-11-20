@@ -14,6 +14,7 @@ use App\Http\InfiniteListResponder;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use App\Entity\TravelExpense\TravelExpensePdfFactory;
 use Qipsius\TCPDFBundle\Controller\TCPDFController;
+use App\Security\OrganizationMemberVoter;
 
 class TravelExpenseQueryController extends AbstractController
 {    
@@ -24,7 +25,7 @@ class TravelExpenseQueryController extends AbstractController
 		$dateTo = $request->query->get('dateTo', 0);
 		$booked = $request->query->get('booked', 'false') == 'true';
 		$unbooked = $request->query->get('unbooked', 'true') == 'true';
-		$queryBuilder = $travelExpenses->getFilteredQuery($dateFrom, $dateTo, $unbooked, $booked);
+		$queryBuilder = $travelExpenses->getFilteredQuery($this->getUser()->getOrganizations(), $dateFrom, $dateTo, $unbooked, $booked);
 		$pagination = $list->paginate($paginator, $queryBuilder, $request);
 
 		if ($list->isPartial($request)) {
@@ -41,7 +42,9 @@ class TravelExpenseQueryController extends AbstractController
     
     #[Route(path: "/dashboard/travelExpense/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}", methods: ["GET"], name: "travelExpense_show")]
     public function show(TravelExpense $travelExpense): Response
-    {           
+    {
+        $this->denyAccessUnlessGranted(OrganizationMemberVoter::MEMBER, $travelExpense);
+
         return $this->render('dashboard/travelExpense/show.html.twig', [
         		'travelExpense' => $travelExpense,
         ]);
@@ -50,6 +53,8 @@ class TravelExpenseQueryController extends AbstractController
     #[Route(path: "/dashboard/travelExpense/bundle/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}", methods: ["GET"], name: "travelExpenseBundle_show")]
     public function showBundle(TravelExpenseBundle $travelExpenseBundle, Request $request, PaginatorInterface $paginator, InfiniteListResponder $list): Response
     {
+    	$this->denyAccessUnlessGranted(OrganizationMemberVoter::MEMBER, $travelExpenseBundle);
+
     	$pagination = $list->paginate($paginator, $travelExpenseBundle->getTravelExpenses(), $request);
 
     	if ($list->isPartial($request)) {
@@ -67,6 +72,7 @@ class TravelExpenseQueryController extends AbstractController
     #[Route(path: "/dashboard/travelExpense/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/pdf", methods: ["GET"], name: "travelExpense_pdf")]
     public function getPdf(TravelExpense $travelExpense, TCPDFController $tcpdf, TranslatorInterface $translator): Response
     {
+    	$this->denyAccessUnlessGranted(OrganizationMemberVoter::MEMBER, $travelExpense);
     	$content = TravelExpensePdfFactory::factory($travelExpense, $translator, $tcpdf, 'S', false, $this->getParameter('signatures_directory'))->generate();
 
     	return new Response((string) $content, 200, [
