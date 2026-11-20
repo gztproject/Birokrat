@@ -26,7 +26,7 @@ class TravelExpenseType extends AbstractType
         		'expanded'=>false,
         		'multiple'=>false,
         		'label' => 'label.organization',
-        	))
+        	])
             ->add('date', DateTimePickerType::class,[
             		'label' => 'label.date',
             ])
