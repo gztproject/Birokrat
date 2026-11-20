@@ -17,6 +17,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use App\Entity\Invoice\InvoicePdfFactory;
 use App\Http\InfiniteListResponder;
+use App\Security\OrganizationVoter;
 
 class InvoiceQueryController extends AbstractController
 {    
@@ -40,6 +41,9 @@ class InvoiceQueryController extends AbstractController
     public function getNewNumber(Request $request, ManagerRegistry $doctrine): JsonResponse
     {   
     	$issuer = $doctrine->getRepository(Organization::class)->findOneBy(['id'=>$request->request->get('issuerId', null)]);
+    	if (!$issuer instanceof Organization || !$this->isGranted(OrganizationVoter::SHOW, $issuer)) {
+    		return $this->issuerNotAccessible();
+    	}
     	$dateOfIssue = new \Datetime($request->request->get('dateOfIssue', 'now'));
     	$state = $request->request->get('state', 10);
     	try {
@@ -68,6 +72,9 @@ class InvoiceQueryController extends AbstractController
     public function getDefaultDueInDays(Request $request, ManagerRegistry $doctrine): JsonResponse
     {    	
     	$issuer = $doctrine->getRepository(Organization::class)->findOneBy(['id'=>$request->request->get('issuerId', null)]);
+    	if (!$issuer instanceof Organization || !$this->isGranted(OrganizationVoter::SHOW, $issuer)) {
+    		return $this->issuerNotAccessible();
+    	}
     	try {
     		$data = $issuer->getOrganizationSettings()!=null?$issuer->getOrganizationSettings()->getDefaultPaymentDueIn():15;
     		$status = "ok";
@@ -88,6 +95,21 @@ class InvoiceQueryController extends AbstractController
     					)
     			)
     			);
+    }
+
+    private function issuerNotAccessible(): JsonResponse
+    {
+    	return new JsonResponse(
+    			array(
+    					array(
+    							'status'=>'error',
+    							'data'=>array(
+    									'Issuer not found.'
+    							)
+    					)
+    			),
+    			Response::HTTP_FORBIDDEN
+    	);
     }
     
     #[Route(path: "/dashboard/invoice/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/pdf", methods: ["GET"], name: "invoice_pdf")]
