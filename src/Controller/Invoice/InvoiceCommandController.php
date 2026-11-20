@@ -1,6 +1,8 @@
 <?php 
 namespace App\Controller\Invoice;
 
+use Doctrine\DBAL\LockMode;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -154,15 +156,24 @@ class InvoiceCommandController extends AbstractController
     		throw new \Exception("Can't find an invoice with id ".$id);
     	$date = new \DateTime($request->request->get('date', null));
     	$entityManager = $doctrine->getManager();
-    	$dateOfIssue = new \Datetime($request->request->get('dateOfIssue', 'now'));
-    	$state = $request->request->get('state', States::new);
-    	$number = InvoiceNumberFactory::factory($invoice->getIssuer(), $state, $dateOfIssue, $doctrine)->generate();
+    	$user = $this->getUser();
+    	$issuer = $invoice->getIssuer();
     	
-    	$transaction = $invoice->setIssued($date, $number, $this->getUser());
-    	
-    	$entityManager->persist($invoice);
-    	$entityManager->persist($transaction);
-    	$entityManager->flush();
+    	$entityManager->wrapInTransaction(function (EntityManagerInterface $em) use ($invoice, $issuer, $date, $user, $doctrine) {
+    		// The issuer's sequence is locked before the invoice row; taking them
+    		// in the other order deadlocks two overlapping issues.
+    		$number = InvoiceNumberFactory::factory($issuer, States::new, $date, $doctrine)->allocate();
+    		
+    		$em->refresh($invoice, LockMode::PESSIMISTIC_WRITE);
+    		if(!$invoice->getIssuer()->getId()->equals($issuer->getId()))
+    			throw new \Exception("The invoice issuer changed while it was being issued.");
+    		
+    		$transaction = $invoice->setIssued($date, $number, $user);
+    		
+    		$em->persist($invoice);
+    		$em->persist($transaction);
+    		$em->flush();
+    	});
     	
     	return $this->render('dashboard/invoice/show.html.twig', [
     			'invoice' => $invoice
