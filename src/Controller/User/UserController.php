@@ -160,6 +160,10 @@ class UserController extends AbstractController
         	
         	try 
         	{
+        		// Only another administrator may change the administrator flag; self-edit keeps the stored value.
+        		if ($this->getUser() === $user || !$this->isGranted('ROLE_ADMIN')) {
+        			$c->isRoleAdmin = $user->getIsRoleAdmin();
+        		}
         		$user->update($c, $this->getUser(), $passwordEncoder);
         	} 
         	catch (\Exception $e) 

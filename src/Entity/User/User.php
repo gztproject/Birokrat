@@ -149,7 +149,8 @@ class User extends AggregateBase implements UserInterface, PasswordAuthenticated
     		    $this->password = $passwordHasher->hashPassword($this, $c->password);
     		else throw new \Exception("Old password is incorrect.");
     	}
-    	
+
+    	$this->roles = [$c->isRoleAdmin ? 'ROLE_ADMIN' : 'ROLE_USER'];
     }
     
     private function checkPasswordRequirements(string $password)
