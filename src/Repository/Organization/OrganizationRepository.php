@@ -3,7 +3,9 @@
 namespace App\Repository\Organization;
 
 use App\Entity\Organization\Organization;
+use App\Entity\User\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -17,6 +19,29 @@ class OrganizationRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Organization::class);
+    }
+
+    /**
+     * @param array<string, 'ASC'|'DESC'> $orderBy
+     * @return Organization[]
+     */
+    public function findByMember(User $user, array $orderBy = []): array
+    {
+        $qb = $this->memberQueryBuilder($user);
+
+        foreach ($orderBy as $field => $direction) {
+            $qb->addOrderBy('o.'.$field, $direction);
+        }
+
+        return $qb->getQuery()->getResult();
+    }
+
+    public function memberQueryBuilder(User $user): QueryBuilder
+    {
+        return $this->createQueryBuilder('o')
+            ->innerJoin('o.users', 'u')
+            ->andWhere('u.id = :member')
+            ->setParameter('member', $user->getId(), 'uuid');
     }
 
     // /**
