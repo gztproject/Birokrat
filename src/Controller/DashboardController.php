@@ -20,7 +20,7 @@ class DashboardController extends AbstractController
         $from = DashboardPeriod::current()->from();
     	$myInvoices = $invoices->findRecent([10, 20, 30], 5, $from);
     	$unpaidIncoming = $incomingInvoices->findUnpaidReceived(5, $from);
-    	$myTEs = $travelExpenses->findRecent(5, $from);
+    	$myTEs = $travelExpenses->findRecent($this->getUser()->getOrganizations(), 5, $from);
 	$myTransactions = $transactions->getFilteredQuery($from->getTimestamp(), date('U'), null, 'DESC', 5)->getQuery()->getResult();
     	return $this->render('dashboard/index.html.twig', [
             'invoices' => $myInvoices,

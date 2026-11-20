@@ -3,9 +3,11 @@
 namespace App\Repository\LunchExpense;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use App\Entity\LunchExpense\LunchExpense;
+use App\Entity\Organization\Organization;
 
 /**
  * @method LunchExpense|null find($id, $lockMode = null, $lockVersion = null)
@@ -20,15 +22,31 @@ class LunchExpenseRepository extends ServiceEntityRepository
         parent::__construct($registry, LunchExpense::class);
     }
     
-    public function getFilteredQuery($from, $to, bool $unbooked, bool $booked): QueryBuilder
+    /**
+     * @param iterable<Organization> $organizations Only lunch expenses of these organizations are returned.
+     */
+    public function getFilteredQuery(iterable $organizations, $from, $to, bool $unbooked, bool $booked): QueryBuilder
     {
     	$qb = $this
     	->createQueryBuilder('te')
     	->addSelect('te');
+
+    	$ids = [];
+    	foreach ($organizations as $organization) {
+    		$ids[] = $organization->getId()->toString();
+    	}
+    	if ($ids === []) {
+    		$qb->andWhere('1 = 0');
+    	} else {
+    		$qb
+    		->andWhere('te.organization IN (:organizations)')
+    		->setParameter('organizations', $ids, ArrayParameterType::STRING);
+    	}
+
     	if($from)
     	{
     		$qb
-    		->where('te.date >= :from')
+    		->andWhere('te.date >= :from')
     		->setParameter('from', date('Y-m-d G:i:s', $from));
     	}
     	
