@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use App\Entity\Konto\Konto;
 use App\Entity\Transaction\Transaction;
 use App\Repository\Transaction\TransactionRepository;
@@ -202,6 +203,7 @@ class TransactionController extends AbstractController {
 	}
 	
 	#[Route(path: "/dashboard/transaction/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/edit", methods: ["GET", "POST"], name: "transaction_edit")]
+	#[IsGranted('ROLE_ADMIN', message: 'Only administrators can edit ledger transactions.')]
 	public function edit(Request $request, Transaction $transaction, LoggerInterface $logger, ManagerRegistry $doctrine): Response
 	{
 	    $updateTransactionCommand = new UpdateTransactionCommand();
