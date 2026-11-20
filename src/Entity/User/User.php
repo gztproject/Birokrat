@@ -39,6 +39,8 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 #[ORM\Entity(repositoryClass: \App\Repository\UserRepository::class)]
 class User extends AggregateBase implements UserInterface, PasswordAuthenticatedUserInterface
 {
+    public const MIN_PASSWORD_LENGTH = 12;
+
     #[ORM\Column(type: "string", length: 255)]
     private $username;
     
@@ -87,6 +89,15 @@ class User extends AggregateBase implements UserInterface, PasswordAuthenticated
 
     #[ORM\Column(type: "boolean")]
     private $totpEnabled = false;
+
+    #[ORM\Column(type: "integer", nullable: true)]
+    private $totpLastUsedSlice;
+
+    #[ORM\Column(type: "integer", options: ["default" => 0])]
+    private $totpFailedAttempts = 0;
+
+    #[ORM\Column(type: "datetime_immutable", nullable: true)]
+    private $totpLastFailureAt;
     
     /**
      * 
@@ -138,18 +149,19 @@ class User extends AggregateBase implements UserInterface, PasswordAuthenticated
     		    $this->password = $passwordHasher->hashPassword($this, $c->password);
     		else throw new \Exception("Old password is incorrect.");
     	}
-    	
+
+    	$this->roles = [$c->isRoleAdmin ? 'ROLE_ADMIN' : 'ROLE_USER'];
     }
     
     private function checkPasswordRequirements(string $password)
     {
     	//ToDo: Read this from application settings?
-    	$minPasswordLength = 4;
+    	$minPasswordLength = self::MIN_PASSWORD_LENGTH;
     	$passwordMustHaveNumbers = true;
     	$passwordMustHaveSpecials = true;
     	
-    	if(strlen($password) < $minPasswordLength)
-    		throw new \Exception("The password is too short.");
+    	if(mb_strlen($password, 'UTF-8') < $minPasswordLength)
+    		throw new \Exception(sprintf("The password is too short. It must be at least %d characters long.", $minPasswordLength));
     	
     	if($passwordMustHaveNumbers && preg_match('/\\d/', $password) === 0)
     		throw new \Exception("The password must contain at least one number.");
@@ -435,16 +447,54 @@ class User extends AggregateBase implements UserInterface, PasswordAuthenticated
     	return $this->totpSecret;
     }
 
-    public function enableTotp(string $secret): void
+    public function enableTotp(string $secret, int $usedSlice): void
     {
     	$this->totpSecret = $secret;
     	$this->totpEnabled = true;
+    	$this->totpLastUsedSlice = $usedSlice;
+    	$this->totpFailedAttempts = 0;
+    	$this->totpLastFailureAt = null;
     }
 
     public function disableTotp(): void
     {
     	$this->totpSecret = null;
     	$this->totpEnabled = false;
+    	$this->totpLastUsedSlice = null;
+    	$this->totpFailedAttempts = 0;
+    	$this->totpLastFailureAt = null;
+    }
+
+    public function getTotpFailedAttempts(): int
+    {
+    	return (int) $this->totpFailedAttempts;
+    }
+
+    public function getTotpLastFailureAt(): ?\DateTimeImmutable
+    {
+    	return $this->totpLastFailureAt;
+    }
+
+    /**
+     * Marks the time slice of an accepted code as used. Returns false when that
+     * slice, or a later one, was already used.
+     */
+    public function consumeTotpSlice(int $slice): bool
+    {
+    	if ($this->totpLastUsedSlice !== null && $slice <= (int) $this->totpLastUsedSlice) {
+    		return false;
+    	}
+    	$this->totpLastUsedSlice = $slice;
+    	$this->totpFailedAttempts = 0;
+    	$this->totpLastFailureAt = null;
+
+    	return true;
+    }
+
+    public function recordTotpFailure(\DateTimeImmutable $at): void
+    {
+    	$this->totpFailedAttempts = $this->getTotpFailedAttempts() + 1;
+    	$this->totpLastFailureAt = $at;
     }
 
     public function getIsActive(): ?bool
@@ -475,6 +525,40 @@ class User extends AggregateBase implements UserInterface, PasswordAuthenticated
     public function getOrganizations(): Collection
     {
         return $this->organizations;
+    }
+
+    public function belongsTo(?Organization $organization): bool
+    {
+        if ($organization === null) {
+            return false;
+        }
+        $id = $organization->getId()->toString();
+        foreach ($this->organizations as $own) {
+            if ($own->getId()->toString() === $id) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Ids of the user's organizations, narrowed to $requestedId when the user belongs to it.
+     * An id the user does not belong to is ignored rather than trusted.
+     *
+     * @return string[]
+     */
+    public function getOrganizationIdsFilteredBy(?string $requestedId): array
+    {
+        $ids = [];
+        foreach ($this->organizations as $own) {
+            $ids[] = $own->getId()->toString();
+        }
+        if ($requestedId !== null && in_array(strtolower($requestedId), $ids, true)) {
+            return [strtolower($requestedId)];
+        }
+
+        return $ids;
     }
     
 

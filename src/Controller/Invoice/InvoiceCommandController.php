@@ -1,6 +1,8 @@
 <?php 
 namespace App\Controller\Invoice;
 
+use Doctrine\DBAL\LockMode;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -25,6 +27,8 @@ use App\Entity\Invoice\UpdateInvoiceItemCommand;
 use App\Entity\Invoice\Enumerators\States;
 use App\Mailer\MailerSettings;
 use App\Mailer\RecipientListParser;
+use App\Security\PartnerVoter;
+use App\Security\OrganizationMemberVoter;
 use App\Service\Ledger\BankFeeFactory;
 
 
@@ -43,7 +47,7 @@ class InvoiceCommandController extends AbstractController
     	$form->handleRequest($request);
     	
     	if ($form->isSubmitted() && $form->isValid()) {
-    		 		
+    		$this->denyAccessUnlessGranted(OrganizationMemberVoter::MEMBER, $createInvoiceCommand->issuer);
     		$invoice = $this->getUser()->createInvoice($createInvoiceCommand);
     		    		
     		$em = $doctrine->getManager();
@@ -68,6 +72,7 @@ class InvoiceCommandController extends AbstractController
     #[Route(path: "/dashboard/invoice/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/edit", methods: ["GET", "POST"], name: "invoice_edit")]
     public function edit(Request $request, Invoice $invoice, ManagerRegistry $doctrine): Response
     {
+    	$this->denyAccessUnlessGranted(OrganizationMemberVoter::MEMBER, $invoice);
     	$updateInvoiceCommand = new UpdateInvoiceCommand();
     	$invoice->mapTo($updateInvoiceCommand);    	
     	    	
@@ -82,6 +87,7 @@ class InvoiceCommandController extends AbstractController
     	$form->handleRequest($request);
     	
     	if ($form->isSubmitted() && $form->isValid()) {
+    		$this->denyAccessUnlessGranted(OrganizationMemberVoter::MEMBER, $updateInvoiceCommand->issuer);
     		$invoice->update($updateInvoiceCommand, $this->getUser());
     		$em = $doctrine->getManager();
     		
@@ -105,6 +111,7 @@ class InvoiceCommandController extends AbstractController
     #[Route(path: "/dashboard/invoice/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/clone", methods: ["GET", "POST"], name: "invoice_clone")]
     public function clone(Request $request, Invoice $invoice, ManagerRegistry $doctrine): Response
     {
+    	$this->denyAccessUnlessGranted(OrganizationMemberVoter::MEMBER, $invoice);
     	$clone = $invoice->clone($this->getUser());
     	
     	$updateInvoiceCommand = new UpdateInvoiceCommand();
@@ -122,6 +129,7 @@ class InvoiceCommandController extends AbstractController
     	$form->handleRequest($request);
     	
     	if ($form->isSubmitted() && $form->isValid()) {
+    		$this->denyAccessUnlessGranted(OrganizationMemberVoter::MEMBER, $updateInvoiceCommand->issuer);
     		$clone->update($updateInvoiceCommand, $this->getUser());
     		$em = $doctrine->getManager();
     		
@@ -152,17 +160,28 @@ class InvoiceCommandController extends AbstractController
     	$invoice = $doctrine->getRepository(Invoice::class)->findOneBy(['id'=>$id]);
     	if($invoice == null)
     		throw new \Exception("Can't find an invoice with id ".$id);
+    	if(!$this->getUser()->belongsTo($invoice->getIssuer()))
+    		throw $this->createNotFoundException();
     	$date = new \DateTime($request->request->get('date', null));
     	$entityManager = $doctrine->getManager();
-    	$dateOfIssue = new \Datetime($request->request->get('dateOfIssue', 'now'));
-    	$state = $request->request->get('state', States::new);
-    	$number = InvoiceNumberFactory::factory($invoice->getIssuer(), $state, $dateOfIssue, $doctrine)->generate();
+    	$user = $this->getUser();
+    	$issuer = $invoice->getIssuer();
     	
-    	$transaction = $invoice->setIssued($date, $number, $this->getUser());
-    	
-    	$entityManager->persist($invoice);
-    	$entityManager->persist($transaction);
-    	$entityManager->flush();
+    	$entityManager->wrapInTransaction(function (EntityManagerInterface $em) use ($invoice, $issuer, $date, $user, $doctrine) {
+    		// The issuer's sequence is locked before the invoice row; taking them
+    		// in the other order deadlocks two overlapping issues.
+    		$number = InvoiceNumberFactory::factory($issuer, States::new, $date, $doctrine)->allocate();
+    		
+    		$em->refresh($invoice, LockMode::PESSIMISTIC_WRITE);
+    		if(!$invoice->getIssuer()->getId()->equals($issuer->getId()))
+    			throw new \Exception("The invoice issuer changed while it was being issued.");
+    		
+    		$transaction = $invoice->setIssued($date, $number, $user);
+    		
+    		$em->persist($invoice);
+    		$em->persist($transaction);
+    		$em->flush();
+    	});
     	
     	return $this->render('dashboard/invoice/show.html.twig', [
     			'invoice' => $invoice
@@ -173,6 +192,8 @@ class InvoiceCommandController extends AbstractController
     public function setPaid(Request $request, ManagerRegistry $doctrine, BankFeeFactory $bankFees): Response
     {
     	$invoice = $doctrine->getRepository(Invoice::class)->findOneBy(['id'=>$request->request->get('id', null)]);
+    	if($invoice === null || !$this->getUser()->belongsTo($invoice->getIssuer()))
+    		throw $this->createNotFoundException();
     	$date = new \DateTime($request->request->get('date', null));    	
     	$entityManager = $doctrine->getManager();
     	    	
@@ -193,6 +214,8 @@ class InvoiceCommandController extends AbstractController
     public function cancel(Request $request, ManagerRegistry $doctrine): Response
     {
     	$invoice = $doctrine->getRepository(Invoice::class)->findOneBy(['id'=>$request->request->get('id', null)]);
+    	if($invoice === null || !$this->getUser()->belongsTo($invoice->getIssuer()))
+    		throw $this->createNotFoundException();
     	$entityManager = $doctrine->getManager();
     	
     	$invoice->cancel($request->request->get('reason', ""));
@@ -209,11 +232,13 @@ class InvoiceCommandController extends AbstractController
     	$id = $request->request->get('id', null);
     	if($id == null)
     		throw new \Exception("Bad request. I need an id.");
-    	$invoice = $doctrine->getRepository(Invoice::class)->findOneBy(['id'=>$id]);    	
+    	$invoice = $doctrine->getRepository(Invoice::class)->findOneBy(['id'=>$id]);
+    	if($invoice === null || !$this->getUser()->belongsTo($invoice->getIssuer()))
+    		throw $this->createNotFoundException();
     	$email = $request->request->get('email', null);
     	$ccRaw = (string) $request->request->get('cc', '');
     	$subject = $request->request->get('subject', null);
-    	$body = $request->request->get('body', null);
+    	$body = (string) $request->request->get('body', '');
     	try {
     		$parser = new RecipientListParser();
     		$toAddresses = $parser->parse((string) $email);
@@ -222,22 +247,17 @@ class InvoiceCommandController extends AbstractController
     			throw new \Exception("Client has no e-mail addres.");
     		}
     		$ccAddresses = $parser->parse($ccRaw);
-    		$path = __DIR__."/../../../tmp/";
-    		//Check if the directory already exists.
-    		if(!is_dir($path)){
-    			//Directory does not exist, so lets create it.
-    			mkdir($path, 0755);
-    		}
     		
-    		InvoicePdfFactory::factory($invoice, $translator, $tcpdf, 'F', $path)->generate();
-    		$title = $translator->trans('title.invoice').' '.$invoice->getNumber().'.pdf';
+    		$content = (string) InvoicePdfFactory::factory($invoice, $translator, $tcpdf, 'S', false, $this->getParameter('signatures_directory'))->generate();
+    		$title = str_replace(['/', '\\'], '-', $translator->trans('title.invoice').' '.$invoice->getNumber()).'.pdf';
     		
     		$emailObject = (new Email())
     		->from('birokrat@gzt.si')
     			->to(...$toAddresses)
     			->subject($subject)
-    			->html('<p>'.$body.'</p>')
-    			->attachFromPath($path.$title);
+    			->text($body)
+    			->html('<p>'.nl2br(htmlspecialchars($body, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML5, 'UTF-8')).'</p>')
+    			->attach($content, $title, 'application/pdf');
     		if ($ccAddresses !== []) {
     			$emailObject->cc(...$ccAddresses);
     		}
@@ -248,15 +268,13 @@ class InvoiceCommandController extends AbstractController
     		
     		$mailer->send($emailObject);
     		
-    		unlink($path.$title);
-    		
     		$partner = $invoice->getRecepient();
     		$data = $mailerSettings->describeDelivery((string) $email, $ccRaw);
     		$status = "ok";
     		$payload = [
     			'status' => $status,
     			'data' => [$data],
-    			'partnerNeedsUpdate' => $partner->emailsDifferFrom($toAddresses, $ccAddresses),
+    			'partnerNeedsUpdate' => $this->isGranted(PartnerVoter::MANAGE, $partner) && $partner->emailsDifferFrom($toAddresses, $ccAddresses),
     			'mergeUrl' => $this->generateUrl('partner_emails_merge', ['id' => $partner->getId()]),
     			'editUrl' => $this->generateUrl('partner_edit', [
     				'id' => $partner->getId(),

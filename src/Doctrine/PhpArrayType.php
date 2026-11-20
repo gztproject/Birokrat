@@ -24,7 +24,7 @@ final class PhpArrayType extends Type
             return $value;
         }
 
-        return unserialize((string) $value);
+        return unserialize((string) $value, ['allowed_classes' => false]);
     }
 
     public function convertToDatabaseValue(mixed $value, AbstractPlatform $platform): mixed

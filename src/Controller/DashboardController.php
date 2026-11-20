@@ -18,18 +18,19 @@ class DashboardController extends AbstractController
 	public function index(InvoiceRepository $invoices, IncomingInvoiceRepository $incomingInvoices, TravelExpenseRepository $travelExpenses, TransactionRepository $transactions): Response
     {     
         $from = DashboardPeriod::current()->from();
-    	$myInvoices = $invoices->findRecent([10, 20, 30], 5, $from);
-    	$unpaidIncoming = $incomingInvoices->findUnpaidReceived(5, $from);
-    	$myTEs = $travelExpenses->findRecent(5, $from);
-	$myTransactions = $transactions->getFilteredQuery($from->getTimestamp(), date('U'), null, 'DESC', 5)->getQuery()->getResult();
+    	$user = $this->getUser();
+    	$myInvoices = $invoices->findRecent($user, [10, 20, 30], 5, $from);
+    	$unpaidIncoming = $incomingInvoices->findUnpaidReceived($user, 5, $from);
+    	$myTEs = $travelExpenses->findRecent($user->getOrganizations(), 5, $from);
+	$myTransactions = $transactions->getFilteredQuery($from->getTimestamp(), date('U'), $user->getOrganizationIdsFilteredBy(null), 'DESC', 5)->getQuery()->getResult();
     	return $this->render('dashboard/index.html.twig', [
             'invoices' => $myInvoices,
             'incomingInvoices' => $unpaidIncoming,
             'travelExpenses' => $myTEs,
             'transactions'=>$myTransactions,
-            'receivables' => $invoices->summarizeIssued($from),
-            'overdue' => $invoices->summarizeOverdue($from),
-            'unpaidBills' => $incomingInvoices->summarizeUnpaid($from),
+            'receivables' => $invoices->summarizeIssued($user, $from),
+            'overdue' => $invoices->summarizeOverdue($user, $from),
+            'unpaidBills' => $incomingInvoices->summarizeUnpaid($user, $from),
         ]);
     }    
     

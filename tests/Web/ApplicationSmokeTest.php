@@ -23,13 +23,14 @@ class ApplicationSmokeTest extends WebTestCase
             $container = static::getContainer();
             $em = $container->get(EntityManagerInterface::class);
             $em->getConnection()->executeQuery('SELECT 1');
-            $this->fixtures = (new SmokeFixtures(
-                $em,
-                $container->get(UserPasswordHasherInterface::class),
-            ))->load();
-        } catch (DbalException|\PDOException|\Throwable $e) {
+        } catch (DbalException|\PDOException $e) {
             $this->markTestSkipped('Database is not available for application tests: '.$e->getMessage());
         }
+
+        $this->fixtures = (new SmokeFixtures(
+            static::getContainer()->get(EntityManagerInterface::class),
+            static::getContainer()->get(UserPasswordHasherInterface::class),
+        ))->load();
     }
 
     public function testLoginPageIsReachable(): void
@@ -96,6 +97,12 @@ class ApplicationSmokeTest extends WebTestCase
         $this->assertResponseIsSuccessful();
 
         $this->client->request('GET', '/dashboard/travelExpense');
+        $this->assertResponseIsSuccessful();
+
+        $this->client->request('GET', '/dashboard/lunchExpense');
+        $this->assertResponseIsSuccessful();
+
+        $this->client->request('GET', '/dashboard/lunchExpense/new');
         $this->assertResponseIsSuccessful();
 
         $this->client->request('GET', '/dashboard/transaction');

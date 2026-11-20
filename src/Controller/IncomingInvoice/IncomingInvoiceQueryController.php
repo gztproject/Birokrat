@@ -9,13 +9,15 @@ use App\Entity\IncomingInvoice\IncomingInvoice;
 use App\Repository\IncomingInvoice\IncomingInvoiceRepository;
 use Knp\Component\Pager\PaginatorInterface;
 use App\Http\InfiniteListResponder;
+use App\Http\StoredFileResponder;
+use App\Security\OrganizationMemberVoter;
 
 class IncomingInvoiceQueryController extends AbstractController
 {    
     #[Route(path: "/dashboard/incomingInvoice", methods: ["GET"], name: "incomingInvoice_index")]
 	public function index(IncomingInvoiceRepository $incomingInvoices, Request $request, PaginatorInterface $paginator, InfiniteListResponder $list): Response
     {   		
-    	$queryBuilder = $incomingInvoices->getQuery();
+    	$queryBuilder = $incomingInvoices->getQuery($this->getUser());
     	$pagination = $list->paginate($paginator, $queryBuilder, $request);
 
     	if ($list->isPartial($request)) {
@@ -31,8 +33,17 @@ class IncomingInvoiceQueryController extends AbstractController
     #[Route(path: "/dashboard/incomingInvoice/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/show", methods: ["GET"], name: "incomingInvoice_show")]
     public function show(IncomingInvoice $invoice): Response
     {
-    	return $this->render('dashboard/incomingInvoice/show.html.twig', [
+    	$this->denyAccessUnlessGranted(OrganizationMemberVoter::MEMBER, $invoice);
+	return $this->render('dashboard/incomingInvoice/show.html.twig', [
     			'invoice' => $invoice
     	]);    	    	
+    }
+
+    #[Route(path: "/dashboard/incomingInvoice/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/scan", methods: ["GET"], name: "incomingInvoice_scan")]
+    public function scan(IncomingInvoice $invoice, StoredFileResponder $files): Response
+    {
+    	$this->denyAccessUnlessGranted(OrganizationMemberVoter::MEMBER, $invoice);
+
+    	return $files->attachment($this->getParameter('incoming_scans_directory'), $invoice->getScanFilename());
     }
 }

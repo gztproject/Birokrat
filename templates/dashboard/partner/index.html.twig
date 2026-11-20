@@ -30,14 +30,16 @@
                     <tr>
                         <td><a href="{{ path('partner_show', {'id': organization.id}) }}">{{ organization.name }}</a></td>
                         <td class="d-none d-lg-table-cell">{{ organization.address.fullAddress }}</td>
-                        <td>{{ organization.fullTaxNumber }}</td>
+                        <td>{% if is_granted('PARTNER_MANAGE', organization) %}{{ organization.fullTaxNumber }}{% endif %}</td>
                         <td class="d-none d-md-table-cell">{% if organization.taxable %}<i class="fa fa-check" aria-hidden="true"></i>{% endif %}</td>
                         <td class="d-none d-md-table-cell">{% if organization.isClient %}<i class="fa fa-check" aria-hidden="true"></i>{% endif %}</td>
                         <td class="d-none d-md-table-cell">{% if organization.isSupplier %}<i class="fa fa-check" aria-hidden="true"></i>{% endif %}</td>
                         <td class="text-end">
                             <div class="item-actions">
                                 <a href="{{ path('partner_show', {'id': organization.id}) }}" class="btn btn-sm btn-primary">{{ 'action.show'|trans }}</a>
-                                <a href="{{ path('partner_edit', {'id': organization.id}) }}" class="btn btn-sm btn-outline-secondary">{{ 'action.edit'|trans }}</a>
+                                {% if is_granted('PARTNER_MANAGE', organization) %}
+                                    <a href="{{ path('partner_edit', {'id': organization.id}) }}" class="btn btn-sm btn-outline-secondary">{{ 'action.edit'|trans }}</a>
+                                {% endif %}
                             </div>
                         </td>
                     </tr>
@@ -54,12 +56,16 @@
             <div class="list-card">
                 <div>
                     <div class="list-card-title">{{ organization.name }}</div>
-                    <div class="list-card-sub">{{ organization.fullTaxNumber }}</div>
+                    {% if is_granted('PARTNER_MANAGE', organization) %}
+                        <div class="list-card-sub">{{ organization.fullTaxNumber }}</div>
+                    {% endif %}
                     <div class="list-card-meta">{{ organization.address.fullAddress }}</div>
                 </div>
                 <div class="list-card-actions">
                     <a href="{{ path('partner_show', {'id': organization.id}) }}" class="btn btn-sm btn-primary">{{ 'action.show'|trans }}</a>
-                    <a href="{{ path('partner_edit', {'id': organization.id}) }}" class="btn btn-sm btn-outline-secondary">{{ 'action.edit'|trans }}</a>
+                    {% if is_granted('PARTNER_MANAGE', organization) %}
+                        <a href="{{ path('partner_edit', {'id': organization.id}) }}" class="btn btn-sm btn-outline-secondary">{{ 'action.edit'|trans }}</a>
+                    {% endif %}
                 </div>
             </div>
         {% else %}

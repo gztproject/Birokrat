@@ -50,7 +50,7 @@
                     {{ 'label.note'|trans }}: {{ invoice.note }}<br>
                     {% endif %}
                     {% if invoice.scanFilename %}
-                    {{ 'label.scan'|trans }}: <a href="{{ asset('uploads/incoming-invoices/' ~ invoice.scanFilename) }}" target="_blank" rel="noopener">{{ invoice.scanFilename }}</a><br>
+                    {{ 'label.scan'|trans }}: <a href="{{ path('incomingInvoice_scan', {id: invoice.id}) }}">{{ invoice.scanFilename }}</a><br>
                     {% endif %}
                 </div>
             </div>

@@ -286,6 +286,16 @@ composer dump-env prod
 npm ci
 npm run build
 
+# Move uploaded documents out of the public web directory when upgrading.
+for dir in signatures incoming-invoices; do
+	if [ -d "public/uploads/$dir" ]; then
+		mkdir -p "uploads/$dir"
+		find "public/uploads/$dir" -maxdepth 1 -type f -exec mv -n {} "uploads/$dir/" \;
+		rmdir "public/uploads/$dir" 2>/dev/null || true
+	fi
+done
+rmdir public/uploads 2>/dev/null || true
+
 php bin/console doctrine:migrations:migrate --no-interaction --env=prod
 php bin/console cache:clear --env=prod
 

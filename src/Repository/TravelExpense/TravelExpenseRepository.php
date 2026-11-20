@@ -2,8 +2,10 @@
 
 namespace App\Repository\TravelExpense;
 
+use App\Entity\Organization\Organization;
 use App\Entity\TravelExpense\TravelExpense;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Common\Collections\Criteria;
@@ -21,15 +23,19 @@ class TravelExpenseRepository extends ServiceEntityRepository
     }
     
     
-    public function getFilteredQuery($from, $to, bool $unbooked, bool $booked): QueryBuilder
+    /**
+     * @param iterable<Organization> $organizations Only travel expenses of these organizations are returned.
+     */
+    public function getFilteredQuery(iterable $organizations, $from, $to, bool $unbooked, bool $booked): QueryBuilder
     {
     	$qb = $this
     		->createQueryBuilder('te')
     		->addSelect('te');
+    	$this->restrictToOrganizations($qb, $organizations);
     	if($from)
     	{
     	  	$qb
-    	  	->where('te.date >= :from')
+    	  	->andWhere('te.date >= :from')
     	  	->setParameter('from', date('Y-m-d G:i:s', $from));
     	}
     	
@@ -63,17 +69,41 @@ class TravelExpenseRepository extends ServiceEntityRepository
     }
 
     /**
+     * @param iterable<Organization> $organizations
      * @return TravelExpense[]
      */
-    public function findRecent(int $limit, \DateTimeInterface $from): array
+    public function findRecent(iterable $organizations, int $limit, \DateTimeInterface $from): array
     {
-        return $this->createQueryBuilder('te')
+        $qb = $this->createQueryBuilder('te');
+        $this->restrictToOrganizations($qb, $organizations);
+
+        return $qb
             ->andWhere('te.date >= :from')
             ->setParameter('from', $from)
             ->orderBy('te.date', 'DESC')
             ->setMaxResults($limit)
             ->getQuery()
             ->getResult();
+    }
+
+    /**
+     * @param iterable<Organization> $organizations
+     */
+    private function restrictToOrganizations(QueryBuilder $qb, iterable $organizations): void
+    {
+        $ids = [];
+        foreach ($organizations as $organization) {
+            $ids[] = $organization->getId()->toString();
+        }
+
+        if ($ids === []) {
+            $qb->andWhere('1 = 0');
+            return;
+        }
+
+        $qb
+            ->andWhere('te.organization IN (:organizations)')
+            ->setParameter('organizations', $ids, ArrayParameterType::STRING);
     }
 
     // /**
