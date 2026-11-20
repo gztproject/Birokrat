@@ -17,6 +17,7 @@ use App\Repository\Transaction\TransactionRepository;
 use App\Entity\Transaction\UpdateTransactionCommand;
 use App\Entity\Transaction\CreateTransactionCommand;
 use App\Form\Transaction\TransactionType;
+use PhpOffice\PhpSpreadsheet\Cell\DataType;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use App\Service\Ledger\BankFeeFactory;
@@ -72,12 +73,13 @@ class TransactionController extends AbstractController {
 		$row ++;
 
 		foreach ( $result as $res ) {
-			$sheet->setCellValue ( 'A' . $row, $res->getOrganization ()->getShortName () );
+			// User-entered text must stay a string cell; setCellValue() turns a leading "=" into a live formula.
+			$sheet->setCellValueExplicit ( 'A' . $row, (string) $res->getOrganization ()->getShortName (), DataType::TYPE_STRING );
 			$sheet->setCellValue ( 'B' . $row, \PhpOffice\PhpSpreadsheet\Shared\Date::PHPToExcel ( $res->getDate () ) );
 			$sheet->setCellValue ( 'C' . $row, $res->getSum () );
 			$sheet->setCellValue ( 'D' . $row, $res->getCreditKonto ()->getNumber () );
 			$sheet->setCellValue ( 'E' . $row, $res->getDebitKonto ()->getNumber () );
-			$sheet->setCellValue ( 'F' . $row, $res->getDescription () );
+			$sheet->setCellValueExplicit ( 'F' . $row, (string) $res->getDescription (), DataType::TYPE_STRING );
 
 			$row ++;
 		}
