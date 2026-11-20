@@ -42,7 +42,10 @@ final class InfiniteListResponder
     ): JsonResponse {
         $vars = array_merge($context, [$itemsKey => $pagination, 'empty' => false]);
 
-        return new JsonResponse([
+        $response = new JsonResponse();
+        $response->setEncodingOptions(JsonResponse::DEFAULT_ENCODING_OPTIONS | \JSON_UNESCAPED_UNICODE);
+
+        return $response->setData([
             'rows' => $this->twig->render($rowsTemplate, $vars),
             'cards' => $this->twig->render($cardsTemplate, $vars),
             'page' => $pagination->getCurrentPageNumber(),
