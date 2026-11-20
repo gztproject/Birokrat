@@ -23,9 +23,9 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 final class SmokeFixtures
 {
     public const ADMIN_USERNAME = 'admin';
-    public const ADMIN_PASSWORD = 'Admin1!';
+    public const ADMIN_PASSWORD = 'admin-placeholder-1!';
     public const USER_USERNAME = 'tester';
-    public const USER_PASSWORD = 'User1!a';
+    public const USER_PASSWORD = 'user-placeholder-1!';
 
     public function __construct(
         private readonly EntityManagerInterface $em,
