@@ -9,6 +9,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use App\Entity\Transaction\iTransactionDocument;
 use App\Entity\User\User;
+use App\Entity\Organization\Organization;
 use App\Entity\Transaction\CreateTransactionCommand;
 
 #[ORM\Entity(repositoryClass: \App\Repository\LunchExpense\LunchExpenseBundleRepository::class)]
@@ -39,6 +40,11 @@ class LunchExpenseBundle extends AggregateBase implements iTransactionDocument
     public function getLunchExpenses(): Collection
     {
         return $this->lunchExpenses;
+    }
+
+    public function getOrganization(): ?Organization
+    {
+        return $this->organization;
     }
 
     private function addLunchExpense(LunchExpense $lunchExpense, User $user): self

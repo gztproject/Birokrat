@@ -17,6 +17,7 @@ class LunchExpenseType extends AbstractType
         $builder
         	->add('organization', EntityType::class, array(
         		'class' => Organization::class,
+        		'choices' => $options['organizations'],
         		'choice_label' => 'name',
         		'expanded'=>false,
         		'multiple'=>false,
@@ -37,5 +38,7 @@ class LunchExpenseType extends AbstractType
         $resolver->setDefaults(array(
         	'data_class' => CreateLunchExpenseCommand::class,
         ));
+        $resolver->setRequired('organizations');
+        $resolver->setAllowedTypes('organizations', Organization::class.'[]');
     }
 }

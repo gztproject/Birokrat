@@ -3,6 +3,7 @@
 namespace App\Repository\TravelExpense;
 
 use App\Entity\TravelExpense\TravelExpense;
+use App\Entity\User\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -21,15 +22,21 @@ class TravelExpenseRepository extends ServiceEntityRepository
     }
     
     
-    public function getFilteredQuery($from, $to, bool $unbooked, bool $booked): QueryBuilder
+    /**
+     * Only returns travel expenses of organizations $user is a member of.
+     */
+    public function getFilteredQuery($from, $to, bool $unbooked, bool $booked, User $user): QueryBuilder
     {
     	$qb = $this
     		->createQueryBuilder('te')
-    		->addSelect('te');
+    		->addSelect('te')
+    		->innerJoin('te.organization', 'org')
+    		->andWhere(':user MEMBER OF org.users')
+    		->setParameter('user', $user);
     	if($from)
     	{
     	  	$qb
-    	  	->where('te.date >= :from')
+    	  	->andWhere('te.date >= :from')
     	  	->setParameter('from', date('Y-m-d G:i:s', $from));
     	}
     	

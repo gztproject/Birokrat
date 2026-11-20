@@ -6,6 +6,7 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use App\Entity\LunchExpense\LunchExpense;
+use App\Entity\User\User;
 
 /**
  * @method LunchExpense|null find($id, $lockMode = null, $lockVersion = null)
@@ -20,15 +21,21 @@ class LunchExpenseRepository extends ServiceEntityRepository
         parent::__construct($registry, LunchExpense::class);
     }
     
-    public function getFilteredQuery($from, $to, bool $unbooked, bool $booked): QueryBuilder
+    /**
+     * Only returns claims of organizations $user is a member of.
+     */
+    public function getFilteredQuery($from, $to, bool $unbooked, bool $booked, User $user): QueryBuilder
     {
     	$qb = $this
     	->createQueryBuilder('te')
-    	->addSelect('te');
+    	->addSelect('te')
+    	->innerJoin('te.organization', 'org')
+    	->andWhere(':user MEMBER OF org.users')
+    	->setParameter('user', $user);
     	if($from)
     	{
     		$qb
-    		->where('te.date >= :from')
+    		->andWhere('te.date >= :from')
     		->setParameter('from', date('Y-m-d G:i:s', $from));
     	}
     	
