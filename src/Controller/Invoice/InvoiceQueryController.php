@@ -18,13 +18,14 @@ use Knp\Component\Pager\PaginatorInterface;
 use App\Entity\Invoice\InvoicePdfFactory;
 use App\Http\InfiniteListResponder;
 use App\Security\OrganizationVoter;
+use App\Security\OrganizationMemberVoter;
 
 class InvoiceQueryController extends AbstractController
 {    
     #[Route(path: "/dashboard/invoice", methods: ["GET"], name: "invoice_index")]
 	public function index(InvoiceRepository $invoices, Request $request, PaginatorInterface $paginator, InfiniteListResponder $list): Response
     {   		
-    	$queryBuilder = $invoices->getQuery();
+    	$queryBuilder = $invoices->getQuery($this->getUser());
     	$pagination = $list->paginate($paginator, $queryBuilder, $request);
 
     	if ($list->isPartial($request)) {
@@ -115,6 +116,7 @@ class InvoiceQueryController extends AbstractController
     #[Route(path: "/dashboard/invoice/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/pdf", methods: ["GET"], name: "invoice_pdf")]
     public function getPdf(Invoice $invoice, TCPDFController $tcpdf, TranslatorInterface $translator): Response
     {
+    	$this->denyAccessUnlessGranted(OrganizationMemberVoter::MEMBER, $invoice);
     	$content = InvoicePdfFactory::factory($invoice, $translator, $tcpdf, 'S', false, $this->getParameter('signatures_directory'))->generate();
 
     	return new Response((string) $content, 200, [
@@ -126,6 +128,7 @@ class InvoiceQueryController extends AbstractController
     #[Route(path: "/dashboard/invoice/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/print", methods: ["GET"], name: "invoice_print")]
     public function print(Invoice $invoice, TCPDFController $tcpdf, TranslatorInterface $translator): Response
     {
+    	$this->denyAccessUnlessGranted(OrganizationMemberVoter::MEMBER, $invoice);
     	$content = InvoicePdfFactory::factory($invoice, $translator, $tcpdf, 'S', true, $this->getParameter('signatures_directory'))->generate();
 
     	return new Response((string) $content, 200, [
@@ -137,6 +140,7 @@ class InvoiceQueryController extends AbstractController
     #[Route(path: "/dashboard/invoice/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/show", methods: ["GET"], name: "invoice_show")]
     public function show(Invoice $invoice): Response
     {
+    	$this->denyAccessUnlessGranted(OrganizationMemberVoter::MEMBER, $invoice);
     	return $this->render('dashboard/invoice/show.html.twig', [
     			'invoice' => $invoice
     	]);    	    	

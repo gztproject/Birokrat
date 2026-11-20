@@ -28,6 +28,7 @@ use App\Entity\Invoice\Enumerators\States;
 use App\Mailer\MailerSettings;
 use App\Mailer\RecipientListParser;
 use App\Security\PartnerVoter;
+use App\Security\OrganizationMemberVoter;
 use App\Service\Ledger\BankFeeFactory;
 
 
@@ -46,7 +47,7 @@ class InvoiceCommandController extends AbstractController
     	$form->handleRequest($request);
     	
     	if ($form->isSubmitted() && $form->isValid()) {
-    		 		
+    		$this->denyAccessUnlessGranted(OrganizationMemberVoter::MEMBER, $createInvoiceCommand->issuer);
     		$invoice = $this->getUser()->createInvoice($createInvoiceCommand);
     		    		
     		$em = $doctrine->getManager();
@@ -71,6 +72,7 @@ class InvoiceCommandController extends AbstractController
     #[Route(path: "/dashboard/invoice/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/edit", methods: ["GET", "POST"], name: "invoice_edit")]
     public function edit(Request $request, Invoice $invoice, ManagerRegistry $doctrine): Response
     {
+    	$this->denyAccessUnlessGranted(OrganizationMemberVoter::MEMBER, $invoice);
     	$updateInvoiceCommand = new UpdateInvoiceCommand();
     	$invoice->mapTo($updateInvoiceCommand);    	
     	    	
@@ -85,6 +87,7 @@ class InvoiceCommandController extends AbstractController
     	$form->handleRequest($request);
     	
     	if ($form->isSubmitted() && $form->isValid()) {
+    		$this->denyAccessUnlessGranted(OrganizationMemberVoter::MEMBER, $updateInvoiceCommand->issuer);
     		$invoice->update($updateInvoiceCommand, $this->getUser());
     		$em = $doctrine->getManager();
     		
@@ -108,6 +111,7 @@ class InvoiceCommandController extends AbstractController
     #[Route(path: "/dashboard/invoice/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/clone", methods: ["GET", "POST"], name: "invoice_clone")]
     public function clone(Request $request, Invoice $invoice, ManagerRegistry $doctrine): Response
     {
+    	$this->denyAccessUnlessGranted(OrganizationMemberVoter::MEMBER, $invoice);
     	$clone = $invoice->clone($this->getUser());
     	
     	$updateInvoiceCommand = new UpdateInvoiceCommand();
@@ -125,6 +129,7 @@ class InvoiceCommandController extends AbstractController
     	$form->handleRequest($request);
     	
     	if ($form->isSubmitted() && $form->isValid()) {
+    		$this->denyAccessUnlessGranted(OrganizationMemberVoter::MEMBER, $updateInvoiceCommand->issuer);
     		$clone->update($updateInvoiceCommand, $this->getUser());
     		$em = $doctrine->getManager();
     		
@@ -209,6 +214,8 @@ class InvoiceCommandController extends AbstractController
     public function cancel(Request $request, ManagerRegistry $doctrine): Response
     {
     	$invoice = $doctrine->getRepository(Invoice::class)->findOneBy(['id'=>$request->request->get('id', null)]);
+    	if($invoice === null || !$this->getUser()->belongsTo($invoice->getIssuer()))
+    		throw $this->createNotFoundException();
     	$entityManager = $doctrine->getManager();
     	
     	$invoice->cancel($request->request->get('reason', ""));
@@ -225,7 +232,9 @@ class InvoiceCommandController extends AbstractController
     	$id = $request->request->get('id', null);
     	if($id == null)
     		throw new \Exception("Bad request. I need an id.");
-    	$invoice = $doctrine->getRepository(Invoice::class)->findOneBy(['id'=>$id]);    	
+    	$invoice = $doctrine->getRepository(Invoice::class)->findOneBy(['id'=>$id]);
+    	if($invoice === null || !$this->getUser()->belongsTo($invoice->getIssuer()))
+    		throw $this->createNotFoundException();
     	$email = $request->request->get('email', null);
     	$ccRaw = (string) $request->request->get('cc', '');
     	$subject = $request->request->get('subject', null);

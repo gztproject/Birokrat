@@ -3,6 +3,9 @@
 namespace App\Repository\Invoice;
 
 use App\Entity\Invoice\Invoice;
+use App\Entity\Organization\Partner;
+use App\Entity\User\User;
+use App\Repository\Organization\OrganizationRepository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -20,19 +23,38 @@ class InvoiceRepository extends ServiceEntityRepository
         parent::__construct($registry, Invoice::class);
     }
     
-    public function getQuery(): QueryBuilder
+    public function getQuery(?User $member): QueryBuilder
     {
-    	return $this->createQueryBuilder('i')
+    	return $this->forMember($member)
     		->addSelect('i')
     		->orderBy('i.dateOfIssue', 'DESC')
     		->addOrderBy('i.number', 'DESC');    	 
     }
-    
-    public function getActive(): QueryBuilder
+
+    /**
+     * @return Invoice[]
+     */
+    public function findForRecipient(Partner $recipient, ?User $member): array
     {
-    	return $this->createQueryBuilder('i')
+        return $this->forMember($member)
+            ->andWhere('i.recepient = :recipient')
+            ->setParameter('recipient', $recipient)
+            ->orderBy('i.dateOfIssue', 'DESC')
+            ->addOrderBy('i.number', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    private function forMember(?User $member): QueryBuilder
+    {
+        return OrganizationRepository::restrictToMember($this->createQueryBuilder('i'), 'i.issuer', $member);
+    }
+    
+    public function getActive(?User $member): QueryBuilder
+    {
+    	return $this->forMember($member)
     	->addSelect('i')
-    	->where('i.state IN states')    	
+    	->andWhere('i.state IN states')    	
     	->orderBy('i.dateOfIssue', 'DESC')
     	->addOrderBy('i.number', 'DESC')
     	->setParameter('states', '10,20,30');
@@ -42,9 +64,9 @@ class InvoiceRepository extends ServiceEntityRepository
      * @param int[] $states
      * @return Invoice[]
      */
-    public function findRecent(array $states, int $limit, \DateTimeInterface $from): array
+    public function findRecent(?User $member, array $states, int $limit, \DateTimeInterface $from): array
     {
-        return $this->createQueryBuilder('i')
+        return $this->forMember($member)
             ->andWhere('i.state IN (:states)')
             ->andWhere('i.dateOfIssue >= :from')
             ->setParameter('states', $states)
@@ -59,17 +81,17 @@ class InvoiceRepository extends ServiceEntityRepository
     /**
      * @return array{count: int, total: float}
      */
-    public function summarizeIssued(?\DateTimeInterface $from = null): array
+    public function summarizeIssued(?User $member, ?\DateTimeInterface $from = null): array
     {
-        return $this->summarizeByState(20, $from);
+        return $this->summarizeByState($member, 20, $from);
     }
 
     /**
      * @return array{count: int, total: float}
      */
-    public function summarizeOverdue(?\DateTimeInterface $from = null): array
+    public function summarizeOverdue(?User $member, ?\DateTimeInterface $from = null): array
     {
-        $qb = $this->createQueryBuilder('i')
+        $qb = $this->forMember($member)
             ->select('COUNT(i.id) AS cnt', 'COALESCE(SUM(i.totalPrice), 0) AS total')
             ->andWhere('i.state = :state')
             ->andWhere('i.dueDate < :today')
@@ -85,9 +107,9 @@ class InvoiceRepository extends ServiceEntityRepository
     /**
      * @return array{count: int, total: float}
      */
-    private function summarizeByState(int $state, ?\DateTimeInterface $from = null): array
+    private function summarizeByState(?User $member, int $state, ?\DateTimeInterface $from = null): array
     {
-        $qb = $this->createQueryBuilder('i')
+        $qb = $this->forMember($member)
             ->select('COUNT(i.id) AS cnt', 'COALESCE(SUM(i.totalPrice), 0) AS total')
             ->andWhere('i.state = :state')
             ->setParameter('state', $state);

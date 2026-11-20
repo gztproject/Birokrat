@@ -25,6 +25,26 @@ class OrganizationRepository extends ServiceEntityRepository
      * @param array<string, 'ASC'|'DESC'> $orderBy
      * @return Organization[]
      */
+
+    /**
+     * Limit a query to rows whose organization the user belongs to.
+     * A null member matches nothing so anonymous callers cannot widen the filter.
+     */
+    public static function restrictToMember(QueryBuilder $qb, string $organizationPath, ?User $member): QueryBuilder
+    {
+        if ($member === null) {
+            return $qb->andWhere('1 = 0');
+        }
+
+        return $qb
+            ->andWhere(sprintf(
+                'IDENTITY(%s) IN (SELECT member_org.id FROM %s member_org INNER JOIN member_org.users member_user WHERE member_user = :member)',
+                $organizationPath,
+                Organization::class
+            ))
+            ->setParameter('member', $member);
+    }
+
     public function findByMember(User $user, array $orderBy = []): array
     {
         $qb = $this->memberQueryBuilder($user);
