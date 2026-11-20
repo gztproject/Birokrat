@@ -54,6 +54,7 @@ class LoginGuessLimitTest extends WebTestCase
 
         self::ensureKernelShutdown();
         $this->client = static::createClient();
+        static::getContainer()->get('cache.global_clearer')->clearPool('cache.rate_limiter');
         $this->em = static::getContainer()->get(EntityManagerInterface::class);
         $this->hasher = static::getContainer()->get(UserPasswordHasherInterface::class);
 
@@ -65,6 +66,13 @@ class LoginGuessLimitTest extends WebTestCase
 
     protected function tearDown(): void
     {
+        // Failed guesses fill the shared IP bucket; clear it so later suites can still sign in.
+        if (isset($this->client)) {
+            try {
+                static::getContainer()->get('cache.global_clearer')->clearPool('cache.rate_limiter');
+            } catch (\Throwable) {
+            }
+        }
         parent::tearDown();
         if ($this->previousDatabaseUrl !== '') {
             putenv('DATABASE_URL='.$this->previousDatabaseUrl);

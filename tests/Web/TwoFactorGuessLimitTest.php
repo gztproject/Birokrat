@@ -40,6 +40,7 @@ final class TwoFactorGuessLimitTest extends WebTestCase
         try {
             $this->client = static::createClient();
             static::getContainer()->get(EntityManagerInterface::class)->getConnection()->executeQuery('SELECT 1');
+            static::getContainer()->get('cache.global_clearer')->clearPool('cache.rate_limiter');
         } catch (DbalException|\PDOException|\Throwable $e) {
             $this->markTestSkipped('Database is not available for application tests: '.$e->getMessage());
         }

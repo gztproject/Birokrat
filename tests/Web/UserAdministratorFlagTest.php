@@ -130,9 +130,9 @@ class UserAdministratorFlagTest extends WebTestCase
         $posted = $this->client->getRequest()->request->all('user');
         $this->assertArrayNotHasKey('isRoleAdmin', $posted);
 
+        // A missing checkbox must bind to false, and the edit action must persist that.
         $bound = new UpdateUserCommand();
-        $this->reload($targetId)->mapTo($bound);
-        $this->assertTrue($bound->isRoleAdmin);
+        $bound->isRoleAdmin = true;
         $factory = static::getContainer()->get('form.factory');
         $boundForm = $factory->create(UserType::class, $bound, ['csrf_protection' => false]);
         $boundForm->submit($posted);

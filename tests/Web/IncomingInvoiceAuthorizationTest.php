@@ -84,7 +84,8 @@ class IncomingInvoiceAuthorizationTest extends WebTestCase
         $this->assertStringNotContainsString($this->world['foreignNote'], $body);
         $this->assertStringNotContainsString($this->world['foreignScan'], $body);
         $this->assertStringNotContainsString($this->world['foreignNumber'], $body);
-        $this->assertStringNotContainsString('uploads/incoming-invoices/'.$this->world['foreignScan'], $body);
+        $this->assertStringNotContainsString('/dashboard/incomingInvoice/'.$this->world['foreignId'].'/scan', $body);
+        $this->assertStringNotContainsString($this->world['foreignScan'], $body);
     }
 
     public function testForeignBillPayDoesNotWriteJournal(): void
@@ -203,7 +204,8 @@ class IncomingInvoiceAuthorizationTest extends WebTestCase
         $this->assertResponseIsSuccessful();
         $body = (string) $this->client->getResponse()->getContent();
         $this->assertStringContainsString($this->world['foreignNote'], $body);
-        $this->assertStringContainsString('uploads/incoming-invoices/'.$this->world['foreignScan'], $body);
+        $this->assertStringContainsString('/dashboard/incomingInvoice/'.$this->world['foreignId'].'/scan', $body);
+        $this->assertStringContainsString($this->world['foreignScan'], $body);
 
         $journalsBefore = $this->journalCount($this->world['foreignId']);
         $this->client->request('POST', '/dashboard/incomingInvoice/pay', [

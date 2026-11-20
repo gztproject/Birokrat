@@ -199,10 +199,12 @@ class InvoicePdfExportPathTest extends TestCase
 		});
 
 		$controller = $this->getMockBuilder(InvoiceCommandController::class)
-			->onlyMethods(['getUser', 'generateUrl'])
+			->onlyMethods(['getUser', 'generateUrl', 'getParameter', 'isGranted'])
 			->getMock();
 		$controller->method('getUser')->willReturn($invoice->getCreatedBy());
 		$controller->method('generateUrl')->willReturn('/partner');
+		$controller->method('getParameter')->willReturn($this->projectRoot.'/uploads/signatures');
+		$controller->method('isGranted')->willReturn(false);
 
 		$request = Request::create('/dashboard/invoice/send', 'POST', [
 			'id' => 'issued-invoice',

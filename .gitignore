@@ -43,3 +43,4 @@ src/DataFixtures/InitData/users.tsv
 
 # Symfony dumped PHP config reference (auto-generated)
 /config/reference.php
+tmp/

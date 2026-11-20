@@ -38,38 +38,50 @@ final class SmokeFixtures
      */
     public function load(): array
     {
-        $existing = $this->em->getRepository(User::class)->findOneBy(['username' => self::ADMIN_USERNAME]);
-        if ($existing instanceof User) {
-            $org = $existing->getOrganizations()->first() ?: $this->em->getRepository(Organization::class)->findOneBy([]);
-            $partner = $this->em->getRepository(Partner::class)->findOneBy([]);
-            $invoice = $this->em->getRepository(Invoice::class)->findOneBy([]);
-            $user = $this->em->getRepository(User::class)->findOneBy(['username' => self::USER_USERNAME]);
+        $admin = $this->em->getRepository(User::class)->findOneBy(['username' => self::ADMIN_USERNAME]);
+        $user = $this->em->getRepository(User::class)->findOneBy(['username' => self::USER_USERNAME]);
 
-            return [
-                'admin' => $existing,
-                'user' => $user ?? $existing,
-                'organization' => $org,
-                'partner' => $partner,
-                'invoice' => $invoice,
-            ];
+        if ($admin instanceof User && $user instanceof User) {
+            $org = $admin->getOrganizations()->first();
+            // Other suites may have inserted invoices first; only reuse one issued by an org the admin belongs to.
+            if ($org instanceof Organization) {
+                $invoice = $this->em->getRepository(Invoice::class)->findOneBy(['issuer' => $org]);
+                $partner = $invoice instanceof Invoice ? $invoice->getRecepient() : null;
+                if ($invoice instanceof Invoice && $partner instanceof Partner) {
+                    return [
+                        'admin' => $admin,
+                        'user' => $user,
+                        'organization' => $org,
+                        'partner' => $partner,
+                        'invoice' => $invoice,
+                    ];
+                }
+            }
         }
 
-        $admin = $this->bootstrapUser(self::ADMIN_USERNAME, self::ADMIN_PASSWORD, true);
-        $this->em->getConnection()->executeStatement('SET FOREIGN_KEY_CHECKS=0');
-        $this->em->persist($admin);
-        $this->em->flush();
-        $this->em->getConnection()->executeStatement('SET FOREIGN_KEY_CHECKS=1');
+        if (!$admin instanceof User) {
+            $admin = $this->bootstrapUser(self::ADMIN_USERNAME, self::ADMIN_PASSWORD, true);
+            $this->em->getConnection()->executeStatement('SET FOREIGN_KEY_CHECKS=0');
+            $this->em->persist($admin);
+            $this->em->flush();
+            $this->em->getConnection()->executeStatement('SET FOREIGN_KEY_CHECKS=1');
+        }
 
-        $userCommand = new CreateUserCommand();
-        $userCommand->username = self::USER_USERNAME;
-        $userCommand->firstName = 'Test';
-        $userCommand->lastName = 'User';
-        $userCommand->email = 'tester@example.test';
-        $userCommand->password = self::USER_PASSWORD;
-        $userCommand->isRoleAdmin = false;
-        $userCommand->signatureFilename = '';
-        $user = $admin->createUser($userCommand, $this->hasher);
-        $this->em->persist($user);
+        if (!$user instanceof User) {
+            $userCommand = new CreateUserCommand();
+            $userCommand->username = self::USER_USERNAME;
+            $userCommand->firstName = 'Test';
+            $userCommand->lastName = 'User';
+            $userCommand->email = 'tester@example.test';
+            $userCommand->password = self::USER_PASSWORD;
+            $userCommand->isRoleAdmin = false;
+            $userCommand->signatureFilename = '';
+            $user = $admin->createUser($userCommand, $this->hasher);
+            $this->em->persist($user);
+        }
+
+        // Digits only: invoice reference check digits multiply each character.
+        $suffix = (string) random_int(100000, 999999);
 
         $countryCommand = new CreateCountryCommand();
         $countryCommand->name = 'Slovenija';
@@ -80,8 +92,8 @@ final class SmokeFixtures
         $country = $admin->createCountry($countryCommand);
 
         $postCommand = new CreatePostCommand();
-        $postCommand->code = '1000';
-        $postCommand->codeInternational = 'SI-1000';
+        $postCommand->code = substr($suffix, 0, 4);
+        $postCommand->codeInternational = 'SI-'.$postCommand->code;
         $postCommand->name = 'Ljubljana';
         $post = $country->createPost($postCommand, $admin);
 
@@ -91,9 +103,9 @@ final class SmokeFixtures
         $address = $post->createAddress($addressCommand, $admin);
 
         $orgCommand = new CreateOrganizationCommand();
-        $orgCommand->code = '1';
-        $orgCommand->name = 'Issuer d.o.o.';
-        $orgCommand->shortName = 'Issuer';
+        $orgCommand->code = 'S'.$suffix;
+        $orgCommand->name = 'Issuer '.$suffix;
+        $orgCommand->shortName = 'Issuer'.$suffix;
         $orgCommand->taxNumber = '12345678';
         $orgCommand->taxable = true;
         $orgCommand->address = $address;
@@ -104,8 +116,8 @@ final class SmokeFixtures
         $user->addOrganization($organization, $admin);
 
         $partnerCommand = new CreatePartnerCommand();
-        $partnerCommand->code = '2';
-        $partnerCommand->name = 'Partner d.o.o.';
+        $partnerCommand->code = 'P'.$suffix;
+        $partnerCommand->name = 'Partner '.$suffix;
         $partnerCommand->shortName = 'Partner';
         $partnerCommand->taxNumber = '87654321';
         $partnerCommand->taxable = true;
@@ -120,7 +132,7 @@ final class SmokeFixtures
         $invoiceCommand->dateServiceRenderedTo = new \DateTime('-1 days');
         $invoiceCommand->dueDate = new \DateTime('+10 days');
         $invoiceCommand->discount = 0;
-        $invoiceCommand->number = 'TST-2026-0001';
+        $invoiceCommand->number = 'TST-'.$suffix.'-0001';
         $invoiceCommand->issuer = $organization;
         $invoiceCommand->recepient = $partner;
         $invoice = $admin->createInvoice($invoiceCommand);

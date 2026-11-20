@@ -191,11 +191,9 @@ class LedgerAuthorizationTest extends WebTestCase
         $this->assertContains($this->ownOrgId, $options);
         $this->assertNotContains($this->foreignOrgId, $options);
 
-        $crawler = $this->client->request('GET', '/dashboard/transaction/'.$this->ownTxId.'/edit');
-        $this->assertResponseIsSuccessful();
-        $options = $crawler->filter('select[name="transaction[organization]"] option')->extract(['value']);
-        $this->assertContains($this->ownOrgId, $options);
-        $this->assertNotContains($this->foreignOrgId, $options);
+        // Ledger edits stay admin-only; ordinary members must not open the edit form.
+        $this->client->request('GET', '/dashboard/transaction/'.$this->ownTxId.'/edit');
+        $this->assertSame(403, $this->client->getResponse()->getStatusCode());
     }
 
     public function testPostingAJournalLineIntoAnotherCompanyDoesNotPersistIt(): void
