@@ -2,6 +2,7 @@
 
 namespace App\Repository\TravelExpense;
 
+use App\Entity\Organization\Organization;
 use App\Entity\TravelExpense\TravelExpense;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
@@ -21,7 +22,10 @@ class TravelExpenseRepository extends ServiceEntityRepository
     }
     
     
-    public function getFilteredQuery($from, $to, bool $unbooked, bool $booked): QueryBuilder
+    /**
+     * @param Organization[]|null $organizations Limit to these companies; null leaves the company unfiltered.
+     */
+    public function getFilteredQuery($from, $to, bool $unbooked, bool $booked, ?array $organizations = null): QueryBuilder
     {
     	$qb = $this
     		->createQueryBuilder('te')
@@ -57,6 +61,16 @@ class TravelExpenseRepository extends ServiceEntityRepository
     		$qb
     			->andWhere('te.state <= 10')
     			->andWhere('te.state > 10');
+    	}
+    	
+    	if($organizations !== null)
+    	{
+    		if(count($organizations) === 0)
+    			$qb->andWhere('1 = 0');
+    		else
+    			$qb
+    				->andWhere('te.organization IN (:organizations)')
+    				->setParameter('organizations', array_values($organizations));
     	}
     	
     	return $qb->orderBy('te.date', 'DESC');
