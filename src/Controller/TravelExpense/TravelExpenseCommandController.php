@@ -41,7 +41,8 @@ class TravelExpenseCommandController extends AbstractController
     		])
     		->add('saveAndCreateNew', SubmitType::class);
     	
-    	$form->handleRequest($request);    	
+    	$form->handleRequest($request);
+    	
     	if ($form->isSubmitted() && $form->isValid()) {
     		$this->denyAccessUnlessGranted(OrganizationMemberVoter::MEMBER, $c->organization);
     		
