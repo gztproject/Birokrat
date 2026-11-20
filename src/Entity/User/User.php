@@ -476,6 +476,11 @@ class User extends AggregateBase implements UserInterface, PasswordAuthenticated
     {
         return $this->organizations;
     }
+
+    public function isMemberOf(?Organization $organization): bool
+    {
+        return $organization !== null && $this->organizations->contains($organization);
+    }
     
 
     public function getUserSettings(): ?UserSettings

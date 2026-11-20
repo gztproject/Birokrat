@@ -6,6 +6,7 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use App\Entity\LunchExpense\LunchExpense;
+use App\Entity\User\User;
 
 /**
  * @method LunchExpense|null find($id, $lockMode = null, $lockVersion = null)
@@ -59,6 +60,14 @@ class LunchExpenseRepository extends ServiceEntityRepository
     	}
     	
     	return $qb->orderBy('te.date', 'DESC');
+    }
+
+    public function getFilteredQueryForMember($from, $to, bool $unbooked, bool $booked, User $member): QueryBuilder
+    {
+    	return $this->getFilteredQuery($from, $to, $unbooked, $booked)
+    		->innerJoin('te.organization', 'org')
+    		->andWhere(':member MEMBER OF org.users')
+    		->setParameter('member', $member);
     }
 
     // /**

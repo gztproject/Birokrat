@@ -10,6 +10,7 @@ use App\Form\Type\DateTimePickerType;
 use App\Entity\Organization\Organization;
 use App\Entity\TravelExpense\CreateTravelExpenseCommand;
 use App\Entity\User\User;
+use App\Repository\Organization\OrganizationRepository;
 use App\Repository\UserRepository;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -18,9 +19,11 @@ class TravelExpenseType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $user = $options['user'];
         $builder
         	->add('organization', EntityType::class, array(
         		'class' => Organization::class,
+        		'query_builder' => fn (OrganizationRepository $repository) => $repository->createMemberQueryBuilder($user),
         		'choice_label' => 'name',
         		'expanded'=>false,
         		'multiple'=>false,
@@ -84,5 +87,7 @@ class TravelExpenseType extends AbstractType
         	'is_admin' => false,
         ));
         $resolver->setAllowedTypes('is_admin', 'bool');
+        $resolver->setRequired('user');
+        $resolver->setAllowedTypes('user', User::class);
     }
 }
