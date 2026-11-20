@@ -23,7 +23,9 @@ class IncomingInvoiceCommandController extends AbstractController
     {
     	$c = new CreateIncomingInvoiceCommand();
     	
-    	$form = $this->createForm(IncomingInvoiceType::class, $c);
+    	$form = $this->createForm(IncomingInvoiceType::class, $c, [
+    			'organizations' => array_values($this->getUser()->getOrganizations()->toArray()),
+    	]);
     	
     	$form->handleRequest($request);
     	
@@ -56,13 +58,18 @@ class IncomingInvoiceCommandController extends AbstractController
     #[Route(path: "/dashboard/incomingInvoice/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/clone", methods: ["GET", "POST"], name: "incomingInvoice_clone")]
     public function clone(Request $request, IncomingInvoice $invoice, ManagerRegistry $doctrine): Response
     {
+    	if (!$this->getUser()->belongsTo($invoice->getRecepient()))
+    		throw $this->createNotFoundException();
+
     	$clone = $invoice->clone($this->getUser());
     	
     	$c = new UpdateIncomingInvoiceCommand();
     	$clone->mapTo($c);
     	
     	
-    	$form = $this->createForm(IncomingInvoiceType::class, $c);
+    	$form = $this->createForm(IncomingInvoiceType::class, $c, [
+    			'organizations' => array_values($this->getUser()->getOrganizations()->toArray()),
+    	]);
     	
     	$form->handleRequest($request);
     	
@@ -120,6 +127,8 @@ class IncomingInvoiceCommandController extends AbstractController
     public function pay(Request $request, ManagerRegistry $doctrine, BankFeeFactory $bankFees): Response
     {
     	$invoice = $doctrine->getRepository(IncomingInvoice::class)->findOneBy(['id'=>$request->request->get('id', null)]);
+    	if ($invoice === null || !$this->getUser()->belongsTo($invoice->getRecepient()))
+    		throw $this->createNotFoundException();
     	$date = new \DateTime($request->request->get('date', null));    	
     	$entityManager = $doctrine->getManager();
     	

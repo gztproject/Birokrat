@@ -51,6 +51,7 @@ class IncomingInvoiceType extends AbstractType
         	]) 
         	->add('recepient', EntityType::class, array(
         			'class' => Organization::class,
+        			'choices' => $options['organizations'],
         			'choice_label' => 'name',
         			'expanded'=>false,
         			'multiple'=>false,
@@ -133,5 +134,7 @@ class IncomingInvoiceType extends AbstractType
         $resolver->setDefaults(array(
         	'data_class' => CreateIncomingInvoiceCommand::class,
         ));
+        $resolver->setRequired('organizations');
+        $resolver->setAllowedTypes('organizations', Organization::class.'[]');
     }
 }

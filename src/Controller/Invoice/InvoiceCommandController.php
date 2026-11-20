@@ -152,6 +152,8 @@ class InvoiceCommandController extends AbstractController
     	$invoice = $doctrine->getRepository(Invoice::class)->findOneBy(['id'=>$id]);
     	if($invoice == null)
     		throw new \Exception("Can't find an invoice with id ".$id);
+    	if(!$this->getUser()->belongsTo($invoice->getIssuer()))
+    		throw $this->createNotFoundException();
     	$date = new \DateTime($request->request->get('date', null));
     	$entityManager = $doctrine->getManager();
     	$dateOfIssue = new \Datetime($request->request->get('dateOfIssue', 'now'));
@@ -173,6 +175,8 @@ class InvoiceCommandController extends AbstractController
     public function setPaid(Request $request, ManagerRegistry $doctrine, BankFeeFactory $bankFees): Response
     {
     	$invoice = $doctrine->getRepository(Invoice::class)->findOneBy(['id'=>$request->request->get('id', null)]);
+    	if($invoice === null || !$this->getUser()->belongsTo($invoice->getIssuer()))
+    		throw $this->createNotFoundException();
     	$date = new \DateTime($request->request->get('date', null));    	
     	$entityManager = $doctrine->getManager();
     	    	
