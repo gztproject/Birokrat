@@ -5,12 +5,14 @@
 {% block toolbar %}
     <div class="page-toolbar">
         <h1 class="page-title">{{ partner.name }}</h1>
+        {% if is_granted('PARTNER_MANAGE', partner) %}
         <div class="page-toolbar-actions">
             <a href="{{ path('partner_edit', {id: partner.id}) }}" class="btn btn-sm btn-success">
                 <i class="fa fa-edit" aria-hidden="true"></i> {{ 'action.edit_contents'|trans }}
             </a>
             {{ include('dashboard/partner/_delete_form.html.twig', {partner: partner}, with_context = false) }}
         </div>
+        {% endif %}
     </div>
 {% endblock %}
 
@@ -39,9 +41,11 @@
                         {% endif %}
                         <strong>{{ 'label.www'|trans }}</strong>: {{ partner.www }}<br>
                         <strong>{{ 'label.phone'|trans }}</strong>: {{ partner.phone }}<br>
-                        <strong>{{ 'label.mobile'|trans }}</strong>: {{ partner.mobile }}<br>
-                        <strong>{{ 'label.accountNumber'|trans }}</strong>: {{ partner.accountNumber }}<br>
-                        <strong>{{ 'label.bic'|trans }}</strong>: {{ partner.bic }}
+                        <strong>{{ 'label.mobile'|trans }}</strong>: {{ partner.mobile }}
+                        {% if is_granted('PARTNER_MANAGE', partner) %}
+                            <br><strong>{{ 'label.accountNumber'|trans }}</strong>: {{ partner.accountNumber }}
+                            <br><strong>{{ 'label.bic'|trans }}</strong>: {{ partner.bic }}
+                        {% endif %}
                     </div>
                 </div>
             </div>
