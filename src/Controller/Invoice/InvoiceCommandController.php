@@ -229,7 +229,7 @@ class InvoiceCommandController extends AbstractController
     			mkdir($path, 0755);
     		}
     		
-    		InvoicePdfFactory::factory($invoice, $translator, $tcpdf, 'F', $path)->generate();
+    		InvoicePdfFactory::factory($invoice, $translator, $tcpdf, 'F', $path, false, $this->getParameter('signatures_directory'))->generate();
     		$title = $translator->trans('title.invoice').' '.$invoice->getNumber().'.pdf';
     		
     		$emailObject = (new Email())

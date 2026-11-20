@@ -54,7 +54,10 @@
                             
                         </div>
                         <div class="col-6">
-                            <img src="{{ asset('uploads/signatures/' ~ user.signatureFilename) }}" alt="User signature" width="100%">
+                            {% if user.signatureFilename %}
+                            <img src="{{ path('user_signature', {id: user.id}) }}" alt="User signature" width="100%">
+                            <a href="{{ path('user_signature', {id: user.id}) }}">{{ user.signatureFilename }}</a>
+                            {% endif %}
                         </div>
                     </div>  
                 </div>
