@@ -3,6 +3,7 @@
 namespace App\Repository\TravelExpense;
 
 use App\Entity\TravelExpense\TravelExpense;
+use App\Entity\User\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -60,6 +61,14 @@ class TravelExpenseRepository extends ServiceEntityRepository
     	}
     	
     	return $qb->orderBy('te.date', 'DESC');
+    }
+
+    public function getFilteredQueryForMember($from, $to, bool $unbooked, bool $booked, User $member): QueryBuilder
+    {
+    	return $this->getFilteredQuery($from, $to, $unbooked, $booked)
+    		->innerJoin('te.organization', 'org')
+    		->andWhere(':member MEMBER OF org.users')
+    		->setParameter('member', $member);
     }
 
     /**
