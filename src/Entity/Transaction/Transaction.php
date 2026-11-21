@@ -323,6 +323,11 @@ class Transaction extends AggregateBase
         return $this->date;
     }
 
+    public function isHidden(): bool
+    {
+        return (bool) $this->hidden;
+    }
+
     public function getDateString(): ?string
     {
         return $this->date->format('d. m. Y');
