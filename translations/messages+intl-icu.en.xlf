@@ -349,6 +349,10 @@
                 <source>user.updated_successfully</source>
                 <target>User updated successfully!</target>
             </trans-unit>
+            <trans-unit id="user.username_taken">
+                <source>user.username_taken</source>
+                <target>This username is already taken.</target>
+            </trans-unit>
 
             <trans-unit id="notification.comment_created">
                 <source>notification.comment_created</source>

@@ -15,6 +15,9 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use App\Entity\Organization\Organization;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
+use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\User\CreateUserCommand;
 use App\Entity\User\UpdateUserCommand;
 use Symfony\Component\Form\FormErrorIterator;
@@ -42,26 +45,10 @@ class UserController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             
-        	//Handle the file stuff
-        	$signatureFile = $form['signature']->getData();        	
-        	if($signatureFile)
-        	{
-        		$originalFilename = pathinfo($signatureFile->getClientOriginalName(), PATHINFO_FILENAME);
-        		// this is needed to safely include the file name as part of the URL
-        		$safeFilename = transliterator_transliterate('Any-Latin; Latin-ASCII; [^A-Za-z0-9_] remove; Lower()', $originalFilename);
-        		$newFilename = $safeFilename.'-'.uniqid().'.'.$signatureFile->guessExtension();
-        		
-        		// Move the file to the directory where brochures are stored
-        		try {
-        			$signatureFile->move(
-        					$this->getParameter('signatures_directory'),
-        					$newFilename
-        					);
-        		} catch (FileException $e) {
-        			// ... handle exception if something happens during file upload
-        		}        		
+        	$signatureFile = $form['signature']->getData();
+        	$newFilename = $signatureFile ? $this->signatureFilename($signatureFile) : null;
+        	if($newFilename !== null)
         		$createUserCommand->signatureFilename = $newFilename;
-        	}
         	
         	try
         	{
@@ -76,12 +63,27 @@ class UserController extends AbstractController
         				);
         	}
         	
-        	
-        	
             // 4) save the User!
-            $entityManager = $doctrine->getManager();
-            $entityManager->persist($user);
-            $entityManager->flush();
+            try
+            {
+            	$this->saveWithSignature($doctrine->getManager(), $user, $signatureFile, $newFilename);
+            }
+            catch (UniqueConstraintViolationException $e)
+            {
+            	$this->addFlash('danger', 'user.username_taken');
+            	return $this->render(
+            			'/admin/user/new.html.twig',
+            			array('form' => $form->createView())
+            			);
+            }
+            catch (FileException $e)
+            {
+            	$this->addFlash('warning', "File Exception: ".$e->getMessage());
+            	return $this->render(
+            			'/admin/user/new.html.twig',
+            			array('form' => $form->createView())
+            			);
+            }
             
             // ... do any other work - like sending them an email, etc
             $this->addFlash('success', 'user.saved_successfully');
@@ -120,34 +122,11 @@ class UserController extends AbstractController
         
         if ($form->isSubmitted() && $form->isValid()) {
         	
-        	//Handle the file stuff
         	$signatureFile = $form['signature']->getData();
-        	if($signatureFile)
-        	{
-        		$originalFilename = pathinfo($signatureFile->getClientOriginalName(), PATHINFO_FILENAME);
-        		// this is needed to safely include the file name as part of the URL
-        		$safeFilename = transliterator_transliterate('Any-Latin; Latin-ASCII; [^A-Za-z0-9_] remove; Lower()', $originalFilename);
-        		$newFilename = $safeFilename.'-'.uniqid().'.'.$signatureFile->guessExtension();
-        		
-        		// Move the file to the directory where brochures are stored
-        		try {
-        			$signatureFile->move(
-        					$this->getParameter('signatures_directory'),
-        					$newFilename
-        					);
-        			
-        			//delete old file
-        			unlink($this->getParameter('signatures_directory').'/'.$user->getSignatureFilename());
-        		} catch (\Exception $e) {
-        			$this->addFlash('warning', "File Exception: ".$e->getMessage());
-        			return $this->render('admin/user/edit.html.twig', [
-        					'user' => $user,
-        					'form' => $form->createView(),
-        					'showChangePassword' => true,
-        			]);
-        		}
+        	$newFilename = $signatureFile ? $this->signatureFilename($signatureFile) : null;
+        	$oldFilename = $user->getSignatureFilename();
+        	if($newFilename !== null)
         		$c->signatureFilename = $newFilename;
-        	}
         	
         	try 
         	{
@@ -162,11 +141,40 @@ class UserController extends AbstractController
         				'showChangePassword' => true,
         		]);
         	}
-            
-                                   
-            $doctrine->getManager()->persist($user);
-            
-            $doctrine->getManager()->flush();
+        	
+        	try
+        	{
+        		$this->saveWithSignature($doctrine->getManager(), $user, $signatureFile, $newFilename);
+        	}
+        	catch (UniqueConstraintViolationException $e)
+        	{
+        		$this->addFlash('danger', 'user.username_taken');
+        		return $this->render('admin/user/edit.html.twig', [
+        				'user' => $user,
+        				'form' => $form->createView(),
+        				'showChangePassword' => true,
+        		]);
+        	}
+        	catch (FileException $e)
+        	{
+        		$this->addFlash('warning', "File Exception: ".$e->getMessage());
+        		return $this->render('admin/user/edit.html.twig', [
+        				'user' => $user,
+        				'form' => $form->createView(),
+        				'showChangePassword' => true,
+        		]);
+        	}
+        	
+        	if($newFilename !== null && $oldFilename)
+        	{
+        		$oldPath = $this->getParameter('signatures_directory').'/'.$oldFilename;
+        		try {
+        			if(is_file($oldPath))
+        				unlink($oldPath);
+        		} catch (\Exception $e) {
+        			$this->addFlash('warning', "File Exception: ".$e->getMessage());
+        		}
+        	}
             
             $this->addFlash('success', 'user.updated_successfully');
             
@@ -230,5 +238,34 @@ class UserController extends AbstractController
         $this->addFlash('success', 'user.deleted_successfully');
         
         return $this->redirectToRoute('admin_user_index');
+    }
+    
+    private function signatureFilename(UploadedFile $signatureFile): string
+    {
+    	$originalFilename = pathinfo($signatureFile->getClientOriginalName(), PATHINFO_FILENAME);
+    	// this is needed to safely include the file name as part of the URL
+    	$safeFilename = transliterator_transliterate('Any-Latin; Latin-ASCII; [^A-Za-z0-9_] remove; Lower()', $originalFilename);
+    	return $safeFilename.'-'.uniqid().'.'.$signatureFile->guessExtension();
+    }
+    
+    /**
+     * The unique index on app_users.username is what decides whether a username is free, so
+     * the row is written first and the signature is stored only inside that same transaction.
+     */
+    private function saveWithSignature(EntityManagerInterface $entityManager, User $user, ?UploadedFile $signatureFile, ?string $newFilename): void
+    {
+    	$directory = $this->getParameter('signatures_directory');
+    	try {
+    		$entityManager->wrapInTransaction(function (EntityManagerInterface $em) use ($user, $signatureFile, $newFilename, $directory) {
+    			$em->persist($user);
+    			$em->flush();
+    			if($signatureFile && $newFilename !== null)
+    				$signatureFile->move($directory, $newFilename);
+    		});
+    	} catch (\Throwable $e) {
+    		if($newFilename !== null && is_file($directory.'/'.$newFilename))
+    			unlink($directory.'/'.$newFilename);
+    		throw $e;
+    	}
     }
 }
