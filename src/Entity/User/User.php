@@ -36,6 +36,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 
 #[ORM\Table(name: "app_users")]
+#[ORM\UniqueConstraint(name: "UNIQ_APP_USERS_USERNAME", columns: ["username"])]
 #[ORM\Entity(repositoryClass: \App\Repository\UserRepository::class)]
 class User extends AggregateBase implements UserInterface, PasswordAuthenticatedUserInterface
 {
