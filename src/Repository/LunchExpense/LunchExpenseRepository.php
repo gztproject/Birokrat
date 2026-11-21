@@ -3,6 +3,8 @@
 namespace App\Repository\LunchExpense;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\DBAL\LockMode;
+use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use App\Entity\LunchExpense\LunchExpense;
@@ -59,6 +61,22 @@ class LunchExpenseRepository extends ServiceEntityRepository
     	}
     	
     	return $qb->orderBy('te.date', 'DESC');
+    }
+
+    /**
+     * Loads and row-locks the unbooked LunchExpenses in the range so that a concurrent
+     * booking waits for this one and then no longer sees them as unbooked.
+     * Must be called inside a transaction that also persists the booking.
+     *
+     * @return LunchExpense[]
+     */
+    public function findUnbookedForBooking($from, $to): array
+    {
+    	return $this->getFilteredQuery($from, $to, true, false)
+    		->getQuery()
+    		->setLockMode(LockMode::PESSIMISTIC_WRITE)
+    		->setHint(Query::HINT_REFRESH, true)
+    		->getResult();
     }
 
     // /**
