@@ -227,6 +227,10 @@
         <source>user.updated_successfully</source>
         <target>Uporabnik uspešno posodobljen!</target>
       </trans-unit>
+      <trans-unit id="user.username_taken" resname="user.username_taken">
+        <source>user.username_taken</source>
+        <target>To uporabniško ime je že zasedeno.</target>
+      </trans-unit>
      
           
       
