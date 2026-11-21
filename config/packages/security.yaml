@@ -32,6 +32,9 @@ security:
                 login_path: app_login
                 check_path: app_login
                 default_target_path: dashboard_index
+                enable_csrf: true
+                csrf_parameter: _csrf_token
+                csrf_token_id: authenticate
             logout:
                 # The route name the user can go to in order to logout
                 path: app_logout
