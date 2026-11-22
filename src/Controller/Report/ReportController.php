@@ -741,7 +741,7 @@ class ReportController extends AbstractController
         ])
             ->from('App\Entity\Konto\Konto', 'k', 'k.id')
             ->leftJoin('App\Entity\Konto\KontoCategory', 'kc', 'WITH', 'k.category = kc.id')
-            ->leftJoin('App\Entity\Transaction\Transaction', 't', 'WITH', 't.sum >= 0 AND (t.debitKonto = k.id OR t.creditKonto = k.id)')
+            ->leftJoin('App\Entity\Transaction\Transaction', 't', 'WITH', '(t.debitKonto = k.id OR t.creditKonto = k.id)')
             ->Where('t.hidden = 0');
         if ($organizationId !== null)
             $qb->andWhere('t.organization = :orgId');
