@@ -210,14 +210,18 @@ class Transaction extends AggregateBase
      *
      * @param User $user
      *            The cloning user
+     * @param bool $keepHidden
+     *            Whether the clone may inherit the hidden flag; only allowed for users who may hide transactions
      * @return Transaction Cloned transaction
      */
-    public function clone(User $user): Transaction
+    public function clone(User $user, bool $keepHidden = false): Transaction
     {
         if ($this->hasDocument())
             throw new \Exception('Can\'t clone a transaction with document.');
         $c = new CreateTransactionCommand();
         $this->mapTo($c);
+        if (! $keepHidden)
+            $c->hidden = false;
         $transaction = $user->createTransactionWithDescription($c);
 
         return $transaction;
@@ -321,6 +325,11 @@ class Transaction extends AggregateBase
     public function getDate(): ?\DateTimeInterface
     {
         return $this->date;
+    }
+
+    public function isHidden(): bool
+    {
+        return (bool) $this->hidden;
     }
 
     public function getDateString(): ?string

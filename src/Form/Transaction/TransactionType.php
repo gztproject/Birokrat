@@ -60,7 +60,9 @@ class TransactionType extends AbstractType
             ]) 
             ->add('hidden', CheckboxType::class, [
             		'label' => 'label.hidden',
-                    'required' => false
+                    'required' => false,
+                    // A disabled field keeps its initial data and ignores submitted values.
+                    'disabled' => ! $options['allow_hidden'],
             ]) 
         ;
     }
@@ -70,6 +72,8 @@ class TransactionType extends AbstractType
         $resolver->setDefaults(array(
         	'data_class' => CreateTransactionCommand::class,
         	'allow_extra_fields' => true,
+        	'allow_hidden' => false,
         ));
+        $resolver->setAllowedTypes('allow_hidden', 'bool');
     }
 }

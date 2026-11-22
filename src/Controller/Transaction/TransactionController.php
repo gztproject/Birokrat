@@ -174,7 +174,9 @@ class TransactionController extends AbstractController {
 		$createTransactionCommand = new CreateTransactionCommand ();
 		$createTransactionCommand->hidden = false;
 
-		$form = $this->createForm ( TransactionType::class, $createTransactionCommand )->add ( 'saveAndCreateNew', SubmitType::class );
+		$form = $this->createForm ( TransactionType::class, $createTransactionCommand, [ 
+				'allow_hidden' => $this->canHideTransactions ()
+		] )->add ( 'saveAndCreateNew', SubmitType::class );
 
 		$form->handleRequest ( $request );
 
@@ -204,11 +206,16 @@ class TransactionController extends AbstractController {
 	#[Route(path: "/dashboard/transaction/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/edit", methods: ["GET", "POST"], name: "transaction_edit")]
 	public function edit(Request $request, Transaction $transaction, LoggerInterface $logger, ManagerRegistry $doctrine): Response
 	{
+	    $canHide = $this->canHideTransactions();
+	    if ($transaction->isHidden() && ! $canHide) {
+	        throw $this->createAccessDeniedException('Only administrators can edit hidden transactions.');
+	    }
+
 	    $updateTransactionCommand = new UpdateTransactionCommand();
 	    $transaction->mapTo($updateTransactionCommand);
 	    $doc = $transaction->getDocument();
 	    
-	    $form = $this->createForm(TransactionType::class, $updateTransactionCommand);
+	    $form = $this->createForm(TransactionType::class, $updateTransactionCommand, ['allow_hidden' => $canHide]);
 	    $form->handleRequest($request);
 	    
 	    if ($form->isSubmitted() && $form->isValid()) {
@@ -230,12 +237,13 @@ class TransactionController extends AbstractController {
 	#[Route(path: "/dashboard/transaction/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/clone", methods: ["GET", "POST"], name: "transaction_clone")]
 	public function clone(Request $request, Transaction $transaction, LoggerInterface $logger, ManagerRegistry $doctrine): Response
 	{
-	    $clone = $transaction->clone($this->getUser());
+	    $canHide = $this->canHideTransactions();
+	    $clone = $transaction->clone($this->getUser(), $canHide);
 	    
 	    $updateTransactionCommand = new UpdateTransactionCommand();
 	    $clone->mapTo($updateTransactionCommand);
 	    	    	    
-	    $form = $this->createForm(TransactionType::class, $updateTransactionCommand);
+	    $form = $this->createForm(TransactionType::class, $updateTransactionCommand, ['allow_hidden' => $canHide]);
 	    
 	    $form->handleRequest($request);
 	    
@@ -254,5 +262,14 @@ class TransactionController extends AbstractController {
 	        'transaction' => $clone,
 	        'form' => $form->createView(),
 	    ]);
+	}
+
+	/**
+	 * Hidden lines are left out of the overview, balance sheet, income statement and tax summary,
+	 * so only administrators may set the flag.
+	 */
+	private function canHideTransactions(): bool
+	{
+	    return $this->isGranted('ROLE_ADMIN');
 	}
 }
