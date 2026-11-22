@@ -11,7 +11,7 @@ final class MailerSettings
         private readonly string $environment,
         #[Autowire('%env(MAILER_DSN)%')]
         private readonly string $dsn,
-        #[Autowire('%env(default::MAILER_OVERRIDE_TO)%')]
+        #[Autowire('%env(MAILER_OVERRIDE_TO)%')]
         private readonly string $overrideTo = '',
     ) {
     }
