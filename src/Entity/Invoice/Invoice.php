@@ -131,6 +131,8 @@ class Invoice extends AggregateBase implements iTransactionDocument
     	if($this->state != States::new)
     		throw new \Exception("Only new invoices can be updated.");
     	parent::updateBase($user);
+    	$issuer = $this->issuer;
+    	$recepient = $this->recepient;
     	if($c->dateOfIssue !== null && $c->dateOfIssue !== $this->dateOfIssue)
     		$this->dateOfIssue = $c->dateOfIssue;
     	if($c->dateServiceRenderedFrom !== null && $c->dateServiceRenderedFrom !== $this->dateServiceRenderedFrom)
@@ -147,7 +149,8 @@ class Invoice extends AggregateBase implements iTransactionDocument
     		$this->number = $c->number;
     	if($c->recepient !== null && $c->recepient !== $this->recepient)
     		$this->recepient = $c->recepient;
-    	
+    	if($this->issuer !== $issuer || $this->recepient !== $recepient)
+    		$this->setRedundantData();
     	    
     	$itemsToKeep = new ArrayCollection();
     	foreach($c->invoiceItemCommands as $uiic)
