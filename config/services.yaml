@@ -8,7 +8,6 @@ parameters:
     # Numbers, dates, currency and addresses stay Slovenian even when the UI language is not.
     format_locale: 'sl_SI'
     env(MAILER_DSN): 'null://null'
-    env(MAILER_OVERRIDE_TO): 'gasper@sensware.si'
     # This parameter defines the codes of the locales (languages) enabled in the application
     app_locales: en|sl
     app.notifications.email_sender: anonymous@example.com

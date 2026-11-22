@@ -12,7 +12,7 @@ final class MailerSettings
         #[Autowire('%env(MAILER_DSN)%')]
         private readonly string $dsn,
         #[Autowire('%env(default::MAILER_OVERRIDE_TO)%')]
-        private readonly string $overrideTo = '',
+        private readonly ?string $overrideTo = null,
     ) {
     }
 
@@ -32,7 +32,7 @@ final class MailerSettings
 
     public function overrideTo(): string
     {
-        return trim($this->overrideTo);
+        return trim($this->overrideTo ?? '');
     }
 
     public function shouldRedirect(): bool
