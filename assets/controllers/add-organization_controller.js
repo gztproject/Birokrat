@@ -27,7 +27,10 @@ export default class extends Controller {
         const list = document.getElementById('organizationList');
         if (list && data?.[0]?.data?.organization) {
             const item = document.createElement('li');
-            item.innerHTML = `<a href="/dashboard/organization/${data[0].data.organization.id}"> ${data[0].data.organization.fullAddress}</a>`;
+            const link = document.createElement('a');
+            link.href = `/dashboard/organization/${encodeURIComponent(data[0].data.organization.id)}`;
+            link.textContent = ` ${data[0].data.organization.fullAddress}`;
+            item.append(link);
             list.append(item);
         }
     }
