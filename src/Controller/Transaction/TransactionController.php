@@ -211,6 +211,9 @@ class TransactionController extends AbstractController {
 	public function edit(Request $request, Transaction $transaction, LoggerInterface $logger, ManagerRegistry $doctrine): Response
 	{
 	    $this->denyUnlessOwnOrganization($transaction);
+	    if ($transaction->isHidden() && ! $this->canHideTransactions()) {
+	        throw $this->createAccessDeniedException('Only administrators can edit hidden transactions.');
+	    }
 
 	    $updateTransactionCommand = new UpdateTransactionCommand();
 	    $transaction->mapTo($updateTransactionCommand);
@@ -240,7 +243,7 @@ class TransactionController extends AbstractController {
 	{
 	    $this->denyUnlessOwnOrganization($transaction);
 
-	    $clone = $transaction->clone($this->getUser());
+	    $clone = $transaction->clone($this->getUser(), $this->canHideTransactions());
 	    
 	    $updateTransactionCommand = new UpdateTransactionCommand();
 	    $clone->mapTo($updateTransactionCommand);
@@ -275,6 +278,18 @@ class TransactionController extends AbstractController {
 
 	private function formOptions(): array
 	{
-	    return ['organizations' => array_values($this->getUser()->getOrganizations()->toArray())];
+	    return [
+	        'organizations' => array_values($this->getUser()->getOrganizations()->toArray()),
+	        'allow_hidden' => $this->canHideTransactions(),
+	    ];
+	}
+
+	/**
+	 * Hidden lines are left out of the overview, balance sheet, income statement and tax summary,
+	 * so only administrators may set the flag.
+	 */
+	private function canHideTransactions(): bool
+	{
+	    return $this->isGranted('ROLE_ADMIN');
 	}
 }
