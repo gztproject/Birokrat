@@ -78,6 +78,18 @@ class LunchExpenseRepository extends ServiceEntityRepository
     	
     	return $qb->orderBy('te.date', 'DESC');
     }
+    
+    public function countForOrganizationOnDay(Organization $organization, \DateTimeInterface $day): int
+    {
+    	return (int) $this->createQueryBuilder('le')
+    	->select('COUNT(le.id)')
+    	->where('le.organization = :organization')
+    	->andWhere('le.date = :day')
+    	->setParameter('organization', $organization)
+    	->setParameter('day', $day->format('Y-m-d'))
+    	->getQuery()
+    	->getSingleScalarResult();
+    }
 
     // /**
     //  * @return LunchExpense[] Returns an array of LunchExpense objects
