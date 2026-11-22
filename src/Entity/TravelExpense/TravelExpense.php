@@ -207,11 +207,9 @@ class TravelExpense extends AggregateBase implements iTransactionDocument
      */
     public function createTravelStop(CreateTravelStopCommand $c): TravelStop
     {
-    	echo("Creating new TravelStop with post ".$c->post.". ");
     	if($this->state > States::unbooked)
     		throw new \Exception("Can't update booked or cancelled TravelExpenses.");
     	$ts = new TravelStop($c, $this);
-    	echo("Created ".$ts);
     	$this->travelStops->add($ts);
     	$this->calculateTotalDistance();
     	return $ts;
@@ -246,8 +244,6 @@ class TravelExpense extends AggregateBase implements iTransactionDocument
     	if($this->travelStops->count() < 3) 
     		throw new \Exception("Can't remove last two TravelStops.");
     	
-    	echo("Removing TravelStop ".$ts.". ");
-    		    	
     	$this->travelStops->removeElement($ts);    		
     	if ($ts->getTravelExpense() === $this) {
     		$ts->remove();
