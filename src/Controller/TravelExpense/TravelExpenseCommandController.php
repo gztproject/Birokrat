@@ -2,6 +2,7 @@
 
 namespace App\Controller\TravelExpense;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -198,41 +199,43 @@ class TravelExpenseCommandController extends AbstractController
     {
     	$dateFrom = $request->request->get('dateFrom', 0);
     	$dateTo = $request->request->get('dateTo', 0);
-    	$queryBuilder = $repo->getFilteredQuery($this->getUser()->getOrganizations(), $dateFrom, $dateTo, true, false);
-    	
-    	$travelExpenses = $queryBuilder->getQuery()->getResult();
-    	
-    	$organizations = new ArrayCollection();
-    	
-    	foreach($travelExpenses as $te)
-    	{
-    		if(!$organizations->contains($te->getOrganization()))
-    			$organizations->add($te->getOrganization());    		
-    	}
-    	
-    	foreach($organizations as $org)
-    	{
-    		$myTes = array_filter($travelExpenses, function ($v) use ($org) {return $v->getOrganization() == $org;});
-    		$c = new CreateTravelExpenseBundleCommand();
-    		$c->travelExpenses = $myTes;
-    		$c->organization = $org;
-    		
-    		$bundle = $this->getUser()->createTravelExpenseBundle($c);      	
-	    	
-    		$date = new \DateTime($request->request->get('date', null));
-    		$entityManager = $doctrine->getManager();
-	    	
-    		$transaction = $bundle->setBooked($date, $this->getUser());
-	    	
-    		foreach($myTes as $te)
+    	$date = new \DateTime($request->request->get('date', null));
+    	$user = $this->getUser();
+    	$userOrganizations = $user->getOrganizations();
+
+    	$travelExpenses = $doctrine->getManager()->wrapInTransaction(function (EntityManagerInterface $entityManager) use ($repo, $dateFrom, $dateTo, $date, $user, $userOrganizations) {
+    		$travelExpenses = $repo->findUnbookedForBooking($userOrganizations, $dateFrom, $dateTo);
+
+    		$organizations = new ArrayCollection();
+
+    		foreach($travelExpenses as $te)
     		{
-	    		$entityManager->persist($te);
+    			if(!$organizations->contains($te->getOrganization()))
+    				$organizations->add($te->getOrganization());
     		}
-    		$entityManager->persist($bundle);
-    		$entityManager->persist($transaction);
-    		$entityManager->flush();
-    	}
-    	
+
+    		foreach($organizations as $org)
+    		{
+    			$myTes = array_filter($travelExpenses, function ($v) use ($org) {return $v->getOrganization() == $org;});
+    			$c = new CreateTravelExpenseBundleCommand();
+    			$c->travelExpenses = $myTes;
+    			$c->organization = $org;
+
+    			$bundle = $user->createTravelExpenseBundle($c);
+    			$transaction = $bundle->setBooked($date, $user);
+
+    			foreach($myTes as $te)
+    			{
+    				$entityManager->persist($te);
+    			}
+    			$entityManager->persist($bundle);
+    			$entityManager->persist($transaction);
+    			$entityManager->flush();
+    		}
+
+    		return $travelExpenses;
+    	});
+
     	return new JsonResponse($travelExpenses);
     }
 

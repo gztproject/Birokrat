@@ -6,6 +6,8 @@ use App\Entity\Organization\Organization;
 use App\Entity\TravelExpense\TravelExpense;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\ArrayParameterType;
+use Doctrine\DBAL\LockMode;
+use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Common\Collections\Criteria;
@@ -84,6 +86,23 @@ class TravelExpenseRepository extends ServiceEntityRepository
             ->setMaxResults($limit)
             ->getQuery()
             ->getResult();
+    }
+
+    /**
+     * Loads and row-locks the unbooked TravelExpenses in the range so that a concurrent
+     * booking waits for this one and then no longer sees them as unbooked.
+     * Must be called inside a transaction that also persists the booking.
+     *
+     * @param iterable<Organization> $organizations
+     * @return TravelExpense[]
+     */
+    public function findUnbookedForBooking(iterable $organizations, $from, $to): array
+    {
+    	return $this->getFilteredQuery($organizations, $from, $to, true, false)
+    		->getQuery()
+    		->setLockMode(LockMode::PESSIMISTIC_WRITE)
+    		->setHint(Query::HINT_REFRESH, true)
+    		->getResult();
     }
 
     /**

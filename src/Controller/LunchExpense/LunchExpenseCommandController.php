@@ -2,6 +2,7 @@
 
 namespace App\Controller\LunchExpense;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -60,41 +61,43 @@ class LunchExpenseCommandController extends AbstractController
     {
     	$dateFrom = $request->request->get('dateFrom', 0);
     	$dateTo = $request->request->get('dateTo', 0);
-    	$queryBuilder = $repo->getFilteredQuery($this->getUser()->getOrganizations(), $dateFrom, $dateTo, true, false);
-    	
-    	$lunchExpenses = $queryBuilder->getQuery()->getResult();
-    	
-    	$organizations = new ArrayCollection();
-    	
-    	foreach($lunchExpenses as $te)
-    	{
-    		if(!$organizations->contains($te->getOrganization()))
-    			$organizations->add($te->getOrganization());    		
-    	}
-    	
-    	foreach($organizations as $org)
-    	{
-    		$myTes = array_filter($lunchExpenses, function ($v) use ($org) {return $v->getOrganization() == $org;});
-    		$c = new CreateLunchExpenseBundleCommand();
-    		$c->lunchExpenses = $myTes;
-    		$c->organization = $org;
-    		
-    		$bundle = $this->getUser()->createLunchExpenseBundle($c);      	
-	    	
-    		$date = new \DateTime($request->request->get('date', null));
-    		$entityManager = $doctrine->getManager();
-	    	
-    		$transaction = $bundle->setBooked($date, $this->getUser());
-	    	
-    		foreach($myTes as $te)
+    	$date = new \DateTime($request->request->get('date', null));
+    	$user = $this->getUser();
+    	$userOrganizations = $user->getOrganizations();
+
+    	$lunchExpenses = $doctrine->getManager()->wrapInTransaction(function (EntityManagerInterface $entityManager) use ($repo, $dateFrom, $dateTo, $date, $user, $userOrganizations) {
+    		$lunchExpenses = $repo->findUnbookedForBooking($userOrganizations, $dateFrom, $dateTo);
+
+    		$organizations = new ArrayCollection();
+
+    		foreach($lunchExpenses as $te)
     		{
-	    		$entityManager->persist($te);
+    			if(!$organizations->contains($te->getOrganization()))
+    				$organizations->add($te->getOrganization());
     		}
-    		$entityManager->persist($bundle);
-    		$entityManager->persist($transaction);
-    		$entityManager->flush();
-    	}
-    	
+
+    		foreach($organizations as $org)
+    		{
+    			$myTes = array_filter($lunchExpenses, function ($v) use ($org) {return $v->getOrganization() == $org;});
+    			$c = new CreateLunchExpenseBundleCommand();
+    			$c->lunchExpenses = $myTes;
+    			$c->organization = $org;
+
+    			$bundle = $user->createLunchExpenseBundle($c);
+    			$transaction = $bundle->setBooked($date, $user);
+
+    			foreach($myTes as $te)
+    			{
+    				$entityManager->persist($te);
+    			}
+    			$entityManager->persist($bundle);
+    			$entityManager->persist($transaction);
+    			$entityManager->flush();
+    		}
+
+    		return $lunchExpenses;
+    	});
+
     	return new JsonResponse($lunchExpenses);
     }
     
