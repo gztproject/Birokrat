@@ -28,6 +28,7 @@ use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
 /**
  * Saving an edit or clone must keep a discount that was entered as a percent.
@@ -49,12 +50,16 @@ class InvoiceDiscountRoundTripTest extends KernelTestCase
 
     private Partner $recipient;
 
+    private string $previousDatabaseUrl = '';
+
     protected function setUp(): void
     {
+        $this->previousDatabaseUrl = (string) (getenv('DATABASE_URL') ?: ($_ENV['DATABASE_URL'] ?? ''));
         $_SERVER['DATABASE_URL'] = 'sqlite:///:memory:';
         $_ENV['DATABASE_URL'] = 'sqlite:///:memory:';
         putenv('DATABASE_URL=sqlite:///:memory:');
 
+        self::ensureKernelShutdown();
         self::bootKernel();
         $container = static::getContainer();
         $this->forms = $container->get('form.factory');
@@ -72,6 +77,24 @@ class InvoiceDiscountRoundTripTest extends KernelTestCase
         $this->user = $this->persistUser();
         [$this->issuer, $this->recipient] = $this->persistIssuerAndRecipient($this->user);
         $this->attachLedgerAccounts($this->issuer);
+        // MemberOrganizationType needs a signed-in member (or admin) for issuer choices.
+        $container->get('security.token_storage')->setToken(
+            new UsernamePasswordToken($this->user, 'main', $this->user->getRoles())
+        );
+    }
+
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+        if ($this->previousDatabaseUrl !== '') {
+            putenv('DATABASE_URL='.$this->previousDatabaseUrl);
+            $_ENV['DATABASE_URL'] = $this->previousDatabaseUrl;
+            $_SERVER['DATABASE_URL'] = $this->previousDatabaseUrl;
+        } else {
+            putenv('DATABASE_URL');
+            unset($_ENV['DATABASE_URL'], $_SERVER['DATABASE_URL']);
+        }
+        self::ensureKernelShutdown();
     }
 
     #[DataProvider('discountCases')]
@@ -284,7 +307,7 @@ class InvoiceDiscountRoundTripTest extends KernelTestCase
         $this->setProperty($user, 'position', 'Tester');
         $this->setProperty($user, 'totpEnabled', false);
         $this->setProperty($user, 'totpSecret', null);
-        $this->setProperty($user, 'roles', ['ROLE_USER']);
+        $this->setProperty($user, 'roles', ['ROLE_ADMIN']);
         $this->setProperty($user, 'password', $hasher->hashPassword($user, 'password'));
         $this->em->persist($user);
         $this->em->flush();
