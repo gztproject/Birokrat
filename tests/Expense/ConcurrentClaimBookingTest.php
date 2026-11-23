@@ -101,7 +101,7 @@ final class ConcurrentClaimBookingTest extends WebTestCase
     private function bookTwice(string $kind, string $claimClass, string $path, string $bundleField, array $seed): array
     {
         $repository = $this->em->getRepository($claimClass);
-        $visible = $repository->getFilteredQuery((string) $seed['from'], (string) $seed['to'], true, false)->getQuery()->getResult();
+        $visible = $repository->getFilteredQuery([$seed['organization']], (string) $seed['from'], (string) $seed['to'], true, false)->getQuery()->getResult();
         self::assertCount(1, $visible, 'The unbooked claim must be visible to the booking query.');
 
         $directory = sys_get_temp_dir().'/birokrat-booking-'.bin2hex(random_bytes(6));
