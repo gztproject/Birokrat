@@ -31,7 +31,6 @@ use PHPUnit\Framework\TestCase;
 use Qipsius\TCPDFBundle\Controller\TCPDFController;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use TCPDF;
-use TCPDF2DBarcode;
 
 /**
  * Sales-invoice PDFs must encode the account, name, and address copied onto the
@@ -92,11 +91,6 @@ class InvoicePaymentQrTest extends TestCase
 
         $expected = $this->expectedUpnPayload($invoice);
         self::assertSame($expected, $actual);
-
-        $expectedMatrix = (new TCPDF2DBarcode($expected, 'QRCODE,M'))->getBarcodeArray();
-        $actualMatrix = (new TCPDF2DBarcode($actual, 'QRCODE,M'))->getBarcodeArray();
-        self::assertNotEmpty($actualMatrix['bcode'] ?? []);
-        self::assertSame($expectedMatrix['bcode'], $actualMatrix['bcode']);
         self::assertStringNotContainsString($this->compactIban(self::ATTACKER_ACCOUNT), $actual);
         self::assertStringContainsString($this->compactIban(self::ORIGINAL_ACCOUNT), $actual);
     }

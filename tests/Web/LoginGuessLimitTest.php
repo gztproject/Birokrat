@@ -173,7 +173,7 @@ class LoginGuessLimitTest extends WebTestCase
 
     public function testMinimumLengthPasswordCanBeCreated(): void
     {
-        $admin = $this->creator();
+        $admin = $this->creator('creator-min-length');
         $created = $admin->createUser($this->command('created-long', self::MINIMUM_PASSWORD_LENGTH), $this->hasher);
 
         $this->assertNotSame($this->placeholderPassword(self::MINIMUM_PASSWORD_LENGTH), $created->getPassword());
@@ -192,8 +192,8 @@ class LoginGuessLimitTest extends WebTestCase
 
     private function assertPasswordRejected(int $length, string $operation): void
     {
-        $admin = $this->creator();
-        $account = $admin->createUser($this->command('password-rule', self::MINIMUM_PASSWORD_LENGTH), $this->hasher);
+        $admin = $this->creator('creator-password-rule-'.$operation.'-'.$length);
+        $account = $admin->createUser($this->command('password-rule-'.$operation.'-'.$length, self::MINIMUM_PASSWORD_LENGTH), $this->hasher);
 
         try {
             if ('create' === $operation) {
@@ -214,7 +214,7 @@ class LoginGuessLimitTest extends WebTestCase
 
     private function storeAccount(string $username, string $password): void
     {
-        $admin = $this->creator();
+        $admin = $this->creator('creator-'.$username);
         $account = $admin->createUser($this->command($username, null, $password), $this->hasher);
 
         $this->em->getConnection()->executeStatement('PRAGMA foreign_keys = OFF');
@@ -238,7 +238,7 @@ class LoginGuessLimitTest extends WebTestCase
         return $command;
     }
 
-    private function creator(): User
+    private function creator(string $username = 'creator'): User
     {
         $ref = new ReflectionClass(User::class);
         $user = $ref->newInstanceWithoutConstructor();
@@ -247,10 +247,10 @@ class LoginGuessLimitTest extends WebTestCase
         $this->setProperty($user, 'createdBy', $user);
         $this->setProperty($user, 'isActive', true);
         $this->setProperty($user, 'organizations', new ArrayCollection());
-        $this->setProperty($user, 'username', 'creator');
+        $this->setProperty($user, 'username', $username);
         $this->setProperty($user, 'firstName', 'Creator');
         $this->setProperty($user, 'lastName', 'Account');
-        $this->setProperty($user, 'email', 'creator@example.test');
+        $this->setProperty($user, 'email', $username.'@example.test');
         $this->setProperty($user, 'mobile', null);
         $this->setProperty($user, 'phone', null);
         $this->setProperty($user, 'signatureFilename', '');
