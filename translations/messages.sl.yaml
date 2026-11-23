@@ -173,5 +173,6 @@ update:
     checkout: Prevzem različice
     composer: Namestitev PHP odvisnosti
     frontend: Izgradnja vmesnika
+    uploads: Premik prilog iz javnega spletnega imenika
     migrate: Migracije podatkovne baze
     cache: Čiščenje predpomnilnika
