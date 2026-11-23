@@ -28,12 +28,17 @@ class OrganizationRepository extends ServiceEntityRepository
 
     /**
      * Limit a query to rows whose organization the user belongs to.
-     * A null member matches nothing so anonymous callers cannot widen the filter.
+     * Administrators are unrestricted. A null member matches nothing so anonymous
+     * callers cannot widen the filter.
      */
     public static function restrictToMember(QueryBuilder $qb, string $organizationPath, ?User $member): QueryBuilder
     {
         if ($member === null) {
             return $qb->andWhere('1 = 0');
+        }
+
+        if ($member->getIsRoleAdmin()) {
+            return $qb;
         }
 
         return $qb

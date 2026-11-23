@@ -1,6 +1,6 @@
 import { Controller } from '@hotwired/stimulus';
 
-const STEPS = ['requirements', 'fetch', 'checkout', 'composer', 'frontend', 'migrate', 'cache'];
+const STEPS = ['requirements', 'fetch', 'checkout', 'composer', 'frontend', 'uploads', 'migrate', 'cache'];
 
 export default class extends Controller {
     static targets = [

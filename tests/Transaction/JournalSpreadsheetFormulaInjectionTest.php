@@ -14,6 +14,7 @@ use App\Entity\User\User;
 use App\Form\Organization\OrganizationType;
 use App\Form\Transaction\TransactionType;
 use App\Repository\Transaction\TransactionRepository;
+use App\Security\OrganizationScope;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query;
@@ -285,6 +286,7 @@ class JournalSpreadsheetFormulaInjectionTest extends KernelTestCase
                 'dateTo' => '1700086400',
             ]),
             $this->createMock(PaginatorInterface::class),
+            static::getContainer()->get(OrganizationScope::class),
         );
 
         $path = $response->getFile()->getPathname();

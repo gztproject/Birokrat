@@ -12,17 +12,18 @@ use App\Entity\LunchExpense\LunchExpenseBundle;
 use Knp\Component\Pager\PaginatorInterface;
 use App\Http\InfiniteListResponder;
 use App\Security\OrganizationMemberVoter;
+use App\Security\OrganizationScope;
 
 class LunchExpenseQueryController extends AbstractController
 {    
 	#[Route(path: "/dashboard/lunchExpense", methods: ["GET"], name: "lunchExpense_index")]
-	public function index(LunchExpenseRepository $lunchExpenses, Request $request, PaginatorInterface $paginator, InfiniteListResponder $list): Response
+	public function index(LunchExpenseRepository $lunchExpenses, Request $request, PaginatorInterface $paginator, InfiniteListResponder $list, OrganizationScope $orgScope): Response
 	{   		
 		$dateFrom = $request->query->get('dateFrom', 0);
 		$dateTo = $request->query->get('dateTo', 0);
 		$booked = $request->query->get('booked', 'false') == 'true';
 		$unbooked = $request->query->get('unbooked', 'true') == 'true';
-		$queryBuilder = $lunchExpenses->getFilteredQuery($this->getUser()->getOrganizations(), $dateFrom, $dateTo, $unbooked, $booked);
+		$queryBuilder = $lunchExpenses->getFilteredQuery($orgScope->organizations(), $dateFrom, $dateTo, $unbooked, $booked);
 		$pagination = $list->paginate($paginator, $queryBuilder, $request);
 
 		if ($list->isPartial($request)) {

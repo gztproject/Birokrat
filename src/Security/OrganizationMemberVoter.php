@@ -12,15 +12,20 @@ use App\Entity\TravelExpense\TravelExpense;
 use App\Entity\TravelExpense\TravelExpenseBundle;
 use App\Entity\User\User;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\AccessDecisionManagerInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
 /**
- * Grants access to a company-owned document only to users who belong to that company.
+ * Grants access to a company-owned document to members of that company and to administrators.
  */
 class OrganizationMemberVoter extends Voter
 {
     public const MEMBER = 'ORGANIZATION_MEMBER';
+
+    public function __construct(private readonly AccessDecisionManagerInterface $accessDecisionManager)
+    {
+    }
 
     protected function supports(string $attribute, mixed $subject): bool
     {
@@ -44,6 +49,10 @@ class OrganizationMemberVoter extends Voter
             return false;
         }
 
+        if ($this->accessDecisionManager->decide($token, ['ROLE_ADMIN'])) {
+            return true;
+        }
+
         $organization = match (true) {
             $subject instanceof Invoice => $subject->getIssuer(),
             $subject instanceof IncomingInvoice => $subject->getRecepient(),
@@ -62,6 +71,10 @@ class OrganizationMemberVoter extends Voter
     {
         if ($organization === null) {
             return false;
+        }
+
+        if ($user->getIsRoleAdmin()) {
+            return true;
         }
 
         $id = $organization->getId()->toString();

@@ -5,7 +5,9 @@ namespace App\Tests\Unit;
 use PHPUnit\Framework\TestCase;
 
 /**
- * /admin/update runs Update.sh -v, which must relocate legacy public uploads.
+ * Later hops and interactive Update.sh relocate legacy public uploads.
+ * The first hop from an older release also relies on composer auto-scripts
+ * running app:migrate-public-uploads (see MigratePublicUploadsCommandTest).
  */
 class UpdateScriptUploadMigrationTest extends TestCase
 {

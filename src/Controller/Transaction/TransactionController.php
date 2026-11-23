@@ -22,17 +22,18 @@ use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use App\Service\Ledger\BankFeeFactory;
 use App\Http\InfiniteListResponder;
+use App\Security\OrganizationScope;
 use Psr\Log\LoggerInterface;
 
 class TransactionController extends AbstractController {
 	#[Route(path: "/dashboard/transaction", methods: ["GET"], name: "transaction_index")]
-	public function index(TransactionRepository $transactions, Request $request, PaginatorInterface $paginator, InfiniteListResponder $list): Response {
+	public function index(TransactionRepository $transactions, Request $request, PaginatorInterface $paginator, InfiniteListResponder $list, OrganizationScope $orgScope): Response {
 		$dateFrom = $request->query->get ( 'dateFrom', null );
 		$dateTo = $request->query->get ( 'dateTo', null );
 		$orgId = $request->query->get ( 'organization', null );
 		$orgId = $orgId === "" ? null : $orgId;
 
-		$queryBuilder = $transactions->getFilteredQuery ( $dateFrom, $dateTo, $this->getUser ()->getOrganizationIdsFilteredBy ( $orgId ) );
+		$queryBuilder = $transactions->getFilteredQuery ( $dateFrom, $dateTo, $orgScope->ids ( $orgId ) );
 		$pagination = $list->paginate ( $paginator, $queryBuilder, $request );
 
 		if ($list->isPartial ( $request )) {
@@ -46,13 +47,13 @@ class TransactionController extends AbstractController {
 	}
 
 	#[Route(path: "/dashboard/transaction/export", methods: ["GET"], name: "transaction_export")]
-	public function export(TransactionRepository $transactions, Request $request, PaginatorInterface $paginator): Response {
+	public function export(TransactionRepository $transactions, Request $request, PaginatorInterface $paginator, OrganizationScope $orgScope): Response {
 		$dateFrom = $request->query->get ( 'dateFrom', null );
 		$dateTo = $request->query->get ( 'dateTo', null );
 		$orgId = $request->query->get ( 'organization', null );
 		$orgId = $orgId === "" ? null : $orgId;
 
-		$queryBuilder = $transactions->getFilteredQuery ( $dateFrom, $dateTo, $this->getUser ()->getOrganizationIdsFilteredBy ( $orgId ), "ASC" );
+		$queryBuilder = $transactions->getFilteredQuery ( $dateFrom, $dateTo, $orgScope->ids ( $orgId ), "ASC" );
 
 		$result = $queryBuilder->getQuery ()->getResult ();
 

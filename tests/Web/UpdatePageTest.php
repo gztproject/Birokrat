@@ -69,6 +69,7 @@ class UpdatePageTest extends WebTestCase
         $this->assertSelectorExists('[data-channel="stable"]');
         $this->assertSelectorExists('[data-channel="prerelease"]');
         $this->assertSelectorExists('[data-step="requirements"]');
+        $this->assertSelectorExists('[data-step="uploads"]');
         $this->assertSelectorExists('[data-step="cache"]');
         $this->assertSelectorExists('[data-controller="update-badge"]');
     }

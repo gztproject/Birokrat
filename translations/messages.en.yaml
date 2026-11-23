@@ -64,5 +64,6 @@ update:
     checkout: Check out the release
     composer: Install PHP dependencies
     frontend: Build the frontend
+    uploads: Move uploads out of the public web directory
     migrate: Run database migrations
     cache: Clear the cache
