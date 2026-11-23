@@ -91,6 +91,19 @@ version_ok() {
 	[[ "$1" =~ ^v?[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.]+)?$ ]]
 }
 
+# Move legacy public uploads into the private uploads/ tree (idempotent).
+# Must run on both interactive and unattended upgrades; /admin/update uses -v.
+migrate_public_uploads() {
+	for dir in signatures incoming-invoices; do
+		if [ -d "public/uploads/$dir" ]; then
+			mkdir -p "uploads/$dir"
+			find "public/uploads/$dir" -maxdepth 1 -type f -exec mv -n {} "uploads/$dir/" \;
+			rmdir "public/uploads/$dir" 2>/dev/null || true
+		fi
+	done
+	rmdir public/uploads 2>/dev/null || true
+}
+
 run_unattended() {
 	if [[ -z "$VER" ]] || ! version_ok "$VER"; then
 		echo "Invalid version." >&2
@@ -138,6 +151,9 @@ run_unattended() {
 	# Encore and webpack live in devDependencies; do not use --omit=dev.
 	npm ci
 	npm run build
+
+	progress 88 uploads "Moving uploaded documents out of the public web directory."
+	migrate_public_uploads
 
 	progress 90 migrate "Running database migrations."
 	php bin/console doctrine:migrations:migrate --no-interaction --env=prod
@@ -287,14 +303,7 @@ npm ci
 npm run build
 
 # Move uploaded documents out of the public web directory when upgrading.
-for dir in signatures incoming-invoices; do
-	if [ -d "public/uploads/$dir" ]; then
-		mkdir -p "uploads/$dir"
-		find "public/uploads/$dir" -maxdepth 1 -type f -exec mv -n {} "uploads/$dir/" \;
-		rmdir "public/uploads/$dir" 2>/dev/null || true
-	fi
-done
-rmdir public/uploads 2>/dev/null || true
+migrate_public_uploads
 
 php bin/console doctrine:migrations:migrate --no-interaction --env=prod
 php bin/console cache:clear --env=prod
