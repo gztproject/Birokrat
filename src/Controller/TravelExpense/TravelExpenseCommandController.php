@@ -2,6 +2,7 @@
 
 namespace App\Controller\TravelExpense;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -59,34 +60,13 @@ class TravelExpenseCommandController extends AbstractController
     		
     		$transaction = $te->setNew($this->getUser());
     		
-    		//If this is the first lunchExpense of the day:
-    		$query = $lunchExpenses->getFilteredQuery($this->getUser()->getOrganizations(), $c->date->getTimestamp(), $c->date->getTimestamp(), true, true)->getQuery();
-    		$query->execute();
-    		$logger->debug("Found ".count($query->getResult())." existing LunchExpenses on ".date("r",$c->date->getTimestamp()));
-    		if(count($query->getResult()) == 0)
-    		{
-    				$logger->debug("Auto renerating lunch transaction is set to ".$c->organization->getOrganizationSettings()->getAutoCreateLunch());
-    				if($c->organization->getOrganizationSettings()->getAutoCreateLunch())
-    				{
-    					$clec = new CreateLunchExpenseCommand();
-    					$clec->date = $c->date;
-    					$clec->organization = $c->organization;
-    					$clec->sum = $c->organization->getOrganizationSettings()->getLunchValue();
-    					$lunchExpense = $this->getUser()->createLunchExpense($clec);
-    					
-    					$lunchTransaction =  $lunchExpense->setNew($this->getUser());
-    				}
-    				else $logger->debug("Auto generating lunch transaction is off. Moving on.");
-    				
-    				
-    			if(isset($lunchExpense))
-    				$logger->debug("Created lunch expense ".$lunchExpense.". ");
-    				else
-    					$logger->debug("Lunch expense not created.");
-    		}
+    		$lunchExpense = $this->createAutomaticLunchExpense($te, $lunchExpenses, $logger);
+    		if($lunchExpense !== null)
+    			$lunchTransaction = $lunchExpense->setNew($this->getUser());
+    		
     		$em->persist($te);
     		$em->persist($transaction);
-    		if(isset($lunchExpense))
+    		if($lunchExpense !== null)
     		{
     			$em->persist($lunchTransaction);
     			$em->persist($lunchExpense);
@@ -190,35 +170,15 @@ class TravelExpenseCommandController extends AbstractController
     		}
     		    		
     		$transaction = $clone->setNew($this->getUser());
-    		//If there's no lunch expense for the day yet:
-    		$query = $lunchExpenses->getFilteredQuery($this->getUser()->getOrganizations(), $updateTECommand->date->getTimestamp(), $updateTECommand->date->getTimestamp(), true, true)->getQuery();
-    		$query->execute();
-    		$logger->debug("Found ".count($query->getResult())." existing LunchExpenses on ".date("r",$updateTECommand->date->getTimestamp()));
-    		if(count($query->getResult()) == 0)
-    		{
-    			$logger->debug("Auto renerating lunch transaction is set to ".$updateTECommand->organization->getOrganizationSettings()->getAutoCreateLunch());
-    			if($updateTECommand->organization->getOrganizationSettings()->getAutoCreateLunch())
-    			{
-    				$clec = new CreateLunchExpenseCommand();
-    				$clec->date = $updateTECommand->date;
-    				$clec->organization = $updateTECommand->organization;
-    				$clec->sum = $updateTECommand->organization->getOrganizationSettings()->getLunchValue();
-    				$lunchExpense = $this->getUser()->createLunchExpense($clec);
-    				
-    				$lunchTransaction =  $lunchExpense->setNew($this->getUser());
-    			}
-    			else $logger->debug("Auto generating lunch transaction is off. Moving on.");
-    			
-    			
-    			if(isset($lunchExpense))
-    				$logger->debug("Created lunch expense ".$lunchExpense.". ");
-    				else
-    					$logger->debug("Lunch expense not created.");
-    		}
+    		
+    		$lunchExpense = $this->createAutomaticLunchExpense($clone, $lunchExpenses, $logger);
+    		if($lunchExpense !== null)
+    			$lunchTransaction = $lunchExpense->setNew($this->getUser());
+    		
     		$em->persist($clone);
     		$logger->debug("Persisting Cloned TravelExpense ".$clone.". ");
     		$em->persist($transaction);
-    		if(isset($lunchExpense))
+    		if($lunchExpense !== null)
     		{
     			$em->persist($lunchTransaction);
     			$em->persist($lunchExpense);
@@ -239,41 +199,43 @@ class TravelExpenseCommandController extends AbstractController
     {
     	$dateFrom = $request->request->get('dateFrom', 0);
     	$dateTo = $request->request->get('dateTo', 0);
-    	$queryBuilder = $repo->getFilteredQuery($this->getUser()->getOrganizations(), $dateFrom, $dateTo, true, false);
-    	
-    	$travelExpenses = $queryBuilder->getQuery()->getResult();
-    	
-    	$organizations = new ArrayCollection();
-    	
-    	foreach($travelExpenses as $te)
-    	{
-    		if(!$organizations->contains($te->getOrganization()))
-    			$organizations->add($te->getOrganization());    		
-    	}
-    	
-    	foreach($organizations as $org)
-    	{
-    		$myTes = array_filter($travelExpenses, function ($v) use ($org) {return $v->getOrganization() == $org;});
-    		$c = new CreateTravelExpenseBundleCommand();
-    		$c->travelExpenses = $myTes;
-    		$c->organization = $org;
-    		
-    		$bundle = $this->getUser()->createTravelExpenseBundle($c);      	
-	    	
-    		$date = new \DateTime($request->request->get('date', null));
-    		$entityManager = $doctrine->getManager();
-	    	
-    		$transaction = $bundle->setBooked($date, $this->getUser());
-	    	
-    		foreach($myTes as $te)
+    	$date = new \DateTime($request->request->get('date', null));
+    	$user = $this->getUser();
+    	$userOrganizations = $user->getOrganizations();
+
+    	$travelExpenses = $doctrine->getManager()->wrapInTransaction(function (EntityManagerInterface $entityManager) use ($repo, $dateFrom, $dateTo, $date, $user, $userOrganizations) {
+    		$travelExpenses = $repo->findUnbookedForBooking($userOrganizations, $dateFrom, $dateTo);
+
+    		$organizations = new ArrayCollection();
+
+    		foreach($travelExpenses as $te)
     		{
-	    		$entityManager->persist($te);
+    			if(!$organizations->contains($te->getOrganization()))
+    				$organizations->add($te->getOrganization());
     		}
-    		$entityManager->persist($bundle);
-    		$entityManager->persist($transaction);
-    		$entityManager->flush();
-    	}
-    	
+
+    		foreach($organizations as $org)
+    		{
+    			$myTes = array_filter($travelExpenses, function ($v) use ($org) {return $v->getOrganization() == $org;});
+    			$c = new CreateTravelExpenseBundleCommand();
+    			$c->travelExpenses = $myTes;
+    			$c->organization = $org;
+
+    			$bundle = $user->createTravelExpenseBundle($c);
+    			$transaction = $bundle->setBooked($date, $user);
+
+    			foreach($myTes as $te)
+    			{
+    				$entityManager->persist($te);
+    			}
+    			$entityManager->persist($bundle);
+    			$entityManager->persist($transaction);
+    			$entityManager->flush();
+    		}
+
+    		return $travelExpenses;
+    	});
+
     	return new JsonResponse($travelExpenses);
     }
 
@@ -285,4 +247,34 @@ class TravelExpenseCommandController extends AbstractController
     	];
     }
     
+    /**
+     * The allowance belongs to the travel expense's own organization and day, so both the
+     * "already has a lunch" check and the created LunchExpense must use that same organization.
+     */
+    private function createAutomaticLunchExpense(TravelExpense $te, LunchExpenseRepository $lunchExpenses, LoggerInterface $logger): ?LunchExpense
+    {
+    	$organization = $te->getOrganization();
+    	$date = $te->getDate();
+    	$settings = $organization->getOrganizationSettings();
+    	
+    	if(!$settings->getAutoCreateLunch())
+    	{
+    		$logger->debug("Auto generating lunch transaction is off for ".$organization.". Moving on.");
+    		return null;
+    	}
+    	
+    	$existing = $lunchExpenses->countForOrganizationOnDay($organization, $date);
+    	$logger->debug("Found ".$existing." existing LunchExpenses for ".$organization." on ".$date->format('Y-m-d'));
+    	if($existing > 0)
+    		return null;
+    	
+    	$clec = new CreateLunchExpenseCommand();
+    	$clec->date = $date;
+    	$clec->organization = $organization;
+    	$clec->sum = $settings->getLunchValue();
+    	$lunchExpense = $this->getUser()->createLunchExpense($clec);
+    	$logger->debug("Created lunch expense ".$lunchExpense.". ");
+    	
+    	return $lunchExpense;
+    }
 }

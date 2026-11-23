@@ -266,15 +266,43 @@ class IncomingInvoice extends AggregateBase implements iTransactionDocument {
 	}
 
 	/**
-	 * Reject the IncomingInvoice
+	 * Reject the IncomingInvoice and reverse everything booked on it.
 	 *
 	 * @param string $reason
 	 *        	A reason for the rejection
+	 * @param iterable<int, Transaction> $postedLines
+	 *        	Every journal line booked on this invoice; the reversals must be persisted in the same flush as the rejected state.
+	 * @throws \LogicException
+	 * @throws \InvalidArgumentException
+	 * @return Transaction[] Reversing lines
 	 */
-	public function reject(String $reason) {
+	public function reject(String $reason, User $user, iterable $postedLines): array {
+		$this->setState ( States::rejected );
+		parent::updateBase ( $user );
 		$this->dateRejected = \DateTime::createFromFormat ( 'U', date ( "U" ) );
 		$this->rejectedReason = $reason;
-		$this->setState ( States::rejected );
+
+		$reversals = [];
+		foreach ( $postedLines as $line ) {
+			$document = $line->getIncomingInvoice ();
+			if ($document === null || $document->getId ()->toString () !== $this->getId ()->toString ())
+				throw new \InvalidArgumentException ( "Transaction does not belong to this invoice." );
+
+			$c = new CreateTransactionCommand ();
+			$c->date = \DateTime::createFromInterface ( $line->getDate () );
+			$c->organization = $line->getOrganization ();
+			$c->debitKonto = $line->getCreditKonto ();
+			$c->creditKonto = $line->getDebitKonto ();
+			$c->sum = $line->getSum ();
+			$c->hidden = $line->isHidden ();
+			$c->description = trim ( $reason ) === '' ? 'Storno' : 'Storno: ' . trim ( $reason );
+			$c->role = TransactionRole::REVERSAL;
+			$reversal = new Transaction ( $c, $user, $this );
+			$reversal->setRelatedTransaction ( $line );
+			$reversals [] = $reversal;
+		}
+
+		return $reversals;
 	}
 
 	/**
@@ -328,7 +356,7 @@ class IncomingInvoice extends AggregateBase implements iTransactionDocument {
 				if ($newState != States::refunded)
 					throw new \LogicException ( "Can't transition to state $newState from $currState" );
 				break;
-			case States::refounded :
+			case States::refunded :
 				throw new \LogicException ( "Can't transition to state $newState from $currState" );
 				break;
 			case States::rejected :

@@ -7,4 +7,5 @@ final class TransactionRole
     public const DOCUMENT = 'document';
     public const ALLOCATION = 'allocation';
     public const BANK_FEE = 'bank_fee';
+    public const REVERSAL = 'reversal';
 }

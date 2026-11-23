@@ -1,7 +1,10 @@
 <?php 
 namespace App\Controller\IncomingInvoice;
 
+use Doctrine\DBAL\LockMode;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
+use Ramsey\Uuid\Uuid;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -10,6 +13,7 @@ use App\Entity\IncomingInvoice\IncomingInvoice;
 use App\Form\IncomingInvoice\IncomingInvoiceType;
 use App\Entity\IncomingInvoice\CreateIncomingInvoiceCommand;
 use App\Entity\IncomingInvoice\UpdateIncomingInvoiceCommand;
+use App\Entity\Transaction\Transaction;
 use App\Service\Ledger\BankFeeFactory;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -126,41 +130,53 @@ class IncomingInvoiceCommandController extends AbstractController
     #[Route(path: "/dashboard/incomingInvoice/pay", methods: ["POST"], name: "incomingInvoice_pay")]
     public function pay(Request $request, ManagerRegistry $doctrine, BankFeeFactory $bankFees): Response
     {
-    	$invoice = $doctrine->getRepository(IncomingInvoice::class)->findOneBy(['id'=>$request->request->get('id', null)]);
-    	if ($invoice === null || !$this->getUser()->belongsTo($invoice->getRecepient()))
-    		throw $this->createNotFoundException();
     	$date = new \DateTime($request->request->get('date', null));    	
-    	$entityManager = $doctrine->getManager();
-    	
-    	    	
-    	$transaction = $invoice->setPaid($date, $this->getUser(), $request->request->get('mode', null));
-    	    	
-    	$entityManager->persist($invoice);  
-    	$entityManager->persist($transaction);
-    	$fee = $bankFees->createIfNeeded($invoice->getRecepient(), $date, $request->request->get('bankCost', 0), $this->getUser(), $invoice, $transaction);
-    	if ($fee) {
-    		$entityManager->persist($fee);
-    	}
-    	$entityManager->flush();
-    	
+
+    	$doctrine->getManager()->wrapInTransaction(function (EntityManagerInterface $entityManager) use ($request, $bankFees, $date): void {
+    		$invoice = $this->lockOwnInvoice($entityManager, $request->request->get('id', null));
+    		$transaction = $invoice->setPaid($date, $this->getUser(), $request->request->get('mode', null));
+
+    		$entityManager->persist($invoice);
+    		$entityManager->persist($transaction);
+    		$fee = $bankFees->createIfNeeded($invoice->getRecepient(), $date, $request->request->get('bankCost', 0), $this->getUser(), $invoice, $transaction);
+    		if ($fee) {
+    			$entityManager->persist($fee);
+    		}
+    	});
+
     	return $this->redirectToRoute('incomingInvoice_index');
-    }    
-    	
+    }
+
     #[Route(path: "/dashboard/incomingInvoice/reject", methods: ["POST"], name: "incomingInvoice_reject")]
     public function reject(Request $request, ManagerRegistry $doctrine): Response
     {
-    	$invoice = $doctrine->getRepository(IncomingInvoice::class)->findOneBy(['id'=>$request->request->get('id', null)]);
-    	if ($invoice === null || !$this->getUser()->belongsTo($invoice->getRecepient())) {
+    	$doctrine->getManager()->wrapInTransaction(function (EntityManagerInterface $entityManager) use ($request): void {
+    		$invoice = $this->lockOwnInvoice($entityManager, $request->request->get('id', null));
+    		$posted = $entityManager->getRepository(Transaction::class)->findBy(['incomingInvoice' => $invoice]);
+    		$reversals = $invoice->reject($request->request->get('reason', ""), $this->getUser(), $posted);
+
+    		$entityManager->persist($invoice);
+    		BankFeeFactory::persist($entityManager, $reversals);
+    	});
+
+    	return $this->redirectToRoute('incomingInvoice_index');
+    }
+
+    /**
+     * Loads the invoice with a row lock so concurrent pay/reject requests see each other's state and journal lines.
+     * Must be called inside a transaction. Membership is checked after the lock so foreign bills stay 404.
+     */
+    private function lockOwnInvoice(EntityManagerInterface $entityManager, mixed $id): IncomingInvoice
+    {
+    	if (!is_string($id) || !Uuid::isValid($id)) {
     		throw $this->createNotFoundException();
     	}
-    	$entityManager = $doctrine->getManager();
-    	
-    	$invoice->reject($request->request->get('reason', ""));
-    	
-    	$entityManager->persist($invoice);
-    	$entityManager->flush();
-    	
-    	return $this->redirectToRoute('incomingInvoice_index');
+    	$invoice = $entityManager->find(IncomingInvoice::class, $id, LockMode::PESSIMISTIC_WRITE);
+    	if (!$invoice instanceof IncomingInvoice || !$this->getUser()->belongsTo($invoice->getRecepient())) {
+    		throw $this->createNotFoundException();
+    	}
+
+    	return $invoice;
     }
     
     //ToDo: Add a refund handler...

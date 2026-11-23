@@ -4,6 +4,8 @@ namespace App\Repository\LunchExpense;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\ArrayParameterType;
+use Doctrine\DBAL\LockMode;
+use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use App\Entity\LunchExpense\LunchExpense;
@@ -77,6 +79,35 @@ class LunchExpenseRepository extends ServiceEntityRepository
     	}
     	
     	return $qb->orderBy('te.date', 'DESC');
+    }
+    
+    public function countForOrganizationOnDay(Organization $organization, \DateTimeInterface $day): int
+    {
+    	return (int) $this->createQueryBuilder('le')
+    	->select('COUNT(le.id)')
+    	->where('le.organization = :organization')
+    	->andWhere('le.date = :day')
+    	->setParameter('organization', $organization)
+    	->setParameter('day', $day->format('Y-m-d'))
+    	->getQuery()
+    	->getSingleScalarResult();
+    }
+
+    /**
+     * Loads and row-locks the unbooked LunchExpenses in the range so that a concurrent
+     * booking waits for this one and then no longer sees them as unbooked.
+     * Must be called inside a transaction that also persists the booking.
+     *
+     * @param iterable<Organization> $organizations
+     * @return LunchExpense[]
+     */
+    public function findUnbookedForBooking(iterable $organizations, $from, $to): array
+    {
+    	return $this->getFilteredQuery($organizations, $from, $to, true, false)
+    		->getQuery()
+    		->setLockMode(LockMode::PESSIMISTIC_WRITE)
+    		->setHint(Query::HINT_REFRESH, true)
+    		->getResult();
     }
 
     // /**

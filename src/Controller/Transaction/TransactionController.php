@@ -17,6 +17,7 @@ use App\Repository\Transaction\TransactionRepository;
 use App\Entity\Transaction\UpdateTransactionCommand;
 use App\Entity\Transaction\CreateTransactionCommand;
 use App\Form\Transaction\TransactionType;
+use PhpOffice\PhpSpreadsheet\Cell\DataType;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use App\Service\Ledger\BankFeeFactory;
@@ -72,12 +73,13 @@ class TransactionController extends AbstractController {
 		$row ++;
 
 		foreach ( $result as $res ) {
-			$sheet->setCellValue ( 'A' . $row, $res->getOrganization ()->getShortName () );
+			// User-entered text must stay a string cell; setCellValue() turns a leading "=" into a live formula.
+			$sheet->setCellValueExplicit ( 'A' . $row, (string) $res->getOrganization ()->getShortName (), DataType::TYPE_STRING );
 			$sheet->setCellValue ( 'B' . $row, \PhpOffice\PhpSpreadsheet\Shared\Date::PHPToExcel ( $res->getDate () ) );
 			$sheet->setCellValue ( 'C' . $row, $res->getSum () );
 			$sheet->setCellValue ( 'D' . $row, $res->getCreditKonto ()->getNumber () );
 			$sheet->setCellValue ( 'E' . $row, $res->getDebitKonto ()->getNumber () );
-			$sheet->setCellValue ( 'F' . $row, $res->getDescription () );
+			$sheet->setCellValueExplicit ( 'F' . $row, (string) $res->getDescription (), DataType::TYPE_STRING );
 
 			$row ++;
 		}
@@ -209,6 +211,9 @@ class TransactionController extends AbstractController {
 	public function edit(Request $request, Transaction $transaction, LoggerInterface $logger, ManagerRegistry $doctrine): Response
 	{
 	    $this->denyUnlessOwnOrganization($transaction);
+	    if ($transaction->isHidden() && ! $this->canHideTransactions()) {
+	        throw $this->createAccessDeniedException('Only administrators can edit hidden transactions.');
+	    }
 
 	    $updateTransactionCommand = new UpdateTransactionCommand();
 	    $transaction->mapTo($updateTransactionCommand);
@@ -238,7 +243,7 @@ class TransactionController extends AbstractController {
 	{
 	    $this->denyUnlessOwnOrganization($transaction);
 
-	    $clone = $transaction->clone($this->getUser());
+	    $clone = $transaction->clone($this->getUser(), $this->canHideTransactions());
 	    
 	    $updateTransactionCommand = new UpdateTransactionCommand();
 	    $clone->mapTo($updateTransactionCommand);
@@ -273,6 +278,18 @@ class TransactionController extends AbstractController {
 
 	private function formOptions(): array
 	{
-	    return ['organizations' => array_values($this->getUser()->getOrganizations()->toArray())];
+	    return [
+	        'organizations' => array_values($this->getUser()->getOrganizations()->toArray()),
+	        'allow_hidden' => $this->canHideTransactions(),
+	    ];
+	}
+
+	/**
+	 * Hidden lines are left out of the overview, balance sheet, income statement and tax summary,
+	 * so only administrators may set the flag.
+	 */
+	private function canHideTransactions(): bool
+	{
+	    return $this->isGranted('ROLE_ADMIN');
 	}
 }
