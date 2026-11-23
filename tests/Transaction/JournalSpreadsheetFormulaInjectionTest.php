@@ -14,6 +14,7 @@ use App\Entity\User\User;
 use App\Form\Organization\OrganizationType;
 use App\Form\Transaction\TransactionType;
 use App\Repository\Transaction\TransactionRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
@@ -30,6 +31,7 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
+use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use ZipArchive;
 
 /**
@@ -173,7 +175,10 @@ class JournalSpreadsheetFormulaInjectionTest extends KernelTestCase
     private function submitDescription(string $description, ?CreateTransactionCommand $command = null): string
     {
         $command ??= new CreateTransactionCommand();
-        $form = $this->forms->create(TransactionType::class, $command);
+        $form = $this->forms->create(TransactionType::class, $command, [
+            'organizations' => [],
+            'allow_hidden' => false,
+        ]);
         // Submit only the textarea. The organization and konto fields are entity
         // choices and are not part of the text that reaches the description column.
         $field = $form->get('description');
@@ -232,6 +237,9 @@ class JournalSpreadsheetFormulaInjectionTest extends KernelTestCase
         $user = (new ReflectionClass(User::class))->newInstanceWithoutConstructor();
         $this->setProperty($user, 'firstName', 'Ada');
         $this->setProperty($user, 'lastName', 'Lovelace');
+        $this->setProperty($user, 'username', 'ada-export');
+        $this->setProperty($user, 'roles', ['ROLE_USER']);
+        $this->setProperty($user, 'organizations', new ArrayCollection());
 
         return $user;
     }
@@ -264,7 +272,13 @@ class JournalSpreadsheetFormulaInjectionTest extends KernelTestCase
         $transactions = $this->createMock(TransactionRepository::class);
         $transactions->method('getFilteredQuery')->willReturn($queryBuilder);
 
-        $response = (new TransactionController())->export(
+        $controller = new TransactionController();
+        $controller->setContainer(static::getContainer());
+        static::getContainer()->get('security.token_storage')->setToken(
+            new UsernamePasswordToken($this->user, 'main', $this->user->getRoles()),
+        );
+
+        $response = $controller->export(
             $transactions,
             Request::create('/dashboard/transaction/export', 'GET', [
                 'dateFrom' => '1700000000',

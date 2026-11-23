@@ -428,12 +428,14 @@ final class RejectedSupplierBillLedgerTest extends WebTestCase
             return $reflected->invoke($controller, ...$args);
         };
 
+        $organizationIds = [$orgId];
+
         return [
-            'overview' => $call('getOverviewReport', $orgId, $from, $to, $this->em),
-            'bilanca' => $call('getBilancaReport', $orgId, $to, $this->em),
-            'turnout' => $call('getTurnoutReport', $orgId, $from, $to, $this->em),
-            'ddd' => $call('getDDDReport', $orgId, $from, $to, $this->em),
-            'kontos' => $call('getKontoReport', $orgId, $from, $to, $this->em)['kontos'],
+            'overview' => $call('getOverviewReport', $organizationIds, $from, $to, $this->em),
+            'bilanca' => $call('getBilancaReport', $organizationIds, $to, $this->em),
+            'turnout' => $call('getTurnoutReport', $organizationIds, $from, $to, $this->em),
+            'ddd' => $call('getDDDReport', $organizationIds, $from, $to, $this->em),
+            'kontos' => $call('getKontoReport', $organizationIds, $from, $to, $this->em)['kontos'],
         ];
     }
 
@@ -467,6 +469,8 @@ final class RejectedSupplierBillLedgerTest extends WebTestCase
         if ($feeCredit instanceof Konto) {
             $this->setSetting($settings, 'BankFeeCredit', $feeCredit);
         }
+        $this->fixtures['user']->addOrganization($org, $admin);
+        $this->fixtures['admin']->addOrganization($org, $admin);
         $this->em->persist($org);
         $this->em->flush();
 

@@ -206,18 +206,13 @@ class InvoicePdfRemoteHtmlTest extends TestCase
         return [
             'download' => ['S', false],
             'print' => ['S', true],
-            'email file' => ['F', false],
+            // Email uses the same in-memory string destination as download.
+            'email' => ['S', false],
         ];
     }
 
     private function render(Invoice $invoice, string $destination = 'S', bool $print = false): string
     {
-        $path = null;
-        if ($destination === 'F') {
-            $path = sys_get_temp_dir().'/invoice-pdf-'.bin2hex(random_bytes(4)).'/';
-            mkdir($path, 0700, true);
-        }
-
         $pdf = InvoicePdfFactory::factory(
             $invoice,
             new class implements TranslatorInterface {
@@ -233,18 +228,8 @@ class InvoicePdfRemoteHtmlTest extends TestCase
             },
             new TCPDFController('TCPDF'),
             $destination,
-            $path,
             $print
         )->generate();
-
-        if ($destination === 'F') {
-            $written = glob($path.'*.pdf') ?: [];
-            $pdf = $written === [] ? (string) $pdf : (string) file_get_contents($written[0]);
-            foreach ($written as $file) {
-                @unlink($file);
-            }
-            @rmdir($path);
-        }
 
         return (string) $pdf;
     }

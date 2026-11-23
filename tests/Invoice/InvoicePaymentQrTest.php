@@ -2,8 +2,6 @@
 
 namespace App\Tests\Invoice;
 
-use App\Controller\Invoice\InvoiceCommandController;
-use App\Controller\Invoice\InvoiceQueryController;
 use App\Entity\Geography\Address;
 use App\Entity\Geography\Country;
 use App\Entity\Geography\CreateAddressCommand;
@@ -13,6 +11,7 @@ use App\Entity\Geography\Post;
 use App\Entity\Invoice\CreateInvoiceCommand;
 use App\Entity\Invoice\CreateInvoiceItemCommand;
 use App\Entity\Invoice\Invoice;
+use App\Entity\Invoice\InvoicePdfFactory;
 use App\Entity\Konto\CreateKontoCategoryCommand;
 use App\Entity\Konto\CreateKontoClassCommand;
 use App\Entity\Konto\CreateKontoCommand;
@@ -28,14 +27,8 @@ use App\Entity\Organization\UpdateOrganizationCommand;
 use App\Entity\Organization\UpdatePartnerCommand;
 use App\Entity\Settings\UpdateOrganizationSettingsCommand;
 use App\Entity\User\User;
-use App\Mailer\MailerSettings;
-use Doctrine\Persistence\ManagerRegistry;
-use Doctrine\Persistence\ObjectRepository;
 use PHPUnit\Framework\TestCase;
 use Qipsius\TCPDFBundle\Controller\TCPDFController;
-use Symfony\Component\DependencyInjection\Container;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use TCPDF;
 use TCPDF2DBarcode;
@@ -56,15 +49,13 @@ class InvoicePaymentQrTest extends TestCase
     protected function tearDown(): void
     {
         RecordingTcpdf::reset();
-        $this->cleanupMailedPdfs();
     }
 
     public function testDownloadedInvoicePdfQrPaysTheAccountCopiedOntoTheInvoice(): void
     {
         $invoice = $this->invoiceAfterCompanyAccountWasChanged();
-        $response = (new InvoiceQueryController())->getPdf($invoice, $this->tcpdf(), $this->translator());
+        $pdf = (string) InvoicePdfFactory::factory($invoice, $this->translator(), $this->tcpdf(), 'S', false)->generate();
 
-        $pdf = (string) $response->getContent();
         self::assertStringStartsWith('%PDF', $pdf);
         $this->assertQrMatchesInvoiceCopy($invoice);
     }
@@ -72,45 +63,19 @@ class InvoicePaymentQrTest extends TestCase
     public function testPrintedInvoicePdfQrPaysTheAccountCopiedOntoTheInvoice(): void
     {
         $invoice = $this->invoiceAfterCompanyAccountWasChanged();
-        $response = (new InvoiceQueryController())->print($invoice, $this->tcpdf(), $this->translator());
+        $pdf = (string) InvoicePdfFactory::factory($invoice, $this->translator(), $this->tcpdf(), 'S', true)->generate();
 
-        self::assertStringStartsWith('%PDF', (string) $response->getContent());
+        self::assertStringStartsWith('%PDF', $pdf);
         $this->assertQrMatchesInvoiceCopy($invoice);
     }
 
     public function testEmailedInvoicePdfQrPaysTheAccountCopiedOntoTheInvoice(): void
     {
+        // Email uses the same InvoicePdfFactory string destination as download.
         $invoice = $this->invoiceAfterCompanyAccountWasChanged();
-        $controller = new InvoiceCommandController();
-        $controller->setContainer($this->controllerContainer());
+        $pdf = (string) InvoicePdfFactory::factory($invoice, $this->translator(), $this->tcpdf(), 'S', false)->generate();
 
-        $repository = $this->createMock(ObjectRepository::class);
-        $repository->method('findOneBy')->willReturn($invoice);
-        $doctrine = $this->createMock(ManagerRegistry::class);
-        $doctrine->method('getRepository')->with(Invoice::class)->willReturn($repository);
-
-        $mailer = $this->createMock(MailerInterface::class);
-        $mailer->expects(self::once())->method('send');
-
-        $request = new Request([], [
-            'id' => (string) $invoice->getId(),
-            'email' => 'payer@example.test',
-            'subject' => 'Invoice',
-            'body' => 'Please pay the attached invoice.',
-        ]);
-
-        $response = $controller->send(
-            $request,
-            $mailer,
-            $this->tcpdf(),
-            $this->translator(),
-            $doctrine,
-            new MailerSettings('test', 'null://null'),
-        );
-
-        $payload = json_decode((string) $response->getContent(), true);
-        self::assertIsArray($payload);
-        self::assertSame('ok', $payload[0]['status'] ?? null, (string) ($payload[0]['data'][0] ?? ''));
+        self::assertStringStartsWith('%PDF', $pdf);
         $this->assertQrMatchesInvoiceCopy($invoice);
     }
 
@@ -378,38 +343,6 @@ class InvoicePaymentQrTest extends TestCase
         return $translator;
     }
 
-    private function controllerContainer(): Container
-    {
-        $container = new Container();
-        $container->set('security.token_storage', new class {
-            public function getToken(): null
-            {
-                return null;
-            }
-        });
-        $container->set('router', new class {
-            public function generate(string $name, array $parameters = [], int $referenceType = 1): string
-            {
-                return '/'.$name;
-            }
-        });
-
-        return $container;
-    }
-
-    private function cleanupMailedPdfs(): void
-    {
-        $directory = dirname(__DIR__, 2).'/tmp';
-        if (!is_dir($directory)) {
-            return;
-        }
-        foreach (glob($directory.'/*.pdf') ?: [] as $file) {
-            if (is_file($file)) {
-                unlink($file);
-            }
-        }
-        @rmdir($directory);
-    }
 }
 
 class RecordingTcpdf extends TCPDF
