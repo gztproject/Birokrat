@@ -12,7 +12,7 @@ use App\Form\Type\DateTimePickerType;
 use App\Repository\Organization\PartnerRepository;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use App\Entity\Organization\Partner;
-use App\Entity\Organization\Organization;
+use App\Form\Organization\MemberOrganizationType;
 use App\Entity\Invoice\CreateInvoiceCommand;
 
 class InvoiceType extends AbstractType
@@ -20,13 +20,9 @@ class InvoiceType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-        	->add('issuer', EntityType::class, array(
-        		'class' => Organization::class,
-        		'choice_label' => 'name',
-        		'expanded'=>false,
-        		'multiple'=>false,
+        	->add('issuer', MemberOrganizationType::class, [
         		'label' => 'label.issuer',
-        	))
+        	])
         	->add('number', TextType::class,[
         		'label' => 'label.number'
         	])        	

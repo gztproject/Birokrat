@@ -6,10 +6,8 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use App\Form\Type\DateTimePickerType;
-use App\Entity\LunchExpense\CreateLunchExpenseCommand;
 use App\Entity\Organization\Organization;
 use App\Entity\Transaction\CreateTransactionCommand;
-use Doctrine\DBAL\Types\DecimalType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use App\Entity\Konto\Konto;
@@ -22,6 +20,7 @@ class TransactionType extends AbstractType
         $builder
         	->add('organization', EntityType::class, [
         			'class' => Organization::class,
+        			'choices' => $options['organizations'],
         			'choice_label' => 'name',
         			'expanded'=>false,
         			'multiple'=>false,
@@ -71,5 +70,7 @@ class TransactionType extends AbstractType
         	'data_class' => CreateTransactionCommand::class,
         	'allow_extra_fields' => true,
         ));
+        $resolver->setRequired('organizations');
+        $resolver->setAllowedTypes('organizations', Organization::class.'[]');
     }
 }

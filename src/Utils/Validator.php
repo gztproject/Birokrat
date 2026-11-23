@@ -11,6 +11,7 @@
 
 namespace App\Utils;
 
+use App\Entity\User\User;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
 
 /**
@@ -40,8 +41,8 @@ class Validator
             throw new InvalidArgumentException('The password can not be empty.');
         }
 
-        if (mb_strlen(trim($plainPassword)) < 6) {
-            throw new InvalidArgumentException('The password must be at least 6 characters long.');
+        if (mb_strlen(trim($plainPassword)) < User::MIN_PASSWORD_LENGTH) {
+            throw new InvalidArgumentException(sprintf('The password must be at least %d characters long.', User::MIN_PASSWORD_LENGTH));
         }
 
         return $plainPassword;

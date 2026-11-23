@@ -11,6 +11,7 @@ use App\Entity\LunchExpense\LunchExpense;
 use App\Entity\LunchExpense\LunchExpenseBundle;
 use Knp\Component\Pager\PaginatorInterface;
 use App\Http\InfiniteListResponder;
+use App\Security\OrganizationMemberVoter;
 
 class LunchExpenseQueryController extends AbstractController
 {    
@@ -21,7 +22,7 @@ class LunchExpenseQueryController extends AbstractController
 		$dateTo = $request->query->get('dateTo', 0);
 		$booked = $request->query->get('booked', 'false') == 'true';
 		$unbooked = $request->query->get('unbooked', 'true') == 'true';
-		$queryBuilder = $lunchExpenses->getFilteredQuery($dateFrom, $dateTo, $unbooked, $booked);
+		$queryBuilder = $lunchExpenses->getFilteredQuery($this->getUser()->getOrganizations(), $dateFrom, $dateTo, $unbooked, $booked);
 		$pagination = $list->paginate($paginator, $queryBuilder, $request);
 
 		if ($list->isPartial($request)) {
@@ -39,6 +40,8 @@ class LunchExpenseQueryController extends AbstractController
     #[Route(path: "/dashboard/lunchExpense/bundle/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}", methods: ["GET"], name: "lunchExpenseBundle_show")]
     public function showBundle(LunchExpenseBundle $lunchExpenseBundle, Request $request, PaginatorInterface $paginator, InfiniteListResponder $list): Response
     {
+    	$this->denyAccessUnlessGranted(OrganizationMemberVoter::MEMBER, $lunchExpenseBundle);
+
     	$pagination = $list->paginate($paginator, $lunchExpenseBundle->getLunchExpenses(), $request);
 
     	if ($list->isPartial($request)) {

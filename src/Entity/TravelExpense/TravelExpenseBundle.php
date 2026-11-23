@@ -4,6 +4,7 @@ namespace App\Entity\TravelExpense;
 
 use App\Entity\Base\AggregateBase;
 use App\Entity\Konto\Konto;
+use App\Entity\Organization\Organization;
 use App\Entity\Transaction\Transaction;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -42,6 +43,11 @@ class TravelExpenseBundle extends AggregateBase implements iTransactionDocument
     public function getTravelExpenses(): Collection
     {
         return $this->travelExpenses;
+    }
+
+    public function getOrganization(): Organization
+    {
+        return $this->organization;
     }
 
     private function addTravelExpense(TravelExpense $travelExpense, User $user): self

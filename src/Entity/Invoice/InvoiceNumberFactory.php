@@ -25,9 +25,38 @@ class InvoiceNumberFactory
    		return new InvoiceNumberFactory($issuer, $state, $dateOfIssue, $em);
    	}
 	
+   	/**
+   	 * Returns the next number without reserving it. Use it only for previews.
+   	 */
    	public function generate(): String
+   	{
+   		return $this->next(false);
+   	}
+   	
+   	/**
+   	 * Returns the next number and keeps the issuer's sequence locked until the
+   	 * surrounding transaction ends, so the number has to be stored in that
+   	 * same transaction.
+   	 */
+   	public function allocate(): String
+   	{
+   		$connection = $this->__em->getConnection();
+   		if(!$connection->isTransactionActive())
+   			throw new \LogicException("Invoice numbers can only be allocated inside a transaction.");
+   		
+   		$locked = $connection->executeQuery(
+   			'SELECT o.id FROM organization AS o WHERE o.id = ? FOR UPDATE',
+   			[(string) $this->__issuer->getId()]
+   		)->fetchOne();
+   		if($locked === false)
+   			throw new \Exception("Can't find the issuing organization.");
+   		
+   		return $this->next(true);
+   	}
+   	
+   	private function next(bool $locking): String
    	{   	
-   		$sql = "SELECT i.* FROM invoice AS i WHERE i.issuer_id = '".$this->__issuer->getId()."' AND YEAR(i.date_of_issue) = ".$this->__dateOfIssue->format("Y");   		
+   		$sql = "SELECT i.number FROM invoice AS i WHERE i.issuer_id = ? AND YEAR(i.date_of_issue) = ?";
    		if($this->__state == 00)
    		{
    			$sql .= " AND i.state IN(10,20,30,50)";
@@ -38,10 +67,14 @@ class InvoiceNumberFactory
    		}
    		else if ($this->__state > 10)
    			throw new \Exception("Invoice numbers can only be assigned to draft and new invoices.");
-   		$sql .= ' ORDER BY i.date_of_issue DESC, i.number DESC LIMIT 1';
-   		$stmt = $this->__em->getConnection()->prepare($sql);   		  	 
+   		$sql .= " ORDER BY CAST(SUBSTRING_INDEX(i.number, '-', -1) AS UNSIGNED) DESC, i.date_of_issue DESC LIMIT 1";
+   		if($locking)
+   			$sql .= ' FOR UPDATE';
    		
-   		$lastInvoice =  $stmt->executeQuery()->fetchAssociative();
+   		$lastInvoice = $this->__em->getConnection()->executeQuery(
+   			$sql,
+   			[(string) $this->__issuer->getId(), (int) $this->__dateOfIssue->format("Y")]
+   		)->fetchAssociative();
    		
 	   	$lastNumber = "";
 	   	$prefix = $this->__issuer->getOrganizationSettings()!=null?$this->__issuer->getOrganizationSettings()->getInvoicePrefix():"";

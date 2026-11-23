@@ -2,6 +2,7 @@
 namespace App\Controller\User;
 
 use App\Form\User\UserType;
+use App\Http\StoredFileResponder;
 use App\Entity\User\User;
 use App\Repository\UserRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -105,6 +106,14 @@ class UserController extends AbstractController
             'user' => $user,
         ]);
     }
+
+    #[Route(path: "/user/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/signature", methods: ["GET"], name: "user_signature")]
+    public function signature(User $user, StoredFileResponder $files): Response
+    {
+        $this->denyAccessUnlessGranted('show', $user);
+
+        return $files->attachment($this->getParameter('signatures_directory'), $user->getSignatureFilename());
+    }
     
     #[Route(path: "/user/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/edit", methods: ["GET", "POST"], name: "user_edit")]
     #[Route(path: "/admin/user/{id<[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}>}/edit", methods: ["GET", "POST"], name: "admin_user_edit")]
@@ -151,6 +160,10 @@ class UserController extends AbstractController
         	
         	try 
         	{
+        		// Only another administrator may change the administrator flag; self-edit keeps the stored value.
+        		if ($this->getUser() === $user || !$this->isGranted('ROLE_ADMIN')) {
+        			$c->isRoleAdmin = $user->getIsRoleAdmin();
+        		}
         		$user->update($c, $this->getUser(), $passwordEncoder);
         	} 
         	catch (\Exception $e) 
