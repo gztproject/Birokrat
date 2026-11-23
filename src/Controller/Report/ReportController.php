@@ -17,16 +17,17 @@ use Doctrine\ORM\QueryBuilder;
 use Ramsey\Uuid\Uuid;
 use App\Entity\Report\Turnout;
 use App\Entity\Konto\Enumerators\KontoTypes;
+use App\Security\OrganizationScope;
 
 class ReportController extends AbstractController
 {
     #[Route(path: "/dashboard/report", methods: ["GET"], name: "report_index")]
-    public function index(Request $request, EntityManagerInterface $em): Response
+    public function index(Request $request, EntityManagerInterface $em, OrganizationScope $orgScope): Response
     {
         $dateFrom = $request->query->get('dateFrom', null);
         $dateTo = $request->query->get('dateTo', null);
         $orgId = $request->query->get('organization', null);
-        $orgIds = $this->getUser()->getOrganizationIdsFilteredBy($orgId === "" ? null : $orgId);
+        $orgIds = $orgScope->ids($orgId === "" ? null : $orgId);
 
         return $this->render('dashboard/report/index.html.twig', [            
             'overviewReport' => $this->getOverviewReport($orgIds, $dateFrom, $dateTo, $em),
@@ -37,12 +38,12 @@ class ReportController extends AbstractController
     }
 
     #[Route(path: "/dashboard/report/dddddd", methods: ["GET"], name: "report_dddddd")]
-    public function ddddddReport(Request $request, EntityManagerInterface $em): Response
+    public function ddddddReport(Request $request, EntityManagerInterface $em, OrganizationScope $orgScope): Response
     {
         $dateFrom = $request->query->get('dateFrom', null);
         $dateTo = $request->query->get('dateTo', null);
         $orgId = $request->query->get('organization', null);
-        $orgIds = $this->getUser()->getOrganizationIdsFilteredBy($orgId === "" ? null : $orgId);
+        $orgIds = $orgScope->ids($orgId === "" ? null : $orgId);
 
         return $this->render('dashboard/report/dddddd.html.twig', [
             'dddReport' => $this->getDDDReport($orgIds, $dateFrom, $dateTo, $em)
@@ -50,12 +51,12 @@ class ReportController extends AbstractController
     }
 
     #[Route(path: "/dashboard/report/blianca", methods: ["GET"], name: "report_bilanca")]
-    public function bilancaReport(Request $request, EntityManagerInterface $em): Response
+    public function bilancaReport(Request $request, EntityManagerInterface $em, OrganizationScope $orgScope): Response
     {
         $dateTo = $request->query->get('dateTo', null);
         $dateToLY = strtotime(date("c", $dateTo) . "-1 year");
         $orgId = $request->query->get('organization', null);
-        $orgIds = $this->getUser()->getOrganizationIdsFilteredBy($orgId === "" ? null : $orgId);
+        $orgIds = $orgScope->ids($orgId === "" ? null : $orgId);
 
         return $this->render('dashboard/report/bilanca.html.twig', [
             'bilancaReportThisYear' => $this->getBilancaReport($orgIds, $dateTo, $em),
@@ -64,14 +65,14 @@ class ReportController extends AbstractController
     }
 
     #[Route(path: "/dashboard/report/turnout", methods: ["GET"], name: "report_turnout")]
-    public function izkazIzidaReport(Request $request, EntityManagerInterface $em): Response
+    public function izkazIzidaReport(Request $request, EntityManagerInterface $em, OrganizationScope $orgScope): Response
     {
         $dateFrom = $request->query->get('dateFrom', null);
         $dateFromLY = strtotime(date("c", $dateFrom) . "-1 year");
         $dateTo = $request->query->get('dateTo', null);
         $dateToLY = strtotime(date("c", $dateTo) . "-1 year");
         $orgId = $request->query->get('organization', null);
-        $orgIds = $this->getUser()->getOrganizationIdsFilteredBy($orgId === "" ? null : $orgId);
+        $orgIds = $orgScope->ids($orgId === "" ? null : $orgId);
 
         return $this->render('dashboard/report/turnout.html.twig', [
             'turnoutReportThisYear' => $this->getTurnoutReport($orgIds, $dateFrom, $dateTo, $em),

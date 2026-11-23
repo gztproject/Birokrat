@@ -15,17 +15,18 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 use App\Entity\TravelExpense\TravelExpensePdfFactory;
 use Qipsius\TCPDFBundle\Controller\TCPDFController;
 use App\Security\OrganizationMemberVoter;
+use App\Security\OrganizationScope;
 
 class TravelExpenseQueryController extends AbstractController
 {    
 	#[Route(path: "/dashboard/travelExpense", methods: ["GET"], name: "travelExpense_index")]
-	public function index(TravelExpenseRepository $travelExpenses, Request $request, PaginatorInterface $paginator, InfiniteListResponder $list): Response
+	public function index(TravelExpenseRepository $travelExpenses, Request $request, PaginatorInterface $paginator, InfiniteListResponder $list, OrganizationScope $orgScope): Response
 	{   		
 		$dateFrom = $request->query->get('dateFrom', 0);
 		$dateTo = $request->query->get('dateTo', 0);
 		$booked = $request->query->get('booked', 'false') == 'true';
 		$unbooked = $request->query->get('unbooked', 'true') == 'true';
-		$queryBuilder = $travelExpenses->getFilteredQuery($this->getUser()->getOrganizations(), $dateFrom, $dateTo, $unbooked, $booked);
+		$queryBuilder = $travelExpenses->getFilteredQuery($orgScope->organizations(), $dateFrom, $dateTo, $unbooked, $booked);
 		$pagination = $list->paginate($paginator, $queryBuilder, $request);
 
 		if ($list->isPartial($request)) {

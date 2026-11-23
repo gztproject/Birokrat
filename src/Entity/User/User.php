@@ -533,6 +533,9 @@ class User extends AggregateBase implements UserInterface, PasswordAuthenticated
         if ($organization === null) {
             return false;
         }
+        if ($this->getIsRoleAdmin()) {
+            return true;
+        }
         $id = $organization->getId()->toString();
         foreach ($this->organizations as $own) {
             if ($own->getId()->toString() === $id) {
@@ -546,11 +549,16 @@ class User extends AggregateBase implements UserInterface, PasswordAuthenticated
     /**
      * Ids of the user's organizations, narrowed to $requestedId when the user belongs to it.
      * An id the user does not belong to is ignored rather than trusted.
+     * Administrators may filter to any requested id; with no filter they keep membership ids
+     * (callers that need every company must load all organizations separately).
      *
      * @return string[]
      */
     public function getOrganizationIdsFilteredBy(?string $requestedId): array
     {
+        if ($this->getIsRoleAdmin() && $requestedId !== null && $requestedId !== '') {
+            return [strtolower($requestedId)];
+        }
         $ids = [];
         foreach ($this->organizations as $own) {
             $ids[] = $own->getId()->toString();
