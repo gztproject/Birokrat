@@ -358,6 +358,8 @@ class Invoice extends AggregateBase implements iTransactionDocument
     				$to->$name = $this->$name;
     			}
     		}
+    		// Commands carry the discount as a percent, the invoice stores a fraction.
+    		$to->discount = round((float) $this->discount * 100, 2);
     	}
     	else
     	{

@@ -9,10 +9,5 @@ class UpdateInvoiceCommand extends CreateInvoiceCommand
 	{
 		$this->invoiceItemCommands = array();
 	}
-	
-	public function getDiscount()
-	{
-		return $this->discount * 100;
-	}
 
 }

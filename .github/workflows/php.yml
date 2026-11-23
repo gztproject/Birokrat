@@ -53,10 +53,10 @@ jobs:
           coverage: none
           tools: composer
 
-      - name: Install Apache and inotify for authorization tests
+      - name: Install Apache, inotify, and PDF/QR decode tools for tests
         run: |
           sudo apt-get update
-          sudo apt-get install -y apache2 libapache2-mod-php8.5 inotify-tools
+          sudo apt-get install -y apache2 libapache2-mod-php8.5 inotify-tools poppler-utils zbar-tools
 
       - name: Get Composer cache directory
         id: composer-cache

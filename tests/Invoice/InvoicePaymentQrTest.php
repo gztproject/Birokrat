@@ -181,28 +181,29 @@ class InvoicePaymentQrTest extends TestCase
 
     private function expectedUpnPayload(Invoice $invoice): string
     {
-        $payerAddress = $invoice->getRecepientFormattedAddress();
-        $issuerAddress = $invoice->getIssuerFormattedAddress();
+        $iban = strtoupper(preg_replace('/\s+/u', '', $invoice->getIssuerAccountNumber()) ?? '');
+        [$payerStreet, $payerPost] = $this->splitStoredAddress($invoice->getRecepientAddress());
+        [$issuerStreet, $issuerPost] = $this->splitStoredAddress($invoice->getIssuerAddress());
         $fields = [
             'UPNQR',
             '',
             '',
             '',
             '',
-            $this->qrField($invoice->getRecepientName()),
-            $this->qrField($this->streetFromFormattedAddress($payerAddress)),
-            $this->qrField($this->postFromFormattedAddress($payerAddress)),
+            $this->upnField($invoice->getRecepientName(), 33),
+            $this->upnField($payerStreet, 33),
+            $this->upnField($payerPost, 33),
             sprintf('%011d', (int) round($invoice->getTotalPrice() * 100)),
             '',
             '',
             'IVPT',
-            $this->qrField(sprintf('Plačilo računa %s', $invoice->getNumber())),
+            $this->upnField(sprintf('Plačilo računa %s', $invoice->getNumber()), 42),
             $invoice->getDueDate()->format('d.m.Y'),
-            $this->qrField($this->compactIban($invoice->getIssuerAccountNumber())),
-            $this->qrField(str_replace(' ', '', $invoice->getReferenceNumber())),
-            $this->qrField($invoice->getIssuerName()),
-            $this->qrField($this->streetFromFormattedAddress($issuerAddress)),
-            $this->qrField($this->postFromFormattedAddress($issuerAddress)),
+            $iban,
+            $this->upnField(str_replace(' ', '', $invoice->getReferenceNumber()), 26),
+            $this->upnField($invoice->getIssuerName(), 33),
+            $this->upnField($issuerStreet, 33),
+            $this->upnField($issuerPost, 33),
         ];
 
         $body = implode("\n", $fields)."\n";
@@ -210,31 +211,32 @@ class InvoicePaymentQrTest extends TestCase
         return str_pad($body, 411, ' ');
     }
 
-    private function qrField(string $value): string
+    private function upnField(string $value, int $maxLength): string
     {
-        $value = str_replace(["\r", "\n"], '', $value);
-        return str_replace(['Š', 'š', 'Č', 'č', 'Ž', 'ž'], ['S', 's', 'C', 'c', 'Z', 'z'], $value);
+        $value = function_exists('mb_scrub') ? mb_scrub($value, 'UTF-8') : $value;
+        $value = preg_replace('/[\p{C}\p{Z}]+/u', ' ', $value) ?? '';
+        $value = str_replace(['Š', 'š', 'Č', 'č', 'Ž', 'ž', 'Ć', 'ć', 'Đ', 'đ'], ['S', 's', 'C', 'c', 'Z', 'z', 'C', 'c', 'D', 'd'], $value);
+        $value = preg_replace('/[^\x20-\x7E]/u', '?', $value) ?? '';
+        $value = preg_replace('/[^\x20-\x7E]/', '', $value) ?? '';
+        return trim(substr(trim($value), 0, $maxLength));
     }
 
     private function compactIban(string $account): string
     {
-        return str_replace([' ', "\r", "\n"], '', $account);
+        return strtoupper(preg_replace('/\s+/u', '', $account) ?? '');
     }
 
     /**
-     * @param list<string> $parts
+     * @return array{0: string, 1: string}
      */
-    private function streetFromFormattedAddress(array $parts): string
+    private function splitStoredAddress(string $address): array
     {
-        return implode(', ', array_slice($parts, 0, -2));
-    }
+        $parts = explode(', ', $address);
+        if (count($parts) < 3) {
+            return [$parts[0] ?? '', $parts[1] ?? ''];
+        }
 
-    /**
-     * @param list<string> $parts
-     */
-    private function postFromFormattedAddress(array $parts): string
-    {
-        return $parts[count($parts) - 2];
+        return [implode(', ', array_slice($parts, 0, -2)), $parts[count($parts) - 2]];
     }
 
     private function organization(User $user, string $name, string $account, Address $address): Organization
