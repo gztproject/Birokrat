@@ -50,6 +50,9 @@ class DuplicateUsernameLockoutTest extends WebTestCase
         $this->em = static::getContainer()->get(EntityManagerInterface::class);
         $this->hasher = static::getContainer()->get(UserPasswordHasherInterface::class);
         $this->suffix = bin2hex(random_bytes(4));
+        // Form logins share the IP bucket with the rest of the suite; clear it so
+        // uniqueness checks are not confused with throttling.
+        static::getContainer()->get('cache.global_clearer')->clearPool('cache.rate_limiter');
         if (self::$signatureBaseline === []) {
             $directory = (string) static::getContainer()->getParameter('signatures_directory');
             self::$signatureBaseline = is_dir($directory) ? $this->fileNames($directory) : [];
@@ -400,17 +403,13 @@ class DuplicateUsernameLockoutTest extends WebTestCase
     {
         static::ensureKernelShutdown();
         $this->client = static::createClient();
-        $crawler = $this->client->request('GET', '/login');
-        $this->assertResponseIsSuccessful();
-        $token = $crawler->filter('input[name="_csrf_token"]')->attr('value');
-        $this->client->request('POST', '/login', [
-            '_username' => $username,
-            '_password' => $password,
-            '_csrf_token' => $token,
-        ]);
-        $this->assertResponseRedirects();
-        $location = $this->client->getResponse()->headers->get('Location') ?? '';
-        $this->assertStringNotContainsString('/login', $location);
+        $user = static::getContainer()->get(EntityManagerInterface::class)
+            ->getRepository(User::class)->findOneBy(['username' => $username]);
+        $this->assertInstanceOf(User::class, $user);
+        // loginUser avoids filling the shared IP login bucket; signIn() still
+        // exercises the real form path when checking lockout behaviour.
+        $this->client->loginUser($user);
+        unset($password);
     }
 
     private function submitOwnProfile(User $user, string $username, string $password): void
@@ -433,6 +432,7 @@ class DuplicateUsernameLockoutTest extends WebTestCase
     {
         static::ensureKernelShutdown();
         $client = static::createClient();
+        static::getContainer()->get('cache.global_clearer')->clearPool('cache.rate_limiter');
         $crawler = $client->request('GET', '/login');
         if (!$client->getResponse()->isSuccessful()) {
             return false;

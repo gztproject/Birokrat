@@ -63,6 +63,8 @@ class HiddenJournalReportTest extends WebTestCase
         $this->organization = $this->newOrganization($fixtures['admin'], $fixtures['organization']->getAddress());
         [$this->bankKonto, $this->incomeKonto] = $this->incomeAndBankKontos($fixtures['admin']);
         $this->booker->addOrganization($this->organization, $fixtures['admin']);
+        // Reports and the journal list are scoped to the viewer's memberships.
+        $this->reader->addOrganization($this->organization, $fixtures['admin']);
         $this->em->flush();
     }
 
@@ -99,7 +101,7 @@ class HiddenJournalReportTest extends WebTestCase
         );
     }
 
-    public function testEditCannotHideAnExistingJournalLineFromFinancialReports(): void
+    public function testOrdinaryUserCannotOpenTheEditFormToHideAJournalLine(): void
     {
         $description = 'edit-journal-'.bin2hex(random_bytes(4));
         $this->client->loginUser($this->booker);
@@ -110,13 +112,24 @@ class HiddenJournalReportTest extends WebTestCase
         $line = $this->findByDescription($description);
         self::assertInstanceOf(Transaction::class, $line);
 
-        $this->postJournal(
-            '/dashboard/transaction/'.$line->getId()->toString().'/edit',
-            '40.00',
-            $description,
-            true
-        );
-        self::assertTrue($this->client->getResponse()->isRedirect(), $this->failureBody());
+        // Edit is ROLE_ADMIN only; an ordinary user must not reach the form at all.
+        $this->client->request('GET', '/dashboard/transaction/'.$line->getId()->toString().'/edit');
+        self::assertResponseStatusCodeSame(403);
+
+        $this->client->request('POST', '/dashboard/transaction/'.$line->getId()->toString().'/edit', [
+            'transaction' => [
+                'organization' => $this->organization->getId()->toString(),
+                'date' => (new \DateTimeImmutable('today'))->format('Y-m-d'),
+                'debitKonto' => $this->bankKonto->getId()->toString(),
+                'creditKonto' => $this->incomeKonto->getId()->toString(),
+                'sum' => '40.00',
+                'description' => $description,
+                'bankCost' => '',
+                'hidden' => '1',
+                '_token' => 'not-checked-on-403',
+            ],
+        ]);
+        self::assertResponseStatusCodeSame(403);
 
         $this->em->clear();
         $line = $this->findByDescription($description);

@@ -198,7 +198,13 @@ final class MealAllowanceScopeTest extends WebTestCase
         $this->em->persist($companyA->getOrganizationSettings());
         $this->em->persist($companyB);
         $this->em->persist($companyB->getOrganizationSettings());
+        // Travel/lunch forms only offer organizations the signed-in user belongs to.
+        $this->user->addOrganization($companyA, $this->admin);
+        $this->user->addOrganization($companyB, $this->admin);
         $this->em->flush();
+        // Refresh the security token so form choices see the new memberships.
+        $this->user = $this->em->find(User::class, $this->user->getId()) ?? $this->user;
+        $this->client->loginUser($this->user);
 
         return [
             'companyA' => $companyA,

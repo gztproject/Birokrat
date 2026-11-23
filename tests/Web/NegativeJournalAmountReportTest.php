@@ -36,6 +36,10 @@ class NegativeJournalAmountReportTest extends WebTestCase
 
     private EntityManagerInterface $em;
 
+    private User $actor;
+
+    private User $admin;
+
     private string $organizationId;
 
     private string $debitKontoId;
@@ -63,16 +67,17 @@ class NegativeJournalAmountReportTest extends WebTestCase
             $this->markTestSkipped('Database is not available for application tests: '.$e->getMessage());
         }
 
-        $actor = $fixtures['user'];
-        $this->assertFalse($actor->getIsRoleAdmin());
-        $kontos = $this->createReportKontos($actor);
+        $this->actor = $fixtures['user'];
+        $this->admin = $fixtures['admin'];
+        $this->assertFalse($this->actor->getIsRoleAdmin());
+        $kontos = $this->createReportKontos($this->actor);
         $this->organizationId = $fixtures['organization']->getId()->toString();
         $this->debitKontoId = $kontos['debit']->getId()->toString();
         $this->creditKontoId = $kontos['credit']->getId()->toString();
         $this->periodFrom = (new \DateTimeImmutable('2024-06-15 00:00:00'))->getTimestamp();
         $this->periodTo = (new \DateTimeImmutable('2024-06-15 23:59:59'))->getTimestamp();
 
-        $this->client->loginUser($actor);
+        $this->client->loginUser($this->actor);
     }
 
     public function testPositiveJournalAmountMovesBothReportsTogether(): void
@@ -108,6 +113,8 @@ class NegativeJournalAmountReportTest extends WebTestCase
         $this->assertCount(1, $saved);
         $this->assertEqualsWithDelta(40.0, (float) $saved[0]->getSum(), 0.001);
 
+        // Ledger edit is ROLE_ADMIN only after the authz fold-in.
+        $this->client->loginUser($this->admin);
         $before = $this->reportSnapshot();
         $id = $saved[0]->getId()->toString();
         $crawler = $this->client->request('GET', '/dashboard/transaction/'.$id.'/edit');
@@ -115,6 +122,7 @@ class NegativeJournalAmountReportTest extends WebTestCase
         $this->submitJournalForm('/dashboard/transaction/'.$id.'/edit', $crawler, (string) self::AMOUNT, $description);
 
         $this->assertNegativeLineIsRejectedOrReported($before, $description, self::AMOUNT, 40.0);
+        $this->client->loginUser($this->actor);
     }
 
     public function testCloningJournalWithNegativeAmountCannotSplitTheReports(): void

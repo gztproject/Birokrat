@@ -40,6 +40,8 @@ class LoginCsrfTest extends WebTestCase
                 $em,
                 $container->get(UserPasswordHasherInterface::class),
             ))->load();
+            // Earlier suites may have exhausted the shared IP login bucket.
+            $container->get('cache.global_clearer')->clearPool('cache.rate_limiter');
         } catch (DbalException|\PDOException|\Throwable $e) {
             $this->markTestSkipped('Database is not available for application tests: '.$e->getMessage());
         }
