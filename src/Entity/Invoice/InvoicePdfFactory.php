@@ -232,36 +232,9 @@ class InvoicePdfFactory
    						'fgcolor' => array(0,0,0),
    						'bgcolor' => false,
    				);
-   				//ToDo: Move this somewhere else, it shouldn't really be here. 
-   				//https://www.upn-qr.si/uploads/files/NavodilaZaProgramerjeUPNQR.pdf
-   				$qrString = "";
-   				$qrString .= "UPNQR\n"; //1
-   				$qrString .= "\n";		//2
-   				$qrString .= "\n";		//3
-   				$qrString .= "\n";		//4
-   				$qrString .= "\n";		//5
-   				$qrString .= $this->__invoice->getRecepient()->getName()."\n";		//6 - recip. name
-   				$qrString .= $this->__invoice->getRecepient()->getAddress()->getStreetAddress()."\n";		//7 - recip. address
-   				$qrString .= $this->__invoice->getRecepient()->getAddress()->getPost()->getNameAndCode()."\n";		//8 - recip. ZIP + post
-   				$qrString .= sprintf("%011d\n", $this->__invoice->getTotalPrice()*100);			//9 - price*100; 11 chars, front zero padded
-   				$qrString .= "\n";		//10
-   				$qrString .= "\n";		//11
-   				$qrString .= "IVPT\n";															//12 - purpouse code (IVPT - invoice payment)
-   				$qrString .= sprintf("Plačilo računa %s\n", $this->__invoice->getNumber());		//13 - Description
-   				$qrString .= sprintf("%s\n",$this->__invoice->getDueDate()->format('d.m.Y'));		//14 - DueDate (DD.MM.YYYY)
-   				$qrString .= str_replace(' ', '',$this->__invoice->getIssuer()->getAccountNumber())."\n";		//15 - IBAN - no spaces
-   				$qrString .= str_replace([' '],'',$this->__invoice->getReferenceNumber())."\n";		//16 - reference
-   				$qrString .= $this->__invoice->getIssuer()->getName()."\n";		//17 - issuer name
-   				$qrString .= $this->__invoice->getIssuer()->getAddress()->getStreetAddress()."\n";		//18 - address
-   				$qrString .= $this->__invoice->getIssuer()->getAddress()->getPost()->getNameAndCode()."\n";		//19 - ZIP + post
-   				$qrString = str_replace(['Š', 'š', 'Č', 'č', 'Ž', 'ž'], ['S', 's', 'C', 'c', 'Z', 'z'], $qrString);
-   				$qrString .= sprintf("%03d\n",strlen($qrString));		//20 - checksum (num of characters without this field)
-   				while(strlen($qrString)<411)
-   				{
-   					$qrString.=" ";
-   				}   				
-
-				$pdf->write2DBarcode(utf8_encode($qrString), 'QRCODE,M', 135, 242, 30, 30, $style, 'N');
+   				$qrString = $this->buildUpnQrString();
+   				if($qrString !== null)
+   					$pdf->write2DBarcode($qrString, 'QRCODE,M', 135, 242, 30, 30, $style, 'N');
    				// ---------------------------------------------------------
    				
    				//Close and output PDF document
@@ -270,5 +243,84 @@ class InvoicePdfFactory
 
 				return $pdf->Output($title.'.pdf', $dest);
    	}
+
+	/**
+	 * Builds the UPN QR payload from the data stored on the invoice when it was created, so it
+	 * always matches the printed page. Returns null when a valid payload can't be produced.
+	 * @see https://www.upn-qr.si/uploads/files/NavodilaZaProgramerjeUPNQR.pdf
+	 */
+	private function buildUpnQrString(): ?string
+	{
+		$invoice = $this->__invoice;
+
+		$iban = strtoupper(preg_replace('/\s+/u', '', $invoice->getIssuerAccountNumber()) ?? '');
+		if(!preg_match('/^[A-Z]{2}[0-9]{2}[A-Z0-9]{11,30}$/', $iban))
+			return null;
+
+		$amount = (int) round($invoice->getTotalPrice() * 100);
+		if($amount < 0 || $amount > 99999999999)
+			return null;
+
+		[$recepientStreet, $recepientPost] = self::splitStoredAddress($invoice->getRecepientAddress());
+		[$issuerStreet, $issuerPost] = self::splitStoredAddress($invoice->getIssuerAddress());
+
+		$fields = [
+			'UPNQR',															//1 - leading style
+			'',																	//2 - payer IBAN
+			'',																	//3 - deposit
+			'',																	//4 - withdrawal
+			'',																	//5 - payer reference
+			self::upnField($invoice->getRecepientName(), 33),					//6 - payer name
+			self::upnField($recepientStreet, 33),								//7 - payer street
+			self::upnField($recepientPost, 33),								//8 - payer ZIP + post
+			sprintf('%011d', $amount),											//9 - price*100; 11 chars, front zero padded
+			'',																	//10 - payment date
+			'',																	//11 - urgent
+			'IVPT',																//12 - purpose code (IVPT - invoice payment)
+			self::upnField(sprintf('Plačilo računa %s', $invoice->getNumber()), 42),	//13 - description
+			$invoice->getDueDate()->format('d.m.Y'),							//14 - due date (DD.MM.YYYY)
+			$iban,																//15 - payee IBAN - no spaces
+			self::upnField(str_replace(' ', '', $invoice->getReferenceNumber()), 26),	//16 - reference
+			self::upnField($invoice->getIssuerName(), 33),						//17 - payee name
+			self::upnField($issuerStreet, 33),									//18 - payee street
+			self::upnField($issuerPost, 33),									//19 - payee ZIP + post
+		];
+
+		$qrString = implode("\n", $fields)."\n";
+		$qrString .= sprintf("%03d\n", strlen($qrString));					//20 - checksum (num of characters without this field)
+
+		$lines = explode("\n", $qrString);
+		if(count($lines) !== 21 || $lines[20] !== '' || $lines[14] !== $iban || strlen($qrString) > 411)
+			return null;
+
+		return str_pad($qrString, 411, ' ');
+	}
+
+	/**
+	 * Splits an address stored as "street[, line2], ZIP post, country" into street and ZIP + post.
+	 * @return array{0: string, 1: string}
+	 */
+	private static function splitStoredAddress(string $address): array
+	{
+		$parts = explode(', ', $address);
+		if(count($parts) < 3)
+			return [$parts[0], $parts[1] ?? ''];
+		return [implode(', ', array_slice($parts, 0, -2)), $parts[count($parts) - 2]];
+	}
+
+	/**
+	 * Reduces a value to a single line of printable ASCII no longer than $maxLength.
+	 * Every control, format and separator character (CR, LF, NEL, U+2028, ...) becomes a space,
+	 * and any byte outside printable ASCII is dropped, so no field can add or shift a line.
+	 */
+	private static function upnField(?string $value, int $maxLength): string
+	{
+		$value = mb_scrub((string) $value, 'UTF-8');
+		$value = preg_replace('/[\p{C}\p{Z}]+/u', ' ', $value) ?? '';
+		$value = str_replace(['Š', 'š', 'Č', 'č', 'Ž', 'ž', 'Ć', 'ć', 'Đ', 'đ'], ['S', 's', 'C', 'c', 'Z', 'z', 'C', 'c', 'D', 'd'], $value);
+		$value = preg_replace('/[^\x20-\x7E]/u', '?', $value) ?? '';
+		$value = preg_replace('/[^\x20-\x7E]/', '', $value) ?? '';
+		return trim(substr(trim($value), 0, $maxLength));
+	}
    
 }
