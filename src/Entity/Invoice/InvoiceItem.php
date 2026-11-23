@@ -81,6 +81,8 @@ class InvoiceItem extends AggregateBase
     				$to->$name = $this->$name;
     			}
     		}
+    		// Commands carry the discount as a percent, the item stores a fraction.
+    		$to->discount = round((float) $this->discount * 100, 2);
     	}
     	else
     	{
