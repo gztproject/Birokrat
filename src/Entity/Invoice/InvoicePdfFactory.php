@@ -229,43 +229,12 @@ class InvoicePdfFactory
    						'fgcolor' => array(0,0,0),
    						'bgcolor' => false,
    				);
-   				//ToDo: Move this somewhere else, it shouldn't really be here. 
-   				//https://www.upn-qr.si/uploads/files/NavodilaZaProgramerjeUPNQR.pdf
-   				// Payment fields must come from the data copied onto the invoice (what the PDF prints),
-   				// never from the live Organization/Partner records, which can change after issuing.
-   				$recepientAddress = $this->__invoice->getRecepientFormattedAddress();
-   				$issuerAddress = $this->__invoice->getIssuerFormattedAddress();
-   				$fields = [
-   					"UPNQR",																	//1
-   					"",																			//2
-   					"",																			//3
-   					"",																			//4
-   					"",																			//5
-   					$this->__invoice->getRecepientName(),										//6 - recip. name
-   					self::streetFromFormattedAddress($recepientAddress),						//7 - recip. address
-   					self::postFromFormattedAddress($recepientAddress),							//8 - recip. ZIP + post
-   					sprintf("%011d", $this->__invoice->getTotalPrice()*100),					//9 - price*100; 11 chars, front zero padded
-   					"",																			//10
-   					"",																			//11
-   					"IVPT",																		//12 - purpouse code (IVPT - invoice payment)
-   					sprintf("Plačilo računa %s", $this->__invoice->getNumber()),				//13 - Description
-   					$this->__invoice->getDueDate()->format('d.m.Y'),							//14 - DueDate (DD.MM.YYYY)
-   					str_replace(' ', '', $this->__invoice->getIssuerAccountNumber()),			//15 - IBAN - no spaces
-   					str_replace(' ', '', $this->__invoice->getReferenceNumber()),				//16 - reference
-   					$this->__invoice->getIssuerName(),											//17 - issuer name
-   					self::streetFromFormattedAddress($issuerAddress),							//18 - address
-   					self::postFromFormattedAddress($issuerAddress),								//19 - ZIP + post
-   				];
-   				$qrString = "";
-   				foreach($fields as $field)
-   					$qrString .= self::upnQrField($field)."\n";
-   				$qrString .= sprintf("%03d\n",strlen($qrString));		//20 - checksum (num of characters without this field)
-   				while(strlen($qrString)<411)
-   				{
-   					$qrString.=" ";
-   				}   				
-
-				$pdf->write2DBarcode($qrString, 'QRCODE,M', 135, 242, 30, 30, $style, 'N');
+   				// Payment fields come from data copied onto the invoice (what the PDF prints),
+   				// never from live Organization/Partner records. See UPN QR programmer notes:
+   				// https://www.upn-qr.si/uploads/files/NavodilaZaProgramerjeUPNQR.pdf
+   				$qrString = $this->buildUpnQrString();
+   				if($qrString !== null)
+   					$pdf->write2DBarcode($qrString, 'QRCODE,M', 135, 242, 30, 30, $style, 'N');
    				// ---------------------------------------------------------
    				
    				//Close and output PDF document
@@ -280,29 +249,84 @@ class InvoicePdfFactory
    		return htmlspecialchars($text ?? '', ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
    	}
 
-   	/**
-   	 * UPN QR fields are newline-delimited, so a field must never contain a line break.
-   	 */
-   	private static function upnQrField(?string $value): string
-   	{
-   		$value = str_replace(["\r", "\n"], '', (string) $value);
-   		return str_replace(['Š', 'š', 'Č', 'č', 'Ž', 'ž'], ['S', 's', 'C', 'c', 'Z', 'z'], $value);
-   	}
+	/**
+	 * Builds the UPN QR payload from the data stored on the invoice when it was created, so it
+	 * always matches the printed page. Returns null when a valid payload can't be produced.
+	 */
+	private function buildUpnQrString(): ?string
+	{
+		$invoice = $this->__invoice;
 
-   	/**
-   	 * @param string[] $parts Stored address split on ", ": line1[, line2], "code post", country
-   	 */
-   	private static function streetFromFormattedAddress(array $parts): string
-   	{
-   		return implode(', ', array_slice($parts, 0, max(count($parts) - 2, 0)));
-   	}
+		$iban = strtoupper(preg_replace('/\s+/u', '', $invoice->getIssuerAccountNumber()) ?? '');
+		if(!preg_match('/^[A-Z]{2}[0-9]{2}[A-Z0-9]{11,30}$/', $iban))
+			return null;
 
-   	/**
-   	 * @param string[] $parts Stored address split on ", ": line1[, line2], "code post", country
-   	 */
-   	private static function postFromFormattedAddress(array $parts): string
-   	{
-   		return count($parts) >= 2 ? $parts[count($parts) - 2] : '';
-   	}
+		$amount = (int) round($invoice->getTotalPrice() * 100);
+		if($amount < 0 || $amount > 99999999999)
+			return null;
+
+		[$recepientStreet, $recepientPost] = self::splitStoredAddress($invoice->getRecepientAddress());
+		[$issuerStreet, $issuerPost] = self::splitStoredAddress($invoice->getIssuerAddress());
+
+		$fields = [
+			'UPNQR',															//1
+			'',																	//2
+			'',																	//3
+			'',																	//4
+			'',																	//5
+			self::upnField($invoice->getRecepientName(), 33),					//6
+			self::upnField($recepientStreet, 33),								//7
+			self::upnField($recepientPost, 33),									//8
+			sprintf('%011d', $amount),											//9
+			'',																	//10
+			'',																	//11
+			'IVPT',																//12
+			self::upnField(sprintf('Plačilo računa %s', $invoice->getNumber()), 42),	//13
+			$invoice->getDueDate()->format('d.m.Y'),							//14
+			$iban,																//15
+			self::upnField(str_replace(' ', '', $invoice->getReferenceNumber()), 26),	//16
+			self::upnField($invoice->getIssuerName(), 33),						//17
+			self::upnField($issuerStreet, 33),									//18
+			self::upnField($issuerPost, 33),									//19
+		];
+
+		$qrString = implode("\n", $fields)."\n";
+		$qrString .= sprintf("%03d\n", strlen($qrString));					//20
+
+		$lines = explode("\n", $qrString);
+		if(count($lines) !== 21 || $lines[20] !== '' || $lines[14] !== $iban || strlen($qrString) > 411)
+			return null;
+
+		return str_pad($qrString, 411, ' ');
+	}
+
+	/**
+	 * Splits an address stored as "street[, line2], ZIP post, country" into street and ZIP + post.
+	 * @return array{0: string, 1: string}
+	 */
+	private static function splitStoredAddress(string $address): array
+	{
+		$parts = explode(', ', $address);
+		if(count($parts) < 3)
+			return [$parts[0] ?? '', $parts[1] ?? ''];
+		return [implode(', ', array_slice($parts, 0, -2)), $parts[count($parts) - 2]];
+	}
+
+	/**
+	 * Reduces a value to a single line of printable ASCII no longer than $maxLength.
+	 * Control/format/separator characters become spaces so no field can add or shift a line.
+	 */
+	private static function upnField(?string $value, int $maxLength): string
+	{
+		$value = (string) $value;
+		if (\function_exists('mb_scrub')) {
+			$value = mb_scrub($value, 'UTF-8');
+		}
+		$value = preg_replace('/[\p{C}\p{Z}]+/u', ' ', $value) ?? '';
+		$value = str_replace(['Š', 'š', 'Č', 'č', 'Ž', 'ž', 'Ć', 'ć', 'Đ', 'đ'], ['S', 's', 'C', 'c', 'Z', 'z', 'C', 'c', 'D', 'd'], $value);
+		$value = preg_replace('/[^\x20-\x7E]/u', '?', $value) ?? '';
+		$value = preg_replace('/[^\x20-\x7E]/', '', $value) ?? '';
+		return trim(substr(trim($value), 0, $maxLength));
+	}
    
 }

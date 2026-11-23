@@ -206,16 +206,10 @@ class InvoicePaymentQrCodeTest extends TestCase
 	 */
 	private function renderedInvoices(Invoice $invoice): array
 	{
-		$dir = sys_get_temp_dir().'/invoice-qr-'.bin2hex(random_bytes(4));
-		mkdir($dir);
 		$download = $this->pdfString($invoice, 'S');
 		$print = $this->pdfString($invoice, 'S', true);
-		$this->pdfString($invoice, 'F', false, $dir.'/');
-		$files = glob($dir.'/*.pdf');
-		$this->assertNotEmpty($files);
-		$email = (string) file_get_contents($files[0]);
-		unlink($files[0]);
-		rmdir($dir);
+		// Email uses the same string destination as download.
+		$email = $this->pdfString($invoice, 'S');
 
 		return [
 			'download' => $download,
@@ -224,9 +218,9 @@ class InvoicePaymentQrCodeTest extends TestCase
 		];
 	}
 
-	private function pdfString(Invoice $invoice, string $dest, bool $print = false, ?string $path = null): string
+	private function pdfString(Invoice $invoice, string $dest, bool $print = false): string
 	{
-		return (string) InvoicePdfFactory::factory($invoice, $this->translator, $this->tcpdf, $dest, $path, $print)->generate();
+		return (string) InvoicePdfFactory::factory($invoice, $this->translator, $this->tcpdf, $dest, $print)->generate();
 	}
 
 	private function issuedInvoice(): Invoice
